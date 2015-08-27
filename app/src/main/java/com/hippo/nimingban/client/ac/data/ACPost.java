@@ -21,9 +21,10 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 
+import com.hippo.nimingban.client.ac.ACEngine;
 import com.hippo.nimingban.client.data.Post;
 
 import java.text.ParseException;
@@ -54,7 +55,8 @@ public class ACPost extends Post {
     private String mTimeStr;
     private CharSequence mUser;
     private CharSequence mContent;
-
+    private String mThumb;
+    private String mImage;
 
     public void setId(String id) {
         this.id = id;
@@ -150,9 +152,6 @@ public class ACPost extends Post {
         }
 
         if ("1".equals(admin)) {
-
-            Log.d("TAG", "\"1\".equals(admin)");
-
             Spannable spannable = new SpannableString(userid);
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
@@ -161,6 +160,11 @@ public class ACPost extends Post {
         }
 
         mContent = Html.fromHtml(content);
+
+        if (!TextUtils.isEmpty(img)) {
+            mThumb = ACEngine.HOST + "Public/Upload/thumb/" + img + ext;
+            mImage = ACEngine.HOST + "Public/Upload/image/" + img + ext;
+        }
     }
 
     @Override
@@ -190,11 +194,11 @@ public class ACPost extends Post {
 
     @Override
     public String getNMBThumbUrl() {
-        return null;
+        return mThumb;
     }
 
     @Override
     public String getNMBImageUrl() {
-        return null;
+        return mImage;
     }
 }

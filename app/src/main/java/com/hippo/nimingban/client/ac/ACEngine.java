@@ -32,7 +32,7 @@ import java.util.List;
 
 public class ACEngine {
 
-    private static final String HOST = "http://h.nimingban.com/";
+    public static final String HOST = "http://h.nimingban.com/";
 
     private static final String API_GET_FORUM_LIST = HOST + "Api/getForumList";
 

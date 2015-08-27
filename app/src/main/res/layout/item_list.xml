@@ -45,12 +45,11 @@
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textSize="@dimen/text_little_small"/>
 
-    <ImageView
-        android:visibility="gone"
+    <com.hippo.nimingban.widget.LoadImageView
         android:id="@+id/thumb"
         android:layout_width="@dimen/list_thumb_width"
         android:layout_height="@dimen/list_thumb_height"
-        android:layout_below="@id/left_text"
+        android:layout_below="@id/content"
         android:layout_marginTop="8dp"/>
 
 </RelativeLayout>

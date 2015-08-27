@@ -23,9 +23,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -33,6 +33,7 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.widget.ContentLayout;
+import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -45,6 +46,7 @@ import java.util.List;
 public class ListActivity extends AppCompatActivity {
 
     private NMBClient mNMBClient;
+    private Conaco mConaco;
 
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
@@ -60,6 +62,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         mNMBClient = NMBApplication.getNMBClient(this);
+        mConaco = NMBApplication.getConaco(this);
 
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
@@ -74,6 +77,7 @@ public class ListActivity extends AppCompatActivity {
                 ResourcesUtils.getAttrColor(this, R.attr.colorDivider),
                 LayoutUtils.dp2pix(this, 1)));
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.hasFixedSize();
 
         // Refresh
         mListHelper.firstRefresh();
@@ -84,7 +88,7 @@ public class ListActivity extends AppCompatActivity {
         public TextView leftText;
         public TextView rightText;
         public TextView content;
-        public ImageView thumb;
+        public LoadImageView thumb;
 
         public ListHolder(View itemView) {
             super(itemView);
@@ -92,7 +96,7 @@ public class ListActivity extends AppCompatActivity {
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
-            thumb = (ImageView) itemView.findViewById(R.id.thumb);
+            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
         }
     }
 
@@ -109,6 +113,15 @@ public class ListActivity extends AppCompatActivity {
             holder.leftText.setText(TextUtils2.combine(post.getNMBTime(), "  ", post.getNMBUser()));
             holder.rightText.setText(post.getNMBReplyCount());
             holder.content.setText(post.getNMBContent());
+
+            String thumbUrl = post.getNMBThumbUrl();
+            if (thumbUrl != null) {
+                holder.thumb.setVisibility(View.VISIBLE);
+                holder.thumb.load(mConaco, thumbUrl, thumbUrl);
+            } else {
+                holder.thumb.setVisibility(View.GONE);
+                mConaco.load(holder.thumb, null);
+            }
         }
 
         @Override
