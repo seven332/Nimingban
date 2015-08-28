@@ -51,4 +51,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.android.support:recyclerview-v7:23.0.0'
     compile 'com.alibaba:fastjson:1.1.45.android'
+    compile 'org.jsoup:jsoup:1.8.3'
 }

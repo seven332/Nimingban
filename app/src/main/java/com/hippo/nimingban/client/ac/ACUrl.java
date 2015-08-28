@@ -18,11 +18,13 @@ package com.hippo.nimingban.client.ac;
 
 public class ACUrl {
 
-    public static final String HOST = "http://h.nimingban.com/";
+    public static final String HOST = "http://h.nimingban.com";
 
-    public static final String API_POST_LIST = HOST + "Api/showf";
+    public static final String API_POST_LIST = HOST + "/Api/showf";
 
-    public static final String API_POST = HOST + "Api/thread";
+    public static final String API_POST = HOST + "/Api/thread";
+
+    public static final String API_REFERENCE = HOST + "/Home/Forum/ref";
 
     public static String getPostListUrl(String forum, int page) {
         return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
@@ -30,5 +32,9 @@ public class ACUrl {
 
     public static String getPostUrl(String id, int page) {
         return API_POST + "?id=" + id + "&page=" + (page + 1);
+    }
+
+    public static String getReferenceUrl(String id) {
+        return API_REFERENCE + "?id=" + id;
     }
 }

@@ -16,26 +16,38 @@
 
 package com.hippo.nimingban.ui;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
+import com.hippo.nimingban.client.ReferenceSpan;
+import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.widget.ContentLayout;
+import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.TextUtils2;
@@ -111,6 +123,7 @@ public class PostActivity extends AppCompatActivity {
                 LayoutUtils.dp2pix(this, 1)));
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setOnItemClickListener(new ClickReplyListener());
         mRecyclerView.hasFixedSize();
 
         // Refresh
@@ -122,39 +135,216 @@ public class PostActivity extends AppCompatActivity {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 
-    private class ReplytHolder extends RecyclerView.ViewHolder {
+    private void handleURLSpan(URLSpan urlSpan) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        try {
+            i.setData(Uri.parse(urlSpan.getURL()));
+            startActivity(i);
+        } catch (Exception e) {
+            // Avoid something wrong
+            e.printStackTrace();
+        }
+    }
+
+    private final class ReferenceDialogHelper implements AlertDialog.OnDismissListener,
+            NMBClient.Callback<ACReference>, View.OnClickListener {
+
+        private int mSite;
+        private String mId;
+
+        private View mView;
+        private ViewTransition mViewTransition;
+
+        private TextView mLeftText;
+        private TextView mRightText;
+        private LinkifyTextView mContent;
+        private LoadImageView mThumb;
+
+        private Dialog mDialog;
+
+        private NMBRequest mRequest;
+
+        @SuppressLint("InflateParams")
+        public ReferenceDialogHelper(int site, String id) {
+            mSite = site;
+            mId = id;
+
+            // TODO Add showing original post if it does not belong this post
+            mView = getLayoutInflater().inflate(R.layout.dialog_reference, null);
+
+            View progress = mView.findViewById(R.id.progress_view);
+            View scrollView = mView.findViewById(R.id.scroll_view);
+            mViewTransition = new ViewTransition(progress, scrollView);
+
+            mLeftText = (TextView) scrollView.findViewById(R.id.left_text);
+            mRightText = (TextView) scrollView.findViewById(R.id.right_text);
+            mContent = (LinkifyTextView) scrollView.findViewById(R.id.content);
+            mThumb = (LoadImageView) scrollView.findViewById(R.id.thumb);
+
+            mContent.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            ClickableSpan span = mContent.getCurrentSpan();
+
+            if (span instanceof URLSpan) {
+                handleURLSpan((URLSpan) span);
+            } else if (span instanceof ReferenceSpan) {
+                handleReferenceSpan((ReferenceSpan) span);
+            }
+        }
+
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        public void request() {
+            // Try to find in data list first
+            ReplyHelper replyHelper = mReplyHelper;
+            for (int i = 0, n = replyHelper.size(); i < n; i++) {
+                Reply reply = replyHelper.getDataAt(i);
+                if (mId.equals(reply.getNMBId())) {
+                    onGetReference(reply, false);
+                    return;
+                }
+            }
+
+            NMBRequest request = new NMBRequest();
+            mRequest = request;
+            request.setSite(NMBClient.AC);
+            request.setMethod(NMBClient.METHOD_GET_REFERENCE);
+            request.setArgs(NMBUrl.getReferenceUrl(mSite, mId));
+            request.setCallback(this);
+            mNMBClient.execute(request);
+        }
+
+        private void onGetReference(Reply reply, boolean animation) {
+            mRequest = null;
+            mDialog = null;
+
+            mLeftText.setText(TextUtils2.combine(reply.getNMBTimeStr(), "  ", reply.getNMBUser()));
+            mRightText.setText(reply.getNMBId());
+            mContent.setText(reply.getNMBContent());
+
+            String thumbUrl = reply.getNMBThumbUrl();
+            if (!TextUtils.isEmpty(thumbUrl)) {
+                mThumb.setVisibility(View.VISIBLE);
+                mThumb.load(mConaco, thumbUrl, thumbUrl);
+            } else {
+                mThumb.setVisibility(View.GONE);
+                mConaco.load(mThumb, null);
+            }
+
+            mViewTransition.showView(1, animation);
+        }
+
+        @Override
+        public void onSuccess(ACReference result) {
+            onGetReference(result, true);
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            e.printStackTrace(); // TODO a toast
+
+            mRequest = null;
+
+            if (mDialog != null) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+        }
+
+        @Override
+        public void onCancelled() {
+            mRequest = null;
+
+            if (mDialog != null) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog = null;
+
+            if (mRequest != null) {
+                mRequest.cancel();
+                mRequest = null;
+            }
+        }
+    }
+
+    private void handleReferenceSpan(ReferenceSpan referenceSpan) {
+        ReferenceDialogHelper helper = new ReferenceDialogHelper(referenceSpan.getSite(), referenceSpan.getId());
+        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView())
+                .setOnDismissListener(helper).create();
+        helper.setDialog(dialog);
+        helper.request();
+        dialog.show();
+    }
+
+    private class ClickReplyListener implements EasyRecyclerView.OnItemClickListener {
+
+        @Override
+        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
+            if (holder instanceof ReplyHolder) {
+                ReplyHolder replyHolder = (ReplyHolder) holder;
+                ClickableSpan span = replyHolder.content.getCurrentSpan();
+
+                if (span instanceof URLSpan) {
+                    handleURLSpan((URLSpan) span);
+                    return true;
+                } else if (span instanceof ReferenceSpan) {
+                    handleReferenceSpan((ReferenceSpan) span);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    private class ReplyHolder extends RecyclerView.ViewHolder {
 
         public TextView leftText;
         public TextView rightText;
-        public TextView content;
+        public LinkifyTextView content;
         public LoadImageView thumb;
 
-        public ReplytHolder(View itemView) {
+        public ReplyHolder(View itemView) {
             super(itemView);
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
-            content = (TextView) itemView.findViewById(R.id.content);
+            content = (LinkifyTextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
         }
     }
 
-    private class ReplyAdapter extends RecyclerView.Adapter<ReplytHolder> {
+    private class ReplyAdapter extends RecyclerView.Adapter<ReplyHolder> {
 
         @Override
-        public ReplytHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ReplytHolder(getLayoutInflater().inflate(R.layout.item_list, parent, false));
+        public ReplyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ReplyHolder(getLayoutInflater().inflate(R.layout.item_post, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(ReplytHolder holder, int position) {
+        public void onBindViewHolder(ReplyHolder holder, int position) {
             Reply reply = mReplyHelper.getDataAt(position);
             holder.leftText.setText(TextUtils2.combine(reply.getNMBTimeStr(), "  ", reply.getNMBUser()));
             holder.rightText.setText(reply.getNMBId());
             holder.content.setText(reply.getNMBContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (thumbUrl != null) {
+            if (!TextUtils.isEmpty(thumbUrl)) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.load(mConaco, thumbUrl, thumbUrl);
             } else {

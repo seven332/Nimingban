@@ -24,6 +24,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.URLSpan;
 
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.ReferenceSpan;
@@ -78,6 +79,42 @@ public class ACPost extends Post {
                 ", replyCount = " + replyCount + ", replys = " + replys;
     }
 
+    public static CharSequence fixURLSpan(CharSequence content) {
+        if (!(content instanceof Spanned)) {
+            return content;
+        }
+
+        Spannable spannable;
+        if (content instanceof Spannable) {
+            spannable = (Spannable) content;
+        } else {
+            spannable = new SpannableString(content);
+        }
+
+        URLSpan[] urlSpans = spannable.getSpans(0, content.length(), URLSpan.class);
+        for (URLSpan urlSpan : urlSpans) {
+            int start = spannable.getSpanStart(urlSpan);
+            int end = spannable.getSpanEnd(urlSpan);
+            String url = urlSpan.getURL();
+            String newUrl;
+            if (url.startsWith("http")) {
+                newUrl = url;
+            } else if (url.startsWith("/")){
+                newUrl = ACUrl.HOST + url;
+            } else {
+                newUrl = ACUrl.HOST + '/' + url;
+            }
+
+            //noinspection StringEquality
+            if (newUrl != url) {
+                spannable.removeSpan(urlSpan);
+                spannable.setSpan(new URLSpan(newUrl), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        return content;
+    }
+
     public static CharSequence handleReference(CharSequence content) {
         Matcher m = REFERENCE_PATTERN.matcher(content);
 
@@ -128,11 +165,12 @@ public class ACPost extends Post {
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
         mContent = Html.fromHtml(content);
+        mContent = fixURLSpan(mContent);
         mContent = handleReference(mContent);
 
         if (!TextUtils.isEmpty(img)) {
-            mThumb = ACUrl.HOST + "Public/Upload/thumb/" + img + ext;
-            mImage = ACUrl.HOST + "Public/Upload/image/" + img + ext;
+            mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
+            mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext;
         }
     }
 
@@ -146,12 +184,18 @@ public class ACPost extends Post {
         } else {
             for (ACReply reply : replys) {
                 reply.generate();
+                reply.mPostId = id;
             }
         }
     }
 
     @Override
     public String getNMBId() {
+        return id;
+    }
+
+    @Override
+    public String getNMBPostId() {
         return id;
     }
 

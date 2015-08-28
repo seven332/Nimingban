@@ -31,20 +31,20 @@ import com.hippo.nimingban.client.data.Reply;
 import java.text.ParseException;
 import java.util.Date;
 
-public class ACReply extends Reply {
+public class ACReference extends Reply {
 
-    public String id = "";
-    public String img = "";
-    public String ext = "";
-    public String now = "";
-    public String userid = "";
-    public String name = "";
-    public String email = "";
-    public String title = "";
-    public String content = "";
-    public String admin = "";
+    public String id;
+    public String postId;
+    public String time;
+    public String title;
+    public String user;
+    public String userId;
+    public boolean admin;
+    public String email;
+    public String content;
+    public String thumb;
+    public String image;
 
-    String mPostId;
     private long mTime;
     private String mTimeStr;
     private CharSequence mUser;
@@ -54,62 +54,43 @@ public class ACReply extends Reply {
 
     @Override
     public String toString() {
-        return "id = " + id + ", img = " + img + ", ext = " + ext + ", now = " + now +
-                ", userid = " + userid + ", name = " + name + ", email = " + email +
-                ", title = " + title + ", content = " + content + ", admin = " + admin;
-    }
-
-    static String removeDayOfWeek(String time) {
-        StringBuilder sb = new StringBuilder(time.length() - 3);
-        boolean inBrackets = false;
-        for (int i = 0, n = time.length(); i < n; i++) {
-            char c = time.charAt(i);
-            if (inBrackets) {
-                if (c == ')') {
-                    inBrackets = false;
-                } else {
-                    // Skip
-                }
-            } else {
-                if (c == '(') {
-                    inBrackets = true;
-                } else {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
+        return "id = " + id + ", postId = " + postId + ", time = " + time + ", title = " + title +
+                ", user = " + user + ", userId = " + userId + ", admin = " + admin +
+                ", email = " + email + ", content = " + content + ", thumb = " + thumb +
+                ", image = " + image;
     }
 
     public void generate() {
         try {
             Date date;
             synchronized (ACPost.sDateFormatLock) {
-                date = ACPost.DATE_FORMAT.parse(removeDayOfWeek(now));
+                date = ACPost.DATE_FORMAT.parse(ACReply.removeDayOfWeek(time));
             }
             mTime = date.getTime();
             mTimeStr = Reply.generateTimeString(date);
         } catch (ParseException e) {
             // Can't parse date, may be the format has changed
-            e.printStackTrace();
-            mTimeStr = now;
+            mTimeStr = time;
         }
 
-        if ("1".equals(admin)) {
-            Spannable spannable = new SpannableString(userid);
-            spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (admin) {
+            Spannable spannable = new SpannableString(userId);
+            spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userId.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = userid;
+            mUser = userId;
         }
 
         mContent = Html.fromHtml(content);
         mContent = ACPost.fixURLSpan(mContent);
         mContent = ACPost.handleReference(mContent);
 
-        if (!TextUtils.isEmpty(img)) {
-            mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
-            mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext;
+        // Make it could hit cache
+        if (!TextUtils.isEmpty(thumb)) {
+            mThumb = ACUrl.HOST + thumb.replaceAll("/+", "/");
+        }
+        if (!TextUtils.isEmpty(image)) {
+            mImage = ACUrl.HOST + image.replaceAll("/+", "/");
         }
     }
 
@@ -120,7 +101,7 @@ public class ACReply extends Reply {
 
     @Override
     public String getNMBPostId() {
-        return mPostId;
+        return postId;
     }
 
     @Override
@@ -162,40 +143,42 @@ public class ACReply extends Reply {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
-        dest.writeString(this.img);
-        dest.writeString(this.ext);
-        dest.writeString(this.now);
-        dest.writeString(this.userid);
-        dest.writeString(this.name);
-        dest.writeString(this.email);
+        dest.writeString(this.postId);
+        dest.writeString(this.time);
         dest.writeString(this.title);
+        dest.writeString(this.user);
+        dest.writeString(this.userId);
+        dest.writeByte(admin ? (byte) 1 : (byte) 0);
+        dest.writeString(this.email);
         dest.writeString(this.content);
-        dest.writeString(this.admin);
+        dest.writeString(this.thumb);
+        dest.writeString(this.image);
     }
 
-    public ACReply() {
+    public ACReference() {
     }
 
-    protected ACReply(Parcel in) {
+    protected ACReference(Parcel in) {
         this.id = in.readString();
-        this.img = in.readString();
-        this.ext = in.readString();
-        this.now = in.readString();
-        this.userid = in.readString();
-        this.name = in.readString();
-        this.email = in.readString();
+        this.postId = in.readString();
+        this.time = in.readString();
         this.title = in.readString();
+        this.user = in.readString();
+        this.userId = in.readString();
+        this.admin = in.readByte() != 0;
+        this.email = in.readString();
         this.content = in.readString();
-        this.admin = in.readString();
+        this.thumb = in.readString();
+        this.image = in.readString();
     }
 
-    public static final Creator<ACReply> CREATOR = new Creator<ACReply>() {
-        public ACReply createFromParcel(Parcel source) {
-            return new ACReply(source);
+    public static final Creator<ACReference> CREATOR = new Creator<ACReference>() {
+        public ACReference createFromParcel(Parcel source) {
+            return new ACReference(source);
         }
 
-        public ACReply[] newArray(int size) {
-            return new ACReply[size];
+        public ACReference[] newArray(int size) {
+            return new ACReference[size];
         }
     };
 }

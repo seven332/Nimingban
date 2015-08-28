@@ -20,7 +20,6 @@ import com.hippo.nimingban.client.ac.ACUrl;
 
 public class NMBUrl {
 
-
     public static String getPostListUrl(int site, String forum, int page) {
         switch (site) {
             case NMBClient.AC:
@@ -34,6 +33,15 @@ public class NMBUrl {
         switch (site) {
             case NMBClient.AC:
                 return ACUrl.getPostUrl(id, page);
+            default:
+                throw new IllegalStateException("Unknown site " + site);
+        }
+    }
+
+    public static String getReferenceUrl(int site, String id) {
+        switch (site) {
+            case NMBClient.AC:
+                return ACUrl.getReferenceUrl(id);
             default:
                 throw new IllegalStateException("Unknown site " + site);
         }

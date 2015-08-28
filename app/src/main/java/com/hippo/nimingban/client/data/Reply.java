@@ -35,6 +35,8 @@ public abstract class Reply implements Parcelable {
 
     public abstract String getNMBId();
 
+    public abstract String getNMBPostId();
+
     public abstract long getNMBTime();
 
     public abstract CharSequence getNMBTimeStr();
