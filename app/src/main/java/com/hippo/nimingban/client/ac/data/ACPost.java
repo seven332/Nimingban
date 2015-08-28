@@ -17,6 +17,7 @@
 package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
+import android.os.Parcel;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -24,11 +25,14 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
-import com.hippo.nimingban.client.ac.ACEngine;
+import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.Reply;
+import com.hippo.yorozuya.NumberUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,73 +42,27 @@ public class ACPost extends Post {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
     private static final Object sDateFormatLock = new Object();
 
-    private String id = "";
-    private String img = "";
-    private String ext = "";
-    private String now = "";
-    private String userid = "";
-    private String name = "";
-    private String email = "";
-    private String title = "";
-    private String content = "";
-    private String admin = "";
-    private String replyCount = "";
-    private List<ACReply> replys;
+    public String id = "";
+    public String img = "";
+    public String ext = "";
+    public String now = "";
+    public String userid = "";
+    public String name = "";
+    public String email = "";
+    public String title = "";
+    public String content = "";
+    public String admin = "";
+    public String replyCount = "";
+    // Ingore when writeToParcel
+    public List<ACReply> replys;
 
     private long mTime;
     private String mTimeStr;
     private CharSequence mUser;
+    private int mReplyCount;
     private CharSequence mContent;
     private String mThumb;
     private String mImage;
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setImg(String img) {
-        this.img = img;
-    }
-
-    public void setExt(String ext) {
-        this.ext = ext;
-    }
-
-    public void setNow(String now) {
-        this.now = now;
-    }
-
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setAdmin(String admin) {
-        this.admin = admin;
-    }
-
-    public void setReplyCount(String replyCount) {
-        this.replyCount = replyCount;
-    }
-
-    public void setReplys(List<ACReply> replys) {
-        this.replys = replys;
-    }
 
     @Override
     public String toString() {
@@ -114,38 +72,16 @@ public class ACPost extends Post {
                 ", replyCount = " + replyCount + ", replys = " + replys;
     }
 
-    private String removeDayOfWeek(String time) {
-        StringBuilder sb = new StringBuilder(time.length() - 3);
-        boolean inBrackets = false;
-        for (int i = 0, n = time.length(); i < n; i++) {
-            char c = time.charAt(i);
-            if (inBrackets) {
-                if (c == ')') {
-                    inBrackets = false;
-                } else {
-                    // Skip
-                }
-            } else {
-                if (c == '(') {
-                    inBrackets = true;
-                } else {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
-    }
-
     public void generate() {
         // The object is from JSON, so make it valid to avoid exception
 
         try {
             Date date;
             synchronized (sDateFormatLock) {
-                date = DATE_FORMAT.parse(removeDayOfWeek(now));
+                date = DATE_FORMAT.parse(ACReply.removeDayOfWeek(now));
             }
             mTime = date.getTime();
-            mTimeStr = Post.generateTimeString(date);
+            mTimeStr = Reply.generateTimeString(date);
         } catch (ParseException e) {
             // Can't parse date, may be the format has changed
             mTimeStr = now;
@@ -159,11 +95,27 @@ public class ACPost extends Post {
             mUser = userid;
         }
 
+        mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
+
         mContent = Html.fromHtml(content);
 
         if (!TextUtils.isEmpty(img)) {
-            mThumb = ACEngine.HOST + "Public/Upload/thumb/" + img + ext;
-            mImage = ACEngine.HOST + "Public/Upload/image/" + img + ext;
+            mThumb = ACUrl.HOST + "Public/Upload/thumb/" + img + ext;
+            mImage = ACUrl.HOST + "Public/Upload/image/" + img + ext;
+        }
+    }
+
+    public void generateSelfAndReplies() {
+        generate();
+
+        // generate replies
+        if (replys == null) {
+            // Can't get replise
+            replys = new ArrayList<>(0);
+        } else {
+            for (ACReply reply : replys) {
+                reply.generate();
+            }
         }
     }
 
@@ -173,7 +125,12 @@ public class ACPost extends Post {
     }
 
     @Override
-    public CharSequence getNMBTime() {
+    public long getNMBTime() {
+        return mTime;
+    }
+
+    @Override
+    public CharSequence getNMBTimeStr() {
         return mTimeStr;
     }
 
@@ -188,7 +145,12 @@ public class ACPost extends Post {
     }
 
     @Override
-    public CharSequence getNMBReplyCount() {
+    public int getNMBReplyCount() {
+        return mReplyCount;
+    }
+
+    @Override
+    public CharSequence getNMBReplyCountStr() {
         return replyCount;
     }
 
@@ -201,4 +163,53 @@ public class ACPost extends Post {
     public String getNMBImageUrl() {
         return mImage;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.img);
+        dest.writeString(this.ext);
+        dest.writeString(this.now);
+        dest.writeString(this.userid);
+        dest.writeString(this.name);
+        dest.writeString(this.email);
+        dest.writeString(this.title);
+        dest.writeString(this.content);
+        dest.writeString(this.admin);
+        dest.writeString(this.replyCount);
+    }
+
+    public ACPost() {
+    }
+
+    // Need to call generate
+    protected ACPost(Parcel in) {
+        this.id = in.readString();
+        this.img = in.readString();
+        this.ext = in.readString();
+        this.now = in.readString();
+        this.userid = in.readString();
+        this.name = in.readString();
+        this.email = in.readString();
+        this.title = in.readString();
+        this.content = in.readString();
+        this.admin = in.readString();
+        this.replyCount = in.readString();
+    }
+
+    public static final Creator<ACPost> CREATOR = new Creator<ACPost>() {
+        public ACPost createFromParcel(Parcel source) {
+            return new ACPost(source);
+        }
+
+        public ACPost[] newArray(int size) {
+            return new ACPost[size];
+        }
+    };
 }

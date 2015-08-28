@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.client.ac;
 
+import android.util.Pair;
+
 import com.alibaba.fastjson.JSON;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
@@ -26,15 +28,14 @@ import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.Reply;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ACEngine {
 
-    public static final String HOST = "http://h.nimingban.com/";
-
-    private static final String API_GET_FORUM_LIST = HOST + "Api/getForumList";
+    private static final String API_GET_FORUM_LIST = ACUrl.HOST + "Api/getForumList";
 
     public static List<ACForumGroup> getForumList(HttpClient httpClient, HttpRequest httpRequest) throws Exception {
         try {
@@ -74,6 +75,28 @@ public class ACEngine {
             }
 
             return result;
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
+    public static Pair<Post, List<Reply>> getPost(HttpClient httpClient,
+            HttpRequest httpRequest, String url) throws Exception {
+        try {
+            httpRequest.setUrl(url);
+            HttpResponse response = httpClient.execute(httpRequest);
+            ACPost acPost = JSON.parseObject(response.getString(), ACPost.class);
+            if (acPost == null) {
+                throw new NMBException(NMBClient.AC, "Can't parse json when getPost");
+            }
+            acPost.generateSelfAndReplies();
+            return new Pair<Post, List<Reply>>(acPost, new ArrayList<Reply>());
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {
                 throw new CancelledException();

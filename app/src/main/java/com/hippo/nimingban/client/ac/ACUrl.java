@@ -22,7 +22,13 @@ public class ACUrl {
 
     public static final String API_POST_LIST = HOST + "Api/showf";
 
+    public static final String API_POST = HOST + "Api/thread";
+
     public static String getPostListUrl(String forum, int page) {
         return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
+    }
+
+    public static String getPostUrl(String id, int page) {
+        return API_POST + "?id=" + id + "&page=" + (page + 1);
     }
 }

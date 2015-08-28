@@ -59,13 +59,13 @@ import android.widget.AbsListView;
  * refresh of the content wherever this gesture is used.
  * </p>
  */
-public class RefreshLayout extends ViewGroup {
+public class SwipeRefreshLayout extends ViewGroup {
     // Maps to ProgressBar.Large style
     public static final int LARGE = MaterialProgressDrawable.LARGE;
     // Maps to ProgressBar default style
     public static final int DEFAULT = MaterialProgressDrawable.DEFAULT;
 
-    private static final String LOG_TAG = RefreshLayout.class.getSimpleName();
+    private static final String LOG_TAG = SwipeRefreshLayout.class.getSimpleName();
 
     private static final int MAX_ALPHA = 255;
     private static final int STARTING_PROGRESS_ALPHA = (int) (.3f * MAX_ALPHA);
@@ -119,7 +119,7 @@ public class RefreshLayout extends ViewGroup {
     private final DecelerateInterpolator mDecelerateInterpolator;
     private final AccelerateInterpolator mAccelerateInterpolator;
     private static final int[] LAYOUT_ATTRS = new int[] {
-            android.R.attr.enabled
+        android.R.attr.enabled
     };
 
     private CircleImageView mCircleView;
@@ -339,7 +339,7 @@ public class RefreshLayout extends ViewGroup {
      *
      * @param context
      */
-    public RefreshLayout(Context context) {
+    public SwipeRefreshLayout(Context context) {
         this(context, null);
     }
 
@@ -349,7 +349,7 @@ public class RefreshLayout extends ViewGroup {
      * @param context
      * @param attrs
      */
-    public RefreshLayout(Context context, AttributeSet attrs) {
+    public SwipeRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
@@ -635,7 +635,7 @@ public class RefreshLayout extends ViewGroup {
      * to a user swipe gesture.
      */
     public void setFooterColorSchemeResources(int colorRes1, int colorRes2, int colorRes3,
-            int colorRes4) {
+                                        int colorRes4) {
         final Resources res = getResources();
         setFooterColorSchemeColors(res.getColor(colorRes1), res.getColor(colorRes2),
                 res.getColor(colorRes3), res.getColor(colorRes4));
@@ -795,7 +795,7 @@ public class RefreshLayout extends ViewGroup {
                 final AbsListView absListView = (AbsListView) mTarget;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                        .getTop() < absListView.getPaddingTop());
+                                .getTop() < absListView.getPaddingTop());
             } else {
                 return ViewCompat.canScrollVertically(mTarget, -1) || mTarget.getScrollY() > 0;
             }

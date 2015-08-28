@@ -16,32 +16,9 @@
 
 package com.hippo.nimingban.client.data;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+public abstract class Post extends Reply {
 
-public abstract class Post {
+    public abstract int getNMBReplyCount();
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
-    private static final Object sDateFormatLock = new Object();
-
-    abstract public String getNMBId();
-
-    abstract public CharSequence getNMBTime();
-
-    abstract public CharSequence getNMBUser();
-
-    abstract public CharSequence getNMBReplyCount();
-
-    abstract public CharSequence getNMBContent();
-
-    abstract public String getNMBThumbUrl();
-
-    abstract public String getNMBImageUrl();
-
-    public static String generateTimeString(Date date) {
-        synchronized (sDateFormatLock) {
-            return DATE_FORMAT.format(date);
-        }
-    }
+    public abstract CharSequence getNMBReplyCountStr();
 }

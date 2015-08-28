@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
@@ -44,7 +46,11 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity {
+
+    public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
+
+    public static final String KEY_POST = "post";
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -52,15 +58,40 @@ public class ListActivity extends AppCompatActivity {
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
 
-    private PostHelper mPostHelper;
-    private PostAdapter mPostAdapter;
+    private ReplyHelper mReplyHelper;
+    private ReplyAdapter mReplyAdapter;
 
     private NMBRequest mNMBRequest;
+
+    private Post mPost;
+
+    // false for error
+    private boolean handlerIntent(Intent intent) {
+        if (intent == null) {
+            return false;
+        }
+
+        String action = intent.getAction();
+        if (ACTION_POST.equals(action)) {
+            mPost = intent.getParcelableExtra(KEY_POST);
+            if (mPost != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+
+        if (!handlerIntent(getIntent())) {
+            finish();
+            return;
+        }
+
+        setContentView(R.layout.activity_post);
 
         mNMBClient = NMBApplication.getNMBClient(this);
         mConaco = NMBApplication.getConaco(this);
@@ -68,44 +99,31 @@ public class ListActivity extends AppCompatActivity {
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
 
-        mPostHelper = new PostHelper();
-        mContentLayout.setHelper(mPostHelper);
+        mReplyHelper = new ReplyHelper();
+        mContentLayout.setHelper(mReplyHelper);
 
-        mPostAdapter = new PostAdapter();
-        mRecyclerView.setAdapter(mPostAdapter);
+        mReplyAdapter = new ReplyAdapter();
+        mRecyclerView.setAdapter(mReplyAdapter);
         mRecyclerView.addItemDecoration(new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL,
                 ResourcesUtils.getAttrColor(this, R.attr.colorDivider),
                 LayoutUtils.dp2pix(this, 1)));
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-        mRecyclerView.setOnItemClickListener(new ClickPostListener());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();
 
         // Refresh
-        mPostHelper.firstRefresh();
+        mReplyHelper.firstRefresh();
     }
 
-    private class ClickPostListener implements EasyRecyclerView.OnItemClickListener {
-
-        @Override
-        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-            Intent intent = new Intent(ListActivity.this, PostActivity.class);
-            intent.setAction(PostActivity.ACTION_POST);
-            intent.putExtra(PostActivity.KEY_POST, mPostHelper.getDataAt(position));
-            startActivity(intent);
-            return true;
-        }
-    }
-
-    private class ListHolder extends RecyclerView.ViewHolder {
+    private class ReplytHolder extends RecyclerView.ViewHolder {
 
         public TextView leftText;
         public TextView rightText;
         public TextView content;
         public LoadImageView thumb;
 
-        public ListHolder(View itemView) {
+        public ReplytHolder(View itemView) {
             super(itemView);
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
@@ -115,21 +133,21 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    private class PostAdapter extends RecyclerView.Adapter<ListHolder> {
+    private class ReplyAdapter extends RecyclerView.Adapter<ReplytHolder> {
 
         @Override
-        public ListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ListHolder(getLayoutInflater().inflate(R.layout.item_list, parent, false));
+        public ReplytHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ReplytHolder(getLayoutInflater().inflate(R.layout.item_list, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(ListHolder holder, int position) {
-            Post post = mPostHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(post.getNMBTimeStr(), "  ", post.getNMBUser()));
-            holder.rightText.setText(post.getNMBReplyCountStr());
-            holder.content.setText(post.getNMBContent());
+        public void onBindViewHolder(ReplytHolder holder, int position) {
+            Reply reply = mReplyHelper.getDataAt(position);
+            holder.leftText.setText(TextUtils2.combine(reply.getNMBTimeStr(), "  ", reply.getNMBUser()));
+            holder.rightText.setText(reply.getNMBId());
+            holder.content.setText(reply.getNMBContent());
 
-            String thumbUrl = post.getNMBThumbUrl();
+            String thumbUrl = reply.getNMBThumbUrl();
             if (thumbUrl != null) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.load(mConaco, thumbUrl, thumbUrl);
@@ -141,42 +159,45 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mPostHelper.size();
+            return mReplyHelper.size();
         }
     }
 
-    private class PostHelper extends ContentLayout.ContentHelper<Post> {
+    private class ReplyHelper extends ContentLayout.ContentHelper<Reply> {
 
         @Override
         protected Context getContext() {
-            return ListActivity.this;
+            return PostActivity.this;
         }
 
         @Override
         protected void onScrollToPosition() {
+
         }
 
         @Override
         protected void onShowProgress() {
+
         }
 
         @Override
         protected void onShowText() {
+
         }
 
         @Override
         protected void notifyDataSetChanged() {
-            mPostAdapter.notifyDataSetChanged();
+            mReplyAdapter.notifyDataSetChanged();
         }
 
         @Override
         protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            mPostAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+            mReplyAdapter.notifyItemRangeRemoved(positionStart, itemCount);
         }
 
         @Override
         protected void notifyItemRangeInserted(int positionStart, int itemCount) {
-            mPostAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            mReplyAdapter.notifyItemRangeInserted(positionStart, itemCount);
         }
 
         @Override
@@ -189,39 +210,50 @@ public class ListActivity extends AppCompatActivity {
             NMBRequest request = new NMBRequest();
             mNMBRequest = request;
             request.setSite(NMBClient.AC);
-            request.setMethod(NMBClient.METHOD_GET_POST_LIST);
-            request.setArgs(NMBUrl.getPostListUrl(NMBClient.AC, "4", page));
-            request.setCallback(new ListListener(taskId, page, request));
+            request.setMethod(NMBClient.METHOD_GET_POST);
+            request.setArgs(NMBUrl.getPostUrl(NMBClient.AC, mPost.getNMBId(), page));
+            request.setCallback(new PostListener(taskId, page, request));
             mNMBClient.execute(request);
         }
     }
 
-    private class ListListener implements NMBClient.Callback<List<Post>> {
+    private class PostListener implements NMBClient.Callback<Pair<Post, List<Reply>>> {
 
         private int mTaskId;
-        private int mTaskPage;
+        private int mPage;
         private NMBRequest mRequest;
 
-        public ListListener(int taskId, int taskPage, NMBRequest request) {
+        public PostListener(int taskId, int page, NMBRequest request) {
             mTaskId = taskId;
-            mTaskPage = taskPage;
+            mPage = page;
             mRequest = request;
         }
 
         @Override
-        public void onSuccess(List<Post> result) {
+        public void onSuccess(Pair<Post, List<Reply>> result) {
             if (mNMBRequest == mRequest) {
                 // It is current request
 
                 // Clear
                 mNMBRequest = null;
 
-                if (result.isEmpty()) {
-                    mPostHelper.setPages(mTaskPage);
-                    mPostHelper.onGetEmptyData(mTaskId);
+                mPost = result.first;
+
+                List<Reply> replies = result.second;
+                if (mPage == 0) {
+                    replies.add(0, mPost);
+                }
+
+                if (replies.isEmpty()) {
+                    mReplyHelper.setPages(mPage);
+                    mReplyHelper.onGetEmptyData(mTaskId);
                 } else {
-                    mPostHelper.setPages(Integer.MAX_VALUE);
-                    mPostHelper.onGetPageData(mTaskId, result);
+                    if (mReplyHelper.size() + replies.size() == mPost.getNMBReplyCount() + 1) {
+                        mReplyHelper.setPages(mPage + 1);
+                    } else {
+                        mReplyHelper.setPages(Integer.MAX_VALUE);
+                    }
+                    mReplyHelper.onGetPageData(mTaskId, replies);
                 }
             }
             // Clear
@@ -236,7 +268,7 @@ public class ListActivity extends AppCompatActivity {
                 // Clear
                 mNMBRequest = null;
 
-                mPostHelper.onGetExpection(mTaskId, e);
+                mReplyHelper.onGetExpection(mTaskId, e);
             }
             // Clear
             mRequest = null;

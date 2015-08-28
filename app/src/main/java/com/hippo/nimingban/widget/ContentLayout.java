@@ -17,10 +17,9 @@
 package com.hippo.nimingban.widget;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +34,8 @@ import com.hippo.util.LayoutManagerUtils;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IdIntGenerator;
+import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Say;
 
@@ -105,10 +104,6 @@ public class ContentLayout extends FrameLayout {
         return mRecyclerView;
     }
 
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        mRecyclerView.setAdapter(adapter);
-    }
-
     public void setHelper(ContentHelper helper) {
         mContentHelper = helper;
         helper.init(this);
@@ -128,35 +123,9 @@ public class ContentLayout extends FrameLayout {
                 mRecyclerViewOriginBottom + fitPaddingBottom);
     }
 
-    @Override
-    public Parcelable onSaveInstanceState() {
-        return mContentHelper.onSaveInstanceState(super.onSaveInstanceState());
-    }
+    public abstract static class ContentHelper<E> {
 
-    @Override
-    public void onRestoreInstanceState(Parcelable state) {
-        super.onRestoreInstanceState(mContentHelper.onRestoreInstanceState(state));
-    }
-
-    public abstract static class ContentHelper<E>
-            implements RefreshLayout.OnHeaderRefreshListener,
-            RefreshLayout.OnFooterRefreshListener, OnClickListener {
-
-        private static final String STATE_KEY_SUPER = "super";
-        private static final String STATE_KEY_SHOWN_VIEW = "shown_view";
-        private static final String STATE_KEY_RECYCLER_VIEW = "recycler_view";
-        private static final String STATE_KEY_TIP_MESSAGE = "tip_message";
-
-        private static final String STATE_KEY_FIRST_PAGE = "first_page";
-        private static final String STATE_KEY_LAST_PAGE = "last_page";
-        private static final String STATE_KEY_FIRST_INDEX = "first_index";
-        private static final String STATE_KEY_LAST_INDEX = "last_index";
-        private static final String STATE_KEY_PAGE_COUNT = "page_count";
-        private static final String STATE_KEY_CURRENT_PAGE = "current_page";
-        private static final String STATE_KEY_PAGE_VOLUME = "page_volume";
-        private static final String STATE_KEY_CURRENT_TASK_ID = "current_task_id";
-        private static final String STATE_KEY_CURRENT_TASK_TYPR = "current_task_type";
-        private static final String STATE_KEY_CURRENT_TASK_PAGE = "current_task_page";
+        private static final String TAG = ContentHelper.class.getSimpleName();
 
         public static final int TYPE_REFRESH = 0;
         public static final int TYPE_PRE_PAGE = 1;
@@ -164,6 +133,7 @@ public class ContentLayout extends FrameLayout {
         public static final int TYPE_NEXT_PAGE = 3;
         public static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
         public static final int TYPE_SOMEWHERE = 5;
+        public static final int TYPE_REFRESH_PAGE = 6;
 
         private ProgressView mProgressView;
         private ViewGroup mTipView;
@@ -171,76 +141,87 @@ public class ContentLayout extends FrameLayout {
         private EasyRecyclerView mRecyclerView;
         private View mImageView;
         private TextView mTextView;
-        private RecyclerView.LayoutManager mLayoutManager;
 
         private ViewTransition mViewTransition;
 
         /**
          * Store data
          */
-        private List<E> mData;
-
-        private IdIntGenerator mIdGenerator;
+        private List<E> mData = new ArrayList<>();
 
         /**
-         * First shown page index
+         * Generate task id
          */
-        private int mFirstPage;
+        private IdIntGenerator mIdGenerator = new IdIntGenerator();
+
         /**
-         * Last shown page index + 1
+         * Store the page divider index
+         *
+         * For example, the data contain page 3, page 4, page 5,
+         * page 3 size is 7, page 4 size is 8, page 5 size is 9,
+         * so <code>mPageDivider</code> contain 7, 15, 24.
          */
-        private int mLastPage;
+        private IntList mPageDivider = new IntList();
+
         /**
-         * First index index of current page
+         * The first page in <code>mData</code>
          */
-        private int mFirstIndex;
+        private int mStartPage;
+
         /**
-         * Last index index of current page + 1
+         * The last page + 1 in <code>mData</code>
          */
-        private int mLastIndex;
+        private int mEndPage;
+
         /**
-         * The size of page
+         * The available page count.
          */
-        private int mPageCount;
-        private int mCurrentPage;
-        private int mPageVolume;
+        private int mPages;
 
         private int mCurrentTaskId;
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
 
         private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                // For footer refresh
-                if (mRefreshLayout.isAlmostBottom()) {
-                    mRefreshLayout.requsetFooterRefresh();
+                if (!mRefreshLayout.isRefreshing() && mRefreshLayout.isAlmostBottom() && mEndPage < mPages) {
+                    // Get next page
+                    mRefreshLayout.setFooterRefreshing(true);
+                    mOnRefreshListener.onFooterRefresh();
                 }
+            }
+        };
 
-                // For current index
-                if (mPageVolume <= 0) {
-                    return;
+        private RefreshLayout.OnRefreshListener mOnRefreshListener = new RefreshLayout.OnRefreshListener() {
+            @Override
+            public void onHeaderRefresh() {
+                if (mStartPage > 0) {
+                    mCurrentTaskId = mIdGenerator.nextId();
+                    mCurrentTaskType = TYPE_PRE_PAGE_KEEP_POS;
+                    mCurrentTaskPage = mStartPage - 1;
+                    getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+                } else {
+                    doRefresh();
                 }
-                if (mLastIndex == 0) {
-                    mCurrentPage = 0;
-                    mFirstIndex = 0;
-                    mLastIndex = mPageVolume;
-                }
+            }
 
-                int firstVisiblePosition = LayoutManagerUtils.getFirstVisibleItemPostion(mLayoutManager);
-                int lastVisiblePosition = LayoutManagerUtils.getLastVisibleItemPostion(mLayoutManager);
-
-                int pageChanged = (firstVisiblePosition - mFirstIndex) / mPageVolume;
-                if (pageChanged <= 0) {
-                    pageChanged = (lastVisiblePosition - mLastIndex + 1) / mPageVolume;
-                }
-
-                if (pageChanged != 0) {
-                    mCurrentPage = mCurrentPage + pageChanged;
-                    int offset = pageChanged * mPageVolume;
-                    mFirstIndex += offset;
-                    mLastIndex += offset;
+            @Override
+            public void onFooterRefresh() {
+                if (mEndPage < mPages) {
+                    // Get next page
+                    mCurrentTaskId = mIdGenerator.nextId();
+                    mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
+                    mCurrentTaskPage = mEndPage;
+                    getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+                } else if (mEndPage == mPages) {
+                    // Refresh last page
+                    mCurrentTaskId = mIdGenerator.nextId();
+                    mCurrentTaskType = TYPE_REFRESH_PAGE;
+                    mCurrentTaskPage = mEndPage - 1;
+                    getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+                } else {
+                    Log.e(TAG, "Try to footer refresh, but mEndPage = " + mEndPage + ", mPages = " + mPages);
                 }
             }
         };
@@ -253,11 +234,6 @@ public class ContentLayout extends FrameLayout {
                     }
                 };
 
-        public ContentHelper() {
-            mData = new ArrayList<>();
-            mIdGenerator = new IdIntGenerator();
-        }
-
         private void init(ContentLayout contentLayout) {
             mProgressView = contentLayout.mProgressView;
             mTipView = contentLayout.mTipView;
@@ -265,34 +241,206 @@ public class ContentLayout extends FrameLayout {
             mRecyclerView = contentLayout.mRecyclerView;
             mImageView = contentLayout.mImageView;
             mTextView = contentLayout.mTextView;
-            mLayoutManager = generateLayoutManager();
 
             mViewTransition = new ViewTransition(mRefreshLayout, mProgressView, mTipView);
             mViewTransition.showView(2, false);
 
-            mRecyclerView.setLayoutManager(mLayoutManager);
             mRecyclerView.addOnScrollListener(mOnScrollListener);
-            mRefreshLayout.setOnHeaderRefreshListener(this);
-            mRefreshLayout.setOnFooterRefreshListener(this);
+            mRefreshLayout.setOnRefreshListener(mOnRefreshListener);
 
-            mTipView.setOnClickListener(this);
+            mTipView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    refresh();
+                }
+            });
         }
 
+
+        /**
+         * Call {@link #onGetPageData(int, List)} when get data
+         *
+         * @param taskId task id
+         * @param page the page to get
+         */
+        protected abstract void getPageData(int taskId, int type, int page);
+
         protected abstract Context getContext();
-
-        protected abstract RecyclerView.LayoutManager generateLayoutManager();
-
-        protected abstract void onScrollToPosition();
-
-        protected abstract void onShowProgress();
-
-        protected abstract void onShowText();
 
         protected abstract void notifyDataSetChanged();
 
         protected abstract void notifyItemRangeRemoved(int positionStart, int itemCount);
 
         protected abstract void notifyItemRangeInserted(int positionStart, int itemCount);
+
+        protected void onScrollToPosition() {
+        }
+
+        protected void onShowProgress() {
+        }
+
+        protected void onShowText() {
+        }
+
+        /**
+         * @throws IndexOutOfBoundsException
+         *                if {@code location < 0 || location >= size()}
+         */
+        public E getDataAt(int location) {
+            return mData.get(location);
+        }
+
+        public int size() {
+            return mData.size();
+        }
+
+        public void setPages(int pages) {
+            // TODO what it pages > mEndPage
+            mPages = pages;
+        }
+
+        public void onGetEmptyData(int taskId) {
+            if (mCurrentTaskId != taskId) {
+                return;
+            }
+
+            switch (mCurrentTaskType) {
+                case TYPE_REFRESH:
+                case TYPE_SOMEWHERE:
+                    showText("No hint"); // TODO hardcode
+                    break;
+                case TYPE_NEXT_PAGE:
+                case TYPE_NEXT_PAGE_KEEP_POS:
+                    // Last page ?
+                    break;
+                case TYPE_PRE_PAGE:
+                case TYPE_PRE_PAGE_KEEP_POS:
+                case TYPE_REFRESH_PAGE:
+                    // TODO
+                    break;
+            }
+
+            mRefreshLayout.setHeaderRefreshing(false);
+            mRefreshLayout.setFooterRefreshing(false);
+        }
+
+        public void onGetPageData(int taskId, List<E> data) {
+            if (mCurrentTaskId == taskId) {
+                showContent();
+
+                int dataSize;
+                switch (mCurrentTaskType) {
+                    case TYPE_REFRESH:
+                        mStartPage = 0;
+                        mEndPage = 1;
+                        mPageDivider.clear();
+                        mPageDivider.add(data.size());
+
+                        mData.clear();
+                        mData.addAll(data);
+                        notifyDataSetChanged();
+
+                        mRecyclerView.stopScroll();
+                        LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
+                        onScrollToPosition();
+                        break;
+                    case TYPE_PRE_PAGE:
+                    case TYPE_PRE_PAGE_KEEP_POS:
+                        mData.addAll(0, data);
+                        notifyItemRangeInserted(0, data.size());
+
+                        dataSize = data.size();
+                        for (int i = 0, n = mPageDivider.size(); i < n; i++) {
+                            mPageDivider.set(i, mPageDivider.get(i) + dataSize);
+                        }
+                        mPageDivider.add(dataSize);
+
+                        mStartPage--;
+                        // assert mStartPage >= 0
+                        if (mCurrentTaskType == TYPE_PRE_PAGE_KEEP_POS) {
+                            mRecyclerView.stopScroll();
+                            LayoutManagerUtils.scrollToPositionProperly(mRecyclerView.getLayoutManager(), getContext(),
+                                    dataSize - 1, mOnScrollToPositionListener);
+                        } else {
+                            mRecyclerView.stopScroll();
+                            LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
+                            onScrollToPosition();
+                        }
+                        break;
+                    case TYPE_NEXT_PAGE:
+                    case TYPE_NEXT_PAGE_KEEP_POS:
+                        dataSize = data.size();
+                        int oldDataSize = mData.size();
+                        mData.addAll(data);
+                        notifyItemRangeInserted(oldDataSize, dataSize);
+
+                        mPageDivider.add(oldDataSize + dataSize);
+
+                        mEndPage++;
+                        if (mCurrentTaskType != TYPE_NEXT_PAGE_KEEP_POS) {
+                            mRecyclerView.stopScroll();
+                            LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), oldDataSize, 0);
+                            onScrollToPosition();
+                        }
+                        break;
+                    case TYPE_SOMEWHERE:
+                        mData.clear();
+                        mData.addAll(data);
+                        notifyDataSetChanged();
+
+                        mStartPage = mCurrentTaskPage;
+                        mEndPage = mCurrentTaskPage + 1;
+
+                        mPageDivider.clear();
+                        mPageDivider.add(data.size());
+
+                        mRecyclerView.stopScroll();
+                        LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
+                        onScrollToPosition();
+                        break;
+                    case TYPE_REFRESH_PAGE:
+                        if (mCurrentTaskPage < mStartPage || mCurrentTaskPage >= mEndPage) {
+                            Log.e(TAG, "TYPE_REFRESH_PAGE, but mCurrentTaskPage = " + mCurrentTaskPage +
+                                    ", mStartPage = " + mStartPage + ", mEndPage = " + mEndPage);
+                            break;
+                        }
+
+                        int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);
+                        int oldIndexEnd = mPageDivider.get(mCurrentTaskPage - mStartPage);
+                        mData.subList(oldIndexStart, oldIndexEnd).clear();
+                        int newIndexStart = oldIndexStart;
+                        int newIndexEnd = newIndexStart + data.size();
+                        mData.addAll(oldIndexStart, data);
+                        notifyDataSetChanged();
+
+                        for (int i = mCurrentTaskPage - mStartPage, n = mPageDivider.size(); i < n; i++) {
+                            mPageDivider.set(i, mPageDivider.get(i) - oldIndexEnd + newIndexEnd);
+                        }
+                        break;
+                }
+            }
+
+            mRefreshLayout.setHeaderRefreshing(false);
+            mRefreshLayout.setFooterRefreshing(false);
+        }
+
+        public void onGetExpection(int taskId, Exception e) {
+            if (mCurrentTaskId == taskId) {
+                mRefreshLayout.setHeaderRefreshing(false);
+                mRefreshLayout.setFooterRefreshing(false);
+                Say.d(TAG, "Get page data failed " + e.getClass().getName() + " " + e.getMessage());
+                String readableError = ExceptionUtils.getReadableString(getContext(), e);
+                String reason = ExceptionUtils.getReasonString(getContext(), e);
+                if (reason != null) {
+                    readableError += '\n' + reason;
+                }
+                if (mViewTransition.getShownViewIndex() == 0) {
+                    Toast.makeText(getContext(), readableError, Toast.LENGTH_SHORT).show();
+                } else {
+                    showText(readableError);
+                }
+            }
+        }
 
         public void showContent() {
             mViewTransition.showView(0);
@@ -315,170 +463,6 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
-        /**
-         * @throws IndexOutOfBoundsException
-         *                if {@code location < 0 || location >= size()}
-         */
-        public E getDataAt(int location) {
-            return mData.get(location);
-        }
-
-        /**
-         * Call {@link #onGetPageData(int, List)} when get data
-         *
-         * @param taskId task id
-         * @param page the page to get
-         */
-        protected abstract void getPageData(int taskId, int type, int page);
-
-        public void setPageCount(int pageSize) {
-            mPageCount = pageSize;
-        }
-
-        public int getPageCount() {
-            return mPageCount;
-        }
-
-        public int getCurrentPage() {
-            return mCurrentPage;
-        }
-
-        public void resetPageSize() {
-            mPageCount = Integer.MAX_VALUE;
-        }
-
-        public void onGetPageData(int taskId, List<E> data) {
-            showContent();
-            int pageVolume = data.size();
-            mPageVolume = pageVolume;
-            if (mCurrentTaskId == taskId) {
-                switch (mCurrentTaskType) {
-                    case TYPE_REFRESH:
-                        mFirstPage = 0;
-                        mLastPage = 1;
-                        mCurrentPage = 0;
-                        mFirstIndex = 0;
-                        mLastIndex = pageVolume;
-
-                        mData.clear();
-                        mData.addAll(data);
-                        notifyDataSetChanged();
-
-                        mRecyclerView.stopScroll();
-                        LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
-                        onScrollToPosition();
-                        break;
-                    case TYPE_PRE_PAGE:
-                    case TYPE_PRE_PAGE_KEEP_POS:
-                        mData.addAll(0, data);
-                        notifyItemRangeInserted(0, pageVolume);
-
-                        mFirstPage--;
-                        if (mCurrentTaskType == TYPE_PRE_PAGE_KEEP_POS) {
-                            mFirstIndex += pageVolume;
-                            mLastIndex += pageVolume;
-
-                            mRecyclerView.stopScroll();
-                            LayoutManagerUtils.scrollToPositionProperly(mLayoutManager, getContext(), mFirstIndex - 1, mOnScrollToPositionListener);
-                        } else {
-                            mCurrentPage = mFirstPage;
-                            mFirstIndex = 0;
-                            mLastIndex = pageVolume;
-
-                            mRecyclerView.stopScroll();
-                            LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
-                            onScrollToPosition();
-                        }
-                        break;
-                    case TYPE_NEXT_PAGE:
-                    case TYPE_NEXT_PAGE_KEEP_POS:
-                        int oldDataSize = mData.size();
-                        mData.addAll(data);
-                        notifyItemRangeInserted(oldDataSize, pageVolume);
-
-                        mLastPage++;
-                        if (mCurrentTaskType != TYPE_NEXT_PAGE_KEEP_POS) {
-                            mCurrentPage = mLastPage - 1;
-                            mFirstIndex = mData.size() - pageVolume;
-                            mLastIndex = mData.size();
-
-                            mRecyclerView.stopScroll();
-                            LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, mFirstIndex, 0);
-                            onScrollToPosition();
-                        }
-                        break;
-                    case TYPE_SOMEWHERE:
-                        mData.clear();
-                        mData.addAll(data);
-                        notifyDataSetChanged();
-
-                        mFirstPage = mCurrentTaskPage;
-                        mLastPage = mCurrentTaskPage + 1;
-                        mCurrentPage = mCurrentTaskPage;
-                        mFirstIndex = 0;
-                        mLastIndex = pageVolume;
-
-                        mRecyclerView.stopScroll();
-                        LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
-                        onScrollToPosition();
-                        break;
-                }
-            }
-
-            mRefreshLayout.setHeaderRefreshing(false);
-            mRefreshLayout.setFooterRefreshing(false);
-        }
-
-        public void onGetPageData(int taskId, Exception e) {
-            if (mCurrentTaskId == taskId) {
-                mRefreshLayout.setHeaderRefreshing(false);
-                mRefreshLayout.setFooterRefreshing(false);
-                Say.d(TAG, "Get page data failed " + e.getClass().getName() + " " + e.getMessage());
-                String readableError = ExceptionUtils.getReadableString(getContext(), e);
-                String reason = ExceptionUtils.getReasonString(getContext(), e);
-                if (reason != null) {
-                    readableError += '\n' + reason;
-                }
-                if (mViewTransition.getShownViewIndex() == 0) {
-                    Toast.makeText(getContext(), readableError, Toast.LENGTH_SHORT).show();
-                } else {
-                    showText(readableError);
-                }
-            }
-        }
-
-        @Override
-        public boolean onFooterRefresh() {
-            if (mLastPage >= mPageCount) {
-                return false;
-            } else {
-                mCurrentTaskId = mIdGenerator.nextId();
-                mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
-                mCurrentTaskPage = mLastPage;
-                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
-                return true;
-            }
-        }
-
-        @Override
-        public void onHeaderRefresh() {
-            if (mFirstPage > 0) {
-                mCurrentTaskId = mIdGenerator.nextId();
-                mCurrentTaskType = TYPE_PRE_PAGE_KEEP_POS;
-                mCurrentTaskPage = mFirstPage - 1;
-                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
-            } else {
-                doRefresh();
-            }
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (v == mTipView) {
-                refreshWithSameSearch();
-            }
-        }
-
         private void doRefresh() {
             mCurrentTaskId = mIdGenerator.nextId();
             mCurrentTaskType = TYPE_REFRESH;
@@ -486,6 +470,9 @@ public class ContentLayout extends FrameLayout {
             getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
         }
 
+        /**
+         * Lisk {@link #refresh()}, but no animation when show progress bar
+         */
         public void firstRefresh() {
             showProgressBar(false);
             doRefresh();
@@ -497,109 +484,6 @@ public class ContentLayout extends FrameLayout {
         public void refresh() {
             showProgressBar();
             doRefresh();
-        }
-
-        public void refreshWithSameSearch() {
-            if (mViewTransition.getShownViewIndex() == 0) {
-                // Go to top
-                mRecyclerView.stopScroll();
-                LayoutManagerUtils.scrollToPositionProperly(mLayoutManager,
-                        getContext(), 0, mOnScrollToPositionListener);
-                // Show header refresh
-                mRefreshLayout.setFooterRefreshing(false);
-                mRefreshLayout.setHeaderRefreshing(true);
-                // Do refresh
-                doRefresh();
-            } else {
-                showProgressBar();
-                doRefresh();
-            }
-        }
-
-        public void cancelCurrentTask() {
-            mCurrentTaskId = mIdGenerator.nextId();
-        }
-
-        public boolean canGoTo() {
-            return mViewTransition.getShownViewIndex() == 0;
-        }
-
-        /**
-         * Only work when data is loaded
-         */
-        public void goTo(int page) {
-            if (page < 0 || page >= mPageCount) {
-                throw new IndexOutOfBoundsException("Page count is " + mPageCount + ", page is " + page);
-            } else if (page >= mFirstPage && page < mLastPage) {
-                cancelCurrentTask();
-
-                mCurrentPage = page;
-                mFirstIndex = mPageVolume * (page - mFirstPage);
-                mLastIndex = mFirstIndex + mPageVolume;
-                int position = mFirstIndex;
-                mRecyclerView.stopScroll();
-                LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, position, 0);
-                onScrollToPosition();
-            } else if (page == mFirstPage - 1) {
-                mRefreshLayout.setFooterRefreshing(false);
-                mRefreshLayout.setHeaderRefreshing(true);
-
-                mCurrentTaskId = mIdGenerator.nextId();
-                mCurrentTaskType = TYPE_PRE_PAGE;
-                mCurrentTaskPage = page;
-                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
-            } else if (page == mLastPage) {
-                mRefreshLayout.setFooterRefreshing(false);
-                mRefreshLayout.setHeaderRefreshing(true);
-
-                mCurrentTaskId = mIdGenerator.nextId();
-                mCurrentTaskType = TYPE_NEXT_PAGE;
-                mCurrentTaskPage = page;
-                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
-            } else {
-                mRefreshLayout.setFooterRefreshing(false);
-                mRefreshLayout.setHeaderRefreshing(true);
-
-                mCurrentTaskId = mIdGenerator.nextId();
-                mCurrentTaskType = TYPE_SOMEWHERE;
-                mCurrentTaskPage = page;
-                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
-            }
-        }
-
-        /**
-         * Reload data to layout. Maybe do it when change item view style
-         */
-        public void reload() {
-            notifyDataSetChanged();
-            mCurrentPage = mFirstPage;
-            mFirstIndex = 0;
-            mLastIndex = mPageVolume;
-            mRecyclerView.stopScroll();
-            LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
-            onScrollToPosition();
-        }
-
-        public int size() {
-            return mData.size();
-        }
-
-        protected Parcelable onSaveInstanceState(Parcelable superParcelable) {
-            final Bundle state = new Bundle();
-            state.putParcelable(STATE_KEY_SUPER, superParcelable);
-            state.putInt(STATE_KEY_SHOWN_VIEW, mViewTransition.getShownViewIndex());
-            state.putParcelable(STATE_KEY_RECYCLER_VIEW, mRecyclerView.onSaveInstanceState());
-            state.putString(STATE_KEY_TIP_MESSAGE, mTextView.getText().toString());
-            return state;
-        }
-
-        protected Parcelable onRestoreInstanceState(Parcelable state) {
-            AssertUtils.assertInstanceof("state must be Bundle", state, Bundle.class);
-            final Bundle savedState = (Bundle) state;
-            mViewTransition.showView(savedState.getInt(STATE_KEY_SHOWN_VIEW), false);
-            mRecyclerView.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_RECYCLER_VIEW));
-            mTextView.setText(savedState.getString(STATE_KEY_TIP_MESSAGE));
-            return savedState.getParcelable(STATE_KEY_SUPER);
         }
     }
 }

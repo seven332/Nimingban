@@ -29,4 +29,13 @@ public class NMBUrl {
                 throw new IllegalStateException("Unknown site " + site);
         }
     }
+
+    public static String getPostUrl(int site, String id, int page) {
+        switch (site) {
+            case NMBClient.AC:
+                return ACUrl.getPostUrl(id, page);
+            default:
+                throw new IllegalStateException("Unknown site " + site);
+        }
+    }
 }

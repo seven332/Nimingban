@@ -44,6 +44,8 @@ public class NMBClient {
 
     public static final int METHOD_GET_POST_LIST = 1;
 
+    public static final int METHOD_GET_POST = 2;
+
     private final ThreadPoolExecutor mRequestThreadPool;
     private final HttpClient mHttpClient;
 
@@ -115,6 +117,15 @@ public class NMBClient {
             }
         }
 
+        private Object getPost(Object... params) throws Exception {
+            switch (mSite) {
+                case AC:
+                    return ACEngine.getPost(mHttpClient, mHttpRequest, (String) params[0]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         @SuppressWarnings("unchecked")
         @Override
         protected Object doInBackground(Object... params) {
@@ -122,6 +133,8 @@ public class NMBClient {
                 switch (mMethod) {
                     case METHOD_GET_POST_LIST:
                         return getPostList(params);
+                    case METHOD_GET_POST:
+                        return getPost(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }
