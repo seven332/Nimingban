@@ -24,8 +24,8 @@ import java.util.Locale;
 
 public abstract class Reply implements Parcelable {
 
-    protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-ddHH:mm", Locale.getDefault());
-    protected static final Object sDateFormatLock = new Object();
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
+    private static final Object sDateFormatLock = new Object();
 
     public static String generateTimeString(Date date) {
         synchronized (sDateFormatLock) {

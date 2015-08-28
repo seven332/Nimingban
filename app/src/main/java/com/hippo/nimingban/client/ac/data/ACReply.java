@@ -81,12 +81,10 @@ public class ACReply extends Reply {
     }
 
     public void generate() {
-        // The object is from JSON, so make it valid to avoid exception
-
         try {
             Date date;
-            synchronized (sDateFormatLock) {
-                date = DATE_FORMAT.parse(removeDayOfWeek(now));
+            synchronized (ACPost.sDateFormatLock) {
+                date = ACPost.DATE_FORMAT.parse(removeDayOfWeek(now));
             }
             mTime = date.getTime();
             mTimeStr = Reply.generateTimeString(date);
@@ -105,6 +103,7 @@ public class ACReply extends Reply {
         }
 
         mContent = Html.fromHtml(content);
+        mContent = ACPost.handleReference(mContent);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "Public/Upload/thumb/" + img + ext;

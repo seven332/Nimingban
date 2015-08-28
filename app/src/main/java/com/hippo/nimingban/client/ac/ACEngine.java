@@ -96,7 +96,7 @@ public class ACEngine {
                 throw new NMBException(NMBClient.AC, "Can't parse json when getPost");
             }
             acPost.generateSelfAndReplies();
-            return new Pair<Post, List<Reply>>(acPost, new ArrayList<Reply>());
+            return new Pair<Post, List<Reply>>(acPost, new ArrayList<Reply>(acPost.replys));
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {
                 throw new CancelledException();

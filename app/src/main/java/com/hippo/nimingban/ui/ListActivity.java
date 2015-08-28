@@ -37,6 +37,7 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.TextUtils2;
+import com.hippo.vectorold.content.VectorContext;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
@@ -84,6 +85,11 @@ public class ListActivity extends AppCompatActivity {
 
         // Refresh
         mPostHelper.firstRefresh();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 
     private class ClickPostListener implements EasyRecyclerView.OnItemClickListener {

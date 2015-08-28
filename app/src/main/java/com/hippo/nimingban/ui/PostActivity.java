@@ -39,6 +39,7 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.TextUtils2;
+import com.hippo.vectorold.content.VectorContext;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
@@ -114,6 +115,11 @@ public class PostActivity extends AppCompatActivity {
 
         // Refresh
         mReplyHelper.firstRefresh();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 
     private class ReplytHolder extends RecyclerView.ViewHolder {
@@ -248,12 +254,12 @@ public class PostActivity extends AppCompatActivity {
                     mReplyHelper.setPages(mPage);
                     mReplyHelper.onGetEmptyData(mTaskId);
                 } else {
-                    if (mReplyHelper.size() + replies.size() == mPost.getNMBReplyCount() + 1) {
+                    mReplyHelper.onGetPageData(mTaskId, replies);
+                    if (mReplyHelper.size() == mPost.getNMBReplyCount() + 1) {
                         mReplyHelper.setPages(mPage + 1);
                     } else {
                         mReplyHelper.setPages(Integer.MAX_VALUE);
                     }
-                    mReplyHelper.onGetPageData(mTaskId, replies);
                 }
             }
             // Clear

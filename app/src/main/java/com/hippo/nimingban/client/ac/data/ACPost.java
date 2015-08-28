@@ -25,6 +25,8 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
+import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
@@ -36,11 +38,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ACPost extends Post {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
-    private static final Object sDateFormatLock = new Object();
+    static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
+    static final Object sDateFormatLock = new Object();
+
+    static final Pattern REFERENCE_PATTERN = Pattern.compile(">>No.(\\d+)");
 
     public String id = "";
     public String img = "";
@@ -72,9 +78,33 @@ public class ACPost extends Post {
                 ", replyCount = " + replyCount + ", replys = " + replys;
     }
 
-    public void generate() {
-        // The object is from JSON, so make it valid to avoid exception
+    public static CharSequence handleReference(CharSequence content) {
+        Matcher m = REFERENCE_PATTERN.matcher(content);
 
+        Spannable spannable = null;
+        while (m.find()) {
+            // Ensure spannable
+            if (spannable == null) {
+                if (content instanceof Spannable) {
+                    spannable = (Spannable) content;
+                } else {
+                    spannable = new SpannableString(content);
+                }
+            }
+
+            int start = m.start();
+            int end = m.end();
+
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(0xff789922);
+            ReferenceSpan referenceSpan = new ReferenceSpan(NMBClient.AC, m.group(1));
+            spannable.setSpan(colorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(referenceSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannable == null ? content : spannable;
+    }
+
+    public void generate() {
         try {
             Date date;
             synchronized (sDateFormatLock) {
@@ -98,6 +128,7 @@ public class ACPost extends Post {
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
         mContent = Html.fromHtml(content);
+        mContent = handleReference(mContent);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "Public/Upload/thumb/" + img + ext;
