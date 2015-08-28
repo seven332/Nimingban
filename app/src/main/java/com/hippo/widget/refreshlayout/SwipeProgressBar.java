@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2013 The Android Open Source Project
+ * Copyright 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
@@ -48,7 +49,7 @@ final class SwipeProgressBar {
     private static final int FINISH_ANIMATION_DURATION_MS = 1000;
 
     // Interpolator for varying the speed of the animation.
-    private static final Interpolator INTERPOLATOR = BakedBezierInterpolator.getInstance();
+    private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
 
     private final Paint mPaint = new Paint();
     private final RectF mClipRect = new RectF();
@@ -256,7 +257,7 @@ final class SwipeProgressBar {
     private void drawCircle(Canvas canvas, float cx, float cy, int color, float pct) {
         mPaint.setColor(color);
         canvas.save();
-        canvas.translate(cx, mParent.getHeight() - cy);
+        canvas.translate(cx, cy);
         float radiusScale = INTERPOLATOR.getInterpolation(pct);
         canvas.scale(radiusScale, radiusScale);
         canvas.drawCircle(0, 0, cx, mPaint);
