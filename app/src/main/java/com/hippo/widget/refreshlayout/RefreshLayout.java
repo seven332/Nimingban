@@ -38,6 +38,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.AbsListView;
 
+import com.hippo.yorozuya.MathUtils;
+
 /**
  * The SwipeRefreshLayout should be used whenever the user can refresh the
  * contents of a view via a vertical swipe gesture. The activity that
@@ -700,12 +702,14 @@ public class RefreshLayout extends ViewGroup {
     }
 
     private void setTriggerPercentage(float percent) {
+        /*
         if (percent == 0f) {
             // No-op. A null trigger means it's uninitialized, and setting it to zero-percent
             // means we're trying to reset state, so there's nothing to reset in this case.
             mFooterCurrPercentage = 0;
             return;
         }
+        */
         mFooterCurrPercentage = percent;
         mProgressBar.setTriggerPercentage(percent);
     }
@@ -1112,6 +1116,9 @@ public class RefreshLayout extends ViewGroup {
     private boolean footerTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
 
+        int pointerIndex;
+        float y;
+        float yDiff;
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mLastMotionY = mInitialMotionY = ev.getY();
@@ -1121,41 +1128,23 @@ public class RefreshLayout extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+                pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
                     return false;
                 }
 
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
-                final float yDiff = y - mInitialMotionY;
+                y = MotionEventCompat.getY(ev, pointerIndex);
+                yDiff = y - mInitialMotionY;
 
                 if (!mIsFooterBeingDragged && yDiff < -mTouchSlop) {
                     mIsFooterBeingDragged = true;
                 }
 
                 if (mIsFooterBeingDragged) {
-                    // User velocity passed min velocity; trigger a refresh
-                    if (-yDiff > mFooterDistanceToTriggerSync) {
-                        // User movement passed distance; trigger a refresh
-                        startFooterRefresh();
-                    } else {
-                        // Just track the user's movement
-                        setTriggerPercentage(
-                                mAccelerateInterpolator.getInterpolation(
-                                        -yDiff / mFooterDistanceToTriggerSync));
-                        //updateContentOffsetTop((int) (yDiff));
-                        /*
-                        if (y > mLastMotionY && mTarget.getTop() == getPaddingTop()) {
-                            // If the user puts the view back at the top, we
-                            // don't need to. This shouldn't be considered
-                            // cancelling the gesture as the user can restart from the top.
-                            removeCallbacks(mCancel);
-                        } else {
-                            updatePositionTimeout();
-                        }
-                        */
-                    }
+                    setTriggerPercentage(
+                            mAccelerateInterpolator.getInterpolation(
+                                    MathUtils.clamp(-yDiff, 0, mFooterDistanceToTriggerSync) / mFooterDistanceToTriggerSync));
                     mLastMotionY = y;
                 }
                 break;
@@ -1173,7 +1162,19 @@ public class RefreshLayout extends ViewGroup {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (!mFooterRefreshing) {
+                pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+                if (pointerIndex < 0) {
+                    Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
+                    return false;
+                }
+
+                y = MotionEventCompat.getY(ev, pointerIndex);
+                yDiff = y - mInitialMotionY;
+
+                if (-yDiff > mFooterDistanceToTriggerSync) {
+                    // User movement passed distance; trigger a refresh
+                    startFooterRefresh();
+                } else {
                     mCancel.run();
                 }
 
