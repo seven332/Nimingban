@@ -18,7 +18,6 @@ package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
 import android.os.Parcel;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -103,9 +102,7 @@ public class ACReply extends Reply {
             mUser = userid;
         }
 
-        mContent = Html.fromHtml(content);
-        mContent = ACPost.fixURLSpan(mContent);
-        mContent = ACPost.handleReference(mContent);
+        mContent = ACPost.generateContent(content);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;

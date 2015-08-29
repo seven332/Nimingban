@@ -48,6 +48,8 @@ public class ACPost extends Post {
     static final Object sDateFormatLock = new Object();
 
     static final Pattern REFERENCE_PATTERN = Pattern.compile(">>No.(\\d+)");
+    static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
+    static final Pattern GREEN_PATTERN = Pattern.compile("^>>.+?$");
 
     public String id = "";
     public String img = "";
@@ -132,13 +134,78 @@ public class ACPost extends Post {
             int start = m.start();
             int end = m.end();
 
-            ForegroundColorSpan colorSpan = new ForegroundColorSpan(0xff789922);
+            //ForegroundColorSpan colorSpan = new ForegroundColorSpan(); //0xff789922
             ReferenceSpan referenceSpan = new ReferenceSpan(NMBClient.AC, m.group(1));
-            spannable.setSpan(colorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            //spannable.setSpan(colorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannable.setSpan(referenceSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         return spannable == null ? content : spannable;
+    }
+
+    public static CharSequence handleTextUrl(CharSequence content) {
+        Matcher m = URL_PATTERN.matcher(content);
+
+        Spannable spannable = null;
+        while (m.find()) {
+            // Ensure spannable
+            if (spannable == null) {
+                if (content instanceof Spannable) {
+                    spannable = (Spannable) content;
+                } else {
+                    spannable = new SpannableString(content);
+                }
+            }
+
+            int start = m.start();
+            int end = m.end();
+
+            URLSpan[] links = spannable.getSpans(start, end, URLSpan.class);
+            if (links.length > 0) {
+                // There has been URLSpan already, leave it alone
+                continue;
+            }
+
+            URLSpan urlSpan = new URLSpan(m.group(0));
+            spannable.setSpan(urlSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannable == null ? content : spannable;
+    }
+
+    // TODO test
+    public static CharSequence green(CharSequence content) {
+        Matcher m = GREEN_PATTERN.matcher(content);
+
+        Spannable spannable = null;
+        while (m.find()) {
+            // Ensure spannable
+            if (spannable == null) {
+                if (content instanceof Spannable) {
+                    spannable = (Spannable) content;
+                } else {
+                    spannable = new SpannableString(content);
+                }
+            }
+
+            int start = m.start();
+            int end = m.end();
+
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(0xff789922); // TODO R.color.text_link
+            spannable.setSpan(colorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannable == null ? content : spannable;
+    }
+
+    public static CharSequence generateContent(String content) {
+        CharSequence charSequence;
+        charSequence = Html.fromHtml(content);
+        charSequence = fixURLSpan(charSequence);
+        charSequence = handleReference(charSequence);
+        charSequence = handleTextUrl(charSequence);
+        charSequence = green(charSequence);
+        return charSequence;
     }
 
     public void generate() {
@@ -164,9 +231,7 @@ public class ACPost extends Post {
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
-        mContent = Html.fromHtml(content);
-        mContent = fixURLSpan(mContent);
-        mContent = handleReference(mContent);
+        mContent = generateContent(content);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;

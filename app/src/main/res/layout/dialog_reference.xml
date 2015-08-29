@@ -58,7 +58,8 @@
                 android:layout_below="@id/left_text"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat"
-                android:textSize="@dimen/text_little_small"/>
+                android:textSize="@dimen/text_little_small"
+                android:textColorLink="@color/text_link"/>
 
             <com.hippo.nimingban.widget.LoadImageView
                 android:id="@+id/thumb"
