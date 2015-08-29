@@ -43,6 +43,8 @@ public class ACReply extends Reply {
     public String content = "";
     public String admin = "";
 
+    private int mSite;
+
     String mPostId;
     private long mTime;
     private String mTimeStr;
@@ -80,7 +82,9 @@ public class ACReply extends Reply {
         return sb.toString();
     }
 
-    public void generate() {
+    public void generate(int site) {
+        mSite = site;
+
         try {
             Date date;
             synchronized (ACPost.sDateFormatLock) {
@@ -111,6 +115,11 @@ public class ACReply extends Reply {
     }
 
     @Override
+    public int getNMBSite() {
+        return mSite;
+    }
+
+    @Override
     public String getNMBId() {
         return id;
     }
@@ -126,17 +135,17 @@ public class ACReply extends Reply {
     }
 
     @Override
-    public CharSequence getNMBTimeStr() {
+    public CharSequence getNMBDisplayTime() {
         return mTimeStr;
     }
 
     @Override
-    public CharSequence getNMBUser() {
+    public CharSequence getNMBDisplay() {
         return mUser;
     }
 
     @Override
-    public CharSequence getNMBContent() {
+    public CharSequence getNMBDisplayContent() {
         return mContent;
     }
 
@@ -168,6 +177,7 @@ public class ACReply extends Reply {
         dest.writeString(this.title);
         dest.writeString(this.content);
         dest.writeString(this.admin);
+        dest.writeInt(this.mSite);
     }
 
     public ACReply() {
@@ -184,6 +194,7 @@ public class ACReply extends Reply {
         this.title = in.readString();
         this.content = in.readString();
         this.admin = in.readString();
+        this.mSite = in.readInt();
     }
 
     public static final Creator<ACReply> CREATOR = new Creator<ACReply>() {

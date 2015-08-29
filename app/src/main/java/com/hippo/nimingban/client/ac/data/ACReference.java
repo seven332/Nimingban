@@ -44,6 +44,8 @@ public class ACReference extends Reply {
     public String thumb;
     public String image;
 
+    private int mSite;
+
     private long mTime;
     private String mTimeStr;
     private CharSequence mUser;
@@ -59,7 +61,9 @@ public class ACReference extends Reply {
                 ", image = " + image;
     }
 
-    public void generate() {
+    public void generate(int site) {
+        mSite = site;
+
         try {
             Date date;
             synchronized (ACPost.sDateFormatLock) {
@@ -92,6 +96,11 @@ public class ACReference extends Reply {
     }
 
     @Override
+    public int getNMBSite() {
+        return mSite;
+    }
+
+    @Override
     public String getNMBId() {
         return id;
     }
@@ -107,17 +116,17 @@ public class ACReference extends Reply {
     }
 
     @Override
-    public CharSequence getNMBTimeStr() {
+    public CharSequence getNMBDisplayTime() {
         return mTimeStr;
     }
 
     @Override
-    public CharSequence getNMBUser() {
+    public CharSequence getNMBDisplay() {
         return mUser;
     }
 
     @Override
-    public CharSequence getNMBContent() {
+    public CharSequence getNMBDisplayContent() {
         return mContent;
     }
 
@@ -150,6 +159,7 @@ public class ACReference extends Reply {
         dest.writeString(this.content);
         dest.writeString(this.thumb);
         dest.writeString(this.image);
+        dest.writeInt(this.mSite);
     }
 
     public ACReference() {
@@ -167,6 +177,7 @@ public class ACReference extends Reply {
         this.content = in.readString();
         this.thumb = in.readString();
         this.image = in.readString();
+        this.mSite = in.readInt();
     }
 
     public static final Creator<ACReference> CREATOR = new Creator<ACReference>() {

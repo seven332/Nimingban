@@ -69,8 +69,11 @@ import java.util.List;
 public class PostActivity extends AppCompatActivity {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
+    public static final String ACTION_SITE_ID = "com.hippo.nimingban.ui.PostActivity.action.SITE_ID";
 
     public static final String KEY_POST = "post";
+    public static final String KEY_SITE = "site";
+    public static final String KEY_ID = "id";
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -83,7 +86,8 @@ public class PostActivity extends AppCompatActivity {
 
     private NMBRequest mNMBRequest;
 
-    private Post mPost;
+    private int mSite;
+    private String mId;
 
     private int mPageSize = -1;
 
@@ -95,8 +99,18 @@ public class PostActivity extends AppCompatActivity {
 
         String action = intent.getAction();
         if (ACTION_POST.equals(action)) {
-            mPost = intent.getParcelableExtra(KEY_POST);
-            if (mPost != null) {
+            Post post = intent.getParcelableExtra(KEY_POST);
+            if (post != null) {
+                mSite = post.getNMBSite();
+                mId = post.getNMBId();
+                return true;
+            }
+        } else if (ACTION_SITE_ID.equals(action)) {
+            int site = intent.getIntExtra(KEY_SITE, -1);
+            String id = intent.getStringExtra(KEY_ID);
+            if (site != -1 && id != null) { // TODO check is site valid
+                mSite = site;
+                mId = id;
                 return true;
             }
         }
@@ -155,7 +169,6 @@ public class PostActivity extends AppCompatActivity {
             DialogInterface.OnDismissListener, EditText.OnEditorActionListener {
 
         private int mPages;
-        private int mCurrentPage;
 
         private View mView;
         private EditText mEditText;
@@ -165,7 +178,6 @@ public class PostActivity extends AppCompatActivity {
         @SuppressLint("InflateParams")
         private GoToDialogHelper(int pages, int currentPage) {
             mPages = pages;
-            mCurrentPage = currentPage;
             mView = getLayoutInflater().inflate(R.layout.dialog_go_to, null);
             mEditText = (EditText) mView.findViewById(R.id.edit_text);
             mEditText.setHint(getResources().getQuantityString(R.plurals.go_to_hint, pages, currentPage + 1, pages));
@@ -265,8 +277,9 @@ public class PostActivity extends AppCompatActivity {
         private TextView mRightText;
         private LinkifyTextView mContent;
         private LoadImageView mThumb;
+        private View mButton;
 
-        private Dialog mDialog;
+        private AlertDialog mDialog;
 
         private NMBRequest mRequest;
 
@@ -275,19 +288,20 @@ public class PostActivity extends AppCompatActivity {
             mSite = site;
             mId = id;
 
-            // TODO Add showing original post if it does not belong this post
             mView = getLayoutInflater().inflate(R.layout.dialog_reference, null);
 
             View progress = mView.findViewById(R.id.progress_view);
-            View scrollView = mView.findViewById(R.id.scroll_view);
-            mViewTransition = new ViewTransition(progress, scrollView);
+            View reference = mView.findViewById(R.id.reference);
+            mViewTransition = new ViewTransition(progress, reference);
 
-            mLeftText = (TextView) scrollView.findViewById(R.id.left_text);
-            mRightText = (TextView) scrollView.findViewById(R.id.right_text);
-            mContent = (LinkifyTextView) scrollView.findViewById(R.id.content);
-            mThumb = (LoadImageView) scrollView.findViewById(R.id.thumb);
+            mLeftText = (TextView) reference.findViewById(R.id.left_text);
+            mRightText = (TextView) reference.findViewById(R.id.right_text);
+            mContent = (LinkifyTextView) reference.findViewById(R.id.content);
+            mThumb = (LoadImageView) reference.findViewById(R.id.thumb);
+            mButton = reference.findViewById(R.id.button);
 
             mContent.setOnClickListener(this);
+            RippleSalon.addRipple(mButton, false); // TODO darktheme
         }
 
         @Override
@@ -302,7 +316,7 @@ public class PostActivity extends AppCompatActivity {
             }
         }
 
-        public void setDialog(Dialog dialog) {
+        public void setDialog(AlertDialog dialog) {
             mDialog = dialog;
         }
 
@@ -330,13 +344,10 @@ public class PostActivity extends AppCompatActivity {
             mNMBClient.execute(request);
         }
 
-        private void onGetReference(Reply reply, boolean animation) {
-            mRequest = null;
-            mDialog = null;
-
-            mLeftText.setText(TextUtils2.combine(reply.getNMBTimeStr(), "  ", reply.getNMBUser()));
+        private void onGetReference(final Reply reply, boolean animation) {
+            mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", reply.getNMBDisplay()));
             mRightText.setText(reply.getNMBId());
-            mContent.setText(reply.getNMBContent());
+            mContent.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl)) {
@@ -348,6 +359,25 @@ public class PostActivity extends AppCompatActivity {
             }
 
             mViewTransition.showView(1, animation);
+
+            String postId = reply.getNMBPostId();
+
+            if (postId != null && !postId.equals(PostActivity.this.mId) && mDialog != null && mDialog.isShowing()) {
+                mButton.setVisibility(View.VISIBLE);
+                mButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(PostActivity.this, PostActivity.class);
+                        intent.setAction(ACTION_SITE_ID);
+                        intent.putExtra(KEY_SITE, mSite);
+                        intent.putExtra(KEY_ID, reply.getNMBPostId());
+                        PostActivity.this.startActivity(intent);
+                    }
+                });
+            }
+
+            mRequest = null;
+            mDialog = null;
         }
 
         @Override
@@ -390,11 +420,11 @@ public class PostActivity extends AppCompatActivity {
 
     private void handleReferenceSpan(ReferenceSpan referenceSpan) {
         ReferenceDialogHelper helper = new ReferenceDialogHelper(referenceSpan.getSite(), referenceSpan.getId());
-        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView())
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(helper.getView())
                 .setOnDismissListener(helper).create();
         helper.setDialog(dialog);
-        helper.request();
         dialog.show();
+        helper.request();
     }
 
     private class ClickReplyListener implements EasyRecyclerView.OnItemClickListener {
@@ -447,9 +477,9 @@ public class PostActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ReplyHolder holder, int position) {
             Reply reply = mReplyHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(reply.getNMBTimeStr(), "  ", reply.getNMBUser()));
+            holder.leftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", reply.getNMBDisplay()));
             holder.rightText.setText(reply.getNMBId());
-            holder.content.setText(reply.getNMBContent());
+            holder.content.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl)) {
@@ -513,9 +543,9 @@ public class PostActivity extends AppCompatActivity {
 
             NMBRequest request = new NMBRequest();
             mNMBRequest = request;
-            request.setSite(NMBClient.AC);
+            request.setSite(mSite);
             request.setMethod(NMBClient.METHOD_GET_POST);
-            request.setArgs(NMBUrl.getPostUrl(NMBClient.AC, mPost.getNMBId(), page));
+            request.setArgs(NMBUrl.getPostUrl(mSite, mId, page));
             request.setCallback(new PostListener(taskId, type, page, request));
             mNMBClient.execute(request);
         }
@@ -543,12 +573,12 @@ public class PostActivity extends AppCompatActivity {
                 // Clear
                 mNMBRequest = null;
 
-                mPost = result.first;
+                Post post = result.first;
 
                 List<Reply> replies = result.second;
                 if (mPage == 0) {
                     mPageSize = replies.size();
-                    replies.add(0, mPost);
+                    replies.add(0, post);
                 }
 
                 boolean empty;
@@ -564,12 +594,12 @@ public class PostActivity extends AppCompatActivity {
                         mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS ||
                         mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH ||
                         mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) &&
-                        mReplyHelper.size() == mPost.getNMBReplyCount() + 1) { // post is in data, so +1
+                        mReplyHelper.size() == post.getNMBReplyCount() + 1) { // post is in data, so +1
                     mReplyHelper.setPages(mPage + 1); // this is the last page
                 } else if (mPageSize == 0) {
                     mReplyHelper.setPages(1); // Only post, no reply
                 } else if (mPageSize != -1) {
-                    mReplyHelper.setPages(MathUtils.ceilDivide(mPost.getNMBReplyCount(), mPageSize)); // Guess2
+                    mReplyHelper.setPages(MathUtils.ceilDivide(post.getNMBReplyCount(), mPageSize)); // Guess2
                 } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH_PAGE ||
                         mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE ||
                         mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE_KEEP_POS ||

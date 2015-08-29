@@ -398,8 +398,6 @@ public class ContentLayout extends FrameLayout {
                         mPageDivider.clear();
                         mPageDivider.add(data.size());
 
-                        Log.d("TAG", mPageDivider.toString());
-
                         mRecyclerView.stopScroll();
                         LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
                         onScrollToPosition();

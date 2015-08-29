@@ -74,7 +74,7 @@ public class ACEngine {
             List<Post> result = new ArrayList<>(acPosts.size());
             for (ACPost acPost : acPosts) {
                 if (acPost != null) {
-                    acPost.generate();
+                    acPost.generate(NMBClient.AC);
                     result.add(acPost);
                 }
             }
@@ -100,7 +100,7 @@ public class ACEngine {
             if (acPost == null) {
                 throw new NMBException(NMBClient.AC, "Can't parse json when getPost");
             }
-            acPost.generateSelfAndReplies();
+            acPost.generateSelfAndReplies(NMBClient.AC);
             return new Pair<Post, List<Reply>>(acPost, new ArrayList<Reply>(acPost.replys));
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {
@@ -161,7 +161,7 @@ public class ACEngine {
                 }
             }
 
-            reference.generate();
+            reference.generate(NMBClient.AC);
 
             return reference;
 

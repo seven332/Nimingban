@@ -132,9 +132,9 @@ public class ListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ListHolder holder, int position) {
             Post post = mPostHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(post.getNMBTimeStr(), "  ", post.getNMBUser()));
-            holder.rightText.setText(post.getNMBReplyCountStr());
-            holder.content.setText(post.getNMBContent());
+            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayTime(), "  ", post.getNMBDisplay()));
+            holder.rightText.setText(post.getNMBReplyDisplayCount());
+            holder.content.setText(post.getNMBDisplayContent());
 
             String thumbUrl = post.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl)) {

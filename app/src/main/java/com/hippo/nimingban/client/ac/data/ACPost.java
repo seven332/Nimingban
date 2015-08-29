@@ -65,6 +65,8 @@ public class ACPost extends Post {
     // Ingore when writeToParcel
     public List<ACReply> replys;
 
+    private int mSite;
+
     private long mTime;
     private String mTimeStr;
     private CharSequence mUser;
@@ -208,7 +210,9 @@ public class ACPost extends Post {
         return charSequence;
     }
 
-    public void generate() {
+    public void generate(int site) {
+        mSite = site;
+
         try {
             Date date;
             synchronized (sDateFormatLock) {
@@ -239,8 +243,8 @@ public class ACPost extends Post {
         }
     }
 
-    public void generateSelfAndReplies() {
-        generate();
+    public void generateSelfAndReplies(int site) {
+        generate(site);
 
         // generate replies
         if (replys == null) {
@@ -248,10 +252,15 @@ public class ACPost extends Post {
             replys = new ArrayList<>(0);
         } else {
             for (ACReply reply : replys) {
-                reply.generate();
+                reply.generate(site);
                 reply.mPostId = id;
             }
         }
+    }
+
+    @Override
+    public int getNMBSite() {
+        return mSite;
     }
 
     @Override
@@ -270,17 +279,17 @@ public class ACPost extends Post {
     }
 
     @Override
-    public CharSequence getNMBTimeStr() {
+    public CharSequence getNMBDisplayTime() {
         return mTimeStr;
     }
 
     @Override
-    public CharSequence getNMBUser() {
+    public CharSequence getNMBDisplay() {
         return mUser;
     }
 
     @Override
-    public CharSequence getNMBContent() {
+    public CharSequence getNMBDisplayContent() {
         return mContent;
     }
 
@@ -290,7 +299,7 @@ public class ACPost extends Post {
     }
 
     @Override
-    public CharSequence getNMBReplyCountStr() {
+    public CharSequence getNMBReplyDisplayCount() {
         return replyCount;
     }
 
@@ -323,6 +332,7 @@ public class ACPost extends Post {
         dest.writeString(this.content);
         dest.writeString(this.admin);
         dest.writeString(this.replyCount);
+        dest.writeInt(this.mSite);
     }
 
     public ACPost() {
@@ -341,6 +351,7 @@ public class ACPost extends Post {
         this.content = in.readString();
         this.admin = in.readString();
         this.replyCount = in.readString();
+        this.mSite = in.readInt();
     }
 
     public static final Creator<ACPost> CREATOR = new Creator<ACPost>() {

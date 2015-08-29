@@ -27,49 +27,75 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <LinearLayout
+        android:id="@+id/reference"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/keyline_margin_horizontal"
-            android:paddingRight="@dimen/keyline_margin_horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/left_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/right_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"/>
-
-            <com.hippo.nimingban.widget.LinkifyTextView
-                android:id="@+id/content"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/left_text"
-                android:layout_marginTop="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat"
-                android:textSize="@dimen/text_little_small"
-                android:textColorLink="@color/text_link"/>
+                android:paddingLeft="@dimen/keyline_margin_horizontal"
+                android:paddingRight="@dimen/keyline_margin_horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
-            <com.hippo.nimingban.widget.LoadImageView
-                android:id="@+id/thumb"
-                android:layout_width="@dimen/list_thumb_width"
-                android:layout_height="@dimen/list_thumb_height"
-                android:layout_below="@id/content"
-                android:layout_marginTop="8dp"/>
+                <TextView
+                    android:id="@+id/left_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/right_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"/>
 
-    </ScrollView>
+                <com.hippo.nimingban.widget.LinkifyTextView
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/left_text"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    android:textSize="@dimen/text_little_small"
+                    android:textColorLink="@color/text_link"/>
+
+                <com.hippo.nimingban.widget.LoadImageView
+                    android:id="@+id/thumb"
+                    android:layout_width="@dimen/list_thumb_width"
+                    android:layout_height="@dimen/list_thumb_height"
+                    android:layout_below="@id/content"
+                    android:layout_marginTop="8dp"/>
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginRight="12dp"
+            android:minWidth="64dp"
+            android:minHeight="48dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:text="@string/show_thread"
+            android:visibility="gone"
+            android:textColor="?attr/colorAccent"/>
+
+    </LinearLayout>
 
 </FrameLayout>
