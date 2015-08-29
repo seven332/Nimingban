@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.NMBHttpClient;
+import com.hippo.vectorold.content.VectorContext;
 
 import java.io.File;
 
@@ -32,6 +33,11 @@ public class NMBApplication extends Application {
     private NMBHttpClient mNMBHttpClient;
     private NMBClient mNMBClient;
     private Conaco mConaco;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
+    }
 
     @NonNull
     public static NMBHttpClient getNMBHttpClient(@NonNull Context context) {
