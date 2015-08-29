@@ -591,6 +591,9 @@ public class PostActivity extends AppCompatActivity {
                     mReplyHelper.setPages(mPage + 1); // this is the last page
                 } else if (mPageSize == 0) {
                     mReplyHelper.setPages(1); // Only post, no reply
+                } else if (empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS)) {
+                    mReplyHelper.setPages(mPage); // previous page is the last page
                 } else if (mPageSize != -1) {
                     mReplyHelper.setPages(MathUtils.ceilDivide(post.getNMBReplyCount(), mPageSize)); // Guess2
                 } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH_PAGE ||
@@ -598,9 +601,6 @@ public class PostActivity extends AppCompatActivity {
                         mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE_KEEP_POS ||
                         mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) {
                     // Keep the pages
-                } else if (empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS)) {
-                    mReplyHelper.setPages(mPage); // previous page is the last page
                 } else {
                     int pages = mReplyHelper.getPages();
                     if (pages != -1 && pages != Integer.MAX_VALUE) {
