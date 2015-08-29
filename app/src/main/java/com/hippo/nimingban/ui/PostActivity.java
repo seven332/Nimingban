@@ -187,6 +187,7 @@ public class PostActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             ClickableSpan span = mContent.getCurrentSpan();
+            mContent.clearCurrentSpan();
 
             if (span instanceof URLSpan) {
                 handleURLSpan((URLSpan) span);
@@ -298,6 +299,7 @@ public class PostActivity extends AppCompatActivity {
             if (holder instanceof ReplyHolder) {
                 ReplyHolder replyHolder = (ReplyHolder) holder;
                 ClickableSpan span = replyHolder.content.getCurrentSpan();
+                replyHolder.content.clearCurrentSpan();
 
                 if (span instanceof URLSpan) {
                     handleURLSpan((URLSpan) span);

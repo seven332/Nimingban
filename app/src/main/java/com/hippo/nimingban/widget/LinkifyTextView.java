@@ -45,6 +45,10 @@ public class LinkifyTextView extends TextView {
         return mCurrentSpan;
     }
 
+    public void clearCurrentSpan() {
+        mCurrentSpan = null;
+    }
+
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         // Let the parent or grandparent of TextView to handles click aciton.
