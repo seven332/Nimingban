@@ -299,6 +299,10 @@ public class ContentLayout extends FrameLayout {
             mPages = pages;
         }
 
+        public int getPages() {
+            return mPages;
+        }
+
         public void onGetEmptyData(int taskId) {
             if (mCurrentTaskId != taskId) {
                 return;
@@ -353,7 +357,7 @@ public class ContentLayout extends FrameLayout {
                         for (int i = 0, n = mPageDivider.size(); i < n; i++) {
                             mPageDivider.set(i, mPageDivider.get(i) + dataSize);
                         }
-                        mPageDivider.add(dataSize);
+                        mPageDivider.add(0, dataSize);
 
                         mStartPage--;
                         // assert mStartPage >= 0
@@ -394,6 +398,8 @@ public class ContentLayout extends FrameLayout {
                         mPageDivider.clear();
                         mPageDivider.add(data.size());
 
+                        Log.d("TAG", mPageDivider.toString());
+
                         mRecyclerView.stopScroll();
                         LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
                         onScrollToPosition();
@@ -415,6 +421,12 @@ public class ContentLayout extends FrameLayout {
 
                         for (int i = mCurrentTaskPage - mStartPage, n = mPageDivider.size(); i < n; i++) {
                             mPageDivider.set(i, mPageDivider.get(i) - oldIndexEnd + newIndexEnd);
+                        }
+
+                        if (newIndexEnd > oldIndexEnd && newIndexEnd > 0) {
+                            mRecyclerView.stopScroll();
+                            LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), newIndexEnd - 1, 0);
+                            onScrollToPosition();
                         }
                         break;
                 }
@@ -444,6 +456,10 @@ public class ContentLayout extends FrameLayout {
 
         public void showContent() {
             mViewTransition.showView(0);
+        }
+
+        private boolean isContentShowning() {
+            return mViewTransition.getShownViewIndex() == 0;
         }
 
         public void showProgressBar() {
@@ -484,6 +500,84 @@ public class ContentLayout extends FrameLayout {
         public void refresh() {
             showProgressBar();
             doRefresh();
+        }
+
+        private void cancelCurrentTask() {
+            mCurrentTaskId = mIdGenerator.nextId();
+            mRefreshLayout.setHeaderRefreshing(false);
+            mRefreshLayout.setFooterRefreshing(false);
+        }
+
+        private int getPageStart(int page) {
+            if (mStartPage == page) {
+                return 0;
+            } else {
+                return mPageDivider.get(page - 1);
+            }
+        }
+
+        private int getPageEnd(int page) {
+            return mPageDivider.get(page);
+        }
+
+        public int getCurrentPage() {
+            int firstPosition = LayoutManagerUtils.getFirstVisibleItemPostion(mRecyclerView.getLayoutManager());
+            if (firstPosition != -1) {
+                IntList pageDivider = mPageDivider;
+                for (int i = 0, n = pageDivider.size(); i < n; i++) {
+                    if (firstPosition < pageDivider.get(i)) {
+                        return i + mStartPage;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        public boolean canGoTo() {
+            return isContentShowning();
+        }
+
+        /**
+         * Check range first!
+         *
+         * @param page the targe page
+         * @throws IndexOutOfBoundsException
+         */
+        public void goTo(int page) throws IndexOutOfBoundsException {
+            if (page < 0 || page >= mPages) {
+                throw new IndexOutOfBoundsException("Page count is " + mPages + ", page is " + page);
+            } else if (page >= mStartPage && page < mEndPage) {
+                cancelCurrentTask();
+
+                int position = getPageStart(page);
+                mRecyclerView.stopScroll();
+                LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), position, 0);
+                onScrollToPosition();
+            } else if (page == mStartPage - 1) {
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_PRE_PAGE;
+                mCurrentTaskPage = page;
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+            } else if (page == mEndPage) {
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_NEXT_PAGE;
+                mCurrentTaskPage = page;
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+            } else {
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_SOMEWHERE;
+                mCurrentTaskPage = page;
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+            }
         }
     }
 }

@@ -31,9 +31,15 @@ import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.util.Pair;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.effect.ViewTransition;
@@ -55,6 +61,7 @@ import com.hippo.vectorold.content.VectorContext;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
@@ -77,6 +84,8 @@ public class PostActivity extends AppCompatActivity {
     private NMBRequest mNMBRequest;
 
     private Post mPost;
+
+    private int mPageSize = -1;
 
     // false for error
     private boolean handlerIntent(Intent intent) {
@@ -133,6 +142,103 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_post, menu);
+        return true;
+    }
+
+
+    private class GoToDialogHelper implements View.OnClickListener,
+            DialogInterface.OnDismissListener, EditText.OnEditorActionListener {
+
+        private int mPages;
+        private int mCurrentPage;
+
+        private View mView;
+        private EditText mEditText;
+
+        private Dialog mDialog;
+
+        @SuppressLint("InflateParams")
+        private GoToDialogHelper(int pages, int currentPage) {
+            mPages = pages;
+            mCurrentPage = currentPage;
+            mView = getLayoutInflater().inflate(R.layout.dialog_go_to, null);
+            mEditText = (EditText) mView.findViewById(R.id.edit_text);
+            mEditText.setHint(getResources().getQuantityString(R.plurals.go_to_hint, pages, currentPage + 1, pages));
+            mEditText.setOnEditorActionListener(this);
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        public void setPositiveButtonClickListener(AlertDialog dialog) {
+            mDialog = dialog;
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this);
+            dialog.setOnDismissListener(this);
+        }
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                onClick(null);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            // Do not check v, because onEditorAction pass null
+            String str = mEditText.getText().toString();
+            try {
+                int page = Integer.parseInt(str) - 1;
+                if (page >= 0 && page < mPages) {
+                    mReplyHelper.goTo(page);
+                    if (mDialog != null) {
+                        mDialog.dismiss();
+                        mDialog = null;
+                    }
+                } else {
+                    Toast.makeText(PostActivity.this, R.string.go_to_error_out_of_range, Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(PostActivity.this, R.string.go_to_error_invalid, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog = null;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_go_to:
+                int pages = mReplyHelper.getPages();
+                if (pages > 0 && mReplyHelper.canGoTo()) {
+                    GoToDialogHelper helper = new GoToDialogHelper(pages, mReplyHelper.getCurrentPage());
+                    AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.go_to)
+                            .setView(helper.getView())
+                            .setPositiveButton(android.R.string.ok, null)
+                            .create();
+                    dialog.show();
+                    helper.setPositiveButtonClickListener(dialog);
+                }
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void handleURLSpan(URLSpan urlSpan) {
@@ -410,7 +516,7 @@ public class PostActivity extends AppCompatActivity {
             request.setSite(NMBClient.AC);
             request.setMethod(NMBClient.METHOD_GET_POST);
             request.setArgs(NMBUrl.getPostUrl(NMBClient.AC, mPost.getNMBId(), page));
-            request.setCallback(new PostListener(taskId, page, request));
+            request.setCallback(new PostListener(taskId, type, page, request));
             mNMBClient.execute(request);
         }
     }
@@ -418,11 +524,13 @@ public class PostActivity extends AppCompatActivity {
     private class PostListener implements NMBClient.Callback<Pair<Post, List<Reply>>> {
 
         private int mTaskId;
+        private int mTaskType;
         private int mPage;
         private NMBRequest mRequest;
 
-        public PostListener(int taskId, int page, NMBRequest request) {
+        public PostListener(int taskId, int type, int page, NMBRequest request) {
             mTaskId = taskId;
+            mTaskType = type;
             mPage = page;
             mRequest = request;
         }
@@ -439,18 +547,45 @@ public class PostActivity extends AppCompatActivity {
 
                 List<Reply> replies = result.second;
                 if (mPage == 0) {
+                    mPageSize = replies.size();
                     replies.add(0, mPost);
                 }
 
+                boolean empty;
                 if (replies.isEmpty()) {
-                    mReplyHelper.setPages(mPage);
+                    empty = true;
                     mReplyHelper.onGetEmptyData(mTaskId);
                 } else {
+                    empty = false;
                     mReplyHelper.onGetPageData(mTaskId, replies);
-                    if (mReplyHelper.size() == mPost.getNMBReplyCount() + 1) {
-                        mReplyHelper.setPages(mPage + 1);
+                }
+
+                if (!empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) &&
+                        mReplyHelper.size() == mPost.getNMBReplyCount() + 1) { // post is in data, so +1
+                    mReplyHelper.setPages(mPage + 1); // this is the last page
+                } else if (mPageSize == 0) {
+                    mReplyHelper.setPages(1); // Only post, no reply
+                } else if (mPageSize != -1) {
+                    mReplyHelper.setPages(MathUtils.ceilDivide(mPost.getNMBReplyCount(), mPageSize)); // Guess2
+                } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH_PAGE ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE_KEEP_POS ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) {
+                    // Keep the pages
+                } else if (empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS)) {
+                    mReplyHelper.setPages(mPage); // previous page is the last page
+                } else {
+                    int pages = mReplyHelper.getPages();
+                    if (pages != -1 && pages != Integer.MAX_VALUE) {
+                        // Keep it
+                    } else if (empty) {
+                        mReplyHelper.setPages(1); // At least we get post
                     } else {
-                        mReplyHelper.setPages(Integer.MAX_VALUE);
+                        mReplyHelper.setPages(Integer.MAX_VALUE); // Keep going
                     }
                 }
             }
