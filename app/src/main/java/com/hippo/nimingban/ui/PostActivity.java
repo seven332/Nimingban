@@ -59,10 +59,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.TextUtils2;
 import com.hippo.vectorold.content.VectorContext;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
-import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
@@ -140,10 +137,6 @@ public class PostActivity extends AppCompatActivity {
 
         mReplyAdapter = new ReplyAdapter();
         mRecyclerView.setAdapter(mReplyAdapter);
-        mRecyclerView.addItemDecoration(new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL,
-                ResourcesUtils.getAttrColor(this, R.attr.colorDivider),
-                LayoutUtils.dp2pix(this, 1)));
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setOnItemClickListener(new ClickReplyListener());
