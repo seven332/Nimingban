@@ -946,12 +946,12 @@ public class RefreshLayout extends ViewGroup {
         boolean mIsBeingDragged = false;
 
         if (isEnabled() && !mReturningToStart && !mHeaderRefreshing && !mFooterRefreshing) {
-            if (mEnableSwipeHeader && !canChildScrollUp()) {
+            if (!mIsFooterBeingDragged && mEnableSwipeHeader && !canChildScrollUp()) {
                 mIsBeingDragged = headerInterceptTouchEvent(ev);
             }
 
-            if (!mIsBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
-                mIsBeingDragged = footerInterceptTouchEvent(ev);
+            if (!mIsHeaderBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
+                mIsBeingDragged |= footerInterceptTouchEvent(ev);
             }
         }
 
@@ -1163,15 +1163,17 @@ public class RefreshLayout extends ViewGroup {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
-                if (pointerIndex < 0) {
-                    Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
+                if (mActivePointerId == INVALID_POINTER && pointerIndex < 0) {
+                    if (action == MotionEvent.ACTION_UP) {
+                        Log.e(LOG_TAG, "Got ACTION_UP event but don't have an active pointer id.");
+                    }
                     return false;
                 }
 
                 y = MotionEventCompat.getY(ev, pointerIndex);
                 yDiff = y - mInitialMotionY;
 
-                if (-yDiff > mFooterDistanceToTriggerSync) {
+                if (action == MotionEvent.ACTION_UP && -yDiff > mFooterDistanceToTriggerSync) {
                     // User movement passed distance; trigger a refresh
                     startFooterRefresh();
                 } else {
@@ -1195,14 +1197,12 @@ public class RefreshLayout extends ViewGroup {
             mReturningToStart = false;
         }
 
-        boolean mIsBeingDragged = false;
-
         if (isEnabled() && !mReturningToStart && !mHeaderRefreshing && !mFooterRefreshing) {
-            if (mEnableSwipeHeader && !canChildScrollUp()) {
-                mIsBeingDragged = headerTouchEvent(ev);
+            if (!mIsFooterBeingDragged && mEnableSwipeHeader && !canChildScrollUp()) {
+                headerTouchEvent(ev);
             }
 
-            if (!mIsBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
+            if (!mIsHeaderBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
                 footerTouchEvent(ev);
             }
         }
