@@ -14,4 +14,18 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.nimingban;
+
+import android.content.Context;
+import android.support.annotation.Nullable;
+
+import java.io.File;
+
+public class NMBConfig {
+
+
+
+    public static @Nullable File createTempFile(Context context) {
+        return new File(context.getCacheDir(), Long.toString(System.currentTimeMillis()));
+    }
+}

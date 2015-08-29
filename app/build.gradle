@@ -32,10 +32,22 @@ model {
 
     android.buildTypes {
         release {
-            minifyEnabled = true
-            shrinkResources = true
-            proguardFiles += [file('proguard-rules.pro')]
+            minifyEnabled = false
+            shrinkResources = false
+            proguardFiles +=  [file('proguard-rules.pro'),
+                               file('../rippleold/proguard-rules.pro'),
+                               file('../vectorold/proguard-rules.pro')]
         }
+    }
+
+    android.ndk {
+        moduleName = "gifdecoder"
+        ldLibs += ["jnigraphics"]
+    }
+
+    android.productFlavors {
+        // To include all cpu architectures, leaves abiFilters empty
+        create("all")
     }
 }
 
@@ -46,6 +58,7 @@ dependencies {
     compile project(':hotspot')
     compile project(':httpclient')
     compile project(':rippleold')
+    compile project(':unifile')
     compile project(':vectorold')
     compile project(':yorozuya')
     compile 'com.android.support:appcompat-v7:23.0.0'

@@ -14,4 +14,9 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.gallery.ui;
+
+public interface OrientationSource {
+    int getDisplayRotation();
+    int getCompensation();
+}

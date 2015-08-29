@@ -14,4 +14,17 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.nimingban.ui;
+
+import android.support.annotation.Nullable;
+
+public interface GalleryProviderListener {
+
+    void onGetImage(int index, @Nullable Object obj);
+
+    void onPagePercent(int index, float percent);
+
+    void onPageSucceed(int index);
+
+    void onPageFailed(int index, Exception e);
+}

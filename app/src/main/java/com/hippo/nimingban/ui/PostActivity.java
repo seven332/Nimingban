@@ -276,6 +276,8 @@ public class PostActivity extends AppCompatActivity {
 
         private NMBRequest mRequest;
 
+        private Reply mReply;
+
         @SuppressLint("InflateParams")
         public ReferenceDialogHelper(int site, String id) {
             mSite = site;
@@ -294,18 +296,30 @@ public class PostActivity extends AppCompatActivity {
             mButton = reference.findViewById(R.id.button);
 
             mContent.setOnClickListener(this);
+            mThumb.setOnClickListener(this);
             RippleSalon.addRipple(mButton, false); // TODO darktheme
         }
 
         @Override
         public void onClick(View v) {
-            ClickableSpan span = mContent.getCurrentSpan();
-            mContent.clearCurrentSpan();
+            if (v == mContent) {
+                ClickableSpan span = mContent.getCurrentSpan();
+                mContent.clearCurrentSpan();
 
-            if (span instanceof URLSpan) {
-                handleURLSpan((URLSpan) span);
-            } else if (span instanceof ReferenceSpan) {
-                handleReferenceSpan((ReferenceSpan) span);
+                if (span instanceof URLSpan) {
+                    handleURLSpan((URLSpan) span);
+                } else if (span instanceof ReferenceSpan) {
+                    handleReferenceSpan((ReferenceSpan) span);
+                }
+            } else if (v == mThumb) {
+                if (mReply != null && !TextUtils.isEmpty(mReply.getNMBImageUrl())) {
+                    Intent intent = new Intent(PostActivity.this, GalleryActivity.class);
+                    intent.setAction(GalleryActivity.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity.KEY_SITE, mSite);
+                    intent.putExtra(GalleryActivity.KEY_ID, mReply.getNMBId());
+                    intent.putExtra(GalleryActivity.KEY_IMAGE, mReply.getNMBImageUrl());
+                    PostActivity.this.startActivity(intent);
+                }
             }
         }
 
@@ -338,6 +352,8 @@ public class PostActivity extends AppCompatActivity {
         }
 
         private void onGetReference(final Reply reply, boolean animation) {
+            mReply = reply;
+
             mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", reply.getNMBDisplay()));
             mRightText.setText(reply.getNMBId());
             mContent.setText(reply.getNMBDisplayContent());
@@ -443,7 +459,7 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    private class ReplyHolder extends RecyclerView.ViewHolder {
+    private class ReplyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView leftText;
         public TextView rightText;
@@ -457,6 +473,25 @@ public class PostActivity extends AppCompatActivity {
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (LinkifyTextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+
+            thumb.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position >= 0 && position < mReplyHelper.size()) {
+                Reply reply = mReplyHelper.getDataAt(position);
+                String image = reply.getNMBImageUrl();
+                if (!TextUtils.isEmpty(image)) {
+                    Intent intent = new Intent(PostActivity.this, GalleryActivity.class);
+                    intent.setAction(GalleryActivity.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity.KEY_SITE, reply.getNMBSite());
+                    intent.putExtra(GalleryActivity.KEY_ID, reply.getNMBId());
+                    intent.putExtra(GalleryActivity.KEY_IMAGE, image);
+                    PostActivity.this.startActivity(intent);
+                }
+            }
         }
     }
 
@@ -495,21 +530,6 @@ public class PostActivity extends AppCompatActivity {
         @Override
         protected Context getContext() {
             return PostActivity.this;
-        }
-
-        @Override
-        protected void onScrollToPosition() {
-
-        }
-
-        @Override
-        protected void onShowProgress() {
-
-        }
-
-        @Override
-        protected void onShowText() {
-
         }
 
         @Override

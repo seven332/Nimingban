@@ -20,19 +20,23 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.vectorold.content.VectorContext;
 
 import java.io.File;
+import java.io.IOException;
 
 public class NMBApplication extends Application {
 
     private NMBHttpClient mNMBHttpClient;
     private NMBClient mNMBClient;
     private Conaco mConaco;
+    private SimpleDiskCache mImageDiskCache;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -72,11 +76,24 @@ public class NMBApplication extends Application {
             builder.hasMemoryCache = true;
             builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
             builder.hasDiskCache = true;
-            builder.diskCacheDir = new File(context.getCacheDir(), "conaco");
+            builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 20 * 1024 * 1024;
             builder.httpClient = getNMBHttpClient(context);
             application.mConaco = builder.build();
         }
         return application.mConaco;
+    }
+
+    @Nullable
+    public static SimpleDiskCache getImageDiskCache(@NonNull Context context) {
+        NMBApplication application = ((NMBApplication) context.getApplicationContext());
+        if (application.mImageDiskCache == null) {
+            try {
+                application.mImageDiskCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"), 20 * 1024 * 1024);
+            } catch (IOException e) {
+                // Ingore
+            }
+        }
+        return application.mImageDiskCache;
     }
 }

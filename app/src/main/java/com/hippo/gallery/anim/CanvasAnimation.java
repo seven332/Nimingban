@@ -14,4 +14,12 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.gallery.anim;
+
+import com.hippo.gallery.glrenderer.GLCanvas;
+
+public abstract class CanvasAnimation extends Animation {
+
+    public abstract int getCanvasSaveFlags();
+    public abstract void apply(GLCanvas canvas);
+}

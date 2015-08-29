@@ -14,4 +14,27 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.gallery.ui;
+
+public interface TouchOwner {
+
+    void setHotspot(float x, float y);
+
+    boolean isEnabled();
+
+    boolean isPressed();
+
+    void setPressed(boolean pressed);
+
+    boolean isClickable();
+
+    boolean isLongClickable();
+
+    boolean performClick();
+
+    boolean performLongClick();
+
+    int getWidth();
+
+    int getHeight();
+}

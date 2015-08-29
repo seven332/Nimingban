@@ -230,7 +230,7 @@ public class ACPost extends Post {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = userid;
+            mUser = Html.fromHtml(userid);
         }
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);

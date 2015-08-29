@@ -436,6 +436,10 @@ public class ContentLayout extends FrameLayout {
 
         public void onGetExpection(int taskId, Exception e) {
             if (mCurrentTaskId == taskId) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+
                 mRefreshLayout.setHeaderRefreshing(false);
                 mRefreshLayout.setFooterRefreshing(false);
                 Say.d(TAG, "Get page data failed " + e.getClass().getName() + " " + e.getMessage());

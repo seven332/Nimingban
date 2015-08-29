@@ -14,4 +14,17 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.nimingban.util;
+
+public final class Settings {
+
+
+
+
+
+
+
+
+
+
+}

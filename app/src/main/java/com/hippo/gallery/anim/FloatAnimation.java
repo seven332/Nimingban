@@ -14,4 +14,27 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.gallery.anim;
+
+import com.hippo.yorozuya.MathUtils;
+
+public class FloatAnimation extends Animation {
+
+    private float mFrom;
+    private float mTo;
+    private float mCurrent;
+
+    public void setRange(float from, float to) {
+        mFrom = from;
+        mTo = to;
+    }
+
+    @Override
+    protected void onCalculate(float progress) {
+        mCurrent = MathUtils.lerp(mFrom, mTo, progress);
+    }
+
+    public float get() {
+        return mCurrent;
+    }
+}

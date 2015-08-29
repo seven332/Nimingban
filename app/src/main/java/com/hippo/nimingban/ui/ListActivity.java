@@ -105,7 +105,7 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    private class ListHolder extends RecyclerView.ViewHolder {
+    private class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView leftText;
         public TextView rightText;
@@ -119,6 +119,25 @@ public class ListActivity extends AppCompatActivity {
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+
+            thumb.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position >= 0 && position < mPostHelper.size()) {
+                Post post = mPostHelper.getDataAt(position);
+                String image = post.getNMBImageUrl();
+                if (!TextUtils.isEmpty(image)) {
+                    Intent intent = new Intent(ListActivity.this, GalleryActivity.class);
+                    intent.setAction(GalleryActivity.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity.KEY_SITE, post.getNMBSite());
+                    intent.putExtra(GalleryActivity.KEY_ID, post.getNMBId());
+                    intent.putExtra(GalleryActivity.KEY_IMAGE, image);
+                    ListActivity.this.startActivity(intent);
+                }
+            }
         }
     }
 
