@@ -26,6 +26,7 @@ import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.NMBHttpClient;
+import com.hippo.nimingban.util.DB;
 import com.hippo.vectorold.content.VectorContext;
 
 import java.io.File;
@@ -37,6 +38,13 @@ public class NMBApplication extends Application {
     private NMBClient mNMBClient;
     private Conaco mConaco;
     private SimpleDiskCache mImageDiskCache;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        DB.initialize(this);
+    }
 
     @Override
     protected void attachBaseContext(Context newBase) {

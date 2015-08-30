@@ -14,4 +14,25 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', ':daogenerator', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.nimingban;
+
+import java.io.File;
+
+public final class Utilities {
+
+    public static boolean deleteContents(File dir) {
+        File[] files = dir.listFiles();
+        boolean success = true;
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    success &= deleteContents(file);
+                }
+                if (!file.delete()) {
+                    success = false;
+                }
+            }
+        }
+        return success;
+    }
+}

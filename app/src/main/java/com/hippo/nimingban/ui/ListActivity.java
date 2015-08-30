@@ -19,10 +19,12 @@ package com.hippo.nimingban.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,11 +33,16 @@ import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
+import com.hippo.nimingban.client.data.DisplayForum;
+import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
+import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.TextUtils2;
 import com.hippo.vectorold.content.VectorContext;
@@ -46,13 +53,17 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity {
+public final class ListActivity extends AppCompatActivity implements RightDrawer.OnSelectForumListener {
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
 
+    private DrawerLayout mDrawerLayout;
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
+    private RightDrawer mRightDrawer;
+
+    private Forum mCurrentForum;
 
     private PostHelper mPostHelper;
     private PostAdapter mPostAdapter;
@@ -67,8 +78,10 @@ public class ListActivity extends AppCompatActivity {
         mNMBClient = NMBApplication.getNMBClient(this);
         mConaco = NMBApplication.getConaco(this);
 
-        mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mContentLayout = (ContentLayout) mDrawerLayout.findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
+        mRightDrawer = (RightDrawer) mDrawerLayout.findViewById(R.id.right_drawer);
 
         mPostHelper = new PostHelper();
         mContentLayout.setHelper(mPostHelper);
@@ -84,13 +97,44 @@ public class ListActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();
 
+        mRightDrawer.setOnSelectForumListener(this);
+
+        List<DisplayForum> forums = DB.getACForums(true); // TODO DB.getForums
+        if (forums.size() > 0) {
+            mCurrentForum = forums.get(0);
+        } else {
+            mCurrentForum = null;
+        }
+        onChangeForum(mCurrentForum);
+        mRightDrawer.setForums(forums);
+
         // Refresh
         mPostHelper.firstRefresh();
+    }
+
+    private void onChangeForum(Forum forum) {
+        if (forum != null) {
+            setTitle(forum.getNMBDisplayname());
+        } else {
+            setTitle(getString(R.string.app_name));
+        }
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
+    }
+
+    @Override
+    public void onSelectForum(Forum forum) {
+        if (mCurrentForum == null ||
+                (mCurrentForum.getNMBSite() != forum.getNMBSite() ||
+                        !mCurrentForum.getNMBId().equals(forum.getNMBId()))) {
+            mCurrentForum = forum;
+            onChangeForum(mCurrentForum);
+            mDrawerLayout.closeDrawer(Gravity.RIGHT);
+            mPostHelper.refresh();
+        }
     }
 
     private class ClickPostListener implements EasyRecyclerView.OnItemClickListener {
@@ -212,13 +256,17 @@ public class ListActivity extends AppCompatActivity {
                 mNMBRequest = null;
             }
 
-            NMBRequest request = new NMBRequest();
-            mNMBRequest = request;
-            request.setSite(NMBClient.AC);
-            request.setMethod(NMBClient.METHOD_GET_POST_LIST);
-            request.setArgs(NMBUrl.getPostListUrl(NMBClient.AC, "4", page));
-            request.setCallback(new ListListener(taskId, page, request));
-            mNMBClient.execute(request);
+            if (mCurrentForum == null) {
+                onGetExpection(taskId, new NMBException(NMBClient.RANDOM, "current forum is null")); // TODO use unknow, hardcode
+            } else {
+                NMBRequest request = new NMBRequest();
+                mNMBRequest = request;
+                request.setSite(NMBClient.AC);
+                request.setMethod(NMBClient.METHOD_GET_POST_LIST);
+                request.setArgs(NMBUrl.getPostListUrl(mCurrentForum.getNMBSite(), mCurrentForum.getNMBId(), page));
+                request.setCallback(new ListListener(taskId, page, request));
+                mNMBClient.execute(request);
+            }
         }
     }
 

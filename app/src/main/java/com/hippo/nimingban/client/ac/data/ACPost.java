@@ -47,7 +47,7 @@ public class ACPost extends Post {
     static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
     static final Object sDateFormatLock = new Object();
 
-    static final Pattern REFERENCE_PATTERN = Pattern.compile(">>No.(\\d+)");
+    static final Pattern REFERENCE_PATTERN = Pattern.compile(">>(?:No.)?(\\d+)");
     static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
     static final Pattern GREEN_PATTERN = Pattern.compile("^>>.+?$");
 
@@ -136,9 +136,7 @@ public class ACPost extends Post {
             int start = m.start();
             int end = m.end();
 
-            //ForegroundColorSpan colorSpan = new ForegroundColorSpan(); //0xff789922
             ReferenceSpan referenceSpan = new ReferenceSpan(NMBClient.AC, m.group(1));
-            //spannable.setSpan(colorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannable.setSpan(referenceSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 

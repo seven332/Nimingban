@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', ':daogenerator', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'vectorold', 'unifile'
+package com.hippo.nimingban.client.data;
+
+public abstract class Forum {
+
+    public abstract int getNMBSite();
+
+    public abstract String getNMBId();
+
+    public abstract CharSequence getNMBDisplayname();
+}

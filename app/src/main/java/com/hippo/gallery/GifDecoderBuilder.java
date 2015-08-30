@@ -47,7 +47,9 @@ public class GifDecoderBuilder {
     public @Nullable GifDecoder build() {
         if (mInputStream != null && mBitmapPool != null) {
             GifDecoder gifDecoder = GifDecoder.decodeStream(mInputStream);
-            gifDecoder.setBitmapPool(mBitmapPool);
+            if (gifDecoder != null) {
+                gifDecoder.setBitmapPool(mBitmapPool);
+            }
             IOUtils.closeQuietly(mInputStream);
             mInputStream = null;
             mBitmapPool = null;

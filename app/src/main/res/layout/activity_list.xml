@@ -15,8 +15,29 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.nimingban.widget.ContentLayout
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content_layout"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent">
+
+    <com.hippo.nimingban.widget.ContentLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/left_drawer"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="?android:attr/colorBackground"/>
+
+    <com.hippo.nimingban.widget.RightDrawer
+        android:id="@+id/right_drawer"
+        android:layout_width="192dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="?android:attr/colorBackground"/>
+
+</android.support.v4.widget.DrawerLayout>
