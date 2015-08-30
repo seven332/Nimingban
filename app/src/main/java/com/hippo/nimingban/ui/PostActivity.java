@@ -27,8 +27,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -86,6 +91,10 @@ public class PostActivity extends AppCompatActivity {
     private int mSite;
     private String mId;
 
+    private CharSequence mPostUser;
+
+    private int mOpColor;
+
     private int mPageSize = -1;
 
     // false for error
@@ -100,6 +109,7 @@ public class PostActivity extends AppCompatActivity {
             if (post != null) {
                 mSite = post.getNMBSite();
                 mId = post.getNMBId();
+                mPostUser = post.getNMBDisplayUsername();
                 return true;
             }
         } else if (ACTION_SITE_ID.equals(action)) {
@@ -141,6 +151,8 @@ public class PostActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setOnItemClickListener(new ClickReplyListener());
         mRecyclerView.hasFixedSize();
+
+        mOpColor = getResources().getColor(R.color.green_ntr);
 
         // Refresh
         mReplyHelper.firstRefresh();
@@ -354,7 +366,7 @@ public class PostActivity extends AppCompatActivity {
         private void onGetReference(final Reply reply, boolean animation) {
             mReply = reply;
 
-            mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", reply.getNMBDisplay()));
+            mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", highlightOp(reply)));
             mRightText.setText(reply.getNMBId());
             mContent.setText(reply.getNMBDisplayContent());
 
@@ -424,6 +436,30 @@ public class PostActivity extends AppCompatActivity {
                 mRequest.cancel();
                 mRequest = null;
             }
+        }
+    }
+
+    private CharSequence highlightOp(Reply reply) {
+        CharSequence user = reply.getNMBDisplayUsername();
+
+        if (!TextUtils.isEmpty(user) && TextUtils2.contentEquals(user, mPostUser)) {
+            Spannable spannable;
+            if (user instanceof Spannable) {
+                spannable = (Spannable) user;
+            } else {
+                spannable = new SpannableString(user);
+            }
+
+            int length = user.length();
+            if (spannable.getSpans(0, length, Object.class).length == 0) {
+                StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(mOpColor);
+                spannable.setSpan(styleSpan, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannable.setSpan(colorSpan, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            return spannable;
+        } else {
+            return user;
         }
     }
 
@@ -505,7 +541,7 @@ public class PostActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ReplyHolder holder, int position) {
             Reply reply = mReplyHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", reply.getNMBDisplay()));
+            holder.leftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", highlightOp(reply)));
             holder.rightText.setText(reply.getNMBId());
             holder.content.setText(reply.getNMBDisplayContent());
 
@@ -587,6 +623,7 @@ public class PostActivity extends AppCompatActivity {
                 mNMBRequest = null;
 
                 Post post = result.first;
+                mPostUser = post.getNMBDisplayUsername();
 
                 List<Reply> replies = result.second;
                 if (mPage == 0) {

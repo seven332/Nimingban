@@ -18,6 +18,7 @@ package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
 import android.os.Parcel;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -103,7 +104,7 @@ public class ACReply extends Reply {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = userid;
+            mUser = Html.fromHtml(userid);
         }
 
         mContent = ACPost.generateContent(content);
@@ -140,7 +141,7 @@ public class ACReply extends Reply {
     }
 
     @Override
-    public CharSequence getNMBDisplay() {
+    public CharSequence getNMBDisplayUsername() {
         return mUser;
     }
 

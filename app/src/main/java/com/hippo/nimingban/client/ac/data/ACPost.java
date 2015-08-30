@@ -284,7 +284,7 @@ public class ACPost extends Post {
     }
 
     @Override
-    public CharSequence getNMBDisplay() {
+    public CharSequence getNMBDisplayUsername() {
         return mUser;
     }
 

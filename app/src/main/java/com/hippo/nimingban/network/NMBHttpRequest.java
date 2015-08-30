@@ -22,7 +22,7 @@ public class NMBHttpRequest extends HttpRequest {
 
     private int mSite;
 
-    public NMBHttpRequest(int size) {
-        mSite = size;
+    public NMBHttpRequest(int site) {
+        mSite = site;
     }
 }

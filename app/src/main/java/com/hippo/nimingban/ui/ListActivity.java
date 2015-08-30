@@ -151,7 +151,7 @@ public class ListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ListHolder holder, int position) {
             Post post = mPostHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayTime(), "  ", post.getNMBDisplay()));
+            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayTime(), "  ", post.getNMBDisplayUsername()));
             holder.rightText.setText(post.getNMBReplyDisplayCount());
             holder.content.setText(post.getNMBDisplayContent());
 

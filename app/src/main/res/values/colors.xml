@@ -23,6 +23,16 @@
     <color name="primary_drawable_dark">#ffffffff</color>
     <color name="secondary_drawable_dark">#4dffffff</color>
 
+    <!-- Text -->
+    <color name="primary_text_default_light">#de000000</color>
+    <color name="primary_text_disabled_dark">#4dffffff</color>
+    <color name="secondary_text_default_light">#8a000000</color>
+    <color name="secondary_text_disabled_dark">#36ffffff</color>
+    <color name="primary_text_default_dark">#deffffff</color>
+    <color name="primary_text_disabled_light">#39000000</color>
+    <color name="secondary_text_default_dark">#61ffffff</color>
+    <color name="secondary_text_disabled_light">#24000000</color>
+
     <color name="deep_orange_500">#ffff5722</color>
     <color name="deep_orange_700">#ffe64a19</color>
     <color name="light_blue_500">#ff03a9f4</color>
@@ -31,6 +41,8 @@
     <color name="light_green_600">#ff7cb342</color>
     <color name="yellow_800">#fff9a825</color>
     <color name="deep_Orange_400">#ffff7043</color>
+
+    <color name="green_ntr">#ff789922</color>
 
     <!-- divider -->
     <color name="divider_light">#20000000</color>
@@ -43,7 +55,5 @@
     <color name="loading_indicator_green">@color/light_green_600</color>
     <color name="loading_indicator_yellow">@color/yellow_800</color>
     <color name="loading_indicator_orange">@color/deep_Orange_400</color>
-
-    <color name="text_link">#ff789922</color>
 
 </resources>

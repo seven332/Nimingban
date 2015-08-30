@@ -18,6 +18,7 @@ package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
 import android.os.Parcel;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -32,17 +33,17 @@ import java.util.Date;
 
 public class ACReference extends Reply {
 
-    public String id;
-    public String postId;
-    public String time;
-    public String title;
-    public String user;
-    public String userId;
+    public String id = "";
+    public String postId = "";
+    public String time = "";
+    public String title = "";
+    public String user = "";
+    public String userId = "";
     public boolean admin;
-    public String email;
-    public String content;
-    public String thumb;
-    public String image;
+    public String email = "";
+    public String content = "";
+    public String thumb = "";
+    public String image = "";
 
     private int mSite;
 
@@ -81,7 +82,7 @@ public class ACReference extends Reply {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userId.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = userId;
+            mUser = Html.fromHtml(userId);
         }
 
         mContent = ACPost.generateContent(content);
@@ -121,7 +122,7 @@ public class ACReference extends Reply {
     }
 
     @Override
-    public CharSequence getNMBDisplay() {
+    public CharSequence getNMBDisplayUsername() {
         return mUser;
     }
 

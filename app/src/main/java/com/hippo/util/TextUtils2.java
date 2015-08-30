@@ -54,4 +54,24 @@ public class TextUtils2 {
             return (CharSequence) appendable;
         }
     }
+
+    public static boolean stringEquals(String s1, String s2) {
+        if (s1 == null && s2 == null) {
+            return true;
+        } else if (s1 != null && s2 != null) {
+            return s1.equals(s2);
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean contentEquals(CharSequence cs1, CharSequence cs2) {
+        if (cs1 == null && cs2 == null) {
+            return true;
+        } else if (cs1 != null && cs2 != null) {
+            return stringEquals(cs1.toString(), cs2.toString());
+        } else {
+            return false;
+        }
+    }
 }
