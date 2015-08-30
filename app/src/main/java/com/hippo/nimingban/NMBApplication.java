@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.util.DB;
 import com.hippo.vectorold.content.VectorContext;
@@ -44,6 +45,7 @@ public class NMBApplication extends Application {
         super.onCreate();
 
         DB.initialize(this);
+        HttpCookieDB.initialize(this);
     }
 
     @Override

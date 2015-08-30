@@ -22,11 +22,11 @@ import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Schema;
 
-public class NMBDaoGenerator {
+public class HttpCookieDaoGenerator {
 
-    private static final String PACKAGE = "com.hippo.nimingban.dao";
+    private static final String PACKAGE = "com.hippo.network.dao";
     private static final String OUT_DIR = "./app/src/main/java-gen";
-    private static final String DELETE_DIR = "./app/src/main/java-gen/com/hippo/nimingban/dao";
+    private static final String DELETE_DIR = "./app/src/main/java-gen/com/hippo/network/dao";
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
@@ -35,18 +35,27 @@ public class NMBDaoGenerator {
         outDir.mkdirs();
 
         Schema schema = new Schema(1, PACKAGE);
-        addACForum(schema);
+        addHttpCookie(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
-    private static void addACForum(Schema schema) {
-        Entity entity = schema.addEntity("ACForumRaw");
-        entity.setTableName("AC_FORUM");
-        entity.setClassNameDao("ACForumDao");
+    private static void addHttpCookie(Schema schema) {
+        Entity entity = schema.addEntity("HttpCookieRaw");
+        entity.setTableName("HTTP_COOKIE");
+        entity.setClassNameDao("HttpCookieDao");
         entity.addIdProperty();
-        entity.addStringProperty("forumid");
-        entity.addStringProperty("displayname");
-        entity.addIntProperty("priority");
-        entity.addBooleanProperty("visibility");
+        entity.addStringProperty("name");
+        entity.addStringProperty("value");
+        entity.addStringProperty("comment");
+        entity.addStringProperty("commentURL");
+        entity.addBooleanProperty("discard");
+        entity.addStringProperty("domain");
+        entity.addLongProperty("maxAge");
+        entity.addStringProperty("path");
+        entity.addStringProperty("portList");
+        entity.addBooleanProperty("secure");
+        entity.addIntProperty("version");
+        entity.addStringProperty("url");
+        entity.addLongProperty("whenCreated");
     }
 }
