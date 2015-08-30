@@ -42,6 +42,8 @@ public class NMBClient {
     public static final int SITE_MIN = AC;
     public static final int SITE_MAX = KUKUKU;
 
+    public static final int METHOD_GET_COOKIE = 0;
+
     public static final int METHOD_GET_POST_LIST = 1;
 
     public static final int METHOD_GET_POST = 2;
@@ -110,6 +112,15 @@ public class NMBClient {
             }
         }
 
+        private Object getCookie() throws Exception {
+            switch (mSite) {
+                case AC:
+                    return ACEngine.getCookie(mHttpClient, mHttpRequest);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         private Object getPostList(Object... params) throws Exception {
             switch (mSite) {
                 case AC:
@@ -142,6 +153,8 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_GET_COOKIE:
+                        return getCookie();
                     case METHOD_GET_POST_LIST:
                         return getPostList(params);
                     case METHOD_GET_POST:

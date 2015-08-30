@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.client.ac;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.alibaba.fastjson.JSON;
@@ -40,7 +41,29 @@ import java.util.List;
 
 public class ACEngine {
 
+    private static final String API_GET_COOKIE = ACUrl.HOST + "/Api/getCookie";
     private static final String API_GET_FORUM_LIST = ACUrl.HOST + "/Api/getForumList";
+    private static final String API_REPLY = ACUrl.HOST + "/Home/Forum/doReplyThread.html";
+
+    public static Boolean getCookie(HttpClient httpClient, HttpRequest httpRequest) throws Exception {
+        try {
+            httpRequest.setUrl(API_GET_COOKIE);
+            HttpResponse response = httpClient.execute(httpRequest);
+            String content = response.getString();
+
+            Log.d("TAG", "Get AC cookie content: " + content);
+
+            return content.equals("\"ok\"");
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
 
     public static List<ACForumGroup> getForumList(HttpClient httpClient, HttpRequest httpRequest) throws Exception {
         try {
