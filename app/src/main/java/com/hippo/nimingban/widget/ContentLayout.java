@@ -182,6 +182,8 @@ public class ContentLayout extends FrameLayout {
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
 
+        private int mNextPageScrollSize;
+
         private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -235,6 +237,8 @@ public class ContentLayout extends FrameLayout {
                 };
 
         private void init(ContentLayout contentLayout) {
+            mNextPageScrollSize = LayoutUtils.dp2pix(contentLayout.getContext(), 48);
+
             mProgressView = contentLayout.mProgressView;
             mTipView = contentLayout.mTipView;
             mRefreshLayout = contentLayout.mRefreshLayout;
@@ -381,7 +385,11 @@ public class ContentLayout extends FrameLayout {
                         mPageDivider.add(oldDataSize + dataSize);
 
                         mEndPage++;
-                        if (mCurrentTaskType != TYPE_NEXT_PAGE_KEEP_POS) {
+                        if (mCurrentTaskType == TYPE_NEXT_PAGE_KEEP_POS) {
+                            mRecyclerView.stopScroll();
+                            mRecyclerView.smoothScrollBy(0, mNextPageScrollSize);
+                            onScrollToPosition();
+                        } else {
                             mRecyclerView.stopScroll();
                             LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), oldDataSize, 0);
                             onScrollToPosition();
