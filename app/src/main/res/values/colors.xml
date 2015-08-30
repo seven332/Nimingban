@@ -36,6 +36,8 @@
     <color name="deep_orange_500">#ffff5722</color>
     <color name="deep_orange_700">#ffe64a19</color>
     <color name="light_blue_500">#ff03a9f4</color>
+    <color name="purple_500">#ff9c27b0</color>
+    <color name="purple_700">#ff7b1fa2</color>
     <color name="purple_a700">#ffaa00ff</color>
     <color name="cyan_600">#ff00acc1</color>
     <color name="light_green_600">#ff7cb342</color>

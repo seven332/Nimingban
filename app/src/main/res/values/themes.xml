@@ -17,16 +17,16 @@
 <resources>
 
     <style name="AppAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorPrimary">@color/deep_orange_500</item>
-        <item name="colorPrimaryDark">@color/deep_orange_700</item>
-        <item name="colorAccent">@color/light_blue_500</item>
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/deep_orange_500</item>
-        <item name="colorPrimaryDark">@color/deep_orange_700</item>
-        <item name="colorAccent">@color/light_blue_500</item>
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
