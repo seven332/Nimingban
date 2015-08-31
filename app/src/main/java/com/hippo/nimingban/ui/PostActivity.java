@@ -400,7 +400,7 @@ public class PostActivity extends AppCompatActivity {
             String thumbUrl = reply.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl)) {
                 mThumb.setVisibility(View.VISIBLE);
-                mThumb.load(mConaco, thumbUrl, thumbUrl);
+                mThumb.load(thumbUrl, thumbUrl);
             } else {
                 mThumb.setVisibility(View.GONE);
                 mConaco.load(mThumb, null);
@@ -575,7 +575,7 @@ public class PostActivity extends AppCompatActivity {
             String thumbUrl = reply.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl)) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(mConaco, thumbUrl, thumbUrl);
+                holder.thumb.load(thumbUrl, thumbUrl);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);

@@ -47,10 +47,12 @@
         android:textColorLink="@color/green_ntr"/>
 
     <com.hippo.nimingban.widget.LoadImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/thumb"
         android:layout_width="@dimen/list_thumb_width"
         android:layout_height="@dimen/list_thumb_height"
         android:layout_below="@id/content"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        app:retryType="longClick"/>
 
 </com.hippo.nimingban.widget.UnderLineRelativeLayout>

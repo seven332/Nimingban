@@ -202,7 +202,7 @@ public final class ListActivity extends AppCompatActivity implements RightDrawer
             String thumbUrl = post.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl)) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(mConaco, thumbUrl, thumbUrl);
+                holder.thumb.load(thumbUrl, thumbUrl);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);
