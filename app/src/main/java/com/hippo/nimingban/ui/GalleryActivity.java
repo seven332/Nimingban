@@ -40,7 +40,7 @@ import com.hippo.gallery.ui.GalleryView;
 import com.hippo.network.DownloadClient;
 import com.hippo.network.DownloadRequest;
 import com.hippo.nimingban.NMBApplication;
-import com.hippo.nimingban.NMBConfig;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.R;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -476,7 +476,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
 
                         if (bitmap != null) {
                             // Copy the file to
-                            File tempFile = NMBConfig.createTempFile(mContext);
+                            File tempFile = NMBAppConfig.createTempFile(mContext);
                             is = isPipe.open();
                             IOUtils.copy(is, new FileOutputStream(tempFile));
                             isPipe.close();

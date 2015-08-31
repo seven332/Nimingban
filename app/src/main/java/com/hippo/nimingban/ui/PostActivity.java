@@ -383,7 +383,7 @@ public class PostActivity extends AppCompatActivity {
 
             NMBRequest request = new NMBRequest();
             mRequest = request;
-            request.setSite(NMBClient.AC);
+            request.setSite(mSite);
             request.setMethod(NMBClient.METHOD_GET_REFERENCE);
             request.setArgs(NMBUrl.getReferenceUrl(mSite, mId));
             request.setCallback(this);

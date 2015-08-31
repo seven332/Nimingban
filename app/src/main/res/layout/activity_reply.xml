@@ -21,24 +21,64 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edit_text"
+    <com.hippo.nimingban.widget.BottomShadowScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="@dimen/keyline_margin_vertical"
-        android:paddingBottom="@dimen/keyline_margin_vertical"
-        android:paddingLeft="@dimen/keyline_margin_horizontal"
-        android:paddingRight="@dimen/keyline_margin_horizontal"
-        android:clipToPadding="false"
-        android:gravity="left|top"
-        android:inputType="textMultiLine"
-        android:background="@null"/>
+        android:layout_weight="1">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/shadow_top"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="128dp"
+                android:paddingTop="@dimen/keyline_margin_vertical"
+                android:paddingBottom="@dimen/keyline_margin_vertical"
+                android:paddingLeft="@dimen/keyline_margin_horizontal"
+                android:paddingRight="@dimen/keyline_margin_horizontal"
+                android:clipToPadding="false"
+                android:gravity="left|top"
+                android:inputType="textMultiLine"
+                android:background="@null"/>
+
+            <!-- Preview image -->
+            <FrameLayout
+                android:id="@+id/image_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/keyline_margin_vertical"
+                android:paddingLeft="@dimen/keyline_margin_horizontal"
+                android:paddingRight="@dimen/keyline_margin_horizontal"
+                android:visibility="gone">
+
+                <com.hippo.widget.FixedAspectImageView
+                    android:id="@+id/preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:minWidth="128dp"
+                    android:minHeight="128dp"
+                    android:maxWidth="256dp"
+                    android:maxHeight="256dp"
+                    android:contentDescription="@null"/>
+
+                <!-- TODO a black and white close icon -->
+                <com.hippo.widget.SimpleImageView
+                    android:id="@+id/delete"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_close_circle_dark_x24"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </com.hippo.nimingban.widget.BottomShadowScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

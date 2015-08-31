@@ -19,14 +19,20 @@ package com.hippo.nimingban.ui;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -35,8 +41,14 @@ import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -49,6 +61,8 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
 
+    public static final int REQUEST_CODE_SELECT_IMAGE = 0;
+
     public NMBClient mNMBClient;
 
     private EditText mEditText;
@@ -56,9 +70,15 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
     private View mImage;
     private View mDraw;
     private View mSend;
+    private View mImagePreview;
+    private ImageView mPreview;
+    private View mDelete;
 
     private int mSite;
     private String mId;
+
+    private File mSeletedImageFile;
+    private Bitmap mSeletedImageBitmap;
 
     private ProgressDialog mGetCookiePDiglog;
     private ProgressDialog mReplyPDiglog;
@@ -102,6 +122,9 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         mImage = findViewById(R.id.image);
         mDraw = findViewById(R.id.draw);
         mSend = findViewById(R.id.send);
+        mImagePreview = findViewById(R.id.image_preview);
+        mPreview = (ImageView) mImagePreview.findViewById(R.id.preview);
+        mDelete = mImagePreview.findViewById(R.id.delete);
 
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
@@ -112,6 +135,14 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         mImage.setOnClickListener(this);
         mDraw.setOnClickListener(this);
         mSend.setOnClickListener(this);
+        mDelete.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        clearImagePreview();
     }
 
     private boolean hasACCookies() {
@@ -135,7 +166,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         struct.title = null;
         struct.content = mEditText.getText().toString();
         struct.resto = mId;
-        struct.image = null;
+        struct.image = mSeletedImageFile != null ? UniFile.fromFile(mSeletedImageFile) : null;
 
         NMBRequest request = new NMBRequest();
         request.setSite(NMBClient.AC);
@@ -149,7 +180,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         mGetCookiePDiglog = ProgressDialog.show(this, getString(R.string.getting_cookies), null, true, false);
 
         NMBRequest request = new NMBRequest();
-        request.setSite(NMBClient.AC);
+        request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_GET_COOKIE);
         request.setCallback(new GetCookieListener());
         mNMBClient.execute(request);
@@ -194,6 +225,95 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
             } else {
                 tryGettingCookies();
             }
+        } else if (mImage == v) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,
+                    getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
+        } else if (mDelete == v) {
+            clearImagePreview();
+        }
+    }
+
+    private void clearImagePreview() {
+        FileUtils.delete(mSeletedImageFile);
+        if (mSeletedImageBitmap != null) {
+            mSeletedImageBitmap.recycle();
+        }
+        mSeletedImageFile = null;
+        mSeletedImageBitmap = null;
+
+        mPreview.setImageDrawable(null);
+        mImagePreview.setVisibility(View.GONE);
+    }
+
+    private void setImagePreview(File file, Bitmap bitmap) {
+        FileUtils.delete(mSeletedImageFile);
+        if (mSeletedImageBitmap != null) {
+            mSeletedImageBitmap.recycle();
+        }
+        mSeletedImageFile = file;
+        mSeletedImageBitmap = bitmap;
+
+        mPreview.setImageBitmap(bitmap);
+        mImagePreview.setVisibility(View.VISIBLE);
+    }
+
+    // TODO do not do it in UI thread
+    // TODO resize image if it is to large
+    private boolean handleSelectedImageUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+
+        boolean ok = false;
+        File tempFile = null;
+        FileOutputStream tempFileOs = null;
+        InputStream uriIs = null;
+        Bitmap bitmap;
+        try {
+            tempFile = NMBAppConfig.createTempFile(this,
+                    MimeTypeMap.getSingleton().getExtensionFromMimeType(getContentResolver().getType(uri)));
+            if (tempFile == null) {
+                return false;
+            }
+
+            tempFileOs = new FileOutputStream(tempFile);
+            uriIs = getContentResolver().openInputStream(uri);
+            if (uriIs == null) {
+                return false;
+            }
+            IOUtils.copy(uriIs, tempFileOs);
+            IOUtils.closeQuietly(tempFileOs);
+            IOUtils.closeQuietly(uriIs);
+
+            bitmap = BitmapFactory.decodeFile(tempFile.getPath());
+            if (bitmap == null) {
+                return false;
+            } else {
+                ok = true;
+                setImagePreview(tempFile, bitmap);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            IOUtils.closeQuietly(tempFileOs);
+            IOUtils.closeQuietly(uriIs);
+            if (!ok) {
+                FileUtils.delete(tempFile);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SELECT_IMAGE && resultCode == RESULT_OK) {
+            handleSelectedImageUri(data.getData());
         }
     }
 
