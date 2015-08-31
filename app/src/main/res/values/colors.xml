@@ -50,6 +50,10 @@
     <color name="divider_light">#20000000</color>
     <color name="divider_dark">#20ffffff</color>
 
+    <!-- shadow -->
+    <color name="shadow_light">#38000000</color>
+    <color name="shadow_dark">#38ffffff</color>
+
     <color name="loading_indicator_red">#ffe53935</color>
     <color name="loading_indicator_purple">@color/purple_a700</color>
     <color name="loading_indicator_blue">#ff1d87e4</color>

@@ -27,6 +27,7 @@ import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.NMBHttpClient;
+import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.vectorold.content.VectorContext;
 
@@ -35,6 +36,7 @@ import java.io.IOException;
 
 public class NMBApplication extends Application {
 
+    private SimpleCookieStore mSimpleCookieStore;
     private NMBHttpClient mNMBHttpClient;
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -53,11 +55,19 @@ public class NMBApplication extends Application {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 
+    public static SimpleCookieStore getSimpleCookieStore(@NonNull Context context) {
+        NMBApplication application = ((NMBApplication) context.getApplicationContext());
+        if (application.mSimpleCookieStore == null) {
+            application.mSimpleCookieStore = new SimpleCookieStore();
+        }
+        return application.mSimpleCookieStore;
+    }
+
     @NonNull
     public static NMBHttpClient getNMBHttpClient(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mNMBHttpClient == null) {
-            application.mNMBHttpClient = new NMBHttpClient();
+            application.mNMBHttpClient = new NMBHttpClient(context);
         }
         return application.mNMBHttpClient;
     }

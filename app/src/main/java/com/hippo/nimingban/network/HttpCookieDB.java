@@ -69,7 +69,23 @@ public final class HttpCookieDB {
             try {
                 url = new URL(httpCookieRaw.getUrl());
             } catch (MalformedURLException e) {
+                // Can not be recognized, remove it
+                dao.delete(httpCookieRaw);
                 continue;
+            }
+
+            // hasExpired
+            long maxAgeNow;
+            long maxAge = httpCookieRaw.getMaxAge();
+            if (maxAge != -1) {
+                maxAgeNow = maxAge - ((System.currentTimeMillis() - httpCookieRaw.getWhenCreated()) / 1000);
+                if (maxAgeNow <= 0) {
+                    // It has expired, remove it
+                    dao.delete(httpCookieRaw);
+                    continue;
+                }
+            } else {
+                maxAgeNow = -1;
             }
 
             HttpCookie httpCookie = new HttpCookie(httpCookieRaw.getName(), httpCookieRaw.getValue());
@@ -77,8 +93,7 @@ public final class HttpCookieDB {
             httpCookie.setCommentURL(httpCookieRaw.getCommentURL());
             httpCookie.setDiscard(httpCookieRaw.getDiscard());
             httpCookie.setDomain(httpCookieRaw.getDomain());
-            httpCookie.setMaxAge(httpCookieRaw.getMaxAge() -
-                    (System.currentTimeMillis() - httpCookieRaw.getWhenCreated())); // Fix maxAge
+            httpCookie.setMaxAge(maxAgeNow);
             httpCookie.setPath(httpCookieRaw.getPath());
             httpCookie.setPortlist(httpCookieRaw.getPortList());
             httpCookie.setSecure(httpCookieRaw.getSecure());

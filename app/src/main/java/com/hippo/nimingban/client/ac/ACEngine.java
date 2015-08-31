@@ -20,17 +20,23 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.alibaba.fastjson.JSON;
+import com.hippo.httpclient.FormDataPoster;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
+import com.hippo.httpclient.StringData;
+import com.hippo.network.UniFileData;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.nimingban.client.ac.data.ACReference;
+import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.FileUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -198,4 +204,55 @@ public class ACEngine {
             httpRequest.disconnect();
         }
     }
+
+
+    public static Boolean reply(HttpClient httpClient, HttpRequest httpRequest,
+            Object obj) throws Exception {
+        try {
+            ACReplyStruct struct = (ACReplyStruct) obj;
+
+            StringData name = new StringData(struct.name);
+            name.setName("name");
+            StringData email = new StringData(struct.email);
+            email.setName("email");
+            StringData title = new StringData(struct.title);
+            title.setName("title");
+            StringData content = new StringData(struct.content);
+            content.setName("content");
+            StringData resto = new StringData(struct.resto);
+            resto.setName("resto");
+            UniFileData image;
+            UniFile imageContent = struct.image;
+            if (imageContent != null) {
+                image = new UniFileData(imageContent);
+                image.setName("image");
+                String extension = FileUtils.getExtensionFromFilename(imageContent.getName());
+                if (extension != null) {
+                    image.setFilename("a." + extension);
+                } else {
+                    image.setFilename("a");
+                }
+            } else {
+                image = null;
+            }
+
+            FormDataPoster httpImpl = new FormDataPoster(name, email, title, content, resto, image);
+            httpRequest.setUrl(API_REPLY);
+            httpRequest.setHttpImpl(httpImpl);
+            HttpResponse response = httpClient.execute(httpRequest);
+
+            Log.d("TAG", "" + response.getString());
+
+            return true;
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
 }

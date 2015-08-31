@@ -50,6 +50,8 @@ public class NMBClient {
 
     public static final int METHOD_GET_REFERENCE = 3;
 
+    public static final int METHOD_GET_REPLY = 4;
+
     private final ThreadPoolExecutor mRequestThreadPool;
     private final HttpClient mHttpClient;
 
@@ -148,6 +150,15 @@ public class NMBClient {
             }
         }
 
+        private Object reply(Object... params) throws Exception {
+            switch (mSite) {
+                case AC:
+                    return ACEngine.reply(mHttpClient, mHttpRequest, params[0]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         @SuppressWarnings("unchecked")
         @Override
         protected Object doInBackground(Object... params) {
@@ -161,6 +172,8 @@ public class NMBClient {
                         return getPost(params);
                     case METHOD_GET_REFERENCE:
                         return getReference(params);
+                    case METHOD_GET_REPLY:
+                        return reply(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

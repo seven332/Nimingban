@@ -16,8 +16,11 @@
 
 package com.hippo.nimingban.network;
 
+import android.content.Context;
+
 import com.hippo.httpclient.Cookie;
 import com.hippo.httpclient.HttpClient;
+import com.hippo.nimingban.NMBApplication;
 
 import java.net.HttpCookie;
 import java.net.URL;
@@ -25,7 +28,11 @@ import java.util.List;
 
 public class NMBHttpClient extends HttpClient {
 
-    private SimpleCookieStore mCookieStore = new SimpleCookieStore();
+    private SimpleCookieStore mCookieStore;
+
+    public NMBHttpClient(Context context) {
+        mCookieStore = NMBApplication.getSimpleCookieStore(context);
+    }
 
     @Override
     protected void fillCookie(URL url, Cookie cookie) {

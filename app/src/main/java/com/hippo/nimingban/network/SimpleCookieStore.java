@@ -16,6 +16,10 @@
 
 package com.hippo.nimingban.network;
 
+import android.support.annotation.NonNull;
+
+import com.hippo.yorozuya.ObjectUtils;
+
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -246,5 +250,20 @@ public class SimpleCookieStore {
         map.clear();
         HttpCookieDB.removeAllCookies();
         return result;
+    }
+
+    public synchronized boolean contain(@NonNull URL url, String name) {
+        List<HttpCookieWithId> cookies = map.get(cookiesUrl(url));
+        if (cookies != null) {
+            for (HttpCookieWithId hcwi : cookies) {
+                HttpCookie cookie = hcwi.httpCookie;
+                if (ObjectUtils.equal(name, hcwi.httpCookie.getName()) &&
+                        pathMatches(cookie, url) && portMatches(cookie, url)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

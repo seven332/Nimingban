@@ -15,20 +15,13 @@
   ~ limitations under the License.
   -->
 
-<menu
+<shape
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:shape="rectangle">
 
-    <item
-        android:id="@+id/action_reply"
-        android:title="@string/reply"
-        android:icon="@drawable/ic_reply_dark_x24"
-        app:showAsAction="always" />
+    <gradient
+        android:startColor="@android:color/transparent"
+        android:endColor="?attr/colorShadow"
+        android:angle="270"/>
 
-    <item
-        android:id="@+id/action_go_to"
-        android:title="@string/go_to"
-        android:icon="@drawable/ic_go_to_dark_x24"
-        app:showAsAction="ifRoom" />
-
-</menu>
+</shape>

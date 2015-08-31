@@ -54,6 +54,13 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name="com.hippo.nimingban.ui.ReplyActivity"
+            android:theme="@style/AppTheme"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
     </application>
 
 </manifest>

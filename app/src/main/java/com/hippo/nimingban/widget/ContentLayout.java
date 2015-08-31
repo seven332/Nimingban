@@ -135,6 +135,10 @@ public class ContentLayout extends FrameLayout {
         public static final int TYPE_SOMEWHERE = 5;
         public static final int TYPE_REFRESH_PAGE = 6;
 
+        public static final int REFRESH_TYPE_HEADER = 0;
+        public static final int REFRESH_TYPE_FOOTER = 1;
+        public static final int REFRESH_TYPE_PROGRESS_VIEW = 2;
+
         private ProgressView mProgressView;
         private ViewGroup mTipView;
         private RefreshLayout mRefreshLayout;
@@ -489,6 +493,35 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        /**
+         * Be carefull
+         */
+        public void doGetData(int type, int page, int refreshType) {
+            switch (refreshType) {
+                default:
+                case REFRESH_TYPE_HEADER:
+                    showContent();
+                    mRefreshLayout.setFooterRefreshing(false);
+                    mRefreshLayout.setHeaderRefreshing(true);
+                    break;
+                case REFRESH_TYPE_FOOTER:
+                    showContent();
+                    mRefreshLayout.setHeaderRefreshing(false);
+                    mRefreshLayout.setFooterRefreshing(true);
+                    break;
+                case REFRESH_TYPE_PROGRESS_VIEW:
+                    showProgressBar();
+                    mRefreshLayout.setHeaderRefreshing(false);
+                    mRefreshLayout.setFooterRefreshing(false);
+                    break;
+            }
+
+            mCurrentTaskId = mIdGenerator.nextId();
+            mCurrentTaskType = type;
+            mCurrentTaskPage = page;
+            getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+        }
+
         private void doRefresh() {
             mCurrentTaskId = mIdGenerator.nextId();
             mCurrentTaskType = TYPE_REFRESH;
@@ -572,8 +605,8 @@ public class ContentLayout extends FrameLayout {
                 mCurrentTaskPage = page;
                 getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             } else if (page == mEndPage) {
-                mRefreshLayout.setFooterRefreshing(false);
-                mRefreshLayout.setHeaderRefreshing(true);
+                mRefreshLayout.setHeaderRefreshing(false);
+                mRefreshLayout.setFooterRefreshing(true);
 
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_NEXT_PAGE;

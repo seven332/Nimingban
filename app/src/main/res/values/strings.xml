@@ -18,6 +18,7 @@
 
     <string name="app_name">Nimingban</string>
 
+    <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
     <plurals name="go_to_hint">
         <item quantity="one">Page %1$d, %2$d pages in total</item>
@@ -27,5 +28,23 @@
     <string name="go_to_error_out_of_range">Target page is out of range</string>
 
     <string name="show_thread">Show thread</string>
+
+    <string name="replying">Replying…</string>
+    <string name="reply_successfully">Reply successfully</string>
+    <string name="reply_failed">Reply failed</string>
+
+    <string name="no_cookies">No cookies</string>
+    <string name="no_cookies_ac">It seems that you have no cookies of AC nimingban. Try getting cookies ?</string>
+    <string name="i_dont_mind">I don\'t mind</string>
+    <string name="getting_cookies">Getting Cookies…</string>
+    <string name="got_cookies">Got cookies !</string>
+    <string name="cant_get_cookies">Can\'t get cookies</string>
+
+    <string name="em_timeout">Timeout</string>
+    <string name="em_unknown_host">Unknown host</string>
+    <string name="em_response_code">Unexpected response code: %d</string>
+    <string name="em_redirection">Too many redirections</string>
+    <string name="em_socket">Network error</string>
+    <string name="em_unknown">Weird</string>
 
 </resources>

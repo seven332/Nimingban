@@ -21,12 +21,24 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.hippo.httpclient.ResponseCodeException;
+import com.hippo.nimingban.R;
+import com.hippo.nimingban.client.NMBException;
+import com.hippo.yorozuya.Say;
+
+import org.apache.http.conn.ConnectTimeoutException;
+
+import java.net.ProtocolException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+
 public final class ExceptionUtils {
 
     private static final String TAG = ExceptionUtils.class.getSimpleName();
 
-    public static @NonNull String getReadableString(Context context, Exception e) {
-        /*
+    @NonNull
+    public static String getReadableString(@NonNull Context context, @NonNull Exception e) {
         if (e instanceof ConnectTimeoutException ||
                 e instanceof SocketTimeoutException) {
             return context.getString(R.string.em_timeout);
@@ -34,24 +46,22 @@ public final class ExceptionUtils {
             return context.getString(R.string.em_unknown_host);
         } else if (e instanceof ResponseCodeException) {
             ResponseCodeException responseCodeException = (ResponseCodeException) e;
-            String error = String.format(context.getString(R.string.em_response_code),
-                    responseCodeException.getResponseCode());
+            String error = context.getString(R.string.em_response_code, responseCodeException.getResponseCode());
             if (responseCodeException.isIdentifiedResponseCode()) {
-                error += '\n' + responseCodeException.getMessage();
+                error += ", " + responseCodeException.getMessage();
             }
             return error;
         } else if (e instanceof ProtocolException && e.getMessage().startsWith("Too many follow-up requests:")) {
             return context.getString(R.string.em_redirection);
         } else if (e instanceof SocketException) {
             return context.getString(R.string.em_socket);
-        } else if (e instanceof EhException) {
+        } else if (e instanceof NMBException) {
             return e.getMessage();
         } else {
             Say.d(TAG, "Can't recognize this Exception", e);
+            e.printStackTrace();
             return context.getString(R.string.em_unknown);
         }
-        */
-        return null;
     }
 
     public static @Nullable String getReasonString(Context context, Exception e) {

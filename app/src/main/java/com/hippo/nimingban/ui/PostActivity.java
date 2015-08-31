@@ -77,6 +77,8 @@ public class PostActivity extends AppCompatActivity {
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
 
+    public static final int REQUEST_CODE_REPLY = 0;
+
     private NMBClient mNMBClient;
     private Conaco mConaco;
 
@@ -252,9 +254,34 @@ public class PostActivity extends AppCompatActivity {
                     dialog.show();
                     helper.setPositiveButtonClickListener(dialog);
                 }
-                return false;
+                return true;
+            case R.id.action_reply:
+                if (!TextUtils.isEmpty(mId)) {
+                    Intent intent = new Intent(this, ReplyActivity.class);
+                    intent.setAction(ReplyActivity.ACTION_REPLY);
+                    intent.putExtra(ReplyActivity.KEY_SITE, mSite);
+                    intent.putExtra(ReplyActivity.KEY_ID, mId);
+                    startActivityForResult(intent, REQUEST_CODE_REPLY);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_REPLY && resultCode == RESULT_OK) {
+            // Reply successfully
+            int currentPage = mReplyHelper.getCurrentPage();
+            int pages = mReplyHelper.getPages();
+            if (currentPage >= 0 && currentPage + 1 == pages) {
+                // It is the last page, refresh it
+                mReplyHelper.doGetData(ContentLayout.ContentHelper.TYPE_REFRESH_PAGE,
+                        currentPage, ContentLayout.ContentHelper.REFRESH_TYPE_FOOTER);
+            }
         }
     }
 
