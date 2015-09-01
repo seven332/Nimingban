@@ -18,6 +18,10 @@
 <resources>
 
     <!-- Drawable -->
+    <!-- primary_drawable_light     54% -->
+    <!-- secondary_drawable_light   26% -->
+    <!-- primary_drawable_dark     100% -->
+    <!-- secondary_drawable_dark    30% -->
     <color name="primary_drawable_light">#8a000000</color>
     <color name="secondary_drawable_light">#42000000</color>
     <color name="primary_drawable_dark">#ffffffff</color>
@@ -33,6 +37,7 @@
     <color name="secondary_text_default_dark">#61ffffff</color>
     <color name="secondary_text_disabled_light">#24000000</color>
 
+    <color name="bule_500">#ff5677fc</color>
     <color name="deep_orange_500">#ffff5722</color>
     <color name="deep_orange_700">#ffe64a19</color>
     <color name="light_blue_500">#ff03a9f4</color>

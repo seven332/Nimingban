@@ -29,6 +29,7 @@ import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.vectorold.content.VectorContext;
 
 import java.io.File;
@@ -40,6 +41,7 @@ public class NMBApplication extends Application {
     private NMBHttpClient mNMBHttpClient;
     private NMBClient mNMBClient;
     private Conaco mConaco;
+    private SimpleDrawableHelper mDrawableHelper;
     private SimpleDiskCache mImageDiskCache;
 
     @Override
@@ -102,6 +104,15 @@ public class NMBApplication extends Application {
             application.mConaco = builder.build();
         }
         return application.mConaco;
+    }
+
+    @Nullable
+    public static SimpleDrawableHelper getSimpleDrawableHelper(@NonNull Context context) {
+        NMBApplication application = ((NMBApplication) context.getApplicationContext());
+        if (application.mDrawableHelper == null) {
+            application.mDrawableHelper = new SimpleDrawableHelper(context);
+        }
+        return application.mDrawableHelper;
     }
 
     @Nullable

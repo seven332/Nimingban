@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.widget.ContentLayout;
+import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
@@ -53,7 +55,8 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public final class ListActivity extends AppCompatActivity implements RightDrawer.OnSelectForumListener {
+public final class ListActivity extends AppCompatActivity
+        implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -61,6 +64,7 @@ public final class ListActivity extends AppCompatActivity implements RightDrawer
     private DrawerLayout mDrawerLayout;
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
+    private LeftDrawer mLeftDrawer;
     private RightDrawer mRightDrawer;
 
     private Forum mCurrentForum;
@@ -81,6 +85,7 @@ public final class ListActivity extends AppCompatActivity implements RightDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mContentLayout = (ContentLayout) mDrawerLayout.findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
+        mLeftDrawer = (LeftDrawer) mDrawerLayout.findViewById(R.id.left_drawer);
         mRightDrawer = (RightDrawer) mDrawerLayout.findViewById(R.id.right_drawer);
 
         mPostHelper = new PostHelper();
@@ -96,6 +101,8 @@ public final class ListActivity extends AppCompatActivity implements RightDrawer
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();
+
+        mLeftDrawer.setHelper(this);
 
         mRightDrawer.setOnSelectForumListener(this);
 
@@ -135,6 +142,11 @@ public final class ListActivity extends AppCompatActivity implements RightDrawer
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
+    }
+
+    @Override
+    public void onClickSettings() {
+        Log.d("TAG", "onClickSettings");
     }
 
     private class ClickPostListener implements EasyRecyclerView.OnItemClickListener {

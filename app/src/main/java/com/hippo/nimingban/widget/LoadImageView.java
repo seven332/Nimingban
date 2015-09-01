@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.nimingban.NMBApplication;
@@ -129,7 +130,10 @@ public class LoadImageView extends ImageView implements Unikery,
 
         mKey = key;
         mUrl = url;
-        mConaco.load(this, key, url);
+
+        ConacoTask.Builder builder = new ConacoTask.Builder()
+                .setUnikery(this).setKey(mKey).setUrl(mUrl);
+        mConaco.load(builder);
     }
 
     public void cancel() {
@@ -154,6 +158,12 @@ public class LoadImageView extends ImageView implements Unikery,
     @Override
     public void onStart() {
         setImageDrawable(null);
+
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+        }
+        mHolder = null;
     }
 
     @Override
@@ -161,7 +171,7 @@ public class LoadImageView extends ImageView implements Unikery,
     }
 
     @Override
-    public void onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
+    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
         mKey = null;
         mUrl = null;
 
@@ -172,7 +182,6 @@ public class LoadImageView extends ImageView implements Unikery,
 
         switch (source) {
             default:
-            case USER:
             case MEMORY:
             case DISK:
                 setImageDrawable(holder.getDrawable());
@@ -191,6 +200,19 @@ public class LoadImageView extends ImageView implements Unikery,
         if (olderHolder != null) {
             olderHolder.release();
         }
+
+        return true;
+    }
+
+    @Override
+    public void onSetDrawable(Drawable drawable) {
+        setImageDrawable(drawable);
+
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+        }
+        mHolder = null;
     }
 
     @Override
@@ -202,6 +224,12 @@ public class LoadImageView extends ImageView implements Unikery,
         } else if (mRetryType == RetryType.LONG_CLICK) {
             setOnLongClickListener(this);
         }
+
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+        }
+        mHolder = null;
     }
 
     @Override

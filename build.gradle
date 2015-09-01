@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle-experimental:0.2.1'
@@ -15,6 +16,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
     }
 }
 
