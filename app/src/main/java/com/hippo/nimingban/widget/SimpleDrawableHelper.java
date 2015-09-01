@@ -113,8 +113,13 @@ public class SimpleDrawableHelper implements DrawableHelper {
 
     @Override
     public void onRemove(String key, @NonNull DrawableHolder oldValue) {
-        if (oldValue.isFree() && oldValue.getDrawable() instanceof BitmapDrawable) {
-            mBitmapPool.addReusableBitmap(((BitmapDrawable) oldValue.getDrawable()).getBitmap());
+        if (oldValue.isFree()) {
+            Drawable drawable = oldValue.getDrawable();
+            if (drawable instanceof BitmapDrawable) {
+                mBitmapPool.addReusableBitmap(((BitmapDrawable) drawable).getBitmap());
+            } else if (drawable instanceof GifDrawable) {
+                ((GifDrawable) drawable).recycle();
+            }
         }
     }
 }
