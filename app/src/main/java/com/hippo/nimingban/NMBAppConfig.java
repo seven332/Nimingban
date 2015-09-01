@@ -25,8 +25,6 @@ import java.io.File;
 
 public class NMBAppConfig {
 
-
-
     public static @Nullable File getTempDir(Context context) {
         File temp = context.getCacheDir();
         if (FileUtils.ensureDirectory(temp)) {

@@ -31,6 +31,7 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.vectorold.content.VectorContext;
+import com.hippo.yorozuya.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +48,9 @@ public class NMBApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Remove temp file
+        FileUtils.deleteContent(NMBAppConfig.getTempDir(this));
 
         DB.initialize(this);
         HttpCookieDB.initialize(this);
