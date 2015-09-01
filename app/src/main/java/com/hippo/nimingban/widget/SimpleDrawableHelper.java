@@ -43,7 +43,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
     private BitmapPool mBitmapPool;
 
     public SimpleDrawableHelper(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         mBitmapPool = new BitmapPool();
     }
 
