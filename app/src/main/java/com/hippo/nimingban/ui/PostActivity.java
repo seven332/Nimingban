@@ -18,6 +18,8 @@ package com.hippo.nimingban.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -68,7 +70,8 @@ import com.hippo.yorozuya.MathUtils;
 
 import java.util.List;
 
-public class PostActivity extends AppCompatActivity {
+public final class PostActivity extends AppCompatActivity implements EasyRecyclerView.OnItemClickListener,
+        EasyRecyclerView.OnItemLongClickListener {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
     public static final String ACTION_SITE_ID = "com.hippo.nimingban.ui.PostActivity.action.SITE_ID";
@@ -151,7 +154,8 @@ public class PostActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mReplyAdapter);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setOnItemClickListener(new ClickReplyListener());
+        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnItemLongClickListener(this);
         mRecyclerView.hasFixedSize();
 
         mOpColor = getResources().getColor(R.color.green_ntr);
@@ -170,7 +174,6 @@ public class PostActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.activity_post, menu);
         return true;
     }
-
 
     private class GoToDialogHelper implements View.OnClickListener,
             DialogInterface.OnDismissListener, EditText.OnEditorActionListener {
@@ -499,25 +502,76 @@ public class PostActivity extends AppCompatActivity {
         helper.request();
     }
 
-    private class ClickReplyListener implements EasyRecyclerView.OnItemClickListener {
+    private class ReplyDailogHelper implements DialogInterface.OnClickListener {
+
+        private Reply mReply;
+
+        public ReplyDailogHelper(Reply reply) {
+            mReply = reply;
+        }
 
         @Override
-        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
-            if (holder instanceof ReplyHolder) {
-                ReplyHolder replyHolder = (ReplyHolder) holder;
-                ClickableSpan span = replyHolder.content.getCurrentSpan();
-                replyHolder.content.clearCurrentSpan();
-
-                if (span instanceof URLSpan) {
-                    handleURLSpan((URLSpan) span);
-                    return true;
-                } else if (span instanceof ReferenceSpan) {
-                    handleReferenceSpan((ReferenceSpan) span);
-                    return true;
-                }
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case 0:
+                    // Reply
+                    if (!TextUtils.isEmpty(mId)) {
+                        Intent intent = new Intent(PostActivity.this, ReplyActivity.class);
+                        intent.setAction(ReplyActivity.ACTION_REPLY);
+                        intent.putExtra(ReplyActivity.KEY_SITE, mSite);
+                        intent.putExtra(ReplyActivity.KEY_ID, mId);
+                        intent.putExtra(ReplyActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
+                        startActivityForResult(intent, REQUEST_CODE_REPLY);
+                    }
+                    break;
+                case 1:
+                    // Copy
+                    ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    cbm.setPrimaryClip(ClipData.newPlainText(null, mReply.getNMBDisplayContent()));
+                    Toast.makeText(PostActivity.this, R.string.comment_copied_clipboard, Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    // Report
+                    // TODO
+                    break;
+                case 3:
+                    // Info
+                    new AlertDialog.Builder(PostActivity.this).setMessage(mReply.toString()).show();
+                    break;
             }
+        }
+    }
 
+    private void showReplyDialog(int position) {
+        ReplyDailogHelper helper = new ReplyDailogHelper(mReplyHelper.getDataAt(position));
+        new AlertDialog.Builder(this).setItems(R.array.reply_dialog, helper).show();
+    }
+
+    @Override
+    public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
+        showReplyDialog(position);
+        return true;
+    }
+
+    @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
+        if (holder instanceof ReplyHolder) {
+            ReplyHolder replyHolder = (ReplyHolder) holder;
+            ClickableSpan span = replyHolder.content.getCurrentSpan();
+            replyHolder.content.clearCurrentSpan();
+
+            if (span instanceof URLSpan) {
+                handleURLSpan((URLSpan) span);
+                return true;
+            } else if (span instanceof ReferenceSpan) {
+                handleReferenceSpan((ReferenceSpan) span);
+                return true;
+            } else {
+                showReplyDialog(position);
+                return true;
+            }
+        } else {
             return false;
         }
     }

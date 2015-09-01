@@ -64,10 +64,10 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         Resources resources = context.getResources();
 
         Drawable[] drawables = {
-                resources.getDrawable(R.drawable.ic_setting_light_x24)
+                resources.getDrawable(R.drawable.ic_setting_light_x24) // TODO darktheme
         };
         String[] strings = {
-                "Settings"
+                "Settings" // TODO hardcode
         };
 
         mDrawerListView.setData(drawables, strings);

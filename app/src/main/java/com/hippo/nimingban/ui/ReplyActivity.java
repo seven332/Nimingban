@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -60,6 +61,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
 
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
+    public static final String KEY_TEXT = "text";
 
     public static final int REQUEST_CODE_SELECT_IMAGE = 0;
 
@@ -76,6 +78,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
 
     private int mSite;
     private String mId;
+    private String mPresetText;
 
     private File mSeletedImageFile;
     private Bitmap mSeletedImageBitmap;
@@ -94,6 +97,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         if (ACTION_REPLY.equals(action)) {
             int site = intent.getIntExtra(KEY_SITE, -1);
             String id = intent.getStringExtra(KEY_ID);
+            mPresetText = intent.getStringExtra(KEY_TEXT);
             if (site != -1 && id != null) { // TODO check is site valid
                 mSite = site;
                 mId = id;
@@ -136,6 +140,10 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         mDraw.setOnClickListener(this);
         mSend.setOnClickListener(this);
         mDelete.setOnClickListener(this);
+
+        if (!TextUtils.isEmpty(mPresetText)) {
+            mEditText.append(mPresetText);
+        }
     }
 
     @Override
