@@ -59,7 +59,7 @@
             android:theme="@style/AppTheme"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
 
     </application>
 

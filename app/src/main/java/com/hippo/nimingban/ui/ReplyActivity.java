@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -46,6 +47,7 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.LayoutUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -86,6 +88,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
     private ProgressDialog mGetCookiePDiglog;
     private ProgressDialog mReplyPDiglog;
 
+    private int mEditTextMinHeight;
 
     // false for error
     private boolean handlerIntent(Intent intent) {
@@ -144,6 +147,8 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         if (!TextUtils.isEmpty(mPresetText)) {
             mEditText.append(mPresetText);
         }
+
+        mEditTextMinHeight = LayoutUtils.dp2pix(this, 128);
     }
 
     @Override
@@ -254,6 +259,15 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
 
         mPreview.setImageDrawable(null);
         mImagePreview.setVisibility(View.GONE);
+
+        ViewGroup.LayoutParams lp = mEditText.getLayoutParams();
+        if (lp == null) {
+            lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        } else{
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+        mEditText.setLayoutParams(lp);
     }
 
     private void setImagePreview(File file, Bitmap bitmap) {
@@ -266,6 +280,15 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
 
         mPreview.setImageBitmap(bitmap);
         mImagePreview.setVisibility(View.VISIBLE);
+
+        ViewGroup.LayoutParams lp = mEditText.getLayoutParams();
+        if (lp == null) {
+            lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+        } else{
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+        mEditText.setLayoutParams(lp);
     }
 
     // TODO do not do it in UI thread
