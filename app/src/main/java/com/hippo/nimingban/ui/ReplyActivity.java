@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.ui;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +27,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -32,8 +36,10 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.nimingban.Emoji;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -45,6 +51,8 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
@@ -221,6 +229,78 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
                 .setNeutralButton(R.string.i_dont_mind, listener).show();
     }
 
+    private class EmojiDialogHelper implements EasyRecyclerView.OnItemClickListener,
+            DialogInterface.OnDismissListener {
+
+        private Dialog mDialog;
+        private View mView;
+
+        private EmojiDialogHelper() {
+            @SuppressLint("InflateParams")
+            EasyRecyclerView recyclerView = (EasyRecyclerView) ReplyActivity.this
+                    .getLayoutInflater().inflate(R.layout.dialog_emoji, null);
+            recyclerView.setAdapter(new EmojiAdapter());
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)); // TODO
+            recyclerView.setSelector(RippleSalon.generateRippleDrawable(false)); // TODO darktheme
+            recyclerView.setOnItemClickListener(this);
+            mView = recyclerView;
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        @Override
+        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+            if (mDialog != null) {
+                mEditText.append(Emoji.EMOJI_VALUE[position]);
+                mDialog.dismiss();
+                mDialog = null;
+            }
+            return true;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog = null;
+        }
+
+
+        private class EmojiAdapter extends RecyclerView.Adapter<SimpleHolder> {
+
+            @SuppressLint("InflateParams")
+            @Override
+            public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new SimpleHolder(ReplyActivity.this
+                        .getLayoutInflater().inflate(R.layout.item_emoji, null));
+            }
+
+            @Override
+            public void onBindViewHolder(SimpleHolder holder, int position) {
+                ((TextView) holder.itemView).setText(Emoji.EMOJI_NAME[position]);
+            }
+
+            @Override
+            public int getItemCount() {
+                return Emoji.COUNT;
+            }
+        }
+    }
+
+    private void showEmojiDialog() {
+        EmojiDialogHelper helper = new EmojiDialogHelper();
+        Dialog dialog = new AlertDialog.Builder(this)
+                .setView(helper.getView())
+                .setOnDismissListener(helper)
+                .create();
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+
     @Override
     public void onClick(View v) {
         if (mSend == v) {
@@ -238,6 +318,8 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
             } else {
                 tryGettingCookies();
             }
+        } else if (mEmoji == v) {
+            showEmojiDialog();
         } else if (mImage == v) {
             Intent intent = new Intent();
             intent.setType("image/*");
