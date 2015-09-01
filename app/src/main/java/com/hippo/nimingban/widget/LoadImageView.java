@@ -25,25 +25,30 @@ import android.graphics.drawable.TransitionDrawable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
+import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
+import com.hippo.widget.FixedAspectImageView;
 
-public class LoadImageView extends ImageView implements Unikery,
+import pl.droidsonroids.gif.GifDrawable;
+
+public class LoadImageView extends FixedAspectImageView implements Unikery,
         View.OnClickListener, View.OnLongClickListener {
 
     private int mTaskId = Unikery.INVAILD_ID;
 
-    private DrawableHolder mHolder;
-
     private Conaco mConaco;
+
     private String mKey;
     private String mUrl;
+    private DataContainer mContainer;
+
+    private DrawableHolder mHolder;
 
     private boolean mFailed;
 
@@ -125,24 +130,27 @@ public class LoadImageView extends ImageView implements Unikery,
     }
 
     public void load(String key, String url) {
+        load(key, url, null);
+    }
+
+    public void load(String key, String url, DataContainer container) {
         mFailed = false;
         cancelRetryType();
 
         mKey = key;
         mUrl = url;
+        mContainer = container;
 
         ConacoTask.Builder builder = new ConacoTask.Builder()
-                .setUnikery(this).setKey(mKey).setUrl(mUrl);
+                .setUnikery(this)
+                .setKey(key)
+                .setUrl(url)
+                .setDataContainer(container);
         mConaco.load(builder);
     }
 
     public void cancel() {
         mConaco.cancel(this);
-        cancelRetryType();
-
-        // release
-        mKey = null;
-        mUrl = null;
     }
 
     @Override
@@ -162,8 +170,8 @@ public class LoadImageView extends ImageView implements Unikery,
         // Release old holder
         if (mHolder != null) {
             mHolder.release();
+            mHolder = null;
         }
-        mHolder = null;
     }
 
     @Override
@@ -171,26 +179,41 @@ public class LoadImageView extends ImageView implements Unikery,
     }
 
     @Override
+    public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
+    }
+
+    @Override
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
+        // Can't use GifDrawable again
+        if (holder.getDrawable() instanceof GifDrawable && !holder.isFree()) {
+            return false;
+        }
+
+        // Release
         mKey = null;
         mUrl = null;
+        mContainer = null;
 
         DrawableHolder olderHolder = mHolder;
         mHolder = holder;
-
         holder.obtain();
+
+        Drawable drawable = holder.getDrawable();
+        if (drawable instanceof GifDrawable) {
+            ((GifDrawable) drawable).start();
+        }
 
         switch (source) {
             default:
             case MEMORY:
             case DISK:
-                setImageDrawable(holder.getDrawable());
+                setImageDrawable(drawable);
                 break;
 
             case NETWORK:
                 Drawable[] layers = new Drawable[2];
                 layers[0] = new ColorDrawable(Color.TRANSPARENT);
-                layers[1] = holder.getDrawable();
+                layers[1] = drawable;
                 TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
                 setImageDrawable(transitionDrawable);
                 transitionDrawable.startTransition(300);
@@ -211,18 +234,23 @@ public class LoadImageView extends ImageView implements Unikery,
         // Release old holder
         if (mHolder != null) {
             mHolder.release();
+            mHolder = null;
         }
-        mHolder = null;
     }
 
     @Override
     public void onFailure() {
         mFailed = true;
-        setImageResource(R.drawable.ic_failed);
+        setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_failed)); // TODO darktheme
         if (mRetryType == RetryType.CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RetryType.LONG_CLICK) {
             setOnLongClickListener(this);
+        } else {
+            // Can't retry, so release
+            mKey = null;
+            mUrl = null;
+            mContainer = null;
         }
 
         // Release old holder
@@ -234,24 +262,22 @@ public class LoadImageView extends ImageView implements Unikery,
 
     @Override
     public void onCancel() {
-        // Empty, everything is done in cancel
+        mFailed = false;
+        cancelRetryType();
+        // release
+        mKey = null;
+        mUrl = null;
+        mContainer = null;
     }
 
     @Override
     public void onClick(View v) {
-        setOnClickListener(null);
-        setClickable(false);
-
-        load(mKey, mUrl);
+        load(mKey, mUrl, mContainer);
     }
 
     @Override
     public boolean onLongClick(View v) {
-        setOnLongClickListener(null);
-        setLongClickable(false);
-
-        load(mKey, mUrl);
-
+        load(mKey, mUrl, mContainer);
         return true;
     }
 }

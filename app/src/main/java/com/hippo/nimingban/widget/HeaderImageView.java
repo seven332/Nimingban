@@ -27,31 +27,39 @@ import android.widget.Toast;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.DrawableHelper;
 import com.hippo.conaco.DrawableHolder;
+import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
 import com.hippo.io.FileInputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.widget.FixedAspectImageView;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
 import pl.droidsonroids.gif.GifDrawable;
 
-public final class HeaderImageView extends FixedAspectImageView implements Unikery, View.OnClickListener {
+public final class HeaderImageView extends FixedAspectImageView
+        implements Unikery, View.OnClickListener, View.OnLongClickListener {
 
-    private int mId = Unikery.INVAILD_ID;;
+    private int mTaskId = Unikery.INVAILD_ID;
+
     private Conaco mConaco;
-    private DrawableHelper mDrawableHelper;
-    private DrawableHolder mHolder;
 
     private final long[] mHits = new long[8];
+
+    private File mImageFile;
+    private TempDataContainer mContainer;
+    private DrawableHolder mHolder;
+
+    private OnLongClickImageListener mOnLongClickImageListener;
 
     public HeaderImageView(Context context) {
         super(context);
@@ -70,15 +78,19 @@ public final class HeaderImageView extends FixedAspectImageView implements Unike
 
     private void init(Context context) {
         mConaco = NMBApplication.getConaco(context);
-        mDrawableHelper = NMBApplication.getSimpleDrawableHelper(context);
         setSoundEffectsEnabled(false);
         setOnClickListener(this);
+        setOnLongClickListener(this);
         load();
+    }
+
+    public void setOnLongClickImageListener(OnLongClickImageListener listener) {
+        mOnLongClickImageListener = listener;
     }
 
     @Override
     public void onClick(View v) {
-        System.arraycopy(mHits, 1, mHits, 0, mHits.length-1);
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
         mHits[mHits.length-1] = SystemClock.uptimeMillis();
         if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
             Arrays.fill(mHits, 0);
@@ -87,24 +99,33 @@ public final class HeaderImageView extends FixedAspectImageView implements Unike
         }
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        if (mImageFile != null && mOnLongClickImageListener != null) {
+            return mOnLongClickImageListener.onLongClickImage(mImageFile);
+        } else {
+            return false;
+        }
+    }
+
     private void load() {
-        setScaleType(ScaleType.CENTER_CROP);
+        mContainer = new TempDataContainer();
         ConacoTask.Builder builder = new ConacoTask.Builder()
                 .setUnikery(this)
+                .setKey(null)
                 .setUrl("http://cover.acfunwiki.org/cover.php")
-                .setDataContainer(new TempDataContainer())
-                .setHelper(mDrawableHelper);
+                .setDataContainer(mContainer);
         mConaco.load(builder);
     }
 
     @Override
     public void setTaskId(int id) {
-        mId = id;
+        mTaskId = id;
     }
 
     @Override
     public int getTaskId() {
-        return mId;
+        return mTaskId;
     }
 
     @Override
@@ -116,28 +137,34 @@ public final class HeaderImageView extends FixedAspectImageView implements Unike
     }
 
     @Override
+    public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
+    }
+
+    @Override
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
+        // Can't use GifDrawable again
         if (holder.getDrawable() instanceof GifDrawable && !holder.isFree()) {
             return false;
+        }
+
+        // Update image file
+        FileUtils.delete(mImageFile);
+        if (mContainer != null) {
+            mImageFile = mContainer.mTempFile;
+            mContainer = null;
         }
 
         DrawableHolder olderHolder = mHolder;
         mHolder = holder;
         holder.obtain();
 
-        // Refresh old gif drawable
-        Drawable oldDrawable = getDrawable();
-        if (oldDrawable instanceof GifDrawable) {
-            ((GifDrawable) oldDrawable).recycle();
-        }
-
         Drawable drawable = holder.getDrawable();
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
         }
+
         setImageDrawable(drawable);
 
-        // Release old holder
         if (olderHolder != null) {
             olderHolder.release();
         }
@@ -147,30 +174,28 @@ public final class HeaderImageView extends FixedAspectImageView implements Unike
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        // Refresh old gif drawable
-        Drawable oldDrawable = getDrawable();
-        if (oldDrawable instanceof GifDrawable) {
-            ((GifDrawable) oldDrawable).recycle();
-        }
-
-        if (drawable instanceof GifDrawable) {
-            ((GifDrawable) drawable).start();
-        }
         setImageDrawable(drawable);
 
         // Release old holder
         if (mHolder != null) {
             mHolder.release();
+            mHolder = null;
         }
-        mHolder = null;
     }
 
     @Override
     public void onFailure() {
+        mContainer = null;
     }
 
     @Override
     public void onCancel() {
+        mContainer = null;
+    }
+
+    public interface OnLongClickImageListener {
+
+        boolean onLongClickImage(File imageFile);
     }
 
     private class TempDataContainer implements DataContainer {
@@ -178,7 +203,7 @@ public final class HeaderImageView extends FixedAspectImageView implements Unike
         private File mTempFile;
 
         @Override
-        public boolean save(InputStream is) {
+        public boolean save(InputStream is, ProgressNotify notify) {
             FileOutputStream os = null;
             try {
                 mTempFile = NMBAppConfig.createTempFile(getContext());
@@ -188,7 +213,7 @@ public final class HeaderImageView extends FixedAspectImageView implements Unike
                 os = new FileOutputStream(mTempFile);
                 IOUtils.copy(is, os);
                 return true;
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 return false;
             } finally {
                 IOUtils.closeQuietly(os);
