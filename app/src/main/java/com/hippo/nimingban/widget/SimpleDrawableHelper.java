@@ -33,6 +33,7 @@ import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -77,7 +78,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 IOUtils.copy(is, fos);
                 isPipe.close();
                 isPipe.release();
-                return new GifDrawable(temp);
+                return new TempGifDrawable(temp);
             } else {
                 options.inJustDecodeBounds = false;
                 options.inMutable = true;
@@ -129,6 +130,22 @@ public class SimpleDrawableHelper implements DrawableHelper {
             return false;
         } else {
             return true;
+        }
+    }
+
+    private class TempGifDrawable extends GifDrawable {
+
+        private File mFile;
+
+        public TempGifDrawable(@NonNull File file) throws IOException {
+            super(file);
+            mFile = file;
+        }
+
+        @Override
+        public void recycle() {
+            super.recycle();
+            mFile.delete();
         }
     }
 }
