@@ -101,7 +101,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
     }
 
     @Override
-    public int sizeOf(String key, @NonNull Drawable value) {
+    public int sizeOf(@NonNull String key, @NonNull Drawable value) {
         if (value instanceof GifDrawable) {
             return (int) ((GifDrawable) value).getAllocationByteCount();
         } else if (value instanceof BitmapDrawable) {
@@ -112,7 +112,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
     }
 
     @Override
-    public void onRemove(String key, @NonNull DrawableHolder oldValue) {
+    public void onRemove(@NonNull String key, @NonNull DrawableHolder oldValue) {
         if (oldValue.isFree()) {
             Drawable drawable = oldValue.getDrawable();
             if (drawable instanceof BitmapDrawable) {
@@ -120,6 +120,15 @@ public class SimpleDrawableHelper implements DrawableHelper {
             } else if (drawable instanceof GifDrawable) {
                 ((GifDrawable) drawable).recycle();
             }
+        }
+    }
+
+    @Override
+    public boolean useMemoryCache(@NonNull String key, DrawableHolder holder) {
+        if (holder != null && holder.getDrawable() instanceof GifDrawable) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

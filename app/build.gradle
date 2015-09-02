@@ -72,6 +72,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.android.support:recyclerview-v7:23.0.0'
     compile 'com.alibaba:fastjson:1.1.45.android'
+    compile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
     compile 'de.greenrobot:greendao:1.3.7'
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.9'

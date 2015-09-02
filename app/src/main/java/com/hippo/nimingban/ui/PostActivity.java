@@ -355,11 +355,11 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                 }
             } else if (v == mThumb) {
                 if (mReply != null && !TextUtils.isEmpty(mReply.getNMBImageUrl())) {
-                    Intent intent = new Intent(PostActivity.this, GalleryActivity.class);
-                    intent.setAction(GalleryActivity.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity.KEY_SITE, mSite);
-                    intent.putExtra(GalleryActivity.KEY_ID, mReply.getNMBId());
-                    intent.putExtra(GalleryActivity.KEY_IMAGE, mReply.getNMBImageUrl());
+                    Intent intent = new Intent(PostActivity.this, GalleryActivity2.class);
+                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity2.KEY_SITE, mSite);
+                    intent.putExtra(GalleryActivity2.KEY_ID, mReply.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_IMAGE, mReply.getNMBImageUrl());
                     PostActivity.this.startActivity(intent);
                 }
             }
@@ -601,11 +601,11 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                 Reply reply = mReplyHelper.getDataAt(position);
                 String image = reply.getNMBImageUrl();
                 if (!TextUtils.isEmpty(image)) {
-                    Intent intent = new Intent(PostActivity.this, GalleryActivity.class);
-                    intent.setAction(GalleryActivity.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity.KEY_SITE, reply.getNMBSite());
-                    intent.putExtra(GalleryActivity.KEY_ID, reply.getNMBId());
-                    intent.putExtra(GalleryActivity.KEY_IMAGE, image);
+                    Intent intent = new Intent(PostActivity.this, GalleryActivity2.class);
+                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity2.KEY_SITE, reply.getNMBSite());
+                    intent.putExtra(GalleryActivity2.KEY_ID, reply.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     PostActivity.this.startActivity(intent);
                 }
             }

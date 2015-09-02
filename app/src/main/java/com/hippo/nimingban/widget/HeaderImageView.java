@@ -78,6 +78,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     private void init(Context context) {
         mConaco = NMBApplication.getConaco(context);
+        setScaleType(ScaleType.CENTER_CROP);
         setSoundEffectsEnabled(false);
         setOnClickListener(this);
         setOnLongClickListener(this);
@@ -227,6 +228,11 @@ public final class HeaderImageView extends FixedAspectImageView
             } else {
                 return new FileInputStreamPipe(mTempFile);
             }
+        }
+
+        @Override
+        public void remove() {
+            FileUtils.delete(mTempFile);
         }
     }
 }

@@ -26,7 +26,7 @@ import java.io.File;
 public class NMBAppConfig {
 
     public static @Nullable File getTempDir(Context context) {
-        File temp = context.getCacheDir();
+        File temp = new File(context.getCacheDir(), "temp");
         if (FileUtils.ensureDirectory(temp)) {
             return temp;
         } else {
@@ -39,24 +39,10 @@ public class NMBAppConfig {
     }
 
     public static @Nullable File createTempFile(Context context, String extension) {
-        File tempDir = getTempDir(context);
-        if (tempDir == null) {
-            return null;
-        }
+        return FileUtils.createTempFile(getTempDir(context), extension);
+    }
 
-        long now = System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            String filename = Long.toString(now + i);
-            if (extension != null) {
-                filename = filename + '.' + extension;
-            }
-            File tempFile = new File(tempDir, filename);
-            if (!tempFile.exists()) {
-                return tempFile;
-            }
-        }
-
-        // Unbelievable
-        return null;
+    public static @Nullable File createTempDir(Context context) {
+        return FileUtils.createTempDir(getTempDir(context));
     }
 }

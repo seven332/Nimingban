@@ -163,9 +163,26 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         return mTaskId;
     }
 
+    private void setImageDrawableSafely(Drawable drawable) {
+        Drawable oldDrawable = getDrawable();
+        if (oldDrawable instanceof TransitionDrawable) {
+            TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
+            int number = tDrawable.getNumberOfLayers();
+            if (number > 0) {
+                oldDrawable = tDrawable.getDrawable(number - 1);
+            }
+        }
+
+        if (oldDrawable instanceof GifDrawable) {
+            ((GifDrawable) oldDrawable).recycle();
+        }
+
+        setImageDrawable(drawable);
+    }
+
     @Override
     public void onStart() {
-        setImageDrawable(null);
+        setImageDrawableSafely(null);
 
         // Release old holder
         if (mHolder != null) {
@@ -207,7 +224,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
             default:
             case MEMORY:
             case DISK:
-                setImageDrawable(drawable);
+                setImageDrawableSafely(drawable);
                 break;
 
             case NETWORK:
@@ -215,7 +232,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
                 layers[0] = new ColorDrawable(Color.TRANSPARENT);
                 layers[1] = drawable;
                 TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                setImageDrawable(transitionDrawable);
+                setImageDrawableSafely(transitionDrawable);
                 transitionDrawable.startTransition(300);
                 break;
         }
@@ -229,7 +246,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setImageDrawable(drawable);
+        setImageDrawableSafely(drawable);
 
         // Release old holder
         if (mHolder != null) {
@@ -241,7 +258,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     @Override
     public void onFailure() {
         mFailed = true;
-        setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_failed)); // TODO darktheme
+        setImageDrawableSafely(getContext().getResources().getDrawable(R.drawable.ic_failed)); // TODO darktheme
         if (mRetryType == RetryType.CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RetryType.LONG_CLICK) {

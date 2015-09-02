@@ -186,11 +186,11 @@ public final class ListActivity extends AppCompatActivity
                 Post post = mPostHelper.getDataAt(position);
                 String image = post.getNMBImageUrl();
                 if (!TextUtils.isEmpty(image)) {
-                    Intent intent = new Intent(ListActivity.this, GalleryActivity.class);
-                    intent.setAction(GalleryActivity.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity.KEY_SITE, post.getNMBSite());
-                    intent.putExtra(GalleryActivity.KEY_ID, post.getNMBId());
-                    intent.putExtra(GalleryActivity.KEY_IMAGE, image);
+                    Intent intent = new Intent(ListActivity.this, GalleryActivity2.class);
+                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity2.KEY_SITE, post.getNMBSite());
+                    intent.putExtra(GalleryActivity2.KEY_ID, post.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     ListActivity.this.startActivity(intent);
                 }
             }

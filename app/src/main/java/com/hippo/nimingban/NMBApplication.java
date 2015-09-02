@@ -32,6 +32,7 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.vectorold.content.VectorContext;
 import com.hippo.yorozuya.FileUtils;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +55,8 @@ public class NMBApplication extends Application {
 
         DB.initialize(this);
         HttpCookieDB.initialize(this);
+
+        LeakCanary.install(this);
     }
 
     @Override
@@ -105,12 +108,13 @@ public class NMBApplication extends Application {
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 20 * 1024 * 1024;
             builder.httpClient = getNMBHttpClient(context);
+            builder.drawableHelper = getSimpleDrawableHelper(context);
             application.mConaco = builder.build();
         }
         return application.mConaco;
     }
 
-    @Nullable
+    @NonNull
     public static SimpleDrawableHelper getSimpleDrawableHelper(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mDrawableHelper == null) {
