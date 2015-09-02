@@ -63,4 +63,16 @@
     <string name="draft_copied_clipboard">Draft text copied to clipboard</string>
     <string name="no_draft">There is no draft</string>
 
+    <string name="just_now">Just now</string>
+    <plurals name="some_minutes_ago">
+        <item quantity="one">A minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="some_hours_ago">
+        <item quantity="one">An hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <string name="yesterday">Yesterday</string>
+    <string name="some_days_ago">%d days ago</string>
+
 </resources>

@@ -30,6 +30,7 @@ import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
+import com.hippo.util.ReadableTime;
 import com.hippo.vectorold.content.VectorContext;
 import com.hippo.yorozuya.FileUtils;
 import com.squareup.leakcanary.LeakCanary;
@@ -55,6 +56,7 @@ public class NMBApplication extends Application {
 
         DB.initialize(this);
         HttpCookieDB.initialize(this);
+        ReadableTime.initialize(this);
 
         LeakCanary.install(this);
     }
