@@ -181,7 +181,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (which == DialogInterface.BUTTON_POSITIVE) {
-                        DB.addDraft(text);
+                        DB.addDraft(mEditText.getText().toString());
                         finish();
                     } else if (which == DialogInterface.BUTTON_NEUTRAL) {
                         finish();

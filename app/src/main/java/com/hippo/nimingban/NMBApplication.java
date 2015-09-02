@@ -29,6 +29,7 @@ import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.util.ReadableTime;
 import com.hippo.vectorold.content.VectorContext;
@@ -54,6 +55,7 @@ public class NMBApplication extends Application {
         // Remove temp file
         FileUtils.deleteContent(NMBAppConfig.getTempDir(this));
 
+        Settings.initialize(this);
         DB.initialize(this);
         HttpCookieDB.initialize(this);
         ReadableTime.initialize(this);

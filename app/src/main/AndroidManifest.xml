@@ -74,6 +74,13 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name="com.hippo.nimingban.ui.SettingsActivity"
+            android:label="@string/settings"
+            android:theme="@style/AppTheme"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

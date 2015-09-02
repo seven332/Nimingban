@@ -16,16 +16,22 @@
 
 package com.hippo.nimingban.network;
 
+import com.hippo.yorozuya.MathUtils;
+
 import java.net.HttpCookie;
 
 public class HttpCookieWithId {
 
     public long id;
     public HttpCookie httpCookie;
+    private long mMaxAge;
+    private long mWhenCreated;
 
     public HttpCookieWithId(long id, HttpCookie httpCookie) {
         this.id = id;
         this.httpCookie = httpCookie;
+        mMaxAge = httpCookie.getMaxAge();
+        mWhenCreated = System.currentTimeMillis();
     }
 
     @Override
@@ -35,5 +41,33 @@ public class HttpCookieWithId {
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return 0 - Long.MAX_VALUE for the actual max age, -1 for eternal life
+     */
+    public long getMaxAge() {
+        if (mMaxAge == -1l) {
+            return -1l;
+        } else {
+            return MathUtils.clamp(mMaxAge - ((System.currentTimeMillis() - mWhenCreated) / 1000), 0l, Long.MAX_VALUE);
+        }
+    }
+
+    /**
+     * Returns true if this cookie's Max-Age is 0.
+     */
+    public boolean hasExpired() {
+        long maxAge = getMaxAge();
+
+        if (maxAge == -1l) {
+            return false;
+        }
+
+        boolean expired = false;
+        if (maxAge <= 0l) {
+            expired = true;
+        }
+        return expired;
     }
 }

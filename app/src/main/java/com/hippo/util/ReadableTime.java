@@ -20,22 +20,59 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.util.Settings;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public final class ReadableTime {
 
     private static Resources sResources;
 
-    private static final int SECOND_MILLIS = 1000;
-    private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
-    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
-    private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
+    public static final long SECOND_MILLIS = 1000l;
+    public static final long MINUTE_MILLIS = 60l * SECOND_MILLIS;
+    public static final long HOUR_MILLIS = 60l * MINUTE_MILLIS;
+    public static final long DAY_MILLIS = 24l * HOUR_MILLIS;
+    public static final long YEAR_MILLIS = 365l * DAY_MILLIS;
+
+    public static final int SIZE = 5;
+
+    public static final long[] MULTIPLES = {
+            YEAR_MILLIS,
+            DAY_MILLIS,
+            HOUR_MILLIS,
+            MINUTE_MILLIS,
+            SECOND_MILLIS
+    };
+
+    public static final int[] UNITS = {
+            R.plurals.year,
+            R.plurals.day,
+            R.plurals.hour,
+            R.plurals.minute,
+            R.plurals.second
+    };
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
+    private static final Object sDateFormatLock = new Object();
 
     public static void initialize(Context context) {
         sResources = context.getApplicationContext().getResources();
     }
 
     public static String getDisplayTime(long time) {
-        return getTimeAgo(time);
+        if (Settings.getPrettyTime()) {
+            return getTimeAgo(time);
+        } else {
+            return getPlainTime(time);
+        }
+    }
+
+    public static String getPlainTime(long time) {
+        synchronized (sDateFormatLock) {
+            return DATE_FORMAT.format(new Date(time));
+        }
     }
 
     public static String getTimeAgo(long time) {
@@ -65,5 +102,31 @@ public final class ReadableTime {
             int days = (int) (diff / DAY_MILLIS);
             return resources.getString(R.string.some_days_ago, days);
         }
+    }
+
+    public static String getTimeInterval(long time) {
+        StringBuilder sb = new StringBuilder();
+        Resources resources = sResources;
+
+        long leftover = time;
+        boolean start = false;
+
+        for (int i = 0; i < SIZE; i++) {
+            long multiple = MULTIPLES[i];
+            long quotient = leftover / multiple;
+            long remainder = leftover % multiple;
+            if (start || quotient != 0 || i == SIZE - 1) {
+                if (start) {
+                    sb.append(" ");
+                }
+                sb.append(quotient)
+                        .append(" ")
+                        .append(resources.getQuantityString(UNITS[i], (int) quotient));
+                start = true;
+            }
+            leftover = remainder;
+        }
+
+        return sb.toString();
     }
 }

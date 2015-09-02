@@ -18,14 +18,17 @@ package com.hippo.nimingban.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -42,6 +45,7 @@ import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
@@ -69,6 +73,7 @@ public final class ListActivity extends AppCompatActivity
     private EasyRecyclerView mRecyclerView;
     private LeftDrawer mLeftDrawer;
     private RightDrawer mRightDrawer;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     private Forum mCurrentForum;
 
@@ -93,6 +98,16 @@ public final class ListActivity extends AppCompatActivity
         mRecyclerView = mContentLayout.getRecyclerView();
         mLeftDrawer = (LeftDrawer) mDrawerLayout.findViewById(R.id.left_drawer);
         mRightDrawer = (RightDrawer) mDrawerLayout.findViewById(R.id.right_drawer);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.string.drawer_open, R.string.drawer_close);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
 
         mPostHelper = new PostHelper();
         mContentLayout.setHelper(mPostHelper);
@@ -142,6 +157,26 @@ public final class ListActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void onChangeForum(Forum forum) {
         if (forum != null) {
             setTitle(forum.getNMBDisplayname());
@@ -169,7 +204,8 @@ public final class ListActivity extends AppCompatActivity
 
     @Override
     public void onClickSettings() {
-        Log.d("TAG", "onClickSettings");
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     private class ClickPostListener implements EasyRecyclerView.OnItemClickListener {

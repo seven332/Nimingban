@@ -18,6 +18,9 @@
 
     <string name="app_name">Nimingban</string>
 
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
     <string name="press_twice_exit">Press twice to exit</string>
 
     <string name="reply">Reply</string>
@@ -76,5 +79,36 @@
     </plurals>
     <string name="yesterday">Yesterday</string>
     <string name="some_days_ago">%d days ago</string>
+
+    <plurals name="second">
+        <item quantity="one">second</item>
+        <item quantity="other">seconds</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="year">
+        <item quantity="one">year</item>
+        <item quantity="other">years</item>
+    </plurals>
+
+    <string name="settings">Settings</string>
+    <string name="main_pretty_time">Display pretty time</string>
+    <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
+    <string name="main_category_ac">Da Diao</string>
+    <string name="main_ac_cookies">Cookies</string>
+    <string name="main_ac_cookies_summary_no">Theoretically speaking, you have no cookies</string>
+    <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
+    <string name="main_ac_cookies_summary_forever">Theoretically speaking, you have everlasting cookies</string>
+    <string name=""></string>
 
 </resources>

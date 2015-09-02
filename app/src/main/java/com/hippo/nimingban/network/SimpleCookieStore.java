@@ -162,7 +162,7 @@ public class SimpleCookieStore {
             for (Iterator<HttpCookieWithId> i = cookiesForUri.iterator(); i.hasNext(); ) {
                 HttpCookieWithId hcwi = i.next();
                 HttpCookie cookie = hcwi.httpCookie;
-                if (cookie.hasExpired()) {
+                if (hcwi.hasExpired()) {
                     i.remove(); // remove expired cookies
                     HttpCookieDB.removeCookie(hcwi.id); // remove from DB
                 } else if (pathMatches(cookie, url) && portMatches(cookie, url)) {
@@ -184,7 +184,7 @@ public class SimpleCookieStore {
                 if (!HttpCookie.domainMatches(cookie.getDomain(), url.getHost())) {
                     continue;
                 }
-                if (cookie.hasExpired()) {
+                if (hcwi.hasExpired()) {
                     i.remove(); // remove expired cookies
                     HttpCookieDB.removeCookie(hcwi.id); // remove from DB
                 } else if (pathMatches(cookie, url) && portMatches(cookie, url) && !result.contains(cookie)) {
@@ -202,7 +202,7 @@ public class SimpleCookieStore {
             for (Iterator<HttpCookieWithId> i = list.iterator(); i.hasNext(); ) {
                 HttpCookieWithId hcwi = i.next();
                 HttpCookie cookie = hcwi.httpCookie;
-                if (cookie.hasExpired()) {
+                if (hcwi.hasExpired()) {
                     i.remove(); // remove expired cookies
                     HttpCookieDB.removeCookie(hcwi.id); // remove from DB
                 } else if (!result.contains(cookie)) {
@@ -252,18 +252,27 @@ public class SimpleCookieStore {
         return result;
     }
 
-    public synchronized boolean contain(@NonNull URL url, String name) {
+    public synchronized HttpCookieWithId getCookie(@NonNull URL url, String name) {
         List<HttpCookieWithId> cookies = map.get(cookiesUrl(url));
         if (cookies != null) {
-            for (HttpCookieWithId hcwi : cookies) {
+            for (Iterator<HttpCookieWithId> i = cookies.iterator(); i.hasNext(); ) {
+                HttpCookieWithId hcwi = i.next();
                 HttpCookie cookie = hcwi.httpCookie;
-                if (ObjectUtils.equal(name, hcwi.httpCookie.getName()) &&
+
+                if (hcwi.hasExpired()) {
+                    i.remove(); // remove expired cookies
+                    HttpCookieDB.removeCookie(hcwi.id); // remove from DB
+                } else if (ObjectUtils.equal(name, hcwi.httpCookie.getName()) &&
                         pathMatches(cookie, url) && portMatches(cookie, url)) {
-                    return true;
+                    return hcwi;
                 }
             }
         }
 
-        return false;
+        return null;
+    }
+
+    public synchronized boolean contain(@NonNull URL url, String name) {
+        return getCookie(url, name) != null;
     }
 }
