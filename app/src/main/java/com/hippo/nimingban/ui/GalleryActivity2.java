@@ -76,6 +76,19 @@ public class GalleryActivity2 extends AppCompatActivity {
         mViewPager.setAdapter(mGalleryAdapter);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Unload all pager
+        for (int i = 0, n = mViewPager.getChildCount(); i < n; i++) {
+            View child = mViewPager.getChildAt(i);
+            if (child instanceof GalleryPage) {
+                ((GalleryPage) child).unload();
+            }
+        }
+    }
+
     private class GalleryHolder extends PagerHolder {
 
         public GalleryPage galleryPage;
@@ -98,10 +111,6 @@ public class GalleryActivity2 extends AppCompatActivity {
         }
 
         public abstract void saveCurrentImage();
-    }
-
-    public static String getFilename(int site, String id) {
-        return site + ":" + id;
     }
 
     private class SingleImageAdapter extends GalleryAdapter {
@@ -136,39 +145,4 @@ public class GalleryActivity2 extends AppCompatActivity {
             // TODO
         }
     }
-
-    /*
-
-    private class GalleryAdapter extends PagerAdapter {
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            GalleryPage page = new GalleryPage(GalleryActivity2.this);
-            container.addView(page, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            ConacoTask.Builder builder = new ConacoTask.Builder()
-                    .setUnikery(page)
-                    .setKey(mImage)
-                    .setUrl(mImage);
-            NMBApplication.getConaco(GalleryActivity2.this).load(builder);
-            return new Object();
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            // TODO
-            container.removeAllViews();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return true;
-        }
-
-        @Override
-        public int getCount() {
-            return 1;
-        }
-    }
-    */
 }

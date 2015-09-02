@@ -36,6 +36,7 @@ public class NMBDaoGenerator {
 
         Schema schema = new Schema(1, PACKAGE);
         addACForum(schema);
+        addDraft(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
@@ -48,5 +49,14 @@ public class NMBDaoGenerator {
         entity.addStringProperty("displayname");
         entity.addIntProperty("priority");
         entity.addBooleanProperty("visibility");
+    }
+
+    private static void addDraft(Schema schema) {
+        Entity entity = schema.addEntity("DraftRaw");
+        entity.setTableName("DRAFT");
+        entity.setClassNameDao("DraftDao");
+        entity.addIdProperty();
+        entity.addStringProperty("content");
+        entity.addLongProperty("time");
     }
 }

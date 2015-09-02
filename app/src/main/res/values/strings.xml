@@ -39,6 +39,9 @@
     <string name="replying">Replying…</string>
     <string name="reply_successfully">Reply successfully</string>
     <string name="reply_failed">Reply failed</string>
+    <string name="save_text_draft">Save the text you typed to draft ?</string>
+    <string name="save">Save</string>
+    <string name="dont_save">Don\'t save</string>
 
     <string name="select_picture">Select picture</string>
 
@@ -55,5 +58,9 @@
     <string name="em_redirection">Too many redirections</string>
     <string name="em_socket">Network error</string>
     <string name="em_unknown">Weird</string>
+
+    <string name="draft">Draft</string>
+    <string name="draft_copied_clipboard">Draft text copied to clipboard</string>
+    <string name="no_draft">There is no draft</string>
 
 </resources>

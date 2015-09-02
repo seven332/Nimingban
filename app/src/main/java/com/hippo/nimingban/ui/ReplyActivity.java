@@ -48,6 +48,7 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.util.DB;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
@@ -75,12 +76,15 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
 
     public static final int REQUEST_CODE_SELECT_IMAGE = 0;
 
+    public static final int REQUEST_CODE_DRAFT = 1;
+
     public NMBClient mNMBClient;
 
     private EditText mEditText;
     private View mEmoji;
     private View mImage;
     private View mDraw;
+    private View mDraft;
     private View mSend;
     private View mImagePreview;
     private ImageView mPreview;
@@ -136,6 +140,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         mEmoji = findViewById(R.id.emoji);
         mImage = findViewById(R.id.image);
         mDraw = findViewById(R.id.draw);
+        mDraft = findViewById(R.id.draft);
         mSend = findViewById(R.id.send);
         mImagePreview = findViewById(R.id.image_preview);
         mPreview = (ImageView) mImagePreview.findViewById(R.id.preview);
@@ -144,11 +149,13 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
         RippleSalon.addRipple(mDraw, true);
+        RippleSalon.addRipple(mDraft, true);
         RippleSalon.addRipple(mSend, true);
 
         mEmoji.setOnClickListener(this);
         mImage.setOnClickListener(this);
         mDraw.setOnClickListener(this);
+        mDraft.setOnClickListener(this);
         mSend.setOnClickListener(this);
         mDelete.setOnClickListener(this);
 
@@ -164,6 +171,32 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
 
         clearImagePreview();
+    }
+
+    @Override
+    public void onBackPressed() {
+        final String text = mEditText.getText().toString().trim();
+        if (!text.isEmpty()) {
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        DB.addDraft(text);
+                        finish();
+                    } else if (which == DialogInterface.BUTTON_NEUTRAL) {
+                        finish();
+                    }
+                }
+            };
+
+            new AlertDialog.Builder(this).setMessage(R.string.save_text_draft)
+                    .setPositiveButton(R.string.save, listener)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setNeutralButton(R.string.dont_save, listener)
+                    .show();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private boolean hasACCookies() {
@@ -326,6 +359,9 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent,
                     getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
+        } else if (mDraft == v) {
+            Intent intent = new Intent(ReplyActivity.this, DraftActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_DRAFT);
         } else if (mDelete == v) {
             clearImagePreview();
         }

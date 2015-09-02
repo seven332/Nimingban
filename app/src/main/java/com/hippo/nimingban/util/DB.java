@@ -25,10 +25,14 @@ import com.hippo.nimingban.dao.ACForumDao;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.dao.DaoMaster;
 import com.hippo.nimingban.dao.DaoSession;
+import com.hippo.nimingban.dao.DraftDao;
+import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.yorozuya.AssertUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.dao.query.LazyList;
 
 public final class DB {
 
@@ -130,5 +134,20 @@ public final class DB {
     public static List<DisplayForum> getForums(int site, boolean onlyVisible) {
         // TODO
         return null;
+    }
+
+    public static LazyList<DraftRaw> getDraftLazyList() {
+        return sDaoSession.getDraftDao().queryBuilder().orderDesc(DraftDao.Properties.Time).listLazy();
+    }
+
+    public static void addDraft(String content) {
+        DraftRaw raw = new DraftRaw();
+        raw.setContent(content);
+        raw.setTime(System.currentTimeMillis());
+        sDaoSession.getDraftDao().insert(raw);
+    }
+
+    public static void removeDraft(long id) {
+        sDaoSession.getDraftDao().deleteByKey(id);
     }
 }

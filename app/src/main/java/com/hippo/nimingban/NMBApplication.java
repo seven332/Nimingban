@@ -60,6 +60,17 @@ public class NMBApplication extends Application {
     }
 
     @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
+        if (level ==  TRIM_MEMORY_BACKGROUND ) {
+            if (mConaco != null) {
+                mConaco.clearMemoryCache();
+            }
+        }
+    }
+
+    @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
     }

@@ -567,13 +567,9 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
             } else if (span instanceof ReferenceSpan) {
                 handleReferenceSpan((ReferenceSpan) span);
                 return true;
-            } else {
-                showReplyDialog(position);
-                return true;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     private class ReplyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
