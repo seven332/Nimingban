@@ -29,6 +29,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.NMBApplication;
@@ -58,6 +59,8 @@ import java.util.List;
 public final class ListActivity extends AppCompatActivity
         implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
 
+    private static final int BACK_PRESSED_INTERVAL = 2000;
+
     private NMBClient mNMBClient;
     private Conaco mConaco;
 
@@ -73,6 +76,9 @@ public final class ListActivity extends AppCompatActivity
     private PostAdapter mPostAdapter;
 
     private NMBRequest mNMBRequest;
+
+    // Double click back exit
+    private long mPressBackTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +123,23 @@ public final class ListActivity extends AppCompatActivity
 
         // Refresh
         mPostHelper.firstRefresh();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout != null && (mDrawerLayout.isDrawerOpen(Gravity.LEFT) ||
+                mDrawerLayout.isDrawerOpen(Gravity.RIGHT))) {
+            mDrawerLayout.closeDrawers();
+        } else {
+            long time = System.currentTimeMillis();
+            if (time - mPressBackTime > BACK_PRESSED_INTERVAL) {
+                // It is the last scene
+                mPressBackTime = time;
+                Toast.makeText(this, R.string.press_twice_exit, Toast.LENGTH_SHORT).show();
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 
     private void onChangeForum(Forum forum) {

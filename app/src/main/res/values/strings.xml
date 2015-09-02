@@ -18,6 +18,8 @@
 
     <string name="app_name">Nimingban</string>
 
+    <string name="press_twice_exit">Press twice to exit</string>
+
     <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
     <plurals name="go_to_hint">
