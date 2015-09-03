@@ -31,7 +31,7 @@
             android:layout_width="168dp"
             android:layout_height="168dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_emoticon_sad_x168"/>
+            android:src="@drawable/emoticon_sad"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.Medium"

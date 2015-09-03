@@ -32,7 +32,6 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.util.ReadableTime;
-import com.hippo.vectorold.content.VectorContext;
 import com.hippo.yorozuya.FileUtils;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -76,7 +75,7 @@ public class NMBApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(VectorContext.wrapContext(newBase));
+        super.attachBaseContext(newBase);
     }
 
     public static SimpleCookieStore getSimpleCookieStore(@NonNull Context context) {

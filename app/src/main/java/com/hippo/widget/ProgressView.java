@@ -34,8 +34,8 @@ import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.hippo.animation.PathInterpolator;
 import com.hippo.nimingban.R;
-import com.hippo.vectorold.animation.PathInterpolator;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;

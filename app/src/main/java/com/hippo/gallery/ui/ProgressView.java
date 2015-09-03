@@ -21,11 +21,11 @@ import android.graphics.Path;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.hippo.animation.PathInterpolator;
 import com.hippo.gallery.anim.Animation;
 import com.hippo.gallery.anim.FloatAnimation;
 import com.hippo.gallery.glrenderer.GLCanvas;
 import com.hippo.gallery.glrenderer.GLPaint;
-import com.hippo.vectorold.animation.PathInterpolator;
 
 import java.util.ArrayList;
 import java.util.List;
