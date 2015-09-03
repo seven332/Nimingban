@@ -19,6 +19,7 @@ package com.hippo.nimingban.ui;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,8 +40,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.io.UriInputStreamPipe;
 import com.hippo.nimingban.Emoji;
-import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -50,16 +51,13 @@ import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
-import com.hippo.yorozuya.LayoutUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -75,8 +73,8 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
     public static final String KEY_TEXT = "text";
 
     public static final int REQUEST_CODE_SELECT_IMAGE = 0;
-
     public static final int REQUEST_CODE_DRAFT = 1;
+    public static final int REQUEST_CODE_DOODLE = 2;
 
     public NMBClient mNMBClient;
 
@@ -94,13 +92,12 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
     private String mId;
     private String mPresetText;
 
-    private File mSeletedImageFile;
+    private Uri mSeletedImageUri;
+    private String mSeletedImageType;
     private Bitmap mSeletedImageBitmap;
 
     private ProgressDialog mGetCookiePDiglog;
     private ProgressDialog mReplyPDiglog;
-
-    private int mEditTextMinHeight;
 
     // false for error
     private boolean handlerIntent(Intent intent) {
@@ -162,8 +159,6 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         if (!TextUtils.isEmpty(mPresetText)) {
             mEditText.append(mPresetText);
         }
-
-        mEditTextMinHeight = LayoutUtils.dp2pix(this, 128);
     }
 
     @Override
@@ -213,14 +208,14 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
 
     private void doReply() {
         mReplyPDiglog = ProgressDialog.show(this, getString(R.string.replying), null, true, false);
-
         ACReplyStruct struct = new ACReplyStruct();
         struct.name = null;
         struct.email = null;
         struct.title = null;
         struct.content = mEditText.getText().toString();
         struct.resto = mId;
-        struct.image = mSeletedImageFile != null ? UniFile.fromFile(mSeletedImageFile) : null;
+        struct.image = mSeletedImageUri != null ? new UriInputStreamPipe(getApplicationContext(), mSeletedImageUri) : null;
+        struct.imageType = mSeletedImageType;
 
         NMBRequest request = new NMBRequest();
         request.setSite(NMBClient.AC);
@@ -362,17 +357,20 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         } else if (mDraft == v) {
             Intent intent = new Intent(ReplyActivity.this, DraftActivity.class);
             startActivityForResult(intent, REQUEST_CODE_DRAFT);
+        } else if (mDraw == v) {
+            Intent intent = new Intent(ReplyActivity.this, DoodleActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_DOODLE);
         } else if (mDelete == v) {
             clearImagePreview();
         }
     }
 
     private void clearImagePreview() {
-        FileUtils.delete(mSeletedImageFile);
         if (mSeletedImageBitmap != null) {
             mSeletedImageBitmap.recycle();
         }
-        mSeletedImageFile = null;
+        mSeletedImageUri = null;
+        mSeletedImageType = null;
         mSeletedImageBitmap = null;
 
         mPreview.setImageDrawable(null);
@@ -388,12 +386,12 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         mEditText.setLayoutParams(lp);
     }
 
-    private void setImagePreview(File file, Bitmap bitmap) {
-        FileUtils.delete(mSeletedImageFile);
+    private void setImagePreview(Uri uri, String type, Bitmap bitmap) {
         if (mSeletedImageBitmap != null) {
             mSeletedImageBitmap.recycle();
         }
-        mSeletedImageFile = file;
+        mSeletedImageUri = uri;
+        mSeletedImageType = type;
         mSeletedImageBitmap = bitmap;
 
         mPreview.setImageBitmap(bitmap);
@@ -416,59 +414,43 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
             return false;
         }
 
-        boolean ok = false;
-        File tempFile = null;
-        FileOutputStream tempFileOs = null;
-        InputStream uriIs = null;
-        Bitmap bitmap;
+        ContentResolver resolver = getContentResolver();
+        InputStream is = null;
         try {
-            tempFile = NMBAppConfig.createTempFile(this,
-                    MimeTypeMap.getSingleton().getExtensionFromMimeType(getContentResolver().getType(uri)));
-            if (tempFile == null) {
-                return false;
+            String type = resolver.getType(uri);
+            if (type == null) {
+                type =  MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                        FileUtils.getExtensionFromFilename(uri.toString()));
             }
 
-            tempFileOs = new FileOutputStream(tempFile);
-            uriIs = getContentResolver().openInputStream(uri);
-            if (uriIs == null) {
-                return false;
-            }
-            IOUtils.copy(uriIs, tempFileOs);
-            IOUtils.closeQuietly(tempFileOs);
-            IOUtils.closeQuietly(uriIs);
-
-            bitmap = BitmapFactory.decodeFile(tempFile.getPath());
-            if (bitmap == null) {
-                return false;
-            } else {
-                ok = true;
-                setImagePreview(tempFile, bitmap);
+            is = resolver.openInputStream(uri);
+            // TODO downsize
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            if (bitmap != null) {
+                setImagePreview(uri, type, bitmap);
                 return true;
             }
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return false;
         } finally {
-            IOUtils.closeQuietly(tempFileOs);
-            IOUtils.closeQuietly(uriIs);
-            if (!ok) {
-                FileUtils.delete(tempFile);
-            }
+            IOUtils.closeQuietly(is);
         }
+
+        return false;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_SELECT_IMAGE && resultCode == RESULT_OK) {
+        if ((requestCode == REQUEST_CODE_SELECT_IMAGE || requestCode == REQUEST_CODE_DOODLE) && resultCode == RESULT_OK) {
             handleSelectedImageUri(data.getData());
         }
     }
 
-    private class ReplyListener implements NMBClient.Callback<Boolean> {
+    private class ReplyListener implements NMBClient.Callback<Void> {
         @Override
-        public void onSuccess(Boolean result) {
+        public void onSuccess(Void result) {
             mReplyPDiglog.dismiss();
             mReplyPDiglog = null;
 

@@ -17,6 +17,7 @@
 package com.hippo.nimingban;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 
 import com.hippo.yorozuya.FileUtils;
@@ -24,6 +25,43 @@ import com.hippo.yorozuya.FileUtils;
 import java.io.File;
 
 public class NMBAppConfig {
+
+    private static final String APP_DIRNAME = "Nimingban";
+
+    private static final String CRASH_DIRNAME = "crash";
+    private static final String DOODLE_DIRNAME = "doodle";
+
+    public static @Nullable File getExternalAppDir() {
+        if (Environment.getExternalStorageState()
+                .equals(Environment.MEDIA_MOUNTED)) {
+            return new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * mkdirs and get
+     */
+    public static @Nullable File getFileInAppDir(String filename) {
+        File appFolder = getExternalAppDir();
+        if (appFolder != null) {
+            File dir = new File(appFolder, filename);
+            if (FileUtils.ensureDirectory(dir)) {
+                return dir;
+            }
+        }
+
+        return null;
+    }
+
+    public static @Nullable File getCrashDir() {
+        return getFileInAppDir(CRASH_DIRNAME);
+    }
+
+    public static @Nullable File getDoodleDir() {
+        return getFileInAppDir(DOODLE_DIRNAME);
+    }
 
     public static @Nullable File getTempDir(Context context) {
         File temp = new File(context.getCacheDir(), "temp");

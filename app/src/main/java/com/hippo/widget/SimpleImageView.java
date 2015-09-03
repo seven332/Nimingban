@@ -62,10 +62,22 @@ public class SimpleImageView extends View implements Drawable.Callback {
             mDrawable.setCallback(null);
         }
         mDrawable = drawable;
-        if (mDrawable != null) {
-            mDrawable.setCallback(this);
+        if (drawable != null) {
+            drawable.setCallback(this);
+            if (drawable.isStateful()) {
+                drawable.setState(getDrawableState());
+            }
         }
         requestLayout();
+    }
+
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        Drawable d = mDrawable;
+        if (d != null && d.isStateful()) {
+            d.setState(getDrawableState());
+        }
     }
 
     @Override

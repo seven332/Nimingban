@@ -68,6 +68,13 @@
             android:windowSoftInputMode="stateVisible|adjustResize"/>
 
         <activity
+            android:name="com.hippo.nimingban.ui.DoodleActivity"
+            android:label="@string/doodle"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name="com.hippo.nimingban.ui.DraftActivity"
             android:label="@string/draft"
             android:theme="@style/AppTheme"

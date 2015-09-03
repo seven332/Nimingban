@@ -17,32 +17,34 @@
 package com.hippo.network;
 
 import com.hippo.httpclient.FormData;
-import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class UniFileData extends FormData {
+public class InputStreamPipeData extends FormData {
 
-    private UniFile mUniFile;
+    private InputStreamPipe mIsp;
 
-    public UniFileData(UniFile uniFile) {
-        if (uniFile != null) {
-            mUniFile = uniFile;
-            setProperty("Content-Type", uniFile.getType());
-        }
+    public InputStreamPipeData(InputStreamPipe isp) {
+        mIsp = isp;
     }
 
     @Override
     public void output(OutputStream os) throws IOException {
-        if (mUniFile != null) {
-            InputStream is = mUniFile.openInputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1)
-                os.write(buffer, 0, bytesRead);
-            is.close();
+        if (mIsp == null) {
+            return;
+        }
+
+        try {
+            mIsp.obtain();
+            InputStream is = mIsp.open();
+            IOUtils.copy(is, os);
+        } finally {
+            mIsp.close();
+            mIsp.release();
         }
     }
 }

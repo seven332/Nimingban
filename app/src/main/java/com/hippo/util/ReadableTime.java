@@ -54,8 +54,13 @@ public final class ReadableTime {
             R.plurals.second
     };
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
-    private static final Object sDateFormatLock = new Object();
+    private static final SimpleDateFormat DATE_FORMAT =
+            new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
+    private static final Object sDateFormatLock1 = new Object();
+
+    private static final SimpleDateFormat FILENAMABLE_DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.getDefault());
+    private static final Object sDateFormatLock2 = new Object();
 
     public static void initialize(Context context) {
         sResources = context.getApplicationContext().getResources();
@@ -70,7 +75,7 @@ public final class ReadableTime {
     }
 
     public static String getPlainTime(long time) {
-        synchronized (sDateFormatLock) {
+        synchronized (sDateFormatLock1) {
             return DATE_FORMAT.format(new Date(time));
         }
     }
@@ -128,5 +133,11 @@ public final class ReadableTime {
         }
 
         return sb.toString();
+    }
+
+    public static String getFilenamableTime(long time) {
+        synchronized (sDateFormatLock2) {
+            return FILENAMABLE_DATE_FORMAT.format(new Date(time));
+        }
     }
 }

@@ -113,7 +113,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:src="@drawable/ic_draft_light_x24"/>
+            android:src="@drawable/ic_draft_dark_x24"/>
 
         <Space
             android:layout_width="0dp"

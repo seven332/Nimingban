@@ -59,7 +59,6 @@ public final class ExceptionUtils {
             return e.getMessage();
         } else {
             Say.d(TAG, "Can't recognize this Exception", e);
-            e.printStackTrace();
             return context.getString(R.string.em_unknown);
         }
     }

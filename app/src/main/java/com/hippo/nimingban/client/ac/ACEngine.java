@@ -16,16 +16,19 @@
 
 package com.hippo.nimingban.client.ac;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.webkit.MimeTypeMap;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.hippo.httpclient.FormDataPoster;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
 import com.hippo.httpclient.StringData;
-import com.hippo.network.UniFileData;
+import com.hippo.network.InputStreamPipeData;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
@@ -35,8 +38,7 @@ import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
-import com.hippo.unifile.UniFile;
-import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.io.InputStreamPipe;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -206,7 +208,7 @@ public class ACEngine {
     }
 
 
-    public static Boolean reply(HttpClient httpClient, HttpRequest httpRequest,
+    public static Void reply(HttpClient httpClient, HttpRequest httpRequest,
             Object obj) throws Exception {
         try {
             ACReplyStruct struct = (ACReplyStruct) obj;
@@ -221,19 +223,23 @@ public class ACEngine {
             content.setName("content");
             StringData resto = new StringData(struct.resto);
             resto.setName("resto");
-            UniFileData image;
-            UniFile imageContent = struct.image;
-            if (imageContent != null) {
-                image = new UniFileData(imageContent);
-                image.setName("image");
-                String extension = FileUtils.getExtensionFromFilename(imageContent.getName());
-                if (extension != null) {
-                    image.setFilename("a." + extension);
-                } else {
-                    image.setFilename("a");
-                }
-            } else {
+
+            InputStreamPipeData image;
+            InputStreamPipe isp = struct.image;
+            if (isp == null) {
                 image = null;
+            } else {
+                image = new InputStreamPipeData(isp);
+                String filename;
+                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
+                if (TextUtils.isEmpty(extension)) {
+                    // TODO on extension ?
+                    extension = "jpg";
+                }
+                filename = "a." + extension;
+                image.setName("image");
+                image.setFilename(filename);
+                image.setProperty("Content-Type", struct.imageType);
             }
 
             FormDataPoster httpImpl = new FormDataPoster(name, email, title, content, resto, image);
@@ -241,9 +247,16 @@ public class ACEngine {
             httpRequest.setHttpImpl(httpImpl);
             HttpResponse response = httpClient.execute(httpRequest);
 
-            Log.d("TAG", "" + response.getString());
+            String body = response.getString();
+            Log.d("TAG", body);
+            JSONObject jo = JSON.parseObject(body);
+            if (jo.getBoolean("success")) {
+                return null;
+            } else {
+                String msg = jo.getString("msg");
+                throw new NMBException(NMBClient.AC, msg);
+            }
 
-            return true;
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {
                 throw new CancelledException();

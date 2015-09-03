@@ -16,7 +16,7 @@
 
 package com.hippo.nimingban.client.ac.data;
 
-import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.io.InputStreamPipe;
 
 public class ACReplyStruct {
 
@@ -25,5 +25,6 @@ public class ACReplyStruct {
     public String title;
     public String content;
     public String resto;
-    public UniFile image;
+    public InputStreamPipe image;
+    public String imageType;
 }
