@@ -36,6 +36,7 @@ import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.yorozuya.io.InputStreamPipe;
@@ -79,7 +80,7 @@ public class ACEngine {
             HttpResponse response = httpClient.execute(httpRequest);
             List<ACForumGroup> result = JSON.parseArray(response.getString(), ACForumGroup.class);
             if (result == null) {
-                throw new NMBException(NMBClient.AC, "Can't parse json when getForumList");
+                throw new NMBException(ACSite.getInstance(), "Can't parse json when getForumList");
             }
             return result;
         } catch (Exception e) {
@@ -99,13 +100,13 @@ public class ACEngine {
             HttpResponse response = httpClient.execute(httpRequest);
             List<ACPost> acPosts = JSON.parseArray(response.getString(), ACPost.class);
             if (acPosts == null) {
-                throw new NMBException(NMBClient.AC, "Can't parse json when getPostList");
+                throw new NMBException(ACSite.getInstance(), "Can't parse json when getPostList");
             }
 
             List<Post> result = new ArrayList<>(acPosts.size());
             for (ACPost acPost : acPosts) {
                 if (acPost != null) {
-                    acPost.generate(NMBClient.AC);
+                    acPost.generate(ACSite.getInstance());
                     result.add(acPost);
                 }
             }
@@ -129,9 +130,9 @@ public class ACEngine {
             HttpResponse response = httpClient.execute(httpRequest);
             ACPost acPost = JSON.parseObject(response.getString(), ACPost.class);
             if (acPost == null) {
-                throw new NMBException(NMBClient.AC, "Can't parse json when getPost");
+                throw new NMBException(ACSite.getInstance(), "Can't parse json when getPost");
             }
-            acPost.generateSelfAndReplies(NMBClient.AC);
+            acPost.generateSelfAndReplies(ACSite.getInstance());
             return new Pair<Post, List<Reply>>(acPost, new ArrayList<Reply>(acPost.replys));
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {
@@ -192,7 +193,7 @@ public class ACEngine {
                 }
             }
 
-            reference.generate(NMBClient.AC);
+            reference.generate(ACSite.getInstance());
 
             return reference;
 
@@ -254,7 +255,7 @@ public class ACEngine {
                 return null;
             } else {
                 String msg = jo.getString("msg");
-                throw new NMBException(NMBClient.AC, msg);
+                throw new NMBException(ACSite.getInstance(), msg);
             }
 
         } catch (Exception e) {

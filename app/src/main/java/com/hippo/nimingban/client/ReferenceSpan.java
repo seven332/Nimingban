@@ -19,17 +19,19 @@ package com.hippo.nimingban.client;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import com.hippo.nimingban.client.data.Site;
+
 public class ReferenceSpan extends ClickableSpan {
 
-    private int mSite;
+    private Site mSite;
     private String mId;
 
-    public ReferenceSpan(int site, String id) {
+    public ReferenceSpan(Site site, String id) {
         mSite = site;
         mId = id;
     }
 
-    public int getSite() {
+    public Site getSite() {
         return mSite;
     }
 

@@ -23,6 +23,7 @@ import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACEngine;
+import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.NMBHttpRequest;
 import com.hippo.yorozuya.PriorityThreadFactory;
 
@@ -36,11 +37,11 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
-    public static final int RANDOM = 0;
-    public static final int AC = 1;
-    public static final int KUKUKU = 2;
+    /*
+
     public static final int SITE_MIN = AC;
     public static final int SITE_MAX = KUKUKU;
+    */
 
     public static final int METHOD_GET_COOKIE = 0;
 
@@ -78,13 +79,13 @@ public class NMBClient {
     class Task extends AsyncTask<Object, Void, Object> {
 
         private int mMethod;
-        private int mSite;
+        private Site mSite;
         private Callback mCallback;
         private HttpRequest mHttpRequest;
 
         private boolean mStop;
 
-        public Task(int method, int site, Callback callback) {
+        public Task(int method, Site site, Callback callback) {
             mMethod = method;
             mSite = site;
             mCallback = callback;
@@ -115,8 +116,8 @@ public class NMBClient {
         }
 
         private Object getCookie() throws Exception {
-            switch (mSite) {
-                case AC:
+            switch (mSite.getId()) {
+                case Site.AC:
                     return ACEngine.getCookie(mHttpClient, mHttpRequest);
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
@@ -124,8 +125,8 @@ public class NMBClient {
         }
 
         private Object getPostList(Object... params) throws Exception {
-            switch (mSite) {
-                case AC:
+            switch (mSite.getId()) {
+                case Site.AC:
                     return ACEngine.getPostList(mHttpClient, mHttpRequest, (String) params[0]);
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
@@ -133,8 +134,8 @@ public class NMBClient {
         }
 
         private Object getPost(Object... params) throws Exception {
-            switch (mSite) {
-                case AC:
+            switch (mSite.getId()) {
+                case Site.AC:
                     return ACEngine.getPost(mHttpClient, mHttpRequest, (String) params[0]);
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
@@ -142,8 +143,8 @@ public class NMBClient {
         }
 
         private Object getReference(Object... params) throws Exception {
-            switch (mSite) {
-                case AC:
+            switch (mSite.getId()) {
+                case Site.AC:
                     return ACEngine.getReference(mHttpClient, mHttpRequest, (String) params[0]);
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
@@ -151,8 +152,8 @@ public class NMBClient {
         }
 
         private Object reply(Object... params) throws Exception {
-            switch (mSite) {
-                case AC:
+            switch (mSite.getId()) {
+                case Site.AC:
                     return ACEngine.reply(mHttpClient, mHttpRequest, params[0]);
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);

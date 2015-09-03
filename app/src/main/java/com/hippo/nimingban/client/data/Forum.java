@@ -18,7 +18,7 @@ package com.hippo.nimingban.client.data;
 
 public abstract class Forum {
 
-    public abstract int getNMBSite();
+    public abstract Site getNMBSite();
 
     public abstract String getNMBId();
 

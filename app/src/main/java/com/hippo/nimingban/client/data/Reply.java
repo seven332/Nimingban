@@ -33,9 +33,9 @@ public abstract class Reply implements Parcelable {
         }
     }
 
-    public abstract void generate(int site);
+    public abstract void generate(Site site);
 
-    public abstract int getNMBSite();
+    public abstract Site getNMBSite();
 
     public abstract String getNMBId();
 

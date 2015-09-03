@@ -59,6 +59,7 @@ import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
@@ -93,7 +94,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
 
     private NMBRequest mNMBRequest;
 
-    private int mSite;
+    private Site mSite;
     private String mId;
 
     private CharSequence mPostUser;
@@ -120,8 +121,8 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
         } else if (ACTION_SITE_ID.equals(action)) {
             int site = intent.getIntExtra(KEY_SITE, -1);
             String id = intent.getStringExtra(KEY_ID);
-            if (site != -1 && id != null) { // TODO check is site valid
-                mSite = site;
+            if (Site.isValid(site) && id != null) {
+                mSite = Site.fromId(site);
                 mId = id;
                 return true;
             }
@@ -262,7 +263,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                 if (!TextUtils.isEmpty(mId)) {
                     Intent intent = new Intent(this, ReplyActivity.class);
                     intent.setAction(ReplyActivity.ACTION_REPLY);
-                    intent.putExtra(ReplyActivity.KEY_SITE, mSite);
+                    intent.putExtra(ReplyActivity.KEY_SITE, mSite.getId());
                     intent.putExtra(ReplyActivity.KEY_ID, mId);
                     startActivityForResult(intent, REQUEST_CODE_REPLY);
                 }
@@ -302,7 +303,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
     private final class ReferenceDialogHelper implements AlertDialog.OnDismissListener,
             NMBClient.Callback<ACReference>, View.OnClickListener {
 
-        private int mSite;
+        private Site mSite;
         private String mId;
 
         private View mView;
@@ -321,7 +322,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
         private Reply mReply;
 
         @SuppressLint("InflateParams")
-        public ReferenceDialogHelper(int site, String id) {
+        public ReferenceDialogHelper(Site site, String id) {
             mSite = site;
             mId = id;
 
@@ -357,7 +358,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                 if (mReply != null && !TextUtils.isEmpty(mReply.getNMBImageUrl())) {
                     Intent intent = new Intent(PostActivity.this, GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity2.KEY_SITE, mSite);
+                    intent.putExtra(GalleryActivity2.KEY_SITE, mSite.getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, mReply.getNMBId());
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, mReply.getNMBImageUrl());
                     PostActivity.this.startActivity(intent);
@@ -420,7 +421,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                     public void onClick(View v) {
                         Intent intent = new Intent(PostActivity.this, PostActivity.class);
                         intent.setAction(ACTION_SITE_ID);
-                        intent.putExtra(KEY_SITE, mSite);
+                        intent.putExtra(KEY_SITE, mSite.getId());
                         intent.putExtra(KEY_ID, reply.getNMBPostId());
                         PostActivity.this.startActivity(intent);
                     }
@@ -518,7 +519,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                     if (!TextUtils.isEmpty(mId)) {
                         Intent intent = new Intent(PostActivity.this, ReplyActivity.class);
                         intent.setAction(ReplyActivity.ACTION_REPLY);
-                        intent.putExtra(ReplyActivity.KEY_SITE, mSite);
+                        intent.putExtra(ReplyActivity.KEY_SITE, mSite.getId());
                         intent.putExtra(ReplyActivity.KEY_ID, mId);
                         intent.putExtra(ReplyActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
                         startActivityForResult(intent, REQUEST_CODE_REPLY);
@@ -599,7 +600,7 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                 if (!TextUtils.isEmpty(image)) {
                     Intent intent = new Intent(PostActivity.this, GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity2.KEY_SITE, reply.getNMBSite());
+                    intent.putExtra(GalleryActivity2.KEY_SITE, reply.getNMBSite().getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, reply.getNMBId());
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     PostActivity.this.startActivity(intent);

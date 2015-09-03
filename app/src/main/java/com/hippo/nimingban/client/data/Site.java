@@ -18,7 +18,32 @@ package com.hippo.nimingban.client.data;
 
 import android.content.Context;
 
+import com.hippo.yorozuya.MathUtils;
+
 public abstract class Site {
+
+    public static final int RANDOM = 0;
+    public static final int AC = 1;
+    public static final int KUKUKU = 2;
+    public static final int SITE_MIN = AC;
+    public static final int SITE_MAX = AC;
+
+    public static Site fromId(int id) {
+        switch (id) {
+            case RANDOM:
+                return fromId(MathUtils.random(SITE_MIN, SITE_MAX + 1));
+            case AC:
+                return ACSite.getInstance();
+            default:
+                throw new IllegalStateException("Unknown site " + id);
+        }
+    }
+
+    public static boolean isValid(int id) {
+        return id >= SITE_MIN && id <= SITE_MAX;
+    }
+
+    public abstract int getId();
 
     /**
      * @return 0 or negative for none

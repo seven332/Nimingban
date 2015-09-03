@@ -16,10 +16,12 @@
 
 package com.hippo.nimingban.client;
 
+import com.hippo.nimingban.client.data.Site;
+
 public class NMBRequest {
 
     int method;
-    int site;
+    Site site;
     Object[] args;
     NMBClient.Callback callback;
 
@@ -31,7 +33,7 @@ public class NMBRequest {
         this.method = method;
     }
 
-    public void setSite(int site) {
+    public void setSite(Site site) {
         this.site = site;
     }
 

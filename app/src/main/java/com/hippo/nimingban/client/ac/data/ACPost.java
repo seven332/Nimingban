@@ -26,11 +26,12 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
 
-import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.nimingban.client.data.Site;
 import com.hippo.yorozuya.NumberUtils;
 
 import java.text.ParseException;
@@ -65,7 +66,7 @@ public class ACPost extends Post {
     // Ingore when writeToParcel
     public List<ACReply> replys;
 
-    private int mSite;
+    private Site mSite;
 
     private long mTime;
     private String mTimeStr;
@@ -136,7 +137,7 @@ public class ACPost extends Post {
             int start = m.start();
             int end = m.end();
 
-            ReferenceSpan referenceSpan = new ReferenceSpan(NMBClient.AC, m.group(1));
+            ReferenceSpan referenceSpan = new ReferenceSpan(ACSite.getInstance(), m.group(1));
             spannable.setSpan(referenceSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
@@ -208,7 +209,8 @@ public class ACPost extends Post {
         return charSequence;
     }
 
-    public void generate(int site) {
+    @Override
+    public void generate(Site site) {
         mSite = site;
 
         try {
@@ -241,7 +243,7 @@ public class ACPost extends Post {
         }
     }
 
-    public void generateSelfAndReplies(int site) {
+    public void generateSelfAndReplies(Site site) {
         generate(site);
 
         // generate replies
@@ -257,7 +259,7 @@ public class ACPost extends Post {
     }
 
     @Override
-    public int getNMBSite() {
+    public Site getNMBSite() {
         return mSite;
     }
 
@@ -330,7 +332,7 @@ public class ACPost extends Post {
         dest.writeString(this.content);
         dest.writeString(this.admin);
         dest.writeString(this.replyCount);
-        dest.writeInt(this.mSite);
+        dest.writeInt(this.mSite.getId());
     }
 
     public ACPost() {
@@ -349,14 +351,17 @@ public class ACPost extends Post {
         this.content = in.readString();
         this.admin = in.readString();
         this.replyCount = in.readString();
-        this.mSite = in.readInt();
+        this.mSite = Site.fromId(in.readInt());
     }
 
     public static final Creator<ACPost> CREATOR = new Creator<ACPost>() {
+
+        @Override
         public ACPost createFromParcel(Parcel source) {
             return new ACPost(source);
         }
 
+        @Override
         public ACPost[] newArray(int size) {
             return new ACPost[size];
         }

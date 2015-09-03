@@ -16,36 +16,26 @@
 
 package com.hippo.nimingban.client.data;
 
-public class DisplayForum extends Forum {
+import android.content.Context;
 
-    public Site site;
-    public String id;
-    public String displayname;
-    public int priority;
-    public boolean visibility;
+public class DumpSite extends Site {
 
-    @Override
-    public String toString() {
-        return "site = " + site + ", id = " + id + ", displayname = " + displayname +
-                ", priority = " + priority + ", visibility = " + visibility;
+    private static DumpSite sInstance;
+
+    public static DumpSite getInstance() {
+        if (sInstance == null) {
+            sInstance = new DumpSite();
+        }
+        return sInstance;
     }
 
     @Override
-    public Site getNMBSite() {
-        return site;
+    public int getId() {
+        return Site.RANDOM;
     }
 
     @Override
-    public String getNMBId() {
-        return id;
-    }
-
-    @Override
-    public CharSequence getNMBDisplayname() {
-        return displayname;
-    }
-
-    public boolean getVisibility() {
-        return visibility;
+    public long getCookieMaxAge(Context context) {
+        return -1;
     }
 }

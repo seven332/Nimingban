@@ -27,6 +27,7 @@ import android.text.style.ForegroundColorSpan;
 
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.nimingban.client.data.Site;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -45,7 +46,7 @@ public class ACReference extends Reply {
     public String thumb = "";
     public String image = "";
 
-    private int mSite;
+    private Site mSite;
 
     private long mTime;
     private String mTimeStr;
@@ -62,7 +63,8 @@ public class ACReference extends Reply {
                 ", image = " + image;
     }
 
-    public void generate(int site) {
+    @Override
+    public void generate(Site site) {
         mSite = site;
 
         try {
@@ -97,7 +99,7 @@ public class ACReference extends Reply {
     }
 
     @Override
-    public int getNMBSite() {
+    public Site getNMBSite() {
         return mSite;
     }
 
@@ -160,7 +162,7 @@ public class ACReference extends Reply {
         dest.writeString(this.content);
         dest.writeString(this.thumb);
         dest.writeString(this.image);
-        dest.writeInt(this.mSite);
+        dest.writeInt(this.mSite.getId());
     }
 
     public ACReference() {
@@ -178,14 +180,17 @@ public class ACReference extends Reply {
         this.content = in.readString();
         this.thumb = in.readString();
         this.image = in.readString();
-        this.mSite = in.readInt();
+        this.mSite = Site.fromId(in.readInt());
     }
 
     public static final Creator<ACReference> CREATOR = new Creator<ACReference>() {
+
+        @Override
         public ACReference createFromParcel(Parcel source) {
             return new ACReference(source);
         }
 
+        @Override
         public ACReference[] newArray(int size) {
             return new ACReference[size];
         }

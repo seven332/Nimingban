@@ -17,12 +17,13 @@
 package com.hippo.nimingban.network;
 
 import com.hippo.httpclient.HttpRequest;
+import com.hippo.nimingban.client.data.Site;
 
 public class NMBHttpRequest extends HttpRequest {
 
-    private int mSite;
+    private Site mSite;
 
-    public NMBHttpRequest(int site) {
+    public NMBHttpRequest(Site site) {
         mSite = site;
     }
 }

@@ -42,10 +42,10 @@ import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
 import com.hippo.nimingban.client.data.DisplayForum;
+import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.util.DB;
-import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
@@ -247,7 +247,7 @@ public final class ListActivity extends AppCompatActivity
                 if (!TextUtils.isEmpty(image)) {
                     Intent intent = new Intent(ListActivity.this, GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity2.KEY_SITE, post.getNMBSite());
+                    intent.putExtra(GalleryActivity2.KEY_SITE, post.getNMBSite().getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, post.getNMBId());
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     ListActivity.this.startActivity(intent);
@@ -328,11 +328,11 @@ public final class ListActivity extends AppCompatActivity
             }
 
             if (mCurrentForum == null) {
-                onGetExpection(taskId, new NMBException(NMBClient.RANDOM, "current forum is null")); // TODO use unknow, hardcode
+                onGetExpection(taskId, new NMBException(DumpSite.getInstance(), "current forum is null"));
             } else {
                 NMBRequest request = new NMBRequest();
                 mNMBRequest = request;
-                request.setSite(NMBClient.AC);
+                request.setSite(mCurrentForum.getNMBSite());
                 request.setMethod(NMBClient.METHOD_GET_POST_LIST);
                 request.setArgs(NMBUrl.getPostListUrl(mCurrentForum.getNMBSite(), mCurrentForum.getNMBId(), page));
                 request.setCallback(new ListListener(taskId, page, request));

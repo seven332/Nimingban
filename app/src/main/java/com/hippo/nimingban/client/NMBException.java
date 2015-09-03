@@ -16,12 +16,14 @@
 
 package com.hippo.nimingban.client;
 
+import com.hippo.nimingban.client.data.Site;
+
 public class NMBException extends Exception {
 
-    public int mSite;
+    public Site mSite;
 
-    public NMBException(int size, String detailMessage) {
+    public NMBException(Site site, String detailMessage) {
         super(detailMessage);
-        mSite = size;
+        mSite = site;
     }
 }

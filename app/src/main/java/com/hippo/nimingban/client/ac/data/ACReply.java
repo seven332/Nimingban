@@ -27,6 +27,7 @@ import android.text.style.ForegroundColorSpan;
 
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.nimingban.client.data.Site;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class ACReply extends Reply {
     public String content = "";
     public String admin = "";
 
-    private int mSite;
+    private Site mSite;
 
     String mPostId;
     private long mTime;
@@ -83,7 +84,8 @@ public class ACReply extends Reply {
         return sb.toString();
     }
 
-    public void generate(int site) {
+    @Override
+    public void generate(Site site) {
         mSite = site;
 
         try {
@@ -116,7 +118,7 @@ public class ACReply extends Reply {
     }
 
     @Override
-    public int getNMBSite() {
+    public Site getNMBSite() {
         return mSite;
     }
 
@@ -178,7 +180,7 @@ public class ACReply extends Reply {
         dest.writeString(this.title);
         dest.writeString(this.content);
         dest.writeString(this.admin);
-        dest.writeInt(this.mSite);
+        dest.writeInt(this.mSite.getId());
     }
 
     public ACReply() {
@@ -195,14 +197,17 @@ public class ACReply extends Reply {
         this.title = in.readString();
         this.content = in.readString();
         this.admin = in.readString();
-        this.mSite = in.readInt();
+        this.mSite = Site.fromId(in.readInt());
     }
 
     public static final Creator<ACReply> CREATOR = new Creator<ACReply>() {
+
+        @Override
         public ACReply createFromParcel(Parcel source) {
             return new ACReply(source);
         }
 
+        @Override
         public ACReply[] newArray(int size) {
             return new ACReply[size];
         }

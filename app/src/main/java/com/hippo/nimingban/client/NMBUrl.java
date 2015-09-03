@@ -17,30 +17,31 @@
 package com.hippo.nimingban.client;
 
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.data.Site;
 
 public class NMBUrl {
 
-    public static String getPostListUrl(int site, String forum, int page) {
-        switch (site) {
-            case NMBClient.AC:
+    public static String getPostListUrl(Site site, String forum, int page) {
+        switch (site.getId()) {
+            case Site.AC:
                 return ACUrl.getPostListUrl(forum, page);
             default:
                 throw new IllegalStateException("Unknown site " + site);
         }
     }
 
-    public static String getPostUrl(int site, String id, int page) {
-        switch (site) {
-            case NMBClient.AC:
+    public static String getPostUrl(Site site, String id, int page) {
+        switch (site.getId()) {
+            case Site.AC:
                 return ACUrl.getPostUrl(id, page);
             default:
                 throw new IllegalStateException("Unknown site " + site);
         }
     }
 
-    public static String getReferenceUrl(int site, String id) {
-        switch (site) {
-            case NMBClient.AC:
+    public static String getReferenceUrl(Site site, String id) {
+        switch (site.getId()) {
+            case Site.AC:
                 return ACUrl.getReferenceUrl(id);
             default:
                 throw new IllegalStateException("Unknown site " + site);

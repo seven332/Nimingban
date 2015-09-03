@@ -19,7 +19,7 @@ package com.hippo.nimingban.util;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.dao.ACForumDao;
 import com.hippo.nimingban.dao.ACForumRaw;
@@ -120,7 +120,7 @@ public final class DB {
             }
 
             DisplayForum dForum = new DisplayForum();
-            dForum.site = NMBClient.AC;
+            dForum.site = ACSite.getInstance();
             dForum.id = raw.getForumid();
             dForum.displayname = raw.getDisplayname();
             dForum.priority = raw.getPriority();

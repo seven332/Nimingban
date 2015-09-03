@@ -48,6 +48,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
+import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.rippleold.RippleSalon;
@@ -88,7 +89,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
     private ImageView mPreview;
     private View mDelete;
 
-    private int mSite;
+    private Site mSite;
     private String mId;
     private String mPresetText;
 
@@ -110,8 +111,8 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
             int site = intent.getIntExtra(KEY_SITE, -1);
             String id = intent.getStringExtra(KEY_ID);
             mPresetText = intent.getStringExtra(KEY_TEXT);
-            if (site != -1 && id != null) { // TODO check is site valid
-                mSite = site;
+            if (Site.isValid(site) && id != null) {
+                mSite = Site.fromId(site);
                 mId = id;
                 return true;
             }
@@ -218,7 +219,7 @@ public final class ReplyActivity extends AppCompatActivity implements View.OnCli
         struct.imageType = mSeletedImageType;
 
         NMBRequest request = new NMBRequest();
-        request.setSite(NMBClient.AC);
+        request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_GET_REPLY);
         request.setArgs(struct);
         request.setCallback(new ReplyListener());
