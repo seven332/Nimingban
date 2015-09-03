@@ -67,13 +67,12 @@
                     android:maxHeight="256dp"
                     android:contentDescription="@null"/>
 
-                <!-- TODO a black and white close icon -->
                 <com.hippo.widget.SimpleImageView
                     android:id="@+id/delete"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:padding="12dp"
-                    android:src="@drawable/ic_close_circle_dark_x24"/>
+                    android:src="@drawable/delete_image"/>
 
             </FrameLayout>
 
