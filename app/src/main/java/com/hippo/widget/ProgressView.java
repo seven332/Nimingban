@@ -297,7 +297,7 @@ public class ProgressView extends View {
         if (!mIndeterminate) {
             mTrimStart = 0f;
             mTrimEnd = progress;
-            mTrimOffset = -0.25f;
+            mTrimOffset = 0f;
             mTrimRotation = 0f;
             invalidate();
         }
