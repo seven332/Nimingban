@@ -81,12 +81,12 @@ public final class ReadableTime {
     }
 
     public static String getTimeAgo(long time) {
+        Resources resources = sResources;
+
         long now = System.currentTimeMillis();
         if (time > now || time <= 0) {
-            return null;
+            return resources.getString(R.string.from_the_future);
         }
-
-        Resources resources = sResources;
 
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {

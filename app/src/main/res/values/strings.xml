@@ -84,6 +84,7 @@
     <string name="draft_copied_clipboard">Draft text copied to clipboard</string>
     <string name="no_draft">There is no draft</string>
 
+    <string name="from_the_future">From the future</string>
     <string name="just_now">Just now</string>
     <plurals name="some_minutes_ago">
         <item quantity="one">A minute ago</item>
@@ -141,5 +142,8 @@
     <string name="pick_dir_l">Lollipop provides an API to write on external SD card. If you want to set image save location to SD card, click the \"DOCUMENT\" button</string>
 
     <string name="document">Document</string>
+
+    <string name="sort_forums">Sort forums</string>
+    <string name="no_forum">Can\'t find any forum</string>
 
 </resources>
