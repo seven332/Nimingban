@@ -45,6 +45,8 @@ public abstract class Site {
 
     public abstract int getId();
 
+    public abstract String getReadableName(Context context);
+
     /**
      * @return 0 or negative for none
      */

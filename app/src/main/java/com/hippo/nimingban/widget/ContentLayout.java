@@ -325,7 +325,7 @@ public class ContentLayout extends FrameLayout {
             switch (mCurrentTaskType) {
                 case TYPE_REFRESH:
                 case TYPE_SOMEWHERE:
-                    showText(mEmptyString); // TODO hardcode
+                    showText(mEmptyString);
                     break;
                 case TYPE_NEXT_PAGE:
                 case TYPE_NEXT_PAGE_KEEP_POS:

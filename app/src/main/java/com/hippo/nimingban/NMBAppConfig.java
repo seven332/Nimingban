@@ -26,10 +26,11 @@ import java.io.File;
 
 public class NMBAppConfig {
 
-    private static final String APP_DIRNAME = "Nimingban";
+    private static final String APP_DIRNAME = "nmb";
 
     private static final String CRASH_DIRNAME = "crash";
     private static final String DOODLE_DIRNAME = "doodle";
+    private static final String DOODLE_IMAGE = "image";
 
     public static @Nullable File getExternalAppDir() {
         if (Environment.getExternalStorageState()
@@ -61,6 +62,10 @@ public class NMBAppConfig {
 
     public static @Nullable File getDoodleDir() {
         return getFileInAppDir(DOODLE_DIRNAME);
+    }
+
+    public static @Nullable File getImageDir() {
+        return getFileInAppDir(DOODLE_IMAGE);
     }
 
     public static @Nullable File getTempDir(Context context) {

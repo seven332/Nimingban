@@ -42,6 +42,20 @@ public abstract class RecyclerPagerAdapter<E extends PagerHolder> extends PagerA
 
     public abstract void unbindPagerHolder(E holder, int position);
 
+    public E getPagerHolder(int position) {
+        if (position < 0) {
+            return null;
+        }
+
+        for (E holder : mAttachedHolder) {
+            if (holder.position == position) {
+                return holder;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         E holder = mRecycler.obtain();

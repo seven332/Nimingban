@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
@@ -44,7 +43,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     private Conaco mConaco;
 
     private ProgressView mProgressView;
-    private TextView mTextView;
+    private View mFailed;
     private ImageView mImageView;
 
     private String mId;
@@ -73,7 +72,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         LayoutInflater.from(context).inflate(R.layout.widget_gallery_page, this);
 
         mProgressView = (ProgressView) findViewById(R.id.progress_view);
-        mTextView = (TextView) findViewById(R.id.text_view);
+        mFailed = findViewById(R.id.failed);
         mImageView = (ImageView) findViewById(R.id.image_view);
     }
 
@@ -105,7 +104,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
     @Override
     public void onClick(View v) {
-        load(mId, mUrl);
+        if (mId != null && mUrl != null) {
+            load(mId, mUrl);
+        }
     }
 
     @Override
@@ -126,7 +127,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         mProgressView.setVisibility(VISIBLE);
         mProgressView.setIndeterminate(true);
-        mTextView.setVisibility(GONE);
+        mFailed.setVisibility(GONE);
         mImageView.setVisibility(GONE);
         setImageDrawableSafely(null);
 
@@ -190,7 +191,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
-        mTextView.setVisibility(GONE);
+        mFailed.setVisibility(GONE);
         mImageView.setVisibility(VISIBLE);
 
         Drawable drawable = holder.getDrawable();
@@ -215,9 +216,8 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     public void onFailure() {
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
-        mTextView.setVisibility(VISIBLE);
-        mTextView.setText("Failed"); // TODO
-        mImageView.setVisibility(VISIBLE);
+        mFailed.setVisibility(VISIBLE);
+        mImageView.setVisibility(GONE);
         setImageDrawableSafely(null);
 
         // Release old holder
@@ -234,5 +234,30 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         removeRetry();
         mId = null;
         mUrl = null;
+    }
+
+    public void showDrawable(@NonNull Drawable drawable) {
+        mProgressView.setVisibility(GONE);
+        mProgressView.setIndeterminate(false);
+        mFailed.setVisibility(GONE);
+        mImageView.setVisibility(VISIBLE);
+
+        if (drawable instanceof GifDrawable) {
+            ((GifDrawable) drawable).start();
+        }
+
+        setImageDrawableSafely(drawable);
+    }
+
+    public void showFailedText() {
+        mProgressView.setVisibility(GONE);
+        mProgressView.setIndeterminate(false);
+        mFailed.setVisibility(VISIBLE);
+        mImageView.setVisibility(GONE);
+        setImageDrawableSafely(null);
+    }
+
+    public boolean isLoaded() {
+        return mImageView.getDrawable() != null;
     }
 }

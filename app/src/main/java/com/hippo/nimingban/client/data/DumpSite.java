@@ -35,6 +35,11 @@ public class DumpSite extends Site {
     }
 
     @Override
+    public String getReadableName(Context context) {
+        return "";
+    }
+
+    @Override
     public long getCookieMaxAge(Context context) {
         return -1;
     }

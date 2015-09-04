@@ -25,11 +25,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <TextView
-        android:id="@+id/text_view"
+    <ImageView
+        android:id="@+id/failed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:src="@drawable/emoticon_sad"
+        android:contentDescription="@null"/>
 
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/image_view"

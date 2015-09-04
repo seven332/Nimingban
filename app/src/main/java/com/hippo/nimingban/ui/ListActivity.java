@@ -19,6 +19,7 @@ package com.hippo.nimingban.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -58,6 +59,7 @@ import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
+import java.io.File;
 import java.util.List;
 
 public final class ListActivity extends AppCompatActivity
@@ -214,6 +216,14 @@ public final class ListActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
+    }
+
+    @Override
+    public void OnLongClickImage(File imageFile) {
+        Intent intent = new Intent(this, GalleryActivity2.class);
+        intent.setAction(GalleryActivity2.ACTION_IMAGE_FILE);
+        intent.putExtra(GalleryActivity2.KEY_FILE_URI, Uri.fromFile(imageFile));
+        startActivity(intent);
     }
 
     @Override

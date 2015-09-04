@@ -57,6 +57,11 @@ public class ACSite extends Site {
     }
 
     @Override
+    public String getReadableName(Context context) {
+        return "ac";
+    }
+
+    @Override
     public long getCookieMaxAge(Context context) {
         SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(context);
         HttpCookieWithId cookie = cookieStore.getCookie(mSiteUrl, "userId");

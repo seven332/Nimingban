@@ -28,7 +28,10 @@ import android.widget.LinearLayout;
 import com.hippo.nimingban.R;
 import com.hippo.widget.DrawerListView;
 
-public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickListener {
+import java.io.File;
+
+public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickListener,
+        HeaderImageView.OnLongClickImageListener {
 
     private static final int INDEX_FEED = 0;
     private static final int INDEX_SETTINGS = 1;
@@ -62,6 +65,8 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         mHeader = (HeaderImageView) findViewById(R.id.header);
         mDrawerListView = (DrawerListView) findViewById(R.id.drawer_list_view);
 
+        mHeader.setOnLongClickImageListener(this);
+
         Resources resources = context.getResources();
 
         Drawable[] drawables = {
@@ -69,7 +74,7 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
                 resources.getDrawable(R.drawable.ic_setting_light_x24)
         };
         String[] strings = {
-                resources.getString(R.string.feed), // TODO hardcode
+                resources.getString(R.string.feed),
                 resources.getString(R.string.settings)
         };
 
@@ -102,7 +107,19 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         mHelper = helper;
     }
 
+    @Override
+    public boolean onLongClickImage(File imageFile) {
+        if (mHelper != null) {
+            mHelper.OnLongClickImage(imageFile);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public interface Helper {
+
+        void OnLongClickImage(File imageFile);
 
         void onClickFeed();
 
