@@ -47,16 +47,6 @@ model {
             }
         }
     }
-
-    android.ndk {
-        moduleName = "gifdecoder"
-        ldLibs += ["jnigraphics"]
-    }
-
-    android.productFlavors {
-        // To include all cpu architectures, leaves abiFilters empty
-        create("all")
-    }
 }
 
 dependencies {

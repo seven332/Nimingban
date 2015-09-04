@@ -50,13 +50,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name="com.hippo.nimingban.ui.GalleryActivity"
-            android:label="@string/gallery"
-            android:theme="@style/AppTheme"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="portrait"/>
-
-        <activity
             android:name="com.hippo.nimingban.ui.GalleryActivity2"
             android:label="@string/gallery"
             android:theme="@style/AppTheme"

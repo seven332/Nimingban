@@ -55,8 +55,8 @@ import java.io.OutputStream;
 // TODO show all image in post
 public class GalleryActivity2 extends StyleableActivity {
 
-    public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity.action.SINGLE_IMAGE";
-    public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity.action.IMAGE_FILE";
+    public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity2.action.SINGLE_IMAGE";
+    public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity2.action.IMAGE_FILE";
 
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";

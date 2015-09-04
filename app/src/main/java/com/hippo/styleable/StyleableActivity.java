@@ -19,7 +19,7 @@ package com.hippo.styleable;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
-public class StyleableActivity extends AppCompatActivity {
+public abstract class StyleableActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
