@@ -49,4 +49,6 @@ public abstract class Site {
      * @return 0 or negative for none
      */
     public abstract long getCookieMaxAge(Context context);
+
+    public abstract String getUserId(Context context);
 }

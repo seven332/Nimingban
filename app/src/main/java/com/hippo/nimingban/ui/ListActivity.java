@@ -109,6 +109,7 @@ public final class ListActivity extends AppCompatActivity
         }
 
         mPostHelper = new PostHelper();
+        mPostHelper.setEmptyString(getString(R.string.no_post));
         mContentLayout.setHelper(mPostHelper);
 
         mPostAdapter = new PostAdapter();
@@ -199,6 +200,12 @@ public final class ListActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
+    }
+
+    @Override
+    public void onClickFeed() {
+        Intent intent = new Intent(this, FeedActivity.class);
+        startActivity(intent);
     }
 
     @Override

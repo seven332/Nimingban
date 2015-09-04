@@ -30,7 +30,8 @@ import com.hippo.widget.DrawerListView;
 
 public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickListener {
 
-    private static final int INDEX_SETTINGS = 0;
+    private static final int INDEX_FEED = 0;
+    private static final int INDEX_SETTINGS = 1;
 
     private HeaderImageView mHeader;
     private DrawerListView mDrawerListView;
@@ -64,10 +65,12 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         Resources resources = context.getResources();
 
         Drawable[] drawables = {
-                resources.getDrawable(R.drawable.ic_setting_light_x24) // TODO darktheme
+                resources.getDrawable(R.drawable.ic_rss_light_x24), // TODO darktheme
+                resources.getDrawable(R.drawable.ic_setting_light_x24)
         };
         String[] strings = {
-                "Settings" // TODO hardcode
+                resources.getString(R.string.feed), // TODO hardcode
+                resources.getString(R.string.settings)
         };
 
         mDrawerListView.setData(drawables, strings);
@@ -80,6 +83,11 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         long now = System.currentTimeMillis();
         if (now - mHit > 500) {
             switch (position) {
+                case INDEX_FEED:
+                    if (mHelper != null) {
+                        mHelper.onClickFeed();
+                    }
+                    break;
                 case INDEX_SETTINGS:
                     if (mHelper != null) {
                         mHelper.onClickSettings();
@@ -95,6 +103,8 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
     }
 
     public interface Helper {
+
+        void onClickFeed();
 
         void onClickSettings();
     }

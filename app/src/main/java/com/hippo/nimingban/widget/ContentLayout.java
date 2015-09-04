@@ -188,6 +188,8 @@ public class ContentLayout extends FrameLayout {
 
         private int mNextPageScrollSize;
 
+        private String mEmptyString = "No hint";
+
         private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -290,6 +292,10 @@ public class ContentLayout extends FrameLayout {
         protected void onShowText() {
         }
 
+        public void setEmptyString(String str) {
+            mEmptyString = str;
+        }
+
         /**
          * @throws IndexOutOfBoundsException
          *                if {@code location < 0 || location >= size()}
@@ -319,7 +325,7 @@ public class ContentLayout extends FrameLayout {
             switch (mCurrentTaskType) {
                 case TYPE_REFRESH:
                 case TYPE_SOMEWHERE:
-                    showText("No hint"); // TODO hardcode
+                    showText(mEmptyString); // TODO hardcode
                     break;
                 case TYPE_NEXT_PAGE:
                 case TYPE_NEXT_PAGE_KEEP_POS:

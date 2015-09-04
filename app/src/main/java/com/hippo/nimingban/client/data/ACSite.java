@@ -17,6 +17,8 @@
 package com.hippo.nimingban.client.data;
 
 import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACUrl;
@@ -25,6 +27,8 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class ACSite extends Site {
 
@@ -61,5 +65,42 @@ public class ACSite extends Site {
         } else {
             return cookie.getMaxAge();
         }
+    }
+
+    @Override
+    public String getUserId(Context context) {
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        String mac = info.getMacAddress();
+
+        String id;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(mac.getBytes());
+            id = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            id = String.valueOf(mac.hashCode());
+        }
+
+        return id;
+    }
+
+    /**
+     * http://stackoverflow.com/questions/332079
+     *
+     * @param bytes The bytes to convert.
+     * @return A {@link String} converted from the bytes of a hashable key used
+     *         to store a filename on the disk, to hex digits.
+     */
+    private static String bytesToHexString(final byte[] bytes) {
+        final StringBuilder builder = new StringBuilder();
+        for (final byte b : bytes) {
+            final String hex = Integer.toHexString(0xFF & b);
+            if (hex.length() == 1) {
+                builder.append('0');
+            }
+            builder.append(hex);
+        }
+        return builder.toString();
     }
 }

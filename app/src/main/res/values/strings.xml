@@ -23,6 +23,8 @@
 
     <string name="press_twice_exit">Press twice to exit</string>
 
+    <string name="no_post">There is no thread</string>
+
     <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
     <plurals name="go_to_hint">
@@ -31,6 +33,16 @@
     </plurals>
     <string name="go_to_error_invalid">Please enter a valid number</string>
     <string name="go_to_error_out_of_range">Target page is out of range</string>
+
+    <string name="add_feed">Add feed</string>
+    <string name="remove_feed">Remove feed</string>
+    <string name="add_feed_successfully">Add feed successfully</string>
+    <string name="add_feed_failed">Add feed failed</string>
+    <string name="remove_feed_successfully">Remove feed successfully</string>
+    <string name="remove_feed_failed">Remove feed failed</string>
+
+    <string name="feed">Feed</string>
+    <string name="no_feed">There is no feed</string>
 
     <string name="reply_to_comment">Reply to comment</string>
     <string name="copy_comment_text">Copy comment text</string>

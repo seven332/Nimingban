@@ -38,4 +38,9 @@ public class DumpSite extends Site {
     public long getCookieMaxAge(Context context) {
         return -1;
     }
+
+    @Override
+    public String getUserId(Context context) {
+        return "";
+    }
 }

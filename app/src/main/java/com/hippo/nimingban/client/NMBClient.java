@@ -37,12 +37,6 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
-    /*
-
-    public static final int SITE_MIN = AC;
-    public static final int SITE_MAX = KUKUKU;
-    */
-
     public static final int METHOD_GET_COOKIE = 0;
 
     public static final int METHOD_GET_POST_LIST = 1;
@@ -52,6 +46,12 @@ public class NMBClient {
     public static final int METHOD_GET_REFERENCE = 3;
 
     public static final int METHOD_GET_REPLY = 4;
+
+    public static final int METHOD_GET_FEED = 5;
+
+    public static final int METHOD_ADD_FEED = 6;
+
+    public static final int METHOD_DEL_FEED = 7;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final HttpClient mHttpClient;
@@ -160,7 +160,33 @@ public class NMBClient {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        private Object getFeed(Object... params) throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    return ACEngine.getFeed(mHttpClient, mHttpRequest, (String) params[0], (Integer) params[1]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
+        private Object addFeed(Object... params) throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    return ACEngine.addFeed(mHttpClient, mHttpRequest, (String) params[0], (String) params[1]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
+        private Object delFeed(Object... params) throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    return ACEngine.delFeed(mHttpClient, mHttpRequest, (String) params[0], (String) params[1]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -175,6 +201,12 @@ public class NMBClient {
                         return getReference(params);
                     case METHOD_GET_REPLY:
                         return reply(params);
+                    case METHOD_GET_FEED:
+                        return getFeed(params);
+                    case METHOD_ADD_FEED:
+                        return addFeed(params);
+                    case METHOD_DEL_FEED:
+                        return delFeed(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

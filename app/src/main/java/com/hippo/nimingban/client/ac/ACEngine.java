@@ -31,6 +31,7 @@ import com.hippo.httpclient.StringData;
 import com.hippo.network.InputStreamPipeData;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
+import com.hippo.nimingban.client.ac.data.ACFeed;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.nimingban.client.ac.data.ACReference;
@@ -336,6 +337,86 @@ public class ACEngine {
                 } else {
                     throw new NMBException(ACSite.getInstance(), "Unknown"); // TODO get error message from body
                 }
+            }
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
+    public static List<Post> getFeed(HttpClient httpClient, HttpRequest httpRequest,
+            String uuid, int page) throws Exception {
+        try {
+
+            httpRequest.setUrl(ACUrl.getFeedUrl(uuid, page));
+            HttpResponse response = httpClient.execute(httpRequest);
+            String body = response.getString();
+
+            List<ACFeed> acFeeds = JSON.parseArray(body, ACFeed.class);
+
+            if (acFeeds == null) {
+                throw new NMBException(ACSite.getInstance(), "Can't parse json when getPostList");
+            }
+
+            List<Post> result = new ArrayList<>(acFeeds.size());
+            for (ACFeed feed : acFeeds) {
+                if (feed != null) {
+                    feed.generate(ACSite.getInstance());
+                    result.add(feed);
+                }
+            }
+
+            return result;
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
+    public static Void addFeed(HttpClient httpClient, HttpRequest httpRequest,
+            String uuid, String tid) throws Exception {
+        try {
+            httpRequest.setUrl(ACUrl.getAddFeedUrl(uuid, tid));
+            HttpResponse response = httpClient.execute(httpRequest);
+            String body = response.getString();
+
+            if (body.equals("\"\\u8ba2\\u9605\\u5927\\u6210\\u529f\\u2192_\\u2192\"")) {
+                return null;
+            } else {
+                throw new NMBException(ACSite.getInstance(), "Unknown error");
+            }
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
+    public static Void delFeed(HttpClient httpClient, HttpRequest httpRequest,
+            String uuid, String tid) throws Exception {
+        try {
+            httpRequest.setUrl(ACUrl.getDelFeedUrl(uuid, tid));
+            HttpResponse response = httpClient.execute(httpRequest);
+            String body = response.getString();
+
+            if (body.equals("\"\\u53d6\\u6d88\\u8ba2\\u9605\\u6210\\u529f!\"")) {
+                return null;
+            } else {
+                throw new NMBException(ACSite.getInstance(), "Unknown error");
             }
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {

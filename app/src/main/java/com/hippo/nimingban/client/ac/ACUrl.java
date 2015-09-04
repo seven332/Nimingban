@@ -26,6 +26,12 @@ public class ACUrl {
 
     public static final String API_REFERENCE = HOST + "/Home/Forum/ref";
 
+    public static final String API_FEED = HOST + "/Api/feed";
+
+    public static final String API_ADD_FEED = HOST + "/Api/addFeed";
+
+    public static final String API_DEL_FEED = HOST + "/Api/delFeed";
+
     public static String getPostListUrl(String forum, int page) {
         return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
     }
@@ -36,5 +42,17 @@ public class ACUrl {
 
     public static String getReferenceUrl(String id) {
         return API_REFERENCE + "?id=" + id;
+    }
+
+    public static String getFeedUrl(String uuid, int page) {
+        return API_FEED + "?uuid=" + uuid + "&page=" + (page + 1);
+    }
+
+    public static String getAddFeedUrl(String uuid, String tid) {
+        return API_ADD_FEED + "?uuid=" + uuid + "&tid=" + tid;
+    }
+
+    public static String getDelFeedUrl(String uuid, String tid) {
+        return API_DEL_FEED + "?uuid=" + uuid + "&tid=" + tid;
     }
 }

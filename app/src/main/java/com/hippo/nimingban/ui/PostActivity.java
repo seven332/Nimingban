@@ -37,6 +37,7 @@ import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -64,6 +65,7 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.MathUtils;
@@ -266,6 +268,22 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
                     intent.putExtra(ReplyActivity.KEY_ID, mId);
                     startActivityForResult(intent, REQUEST_CODE_REPLY);
                 }
+                return true;
+            case R.id.action_add_feed:
+                NMBRequest request1 = new NMBRequest();
+                request1.setSite(mSite);
+                request1.setMethod(NMBClient.METHOD_ADD_FEED);
+                request1.setArgs(mSite.getUserId(this), mId);
+                request1.setCallback(new FeedListener(this, true));
+                mNMBClient.execute(request1);
+                return true;
+            case R.id.action_remove_feed:
+                NMBRequest request2 = new NMBRequest();
+                request2.setSite(mSite);
+                request2.setMethod(NMBClient.METHOD_DEL_FEED);
+                request2.setArgs(mSite.getUserId(this), mId);
+                request2.setCallback(new FeedListener(this, false));
+                mNMBClient.execute(request2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -774,6 +792,34 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
             }
             // Clear
             mRequest = null;
+        }
+    }
+
+    private static class FeedListener implements NMBClient.Callback<Void> {
+
+        private Context mContext;
+        private boolean mAdd;
+
+        public FeedListener(Context context, boolean add) {
+            mContext = context.getApplicationContext();
+            mAdd = add;
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            Toast.makeText(mContext, mAdd ? R.string.add_feed_successfully : R.string.remove_feed_successfully, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Toast.makeText(mContext, mContext.getString(mAdd ? R.string.add_feed_failed :
+                            R.string.remove_feed_failed) + "\n" + ExceptionUtils.getReadableString(mContext, e),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancelled() {
+            Log.d("TAG", "FeedListener onCancelled");
         }
     }
 }

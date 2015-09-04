@@ -23,12 +23,24 @@
         android:id="@+id/action_reply"
         android:title="@string/reply"
         android:icon="@drawable/ic_reply_dark_x24"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_go_to"
         android:title="@string/go_to"
         android:icon="@drawable/ic_go_to_dark_x24"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_add_feed"
+        android:title="@string/add_feed"
+        android:icon="@drawable/ic_borad_add_dark_x24"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_remove_feed"
+        android:title="@string/remove_feed"
+        android:icon="@drawable/ic_borad_remove_dark_x24"
+        app:showAsAction="ifRoom"/>
 
 </menu>
