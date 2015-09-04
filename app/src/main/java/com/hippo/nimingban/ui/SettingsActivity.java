@@ -25,16 +25,16 @@ import android.os.SystemClock;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.v7.app.AppCompatActivity;
 
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ReadableTime;
 
 import java.util.Arrays;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends StyleableActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

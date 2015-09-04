@@ -19,7 +19,6 @@ package com.hippo.nimingban.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -38,13 +37,14 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import java.util.List;
 
-public final class FeedActivity extends AppCompatActivity implements EasyRecyclerView.OnItemClickListener {
+public final class FeedActivity extends StyleableActivity implements EasyRecyclerView.OnItemClickListener {
 
     private Conaco mConaco;
     private NMBClient mNMBClient;

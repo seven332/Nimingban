@@ -27,7 +27,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -52,6 +51,7 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.SimpleHolder;
@@ -63,7 +63,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public final class ReplyActivity extends AppCompatActivity implements View.OnClickListener {
+public final class ReplyActivity extends StyleableActivity implements View.OnClickListener {
 
     private static final String TAG = ReplyActivity.class.getSimpleName();
 

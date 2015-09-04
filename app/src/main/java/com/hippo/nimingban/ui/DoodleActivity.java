@@ -21,7 +21,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,12 +28,13 @@ import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.MathUtils;
 
 import java.io.File;
 
-public final class DoodleActivity extends AppCompatActivity implements View.OnClickListener, DoodleView.Helper {
+public final class DoodleActivity extends StyleableActivity implements View.OnClickListener, DoodleView.Helper {
 
     private DoodleView mDoodleView;
 

@@ -17,7 +17,6 @@
 package com.hippo.nimingban;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +30,7 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
+import com.hippo.styleable.StyleableApplication;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.squareup.leakcanary.LeakCanary;
@@ -38,7 +38,7 @@ import com.squareup.leakcanary.LeakCanary;
 import java.io.File;
 import java.io.IOException;
 
-public class NMBApplication extends Application {
+public class NMBApplication extends StyleableApplication {
 
     private SimpleCookieStore mSimpleCookieStore;
     private NMBHttpClient mNMBHttpClient;

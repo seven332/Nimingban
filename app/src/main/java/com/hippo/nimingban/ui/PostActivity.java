@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -65,6 +64,7 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
@@ -73,7 +73,7 @@ import com.hippo.yorozuya.MathUtils;
 
 import java.util.List;
 
-public final class PostActivity extends AppCompatActivity implements EasyRecyclerView.OnItemClickListener,
+public final class PostActivity extends StyleableActivity implements EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";

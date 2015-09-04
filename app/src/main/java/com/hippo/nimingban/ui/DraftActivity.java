@@ -19,7 +19,6 @@ package com.hippo.nimingban.ui;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -38,11 +37,12 @@ import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.nimingban.util.DB;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import de.greenrobot.dao.query.LazyList;
 
-public final class DraftActivity extends AppCompatActivity implements EasyRecyclerView.OnItemClickListener {
+public final class DraftActivity extends StyleableActivity implements EasyRecyclerView.OnItemClickListener {
 
     private LazyList<DraftRaw> mLazyList;
 

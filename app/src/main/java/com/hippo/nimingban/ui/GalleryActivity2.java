@@ -25,7 +25,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +39,7 @@ import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.widget.GalleryPage;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
@@ -53,7 +53,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 // TODO show all image in post
-public class GalleryActivity2 extends AppCompatActivity {
+public class GalleryActivity2 extends StyleableActivity {
 
     public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity.action.SINGLE_IMAGE";
     public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity.action.IMAGE_FILE";

@@ -24,7 +24,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 
@@ -39,9 +38,10 @@ import com.hippo.gallery.ui.GalleryPageView;
 import com.hippo.gallery.ui.GalleryView;
 import com.hippo.network.DownloadClient;
 import com.hippo.network.DownloadRequest;
-import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.NMBAppConfig;
+import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
+import com.hippo.styleable.StyleableActivity;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
@@ -53,7 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class GalleryActivity extends AppCompatActivity implements GalleryProviderListener, GalleryView.ActionListener {
+public class GalleryActivity extends StyleableActivity implements GalleryProviderListener, GalleryView.ActionListener {
 
     public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity.action.SINGLE_IMAGE";
 
