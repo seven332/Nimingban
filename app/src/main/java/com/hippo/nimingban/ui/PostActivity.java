@@ -66,6 +66,7 @@ import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.MathUtils;
@@ -636,8 +637,8 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
         @Override
         public void onBindViewHolder(ReplyHolder holder, int position) {
             Reply reply = mReplyHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", highlightOp(reply)));
-            holder.rightText.setText(reply.getNMBId());
+            holder.leftText.setText(TextUtils2.combine(highlightOp(reply), "    ",
+                    ReadableTime.getDisplayTime(reply.getNMBTime())));
             holder.content.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();

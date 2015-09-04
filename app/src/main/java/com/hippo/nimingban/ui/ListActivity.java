@@ -51,6 +51,7 @@ import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
@@ -63,6 +64,8 @@ public final class ListActivity extends AppCompatActivity
         implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
 
     private static final int BACK_PRESSED_INTERVAL = 2000;
+
+    public static final int REQUEST_CODE_SETTINGS = 0;
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -141,6 +144,17 @@ public final class ListActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                mPostAdapter.notifyDataSetChanged();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (mDrawerLayout != null && (mDrawerLayout.isDrawerOpen(Gravity.LEFT) ||
                 mDrawerLayout.isDrawerOpen(Gravity.RIGHT))) {
@@ -211,7 +225,7 @@ public final class ListActivity extends AppCompatActivity
     @Override
     public void onClickSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_SETTINGS);
     }
 
     private class ClickPostListener implements EasyRecyclerView.OnItemClickListener {
@@ -272,7 +286,8 @@ public final class ListActivity extends AppCompatActivity
         @Override
         public void onBindViewHolder(ListHolder holder, int position) {
             Post post = mPostHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayTime(), "  ", post.getNMBDisplayUsername()));
+            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayUsername(), "    ",
+                    ReadableTime.getDisplayTime(post.getNMBTime())));
             holder.rightText.setText(post.getNMBReplyDisplayCount());
             holder.content.setText(post.getNMBDisplayContent());
 

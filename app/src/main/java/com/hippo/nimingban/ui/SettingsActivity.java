@@ -42,7 +42,8 @@ public class SettingsActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainFragement()).commit();
     }
 
-    public static final class MainFragement extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+    public static final class MainFragement extends PreferenceFragment
+            implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
         private static final String KEY_AC_COOKIES = "ac_cookies";
 
@@ -82,6 +83,10 @@ public class SettingsActivity extends AppCompatActivity {
 
             mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mACCookies = findPreference(KEY_AC_COOKIES);
+
+            mPrettyTime.setOnPreferenceChangeListener(this);
+
+            mACCookies.setOnPreferenceClickListener(this);
 
             long time = System.currentTimeMillis() - 3 * ReadableTime.HOUR_MILLIS;
             String plain = ReadableTime.getPlainTime(time);
@@ -133,8 +138,19 @@ public class SettingsActivity extends AppCompatActivity {
                     Arrays.fill(mHits, 0);
                     // TODO
                 }
+                return true;
             }
             return false;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String key = preference.getKey();
+            if (Settings.KEY_PRETTY_TIME.equals(key)) {
+                ((SettingsActivity) getContext()).setResult(RESULT_OK);
+                return true;
+            }
+            return true;
         }
 
         private class TimingLife extends CountDownTimer {
