@@ -28,6 +28,10 @@ public class TextUtils2 {
         Appendable appendable = null;
 
         for (CharSequence sequence : charSequences) {
+            if (sequence == null) {
+                continue;
+            }
+
             // Ensure appendable
             if (sequence instanceof Spanned) {
                 if (appendable == null) {
@@ -48,7 +52,9 @@ public class TextUtils2 {
             }
         }
 
-        if (appendable instanceof StringBuilder) {
+        if (appendable == null) {
+            return "";
+        } else if (appendable instanceof StringBuilder) {
             return appendable.toString();
         } else {
             return (CharSequence) appendable;
