@@ -90,12 +90,6 @@ public class GalleryActivity2 extends StyleableActivity {
                 return true;
             }
         }
-
-        if (mSaveTask != null) {
-            mSaveTask.onActivityDestory();
-            mSaveTask = null;
-        }
-
         return false;
     }
 
@@ -125,6 +119,11 @@ public class GalleryActivity2 extends StyleableActivity {
             if (child instanceof GalleryPage) {
                 ((GalleryPage) child).unload();
             }
+        }
+
+        if (mSaveTask != null) {
+            mSaveTask.onActivityDestory();
+            mSaveTask = null;
         }
     }
 
