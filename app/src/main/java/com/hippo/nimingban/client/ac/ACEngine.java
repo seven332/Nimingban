@@ -30,7 +30,6 @@ import com.hippo.httpclient.HttpResponse;
 import com.hippo.httpclient.StringData;
 import com.hippo.network.InputStreamPipeData;
 import com.hippo.nimingban.client.CancelledException;
-import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
@@ -48,6 +47,7 @@ import org.jsoup.nodes.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO let Engine create url
 public class ACEngine {
 
     private static final String API_GET_COOKIE = ACUrl.HOST + "/Api/getCookie";
@@ -225,6 +225,7 @@ public class ACEngine {
             StringData resto = new StringData(struct.resto);
             resto.setName("resto");
 
+            // TODO down size image
             InputStreamPipeData image;
             InputStreamPipe isp = struct.image;
             if (isp == null) {
@@ -269,4 +270,81 @@ public class ACEngine {
         }
     }
 
+    public static Void reply2(HttpClient httpClient, HttpRequest httpRequest,
+            Object obj) throws Exception {
+        try {
+            ACReplyStruct struct = (ACReplyStruct) obj;
+
+            StringData name = new StringData(struct.name);
+            name.setName("name");
+            name.setProperty("Content-Type", "text/plain; charset=utf-8");
+            StringData email = new StringData(struct.email);
+            email.setName("email");
+            email.setProperty("Content-Type", "text/plain; charset=utf-8");
+            StringData title = new StringData(struct.title);
+            title.setName("title");
+            title.setProperty("Content-Type", "text/plain; charset=utf-8");
+            StringData emotion = new StringData(null);
+            emotion.setName("emotion");
+            emotion.setProperty("Content-Type", "text/plain; charset=utf-8");
+            StringData content = new StringData(struct.content);
+            content.setName("content");
+            content.setProperty("Content-Type", "text/plain; charset=utf-8");
+
+            // TODO down size image
+            InputStreamPipeData image;
+            InputStreamPipe isp = struct.image;
+            if (isp == null) {
+                image = null;
+            } else {
+                image = new InputStreamPipeData(isp);
+                String filename;
+                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
+                if (TextUtils.isEmpty(extension)) {
+                    // TODO on extension ?
+                    extension = "jpg";
+                }
+                filename = "a." + extension;
+                image.setName("image");
+                image.setFilename(filename);
+                image.setProperty("Content-Type", struct.imageType);
+            }
+
+            FormDataPoster httpImpl = new FormDataPoster(name, email, title, emotion, content, image);
+            String url = ACUrl.HOST + "/api/t/" + struct.resto + "/create";
+            httpRequest.setUrl(url);
+            httpRequest.setHttpImpl(httpImpl);
+            HttpResponse response = httpClient.execute(httpRequest);
+
+            String body = response.getString();
+
+            Log.d("TAG", body);
+
+            try {
+                JSONObject jo = JSON.parseObject(body);
+                if (jo.getBoolean("success")) {
+                    return null;
+                } else {
+                    String msg = jo.getString("msg");
+                    throw new NMBException(ACSite.getInstance(), msg);
+                }
+            } catch (Exception e) {
+                Document doc = Jsoup.parse(body);
+                List<Element> elements = doc.getElementsByClass("success");
+                if (!elements.isEmpty()) {
+                    return null;
+                } else {
+                    throw new NMBException(ACSite.getInstance(), "Unknown"); // TODO get error message from body
+                }
+            }
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
 }
