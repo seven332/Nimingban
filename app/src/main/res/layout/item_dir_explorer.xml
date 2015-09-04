@@ -15,20 +15,9 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <SwitchPreference
-        android:key="pretty_time"
-        android:title="@string/main_pretty_time"
-        android:defaultValue="true"/>
-
-    <Preference
-        android:key="ac_cookies"
-        android:title="@string/main_ac_cookies"/>
-
-    <Preference
-        android:key="image_save_location"
-        android:title="@string/main_image_save_location"/>
-
-</PreferenceScreen>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="8dp"/>

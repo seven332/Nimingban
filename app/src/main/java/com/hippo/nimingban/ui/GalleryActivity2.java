@@ -34,10 +34,10 @@ import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.io.FileInputStreamPipe;
-import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
@@ -194,15 +194,22 @@ public class GalleryActivity2 extends StyleableActivity {
             GalleryHolder holder = getPagerHolder(0);
             if (holder == null || !holder.galleryPage.isLoaded()) {
                 onSaveTaskOver(false);
+                return;
             }
 
-            File dir = NMBAppConfig.getImageDir(); // TODO get from settings
+            UniFile dir = Settings.getImageSaveLocation();
             if (dir == null) {
                 onSaveTaskOver(false);
+                return;
             }
 
-            File file = new File(dir, mImageFile.getName());
-            mSaveTask = new ImageFileSaveTask(GalleryActivity2.this, mImageFile, UniFile.fromFile(file));
+            UniFile uniFile = dir.createFile(mImageFile.getName());
+            if (uniFile == null) {
+                onSaveTaskOver(false);
+                return;
+            }
+
+            mSaveTask = new ImageFileSaveTask(GalleryActivity2.this, mImageFile, uniFile);
             mSaveTask.execute();
         }
 
@@ -260,15 +267,22 @@ public class GalleryActivity2 extends StyleableActivity {
             GalleryHolder holder = getPagerHolder(0);
             if (holder == null || !holder.galleryPage.isLoaded()) {
                 onSaveTaskOver(false);
+                return;
             }
 
-            File dir = NMBAppConfig.getImageDir(); // TODO get from settings
+            UniFile dir = Settings.getImageSaveLocation();
             if (dir == null) {
                 onSaveTaskOver(false);
+                return;
             }
 
-            File file = new File(dir, mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
-            mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, UniFile.fromFile(file), mImage);
+            UniFile uniFile = dir.createFile(mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
+            if (uniFile == null) {
+                onSaveTaskOver(false);
+                return;
+            }
+
+            mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, uniFile, mImage);
             mSaveTask.execute();
         }
     }

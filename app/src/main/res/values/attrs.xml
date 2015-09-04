@@ -20,6 +20,7 @@
     <declare-styleable name="Theme">
         <attr format="color" name="colorDivider"/>
         <attr format="color" name="colorShadow"/>
+        <attr format="color" name="colorTextPrimary"/>
     </declare-styleable>
 
     <declare-styleable name="MonoRecyclerView">

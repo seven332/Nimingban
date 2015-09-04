@@ -18,7 +18,13 @@ package com.hippo.nimingban.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.hippo.nimingban.NMBAppConfig;
+import com.hippo.unifile.UniFile;
 
 public final class Settings {
 
@@ -73,15 +79,41 @@ public final class Settings {
 
     public static final String KEY_PRETTY_TIME = "pretty_time";
     public static final boolean DEFAULT_PRETTY_TIME = true;
+    public static final String KEY_IMAGE_SAVE_LOACTION = "image_save_location";
+
+    public static final String KEY_IMAGE_SAVE_SCHEME = "image_scheme";
+    public static final String KEY_IMAGE_SAVE_AUTHORITY = "image_authority";
+    public static final String KEY_IMAGE_SAVE_PATH = "image_path";
+    public static final String KEY_IMAGE_SAVE_QUERY = "image_query";
+    public static final String KEY_IMAGE_SAVE_FRAGMENT = "image_fragment";
 
     public static boolean getPrettyTime() {
         return getBoolean(KEY_PRETTY_TIME, DEFAULT_PRETTY_TIME);
     }
 
+    @Nullable
+    public static UniFile getImageSaveLocation() {
+        UniFile dir = null;
+        try {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme(getString(KEY_IMAGE_SAVE_SCHEME, null));
+            builder.encodedAuthority(getString(KEY_IMAGE_SAVE_AUTHORITY, null));
+            builder.encodedPath(getString(KEY_IMAGE_SAVE_PATH, null));
+            builder.encodedQuery(getString(KEY_IMAGE_SAVE_QUERY, null));
+            builder.encodedFragment(getString(KEY_IMAGE_SAVE_FRAGMENT, null));
+            dir = UniFile.fromUri(sContext, builder.build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dir != null ? dir : UniFile.fromFile(NMBAppConfig.getImageDir());
+    }
 
-
-
-
-
-
+    public static void putImageSaveLocation(@NonNull UniFile location) {
+        Uri uri = location.getUri();
+        putString(KEY_IMAGE_SAVE_SCHEME, uri.getScheme());
+        putString(KEY_IMAGE_SAVE_AUTHORITY, uri.getEncodedAuthority());
+        putString(KEY_IMAGE_SAVE_PATH, uri.getEncodedPath());
+        putString(KEY_IMAGE_SAVE_QUERY, uri.getEncodedQuery());
+        putString(KEY_IMAGE_SAVE_FRAGMENT, uri.getEncodedFragment());
+    }
 }

@@ -99,6 +99,13 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".ui.DirPickerActivity"
+            android:label="@string/dir_picker"
+            android:theme="@style/AppTheme"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

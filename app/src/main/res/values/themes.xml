@@ -22,6 +22,7 @@
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorShadow">@color/shadow_light</item>
+        <item name="colorTextPrimary">@color/primary_text_default_light</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -30,6 +31,7 @@
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorShadow">@color/shadow_light</item>
+        <item name="colorTextPrimary">@color/primary_text_default_light</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
     </style>

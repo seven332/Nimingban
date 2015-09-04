@@ -124,10 +124,20 @@
     <string name="settings">Settings</string>
     <string name="main_pretty_time">Display pretty time</string>
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
-    <string name="main_category_ac">Da Diao</string>
     <string name="main_ac_cookies">Cookies</string>
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you have no cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
     <string name="main_ac_cookies_summary_forever">Theoretically speaking, you have everlasting cookies</string>
+    <string name="main_image_save_location">Image save location</string>
+    <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+
+    <string name="dir_picker">Dir picker</string>
+    <string name="directory_not_writable">The directory is not writable</string>
+    <string name="cant_get_image_save_location">Can\'t get image save location</string>
+
+    <string name="pick_dir_kk">You can\'t write any kind of data on your external SD card in KitKat unless you have hacked it</string>
+    <string name="pick_dir_l">Lollipop provides an API to write on external SD card. If you want to set image save location to SD card, click the \"DOCUMENT\" button</string>
+
+    <string name="document">Document</string>
 
 </resources>
