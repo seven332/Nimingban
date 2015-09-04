@@ -85,6 +85,11 @@ public class ACSite extends Site {
         return id;
     }
 
+    @Override
+    public String getPostTitle(Context context, String postId) {
+        return "No." + postId;
+    }
+
     /**
      * http://stackoverflow.com/questions/332079
      *

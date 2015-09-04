@@ -51,4 +51,6 @@ public abstract class Site {
     public abstract long getCookieMaxAge(Context context);
 
     public abstract String getUserId(Context context);
+
+    public abstract String getPostTitle(Context context, String postId);
 }

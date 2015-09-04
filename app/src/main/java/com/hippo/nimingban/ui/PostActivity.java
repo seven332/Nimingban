@@ -144,6 +144,8 @@ public final class PostActivity extends AppCompatActivity implements EasyRecycle
 
         setContentView(R.layout.activity_post);
 
+        setTitle(mSite.getPostTitle(this, mId));
+
         mNMBClient = NMBApplication.getNMBClient(this);
         mConaco = NMBApplication.getConaco(this);
 

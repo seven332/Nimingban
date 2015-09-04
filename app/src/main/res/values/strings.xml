@@ -62,6 +62,8 @@
 
     <string name="select_picture">Select picture</string>
 
+    <string name="gallery">Gallery</string>
+
     <string name="no_cookies">No cookies</string>
     <string name="no_cookies_ac">It seems that you have no cookies of AC nimingban. Try getting cookies ?</string>
     <string name="i_dont_mind">I don\'t mind</string>

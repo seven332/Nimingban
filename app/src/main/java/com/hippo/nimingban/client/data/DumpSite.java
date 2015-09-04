@@ -43,4 +43,9 @@ public class DumpSite extends Site {
     public String getUserId(Context context) {
         return "";
     }
+
+    @Override
+    public String getPostTitle(Context context, String postId) {
+        return "";
+    }
 }
