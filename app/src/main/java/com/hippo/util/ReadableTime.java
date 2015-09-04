@@ -84,7 +84,7 @@ public final class ReadableTime {
         Resources resources = sResources;
 
         long now = System.currentTimeMillis();
-        if (time > now || time <= 0) {
+        if (time > now + (2 * MINUTE_MILLIS) || time <= 0) {
             return resources.getString(R.string.from_the_future);
         }
 
