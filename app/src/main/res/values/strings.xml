@@ -25,6 +25,8 @@
 
     <string name="no_post">There is no thread</string>
 
+    <string name="refresh">Refresh</string>
+
     <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
     <plurals name="go_to_hint">

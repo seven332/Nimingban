@@ -28,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -186,11 +187,24 @@ public final class ListActivity extends StyleableActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_list, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                mPostHelper.refresh();
+                return true;
+            default:
+                if (mDrawerToggle.onOptionsItemSelected(item)) {
+                    return true;
+                } else {
+                    return super.onOptionsItemSelected(item);
+                }
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void onChangeForum(Forum forum) {
