@@ -21,6 +21,8 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <string name="cant_make_sure_image_save_location">It seems the image save location is not available, you should go to Settings to set it</string>
+
     <string name="press_twice_exit">Press twice to exit</string>
 
     <string name="please_wait">Please wait</string>
@@ -160,5 +162,8 @@
     <string name="no_forum">Can\'t find any forum</string>
     <string name="refreshing_forum_list">Refreshing forum list</string>
     <string name="refresh_forum_list_failed">Refresh forum list failed</string>
+
+    <string name="downloading_update">Downloading update</string>
+    <string name="download_update_failde">Download update failed</string>
 
 </resources>

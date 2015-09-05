@@ -39,6 +39,8 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
+    public static final int METHOD_UPDATE = -2;
+
     public static final int METHOD_GET_FORUM_LIST = -1;
 
     public static final int METHOD_GET_COOKIE = 0;
@@ -215,6 +217,8 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_UPDATE:
+                        return UpdateEngine.update(mHttpClient, mHttpRequest, (Integer) params[0]);
                     case METHOD_GET_FORUM_LIST:
                         return getForumList();
                     case METHOD_GET_COOKIE:

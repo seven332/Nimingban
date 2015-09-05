@@ -35,7 +35,12 @@ public class NMBAppConfig {
     public static @Nullable File getExternalAppDir() {
         if (Environment.getExternalStorageState()
                 .equals(Environment.MEDIA_MOUNTED)) {
-            return new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
+            File file = new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
+            if (FileUtils.ensureDirectory(file)) {
+                return file;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

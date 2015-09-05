@@ -17,6 +17,7 @@
 package com.hippo.nimingban.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -43,18 +45,23 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
+import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.UpdateInfo;
+import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
+import com.hippo.unifile.UniFile;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -94,6 +101,7 @@ public final class ListActivity extends StyleableActivity
     private PostAdapter mPostAdapter;
 
     private NMBRequest mNMBRequest;
+    private NMBRequest mUpdateRequest;
 
     // Double click back exit
     private long mPressBackTime = 0;
@@ -174,6 +182,79 @@ public final class ListActivity extends StyleableActivity
         mRightDrawer.setOnSelectForumListener(this);
 
         updateForums(true);
+
+        checkForAppStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mUpdateRequest != null) {
+            mUpdateRequest.cancel();
+            mUpdateRequest = null;
+        }
+
+        if (mNMBRequest != null) {
+            mNMBRequest.cancel();
+            mNMBRequest = null;
+        }
+    }
+
+    private void showUpdateDialog(final UpdateInfo info) {
+        if (info == null) {
+            return;
+        }
+
+        if (info.info == null || info.apkUrl == null || info.versionName == null || info.size == 0) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Update to the latest version") // TODO hardcode
+                .setMessage(info.info)
+                .setPositiveButton("下载更新", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        UpdateHelper.downloadApk(ListActivity.this, info.apkUrl, "nimingban-" + info.versionName);
+                    }
+                })
+                .show();
+    }
+
+    private void checkForAppStart() {
+        // Check image save location
+        UniFile uniFile = Settings.getImageSaveLocation();
+        if (uniFile == null || !uniFile.ensureDir()) {
+            Toast.makeText(this, R.string.cant_make_sure_image_save_location, Toast.LENGTH_SHORT).show();
+        }
+
+        // Check for update
+        NMBRequest request = new NMBRequest();
+        mUpdateRequest = request;
+        request.setMethod(NMBClient.METHOD_UPDATE);
+        request.setArgs(0);
+        request.setCallback(new NMBClient.Callback<UpdateStatus>() {
+            @Override
+            public void onSuccess(UpdateStatus result) {
+                mUpdateRequest = null;
+                if ("need update".equals(result.status)) {
+                    showUpdateDialog(result.obj);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                mUpdateRequest = null;
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onCancelled() {
+                mUpdateRequest = null;
+            }
+        });
+        mNMBClient.execute(request);
     }
 
     private void updateForums(boolean firstTime) {
