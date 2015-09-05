@@ -116,9 +116,18 @@ public final class ListActivity extends StyleableActivity
                 R.string.drawer_open, R.string.drawer_close) {
 
             @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                if (mLeftDrawer == drawerView) {
+                    super.onDrawerSlide(drawerView, slideOffset);
+                }
+            }
+
+            @Override
             public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                if (view == mRightDrawer) {
+                if (mLeftDrawer == view) {
+                    super.onDrawerClosed(view);
+                }
+                if (mRightDrawer == view) {
                     mCreatePost.setVisible(true);
                     mRefreshMenu.setVisible(true);
                     mSortForumsMenu.setVisible(false);
@@ -127,8 +136,10 @@ public final class ListActivity extends StyleableActivity
 
             @Override
             public void onDrawerOpened(View view) {
-                super.onDrawerOpened(view);
-                if (view == mRightDrawer) {
+                if (mLeftDrawer == view) {
+                    super.onDrawerOpened(view);
+                }
+                if (mRightDrawer == view) {
                     mCreatePost.setVisible(false);
                     mRefreshMenu.setVisible(false);
                     mSortForumsMenu.setVisible(true);
