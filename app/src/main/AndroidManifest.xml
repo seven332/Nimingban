@@ -47,7 +47,19 @@
             android:name="com.hippo.nimingban.ui.PostActivity"
             android:theme="@style/AppTheme"
             android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http"/>
+                <data android:host="h.nimingban.com"/>
+                <data android:host="h.acfun.tv"/>
+                <data android:pathPrefix="/t/"/>
+            </intent-filter>
+
+        </activity>
 
         <activity
             android:name="com.hippo.nimingban.ui.GalleryActivity2"

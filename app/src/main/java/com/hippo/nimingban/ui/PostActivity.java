@@ -56,6 +56,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
 import com.hippo.nimingban.client.ReferenceSpan;
+import com.hippo.nimingban.client.ac.NMBUriParser;
 import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
@@ -126,6 +127,13 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
             if (Site.isValid(site) && id != null) {
                 mSite = Site.fromId(site);
                 mId = id;
+                return true;
+            }
+        } else if (Intent.ACTION_VIEW.equals(action)) {
+            NMBUriParser.PostResult result = NMBUriParser.parsePostUri(intent.getData());
+            mSite = result.site;
+            mId = result.id;
+            if (mSite != null && mId != null) {
                 return true;
             }
         }
