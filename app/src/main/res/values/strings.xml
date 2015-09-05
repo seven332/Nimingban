@@ -145,5 +145,7 @@
 
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Can\'t find any forum</string>
+    <string name="refreshing_forum_list">Refreshing forum list</string>
+    <string name="refresh_forum_list_failed">Refresh forum list failed</string>
 
 </resources>

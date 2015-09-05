@@ -66,6 +66,7 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
     }
 
     public void setForums(List<? extends Forum> forums) {
+        // TODO add tip for empty list
         mForums.clear();
         mForums.addAll(forums);
         mAdapter.notifyDataSetChanged();

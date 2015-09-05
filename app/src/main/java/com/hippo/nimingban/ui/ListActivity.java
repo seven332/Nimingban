@@ -42,6 +42,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Forum;
@@ -69,6 +70,7 @@ public final class ListActivity extends StyleableActivity
     private static final int BACK_PRESSED_INTERVAL = 2000;
 
     public static final int REQUEST_CODE_SETTINGS = 0;
+    public static final int REQUEST_CODE_SORT_FORUMS = 1;
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -79,6 +81,9 @@ public final class ListActivity extends StyleableActivity
     private LeftDrawer mLeftDrawer;
     private RightDrawer mRightDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private MenuItem mRefreshMenu;
+    private MenuItem mSortForumsMenu;
 
     private Forum mCurrentForum;
 
@@ -105,7 +110,26 @@ public final class ListActivity extends StyleableActivity
         mRightDrawer = (RightDrawer) mDrawerLayout.findViewById(R.id.right_drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.string.drawer_open, R.string.drawer_close);
+                R.string.drawer_open, R.string.drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                if (view == mRightDrawer) {
+                    mRefreshMenu.setVisible(true);
+                    mSortForumsMenu.setVisible(false);
+                }
+            }
+
+            @Override
+            public void onDrawerOpened(View view) {
+                super.onDrawerOpened(view);
+                if (view == mRightDrawer) {
+                    mRefreshMenu.setVisible(false);
+                    mSortForumsMenu.setVisible(true);
+                }
+            }
+        };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         ActionBar actionBar = getSupportActionBar();
@@ -133,17 +157,40 @@ public final class ListActivity extends StyleableActivity
 
         mRightDrawer.setOnSelectForumListener(this);
 
+        updateForums(true);
+    }
+
+    private void updateForums(boolean firstTime) {
+        Forum currentForum = mCurrentForum;
         List<DisplayForum> forums = DB.getACForums(true); // TODO DB.getForums
+        mRightDrawer.setForums(forums);
+
+        if (mCurrentForum != null) {
+            for (DisplayForum forum : forums) {
+                if (currentForum.getNMBSite() == forum.getNMBSite() &&
+                        currentForum.getNMBId().equals(forum.getNMBId())) {
+                    if (!currentForum.getNMBDisplayname().equals(forum.getNMBDisplayname())) {
+                        updateTitleByForum(forum);
+                    }
+                    mCurrentForum = forum;
+                    return;
+                }
+            }
+        }
+
         if (forums.size() > 0) {
             mCurrentForum = forums.get(0);
         } else {
             mCurrentForum = null;
         }
-        onChangeForum(mCurrentForum);
-        mRightDrawer.setForums(forums);
 
-        // Refresh
-        mPostHelper.firstRefresh();
+        updateTitleByForum(mCurrentForum);
+
+        if (firstTime) {
+            mPostHelper.firstRefresh();
+        } else {
+            mPostHelper.refresh();
+        }
     }
 
     @Override
@@ -151,6 +198,10 @@ public final class ListActivity extends StyleableActivity
         if (requestCode == REQUEST_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
                 mPostAdapter.notifyDataSetChanged();
+            }
+        } else if (requestCode == REQUEST_CODE_SORT_FORUMS) {
+            if (resultCode == RESULT_OK) {
+                updateForums(false);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -189,6 +240,17 @@ public final class ListActivity extends StyleableActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_list, menu);
+        mRefreshMenu = menu.findItem(R.id.action_refresh);
+        mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
+
+        if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            mRefreshMenu.setVisible(false);
+            mSortForumsMenu.setVisible(true);
+        } else {
+            mRefreshMenu.setVisible(true);
+            mSortForumsMenu.setVisible(false);
+        }
+
         return true;
     }
 
@@ -197,6 +259,11 @@ public final class ListActivity extends StyleableActivity
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 mPostHelper.refresh();
+                return true;
+            case R.id.action_sort_forums:
+                Intent intent = new Intent(this, SortForumsActivity.class);
+                intent.putExtra(SortForumsActivity.KEY_SITE, ACSite.getInstance().getId()); // TODO support other site
+                startActivityForResult(intent, REQUEST_CODE_SORT_FORUMS);
                 return true;
             default:
                 if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -207,7 +274,7 @@ public final class ListActivity extends StyleableActivity
         }
     }
 
-    private void onChangeForum(Forum forum) {
+    private void updateTitleByForum(Forum forum) {
         if (forum != null) {
             setTitle(forum.getNMBDisplayname());
         } else {
@@ -226,7 +293,7 @@ public final class ListActivity extends StyleableActivity
                 (mCurrentForum.getNMBSite() != forum.getNMBSite() ||
                         !mCurrentForum.getNMBId().equals(forum.getNMBId()))) {
             mCurrentForum = forum;
-            onChangeForum(mCurrentForum);
+            updateTitleByForum(mCurrentForum);
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
@@ -373,7 +440,7 @@ public final class ListActivity extends StyleableActivity
             }
 
             if (mCurrentForum == null) {
-                onGetExpection(taskId, new NMBException(DumpSite.getInstance(), "current forum is null"));
+                onGetExpection(taskId, new NMBException(DumpSite.getInstance(), "current forum is null")); // TODO hardcode
             } else {
                 NMBRequest request = new NMBRequest();
                 mNMBRequest = request;

@@ -37,6 +37,8 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
+    public static final int METHOD_GET_FORUM_LIST = -1;
+
     public static final int METHOD_GET_COOKIE = 0;
 
     public static final int METHOD_GET_POST_LIST = 1;
@@ -112,6 +114,15 @@ public class NMBClient {
                         mHttpRequest.cancel();
                     }
                 }
+            }
+        }
+
+        private Object getForumList() throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    return ACEngine.getForumList(mHttpClient, mHttpRequest);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
             }
         }
 
@@ -191,6 +202,8 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_GET_FORUM_LIST:
+                        return getForumList();
                     case METHOD_GET_COOKIE:
                         return getCookie();
                     case METHOD_GET_POST_LIST:

@@ -19,6 +19,7 @@ package com.hippo.nimingban.util;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.hippo.nimingban.client.ac.data.ACForum;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.dao.ACForumDao;
@@ -129,6 +130,38 @@ public final class DB {
         }
 
         return result;
+    }
+
+    public static void setACForums(List<ACForum> list) {
+        ACForumDao dao = sDaoSession.getACForumDao();
+        dao.deleteAll();
+
+        int i = 0;
+        List<ACForumRaw> insertList = new ArrayList<>();
+        for (ACForum forum : list) {
+            ACForumRaw raw = new ACForumRaw();
+            raw.setDisplayname(forum.name);
+            raw.setForumid(forum.id);
+            raw.setPriority(i);
+            raw.setVisibility(true);
+            insertList.add(raw);
+            i++;
+        }
+
+        dao.insertInTx(insertList);
+    }
+
+    public static LazyList<ACForumRaw> getACForumLazyList() {
+        return sDaoSession.getACForumDao().queryBuilder().orderAsc(ACForumDao.Properties.Priority).listLazy();
+    }
+
+    public static void setACForumVisibility(ACForumRaw raw, boolean visibility) {
+        raw.setVisibility(visibility);
+        sDaoSession.getACForumDao().update(raw);
+    }
+
+    public static void updateACForum(Iterable<ACForumRaw> entities) {
+        sDaoSession.getACForumDao().updateInTx(entities);
     }
 
     public static List<DisplayForum> getForums(int site, boolean onlyVisible) {

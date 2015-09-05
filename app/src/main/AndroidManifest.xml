@@ -93,8 +93,15 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.DirPickerActivity"
+            android:name="com.hippo.nimingban.ui.DirPickerActivity"
             android:label="@string/dir_picker"
+            android:theme="@style/AppTheme"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.hippo.nimingban.ui.SortForumsActivity"
+            android:label="@string/sort_forums"
             android:theme="@style/AppTheme"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
