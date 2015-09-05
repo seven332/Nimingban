@@ -102,22 +102,22 @@ public class NMBClient {
             if (!mStop) {
                 mStop = true;
 
+                if (mCallback != null) {
+                    mCallback.onCancelled();
+                }
+
                 Status status = getStatus();
                 if (status == Status.PENDING) {
                     cancel(false);
-
-                    // If it is pending, onPostExecute will not be called,
-                    // need to call mListener.onCanceled here
-                    mCallback.onCancelled();
-
-                    // Clear
-                    mHttpRequest = null;
-                    mCallback = null;
                 } else if (status == Status.RUNNING) {
                     if (mHttpRequest != null) {
                         mHttpRequest.cancel();
                     }
                 }
+
+                // Clear
+                mHttpRequest = null;
+                mCallback = null;
             }
         }
 
@@ -246,12 +246,14 @@ public class NMBClient {
         @SuppressWarnings("unchecked")
         @Override
         protected void onPostExecute(Object result) {
-            if (result instanceof CancelledException) {
-                mCallback.onCancelled();
-            } else if (result instanceof Exception) {
-                mCallback.onFailure((Exception) result);
-            } else {
-                mCallback.onSuccess(result);
+            if (mCallback != null) {
+                if (result instanceof CancelledException) {
+                    mCallback.onCancelled();
+                } else if (result instanceof Exception) {
+                    mCallback.onFailure((Exception) result);
+                } else {
+                    mCallback.onSuccess(result);
+                }
             }
 
             // Clear
