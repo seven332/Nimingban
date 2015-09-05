@@ -71,6 +71,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
 
     public static final String ACTION_REPLY = "com.hippo.nimingban.ui.TypeSendActivity.action.REPLY";
     public static final String ACTION_CREATE_POST = "com.hippo.nimingban.ui.TypeSendActivity.action.CREATE_POST";
+    public static final String ACTION_REPORT = "com.hippo.nimingban.ui.TypeSendActivity.action.REPORT";
 
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
@@ -116,6 +117,8 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
             return false;
         }
 
+        boolean report = false;
+
         String action = intent.getAction();
         if (ACTION_REPLY.equals(action)) {
             mMethod = Method.Reply;
@@ -123,6 +126,10 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         } else if (ACTION_CREATE_POST.equals(action)) {
             mMethod = Method.CreatePost;
             setTitle(R.string.create_post);
+        } else if (ACTION_REPORT.equals(action)) {
+            mMethod = Method.CreatePost;
+            setTitle(R.string.report);
+            report = true;
         }
 
         if (mMethod != null) {
@@ -132,6 +139,10 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
             if (Site.isValid(site) && id != null) {
                 mSite = Site.fromId(site);
                 mId = id;
+
+                if (report) {
+                    Toast.makeText(this, R.string.report_tip, Toast.LENGTH_SHORT).show();
+                }
                 return true;
             }
         }

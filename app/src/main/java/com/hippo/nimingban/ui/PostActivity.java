@@ -562,7 +562,12 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
                     break;
                 case 2:
                     // Report
-                    // TODO
+                    Intent intent = new Intent(PostActivity.this, TypeSendActivity.class);
+                    intent.setAction(TypeSendActivity.ACTION_REPORT);
+                    intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
+                    intent.putExtra(TypeSendActivity.KEY_ID, mSite.getReportForumId());
+                    intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
+                    startActivity(intent);
                     break;
                 case 3:
                     // Info

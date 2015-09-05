@@ -54,4 +54,6 @@ public abstract class Site {
     public abstract String getUserId(Context context);
 
     public abstract String getPostTitle(Context context, String postId);
+
+    public abstract String getReportForumId();
 }

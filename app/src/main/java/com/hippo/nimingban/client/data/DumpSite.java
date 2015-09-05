@@ -53,4 +53,9 @@ public class DumpSite extends Site {
     public String getPostTitle(Context context, String postId) {
         return "";
     }
+
+    @Override
+    public String getReportForumId() {
+        return "";
+    }
 }

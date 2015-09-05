@@ -95,6 +95,11 @@ public class ACSite extends Site {
         return "No." + postId;
     }
 
+    @Override
+    public String getReportForumId() {
+        return "18"; // TODO how to get it ?
+    }
+
     /**
      * http://stackoverflow.com/questions/332079
      *
