@@ -163,6 +163,10 @@
     <string name="refreshing_forum_list">Refreshing forum list</string>
     <string name="refresh_forum_list_failed">Refresh forum list failed</string>
 
+    <string name="version">Version</string>
+    <string name="size">Size</string>
+    <string name="download_update">Download update</string>
+    <string name="download">Download</string>
     <string name="downloading_update">Downloading update</string>
     <string name="download_update_failde">Download update failed</string>
 

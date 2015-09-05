@@ -83,7 +83,7 @@ public final class UpdateHelper {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             mDownloadingBuilder = new NotificationCompat.Builder(context);
-            mDownloadingBuilder.setContentText(context.getString(R.string.downloading_update))
+            mDownloadingBuilder.setContentTitle(context.getString(R.string.downloading_update))
                     .setSmallIcon(android.R.drawable.stat_sys_download)
                     .setOngoing(true)
                     .setAutoCancel(false)
@@ -139,12 +139,14 @@ public final class UpdateHelper {
                 }
 
                 long receivedSize = mListener.receivedSize;
-                String speed = FileUtils.humanReadableByteCount((receivedSize - lastReceivedSize) / mInterval, false);
+                String speed = FileUtils.humanReadableByteCount((receivedSize - lastReceivedSize) *
+                        1000 / mInterval, false) + "/s";
                 int progress = -1;
                 long totalSize = mListener.totalSize;
                 if (totalSize != -1l) {
                     progress = (int) (receivedSize * 100 / totalSize);
                 }
+                lastReceivedSize = receivedSize;
 
                 mDownloadingBuilder.setContentText(speed);
                 if (progress == -1) {

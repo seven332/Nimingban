@@ -29,6 +29,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -66,6 +67,7 @@ import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
@@ -210,13 +212,18 @@ public final class ListActivity extends StyleableActivity
             return;
         }
 
+        CharSequence message = TextUtils2.combine(
+                getString(R.string.version) + ": " + info.versionName + '\n' +
+                        getString(R.string.size) + ": " + FileUtils.humanReadableByteCount(info.size, false) + "\n\n",
+                Html.fromHtml(info.info));
         new AlertDialog.Builder(this)
-                .setTitle("Update to the latest version") // TODO hardcode
-                .setMessage(info.info)
-                .setPositiveButton("下载更新", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.download_update)
+                .setMessage(message)
+                .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UpdateHelper.downloadApk(ListActivity.this, info.apkUrl, "nimingban-" + info.versionName);
+                        UpdateHelper.downloadApk(ListActivity.this, info.apkUrl,
+                                "nimingban-" + info.versionName + ".apk");
                     }
                 })
                 .show();
