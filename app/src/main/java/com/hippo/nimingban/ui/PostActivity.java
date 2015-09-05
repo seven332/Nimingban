@@ -569,10 +569,6 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
                     intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
                     startActivity(intent);
                     break;
-                case 3:
-                    // Info
-                    new AlertDialog.Builder(PostActivity.this).setMessage(mReply.toString()).show();
-                    break;
             }
         }
     }

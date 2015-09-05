@@ -54,7 +54,6 @@
     <string name="reply_to_comment">Reply to comment</string>
     <string name="copy_comment_text">Copy comment text</string>
     <string name="report_comment">Report comment</string>
-    <string name="comment_debug_info">Comment debug info</string>
 
     <string name="comment_copied_clipboard">Comment text copied to clipboard</string>
 

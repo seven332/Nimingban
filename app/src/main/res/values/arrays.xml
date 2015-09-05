@@ -21,7 +21,6 @@
         <item>@string/reply_to_comment</item>
         <item>@string/copy_comment_text</item>
         <item>@string/report_comment</item>
-        <item>@string/comment_debug_info</item>
     </string-array>
 
 </resources>
