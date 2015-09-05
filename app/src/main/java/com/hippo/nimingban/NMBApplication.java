@@ -19,9 +19,7 @@ package com.hippo.nimingban;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.HttpCookieDB;
@@ -36,7 +34,6 @@ import com.hippo.yorozuya.FileUtils;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
-import java.io.IOException;
 
 public class NMBApplication extends StyleableApplication {
 
@@ -45,7 +42,6 @@ public class NMBApplication extends StyleableApplication {
     private NMBClient mNMBClient;
     private Conaco mConaco;
     private SimpleDrawableHelper mDrawableHelper;
-    private SimpleDiskCache mImageDiskCache;
 
     @Override
     public void onCreate() {
@@ -120,7 +116,7 @@ public class NMBApplication extends StyleableApplication {
             builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
             builder.hasDiskCache = true;
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
-            builder.diskCacheMaxSize = 20 * 1024 * 1024;
+            builder.diskCacheMaxSize = 20 * 1024 * 1024; // 20MB
             builder.httpClient = getNMBHttpClient(context);
             builder.drawableHelper = getSimpleDrawableHelper(context);
             application.mConaco = builder.build();
@@ -135,18 +131,5 @@ public class NMBApplication extends StyleableApplication {
             application.mDrawableHelper = new SimpleDrawableHelper(context);
         }
         return application.mDrawableHelper;
-    }
-
-    @Nullable
-    public static SimpleDiskCache getImageDiskCache(@NonNull Context context) {
-        NMBApplication application = ((NMBApplication) context.getApplicationContext());
-        if (application.mImageDiskCache == null) {
-            try {
-                application.mImageDiskCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"), 20 * 1024 * 1024);
-            } catch (IOException e) {
-                // Ingore
-            }
-        }
-        return application.mImageDiskCache;
     }
 }
