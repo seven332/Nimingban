@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.model.application'
+apply plugin: 'com.android.application'
 
-model {
-    android {
-        compileSdkVersion = 23
-        buildToolsVersion = "23.0.0"
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
 
-        defaultConfig.with {
-            applicationId = "com.hippo.nimingban"
-            minSdkVersion.apiLevel = 14
-            targetSdkVersion.apiLevel = 23
-            versionCode = 1
-            versionName = "1.0"
-        }
+    defaultConfig {
+        applicationId "com.hippo.nimingban"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
     }
 
-    android.buildTypes {
+    buildTypes {
         release {
-            minifyEnabled = false
-            shrinkResources = false
-            proguardFiles +=  [file('proguard-rules.pro'),
-                               file('../rippleold/proguard-rules.pro'),
-                               file('../vectorold/proguard-rules.pro')]
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
-    android.sources {
+    sourceSets {
         main {
-            java {
-                source.srcDirs += ['src/main/java', 'src/main/java-gen']
-            }
+            java.srcDirs = ['src/main/java', 'src/main/java-gen']
         }
     }
 }
@@ -63,7 +56,8 @@ dependencies {
     compile 'com.alibaba:fastjson:1.1.45.android'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4'
-    compile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
     compile 'de.greenrobot:greendao:1.3.7'
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.9'
