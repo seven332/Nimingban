@@ -468,14 +468,14 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
 
         @Override
         public void onFailure(Exception e) {
-            e.printStackTrace(); // TODO a toast
+            mLeftText.setVisibility(View.GONE);
+            mRightText.setVisibility(View.GONE);
+            mContent.setText(R.string.cant_get_the_reference);
+            mThumb.setVisibility(View.GONE);
+            mViewTransition.showView(1, true);
 
             mRequest = null;
-
-            if (mDialog != null) {
-                mDialog.dismiss();
-                mDialog = null;
-            }
+            mDialog = null;
         }
 
         @Override

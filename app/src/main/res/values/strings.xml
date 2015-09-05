@@ -58,6 +58,7 @@
 
     <string name="comment_copied_clipboard">Comment text copied to clipboard</string>
 
+    <string name="cant_get_the_reference">Can\'t get the reference</string>
     <string name="show_thread">Show thread</string>
 
     <string name="create_post">Post</string>
