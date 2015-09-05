@@ -57,4 +57,13 @@ public class ACUrl {
     public static String getDelFeedUrl(String uuid, String tid) {
         return API_DEL_FEED + "?uuid=" + uuid + "&tid=" + tid;
     }
+
+    public static String getBrowsablePostUrl(String id, int page) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(HOST).append("/t/").append(id);
+        if (page != 0) {
+            sb.append("?page=").append(page + 1);
+        }
+        return sb.toString();
+    }
 }

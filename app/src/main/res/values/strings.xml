@@ -45,6 +45,9 @@
     <string name="remove_feed_successfully">Remove feed successfully</string>
     <string name="remove_feed_failed">Remove feed failed</string>
 
+    <string name="share">Share</string>
+    <string name="open_in_other_app">Open in other app</string>
+
     <string name="feed">Feed</string>
     <string name="no_feed">There is no feed</string>
 
@@ -85,6 +88,8 @@
     <string name="em_redirection">Too many redirections</string>
     <string name="em_socket">Network error</string>
     <string name="em_unknown">Weird</string>
+
+    <string name="em_cant_find_activity">Can\'t find activity</string>
 
     <string name="draft">Draft</string>
     <string name="draft_copied_clipboard">Draft text copied to clipboard</string>

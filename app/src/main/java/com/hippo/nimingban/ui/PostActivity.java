@@ -66,6 +66,7 @@ import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
+import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
@@ -291,6 +292,11 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
                 request2.setCallback(new FeedListener(this, false));
                 mNMBClient.execute(request2);
                 return true;
+            case R.id.action_share:
+                ActivityHelper.share(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0));
+                return true;
+            case R.id.action_open_in_other_app:
+                ActivityHelper.openUri(this, Uri.parse(NMBUrl.getBrowsablePostUrl(mSite, mId, 0)));
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -43,4 +43,16 @@
         android:icon="@drawable/ic_borad_remove_dark_x24"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/share"
+        android:icon="@drawable/ic_share_dark_x24"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_open_in_other_app"
+        android:title="@string/open_in_other_app"
+        android:icon="@drawable/ic_google_chrome_dark_x24"
+        app:showAsAction="ifRoom"/>
+
 </menu>

@@ -47,4 +47,13 @@ public class NMBUrl {
                 throw new IllegalStateException("Unknown site " + site);
         }
     }
+
+    public static String getBrowsablePostUrl(Site site, String id, int page) {
+        switch (site.getId()) {
+            case Site.AC:
+                return ACUrl.getBrowsablePostUrl(id, page);
+            default:
+                throw new IllegalStateException("Unknown site " + site);
+        }
+    }
 }
