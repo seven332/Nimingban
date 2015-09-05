@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -71,6 +72,7 @@ public final class ListActivity extends StyleableActivity
 
     public static final int REQUEST_CODE_SETTINGS = 0;
     public static final int REQUEST_CODE_SORT_FORUMS = 1;
+    public static final int REQUEST_CODE_CREATE_POST = 2;
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -82,10 +84,11 @@ public final class ListActivity extends StyleableActivity
     private RightDrawer mRightDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private MenuItem mCreatePost;
     private MenuItem mRefreshMenu;
     private MenuItem mSortForumsMenu;
 
-    private Forum mCurrentForum;
+    private @Nullable Forum mCurrentForum;
 
     private PostHelper mPostHelper;
     private PostAdapter mPostAdapter;
@@ -116,6 +119,7 @@ public final class ListActivity extends StyleableActivity
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 if (view == mRightDrawer) {
+                    mCreatePost.setVisible(true);
                     mRefreshMenu.setVisible(true);
                     mSortForumsMenu.setVisible(false);
                 }
@@ -125,6 +129,7 @@ public final class ListActivity extends StyleableActivity
             public void onDrawerOpened(View view) {
                 super.onDrawerOpened(view);
                 if (view == mRightDrawer) {
+                    mCreatePost.setVisible(false);
                     mRefreshMenu.setVisible(false);
                     mSortForumsMenu.setVisible(true);
                 }
@@ -165,7 +170,7 @@ public final class ListActivity extends StyleableActivity
         List<DisplayForum> forums = DB.getACForums(true); // TODO DB.getForums
         mRightDrawer.setForums(forums);
 
-        if (mCurrentForum != null) {
+        if (currentForum != null) {
             for (DisplayForum forum : forums) {
                 if (currentForum.getNMBSite() == forum.getNMBSite() &&
                         currentForum.getNMBId().equals(forum.getNMBId())) {
@@ -201,7 +206,15 @@ public final class ListActivity extends StyleableActivity
             }
         } else if (requestCode == REQUEST_CODE_SORT_FORUMS) {
             if (resultCode == RESULT_OK) {
-                updateForums(false);
+                updateForums(true);
+            }
+        } else if (requestCode == REQUEST_CODE_CREATE_POST) {
+            if (resultCode == RESULT_OK) {
+                // Create post successfully
+                int currentPage = mPostHelper.getCurrentPage();
+                if (currentPage == 0) {
+                    mPostHelper.refresh();
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -240,13 +253,16 @@ public final class ListActivity extends StyleableActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_list, menu);
+        mCreatePost = menu.findItem(R.id.action_create_post);
         mRefreshMenu = menu.findItem(R.id.action_refresh);
         mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
 
         if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            mCreatePost.setVisible(false);
             mRefreshMenu.setVisible(false);
             mSortForumsMenu.setVisible(true);
         } else {
+            mCreatePost.setVisible(true);
             mRefreshMenu.setVisible(true);
             mSortForumsMenu.setVisible(false);
         }
@@ -256,12 +272,22 @@ public final class ListActivity extends StyleableActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
+            case R.id.action_create_post:
+                if (mCurrentForum != null) {
+                    intent = new Intent(this, TypeSendActivity.class);
+                    intent.setAction(TypeSendActivity.ACTION_CREATE_POST);
+                    intent.putExtra(TypeSendActivity.KEY_SITE, mCurrentForum.getNMBSite().getId());
+                    intent.putExtra(TypeSendActivity.KEY_ID, mCurrentForum.getNMBId());
+                    startActivityForResult(intent, REQUEST_CODE_CREATE_POST);
+                }
+                return true;
             case R.id.action_refresh:
                 mPostHelper.refresh();
                 return true;
             case R.id.action_sort_forums:
-                Intent intent = new Intent(this, SortForumsActivity.class);
+                intent = new Intent(this, SortForumsActivity.class);
                 intent.putExtra(SortForumsActivity.KEY_SITE, ACSite.getInstance().getId()); // TODO support other site
                 startActivityForResult(intent, REQUEST_CODE_SORT_FORUMS);
                 return true;

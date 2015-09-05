@@ -46,6 +46,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.SimpleCookieStore;
@@ -63,11 +64,13 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public final class ReplyActivity extends StyleableActivity implements View.OnClickListener {
+// TODO add edit text for name, title and so on
+public final class TypeSendActivity extends StyleableActivity implements View.OnClickListener {
 
-    private static final String TAG = ReplyActivity.class.getSimpleName();
+    private static final String TAG = TypeSendActivity.class.getSimpleName();
 
-    public static final String ACTION_REPLY = "com.hippo.nimingban.ui.ReplyActivity.action.REPLY";
+    public static final String ACTION_REPLY = "com.hippo.nimingban.ui.TypeSendActivity.action.REPLY";
+    public static final String ACTION_CREATE_POST = "com.hippo.nimingban.ui.TypeSendActivity.action.CREATE_POST";
 
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
@@ -77,7 +80,9 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
     public static final int REQUEST_CODE_DRAFT = 1;
     public static final int REQUEST_CODE_DOODLE = 2;
 
-    public NMBClient mNMBClient;
+    private Method mMethod;
+
+    private NMBClient mNMBClient;
 
     private EditText mEditText;
     private View mEmoji;
@@ -98,7 +103,12 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
     private Bitmap mSeletedImageBitmap;
 
     private ProgressDialog mGetCookiePDiglog;
-    private ProgressDialog mReplyPDiglog;
+    private ProgressDialog mActionPDiglog;
+
+    private enum Method {
+        Reply,
+        CreatePost
+    }
 
     // false for error
     private boolean handlerIntent(Intent intent) {
@@ -108,6 +118,14 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
 
         String action = intent.getAction();
         if (ACTION_REPLY.equals(action)) {
+            mMethod = Method.Reply;
+            setTitle(R.string.reply);
+        } else if (ACTION_CREATE_POST.equals(action)) {
+            mMethod = Method.CreatePost;
+            setTitle(R.string.create_post);
+        }
+
+        if (mMethod != null) {
             int site = intent.getIntExtra(KEY_SITE, -1);
             String id = intent.getStringExtra(KEY_ID);
             mPresetText = intent.getStringExtra(KEY_TEXT);
@@ -207,8 +225,18 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
         return cookieStore.contain(url, "userId");
     }
 
+    private void doAction() {
+        if (mMethod == Method.Reply) {
+            doReply();
+        } else if (mMethod == Method.CreatePost) {
+            doCreatePost();
+        } else {
+            Log.d(TAG, "WTF?, an unknown method in TypeSendActivity " + mMethod);
+        }
+    }
+
     private void doReply() {
-        mReplyPDiglog = ProgressDialog.show(this, getString(R.string.replying), null, true, false);
+        mActionPDiglog = ProgressDialog.show(this, null, getString(R.string.replying), true, false);
         ACReplyStruct struct = new ACReplyStruct();
         struct.name = null;
         struct.email = null;
@@ -220,9 +248,28 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
 
         NMBRequest request = new NMBRequest();
         request.setSite(mSite);
-        request.setMethod(NMBClient.METHOD_GET_REPLY);
+        request.setMethod(NMBClient.METHOD_REPLY);
         request.setArgs(struct);
-        request.setCallback(new ReplyListener());
+        request.setCallback(new ActionListener());
+        mNMBClient.execute(request);
+    }
+
+    private void doCreatePost() {
+        mActionPDiglog = ProgressDialog.show(this, null, getString(R.string.creating_post), true, false);
+        ACPostStruct struct = new ACPostStruct();
+        struct.name = null;
+        struct.email = null;
+        struct.title = null;
+        struct.content = mEditText.getText().toString();
+        struct.fid = mId;
+        struct.image = mSeletedImageUri != null ? new UriInputStreamPipe(getApplicationContext(), mSeletedImageUri) : null;
+        struct.imageType = mSeletedImageType;
+
+        NMBRequest request = new NMBRequest();
+        request.setSite(mSite);
+        request.setMethod(NMBClient.METHOD_CREATE_POST);
+        request.setArgs(struct);
+        request.setCallback(new ActionListener());
         mNMBClient.execute(request);
     }
 
@@ -245,7 +292,7 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
                         getCookies();
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
-                        doReply();
+                        doAction();
                         break;
                 }
             }
@@ -266,7 +313,7 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
 
         private EmojiDialogHelper() {
             @SuppressLint("InflateParams")
-            EasyRecyclerView recyclerView = (EasyRecyclerView) ReplyActivity.this
+            EasyRecyclerView recyclerView = (EasyRecyclerView) TypeSendActivity.this
                     .getLayoutInflater().inflate(R.layout.dialog_emoji, null);
             recyclerView.setAdapter(new EmojiAdapter());
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)); // TODO
@@ -304,7 +351,7 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
             @SuppressLint("InflateParams")
             @Override
             public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new SimpleHolder(ReplyActivity.this
+                return new SimpleHolder(TypeSendActivity.this
                         .getLayoutInflater().inflate(R.layout.item_emoji, null));
             }
 
@@ -333,8 +380,9 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         if (mSend == v) {
-            if (mReplyPDiglog != null) {
-                Toast.makeText(this, R.string.replying, Toast.LENGTH_SHORT).show();
+            if (mActionPDiglog != null) {
+                Toast.makeText(this, mMethod == Method.Reply ? R.string.replying : R.string.creating_post,
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
             if (mGetCookiePDiglog != null) {
@@ -343,7 +391,7 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
             }
 
             if (hasACCookies()) {
-                doReply();
+                doAction();
             } else {
                 tryGettingCookies();
             }
@@ -356,10 +404,10 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
             startActivityForResult(Intent.createChooser(intent,
                     getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
         } else if (mDraft == v) {
-            Intent intent = new Intent(ReplyActivity.this, DraftActivity.class);
+            Intent intent = new Intent(TypeSendActivity.this, DraftActivity.class);
             startActivityForResult(intent, REQUEST_CODE_DRAFT);
         } else if (mDraw == v) {
-            Intent intent = new Intent(ReplyActivity.this, DoodleActivity.class);
+            Intent intent = new Intent(TypeSendActivity.this, DoodleActivity.class);
             startActivityForResult(intent, REQUEST_CODE_DOODLE);
         } else if (mDelete == v) {
             clearImagePreview();
@@ -449,32 +497,34 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
         }
     }
 
-    private class ReplyListener implements NMBClient.Callback<Void> {
+    private class ActionListener implements NMBClient.Callback<Void> {
         @Override
         public void onSuccess(Void result) {
-            mReplyPDiglog.dismiss();
-            mReplyPDiglog = null;
+            mActionPDiglog.dismiss();
+            mActionPDiglog = null;
 
-            Toast.makeText(ReplyActivity.this, R.string.reply_successfully, Toast.LENGTH_SHORT).show();
+            Toast.makeText(TypeSendActivity.this, mMethod == Method.Reply ? R.string.reply_successfully :
+                    R.string.create_post_successfully, Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish();
         }
 
         @Override
         public void onFailure(Exception e) {
-            mReplyPDiglog.dismiss();
-            mReplyPDiglog = null;
+            mActionPDiglog.dismiss();
+            mActionPDiglog = null;
 
-            Toast.makeText(ReplyActivity.this, getString(R.string.reply_failed) +
-                    ExceptionUtils.getReadableString(ReplyActivity.this, e), Toast.LENGTH_SHORT).show();
+            Toast.makeText(TypeSendActivity.this, getString(mMethod == Method.Reply ? R.string.reply_failed :
+                    R.string.create_post_failed) +
+                    ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCancelled() {
-            mReplyPDiglog.dismiss();
-            mReplyPDiglog = null;
+            mActionPDiglog.dismiss();
+            mActionPDiglog = null;
 
-            Log.d(TAG, "ReplyListener onCancel");
+            Log.d(TAG, "ActionListener onCancel");
         }
     }
 
@@ -484,7 +534,7 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
             mGetCookiePDiglog.dismiss();
             mGetCookiePDiglog = null;
 
-            Toast.makeText(ReplyActivity.this, R.string.got_cookies, Toast.LENGTH_SHORT).show();
+            Toast.makeText(TypeSendActivity.this, R.string.got_cookies, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -492,8 +542,8 @@ public final class ReplyActivity extends StyleableActivity implements View.OnCli
             mGetCookiePDiglog.dismiss();
             mGetCookiePDiglog = null;
 
-            Toast.makeText(ReplyActivity.this, getString(R.string.cant_get_cookies) +
-                    ExceptionUtils.getReadableString(ReplyActivity.this, e), Toast.LENGTH_SHORT).show();
+            Toast.makeText(TypeSendActivity.this, getString(R.string.cant_get_cookies) +
+                    ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
         }
 
         @Override

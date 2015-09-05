@@ -23,6 +23,8 @@ import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACEngine;
+import com.hippo.nimingban.client.ac.data.ACPostStruct;
+import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.NMBHttpRequest;
 import com.hippo.yorozuya.PriorityThreadFactory;
@@ -47,13 +49,15 @@ public class NMBClient {
 
     public static final int METHOD_GET_REFERENCE = 3;
 
-    public static final int METHOD_GET_REPLY = 4;
+    public static final int METHOD_REPLY = 4;
 
     public static final int METHOD_GET_FEED = 5;
 
     public static final int METHOD_ADD_FEED = 6;
 
     public static final int METHOD_DEL_FEED = 7;
+
+    public static final int METHOD_CREATE_POST = 8;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final HttpClient mHttpClient;
@@ -165,7 +169,7 @@ public class NMBClient {
         private Object reply(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.reply(mHttpClient, mHttpRequest, params[0]);
+                    return ACEngine.reply(mHttpClient, mHttpRequest, (ACReplyStruct) params[0]);
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -198,6 +202,15 @@ public class NMBClient {
             }
         }
 
+        private Object createPost(Object... params) throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    return ACEngine.createPost(mHttpClient, mHttpRequest, (ACPostStruct) params[0]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -212,7 +225,7 @@ public class NMBClient {
                         return getPost(params);
                     case METHOD_GET_REFERENCE:
                         return getReference(params);
-                    case METHOD_GET_REPLY:
+                    case METHOD_REPLY:
                         return reply(params);
                     case METHOD_GET_FEED:
                         return getFeed(params);
@@ -220,6 +233,8 @@ public class NMBClient {
                         return addFeed(params);
                     case METHOD_DEL_FEED:
                         return delFeed(params);
+                    case METHOD_CREATE_POST:
+                        return createPost(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

@@ -34,6 +34,7 @@ import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.ac.data.ACFeed;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
+import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.ACSite;
@@ -211,10 +212,8 @@ public class ACEngine {
 
 
     public static Void reply(HttpClient httpClient, HttpRequest httpRequest,
-            Object obj) throws Exception {
+            ACReplyStruct struct) throws Exception {
         try {
-            ACReplyStruct struct = (ACReplyStruct) obj;
-
             StringData name = new StringData(struct.name);
             name.setName("name");
             StringData email = new StringData(struct.email);
@@ -251,13 +250,23 @@ public class ACEngine {
             HttpResponse response = httpClient.execute(httpRequest);
 
             String body = response.getString();
-            Log.d("TAG", body);
-            JSONObject jo = JSON.parseObject(body);
-            if (jo.getBoolean("success")) {
-                return null;
-            } else {
-                String msg = jo.getString("msg");
-                throw new NMBException(ACSite.getInstance(), msg);
+
+            try {
+                JSONObject jo = JSON.parseObject(body);
+                if (jo.getBoolean("success")) {
+                    return null;
+                } else {
+                    String msg = jo.getString("msg");
+                    throw new NMBException(ACSite.getInstance(), msg);
+                }
+            } catch (Exception e) {
+                Document doc = Jsoup.parse(body);
+                List<Element> elements = doc.getElementsByClass("success");
+                if (!elements.isEmpty()) {
+                    return null;
+                } else {
+                    throw new NMBException(ACSite.getInstance(), "Unknown"); // Can't get error message from body
+                }
             }
 
         } catch (Exception e) {
@@ -272,25 +281,18 @@ public class ACEngine {
     }
 
     public static Void reply2(HttpClient httpClient, HttpRequest httpRequest,
-            Object obj) throws Exception {
+            ACReplyStruct struct) throws Exception {
         try {
-            ACReplyStruct struct = (ACReplyStruct) obj;
-
             StringData name = new StringData(struct.name);
             name.setName("name");
-            name.setProperty("Content-Type", "text/plain; charset=utf-8");
             StringData email = new StringData(struct.email);
             email.setName("email");
-            email.setProperty("Content-Type", "text/plain; charset=utf-8");
             StringData title = new StringData(struct.title);
             title.setName("title");
-            title.setProperty("Content-Type", "text/plain; charset=utf-8");
             StringData emotion = new StringData(null);
             emotion.setName("emotion");
-            emotion.setProperty("Content-Type", "text/plain; charset=utf-8");
             StringData content = new StringData(struct.content);
             content.setName("content");
-            content.setProperty("Content-Type", "text/plain; charset=utf-8");
 
             // TODO down size image
             InputStreamPipeData image;
@@ -319,8 +321,6 @@ public class ACEngine {
 
             String body = response.getString();
 
-            Log.d("TAG", body);
-
             try {
                 JSONObject jo = JSON.parseObject(body);
                 if (jo.getBoolean("success")) {
@@ -335,7 +335,7 @@ public class ACEngine {
                 if (!elements.isEmpty()) {
                     return null;
                 } else {
-                    throw new NMBException(ACSite.getInstance(), "Unknown"); // TODO get error message from body
+                    throw new NMBException(ACSite.getInstance(), "Unknown"); // Can't get error message from body
                 }
             }
         } catch (Exception e) {
@@ -417,6 +417,76 @@ public class ACEngine {
                 return null;
             } else {
                 throw new NMBException(ACSite.getInstance(), "Unknown error");
+            }
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
+    public static Void createPost(HttpClient httpClient, HttpRequest httpRequest,
+            ACPostStruct struct) throws Exception {
+        try {
+            StringData name = new StringData(struct.name);
+            name.setName("name");
+            StringData email = new StringData(struct.email);
+            email.setName("email");
+            StringData title = new StringData(struct.title);
+            title.setName("title");
+            StringData content = new StringData(struct.content);
+            content.setName("content");
+            StringData resto = new StringData(struct.fid);
+            resto.setName("fid");
+
+            // TODO down size image
+            InputStreamPipeData image;
+            InputStreamPipe isp = struct.image;
+            if (isp == null) {
+                image = null;
+            } else {
+                image = new InputStreamPipeData(isp);
+                String filename;
+                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
+                if (TextUtils.isEmpty(extension)) {
+                    // TODO on extension ?
+                    extension = "jpg";
+                }
+                filename = "a." + extension;
+                image.setName("image");
+                image.setFilename(filename);
+                image.setProperty("Content-Type", struct.imageType);
+            }
+
+            FormDataPoster httpImpl = new FormDataPoster(name, email, title, content, resto, image);
+            httpRequest.setUrl(ACUrl.API_CREATE_POST);
+            httpRequest.setHttpImpl(httpImpl);
+            HttpResponse response = httpClient.execute(httpRequest);
+
+            String body = response.getString();
+
+            Log.d("TAG", body);
+
+            try {
+                JSONObject jo = JSON.parseObject(body);
+                if (jo.getBoolean("success")) {
+                    return null;
+                } else {
+                    String msg = jo.getString("msg");
+                    throw new NMBException(ACSite.getInstance(), msg);
+                }
+            } catch (Exception e) {
+                Document doc = Jsoup.parse(body);
+                List<Element> elements = doc.getElementsByClass("success");
+                if (!elements.isEmpty()) {
+                    return null;
+                } else {
+                    throw new NMBException(ACSite.getInstance(), "Unknown"); // Can't get error message from body
+                }
             }
         } catch (Exception e) {
             if (httpRequest.isCancelled()) {

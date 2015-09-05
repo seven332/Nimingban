@@ -32,6 +32,8 @@ public class ACUrl {
 
     public static final String API_DEL_FEED = HOST + "/Api/delFeed";
 
+    public static final String API_CREATE_POST = HOST + "/Home/Forum/doPostThread.html";
+
     public static String getPostListUrl(String forum, int page) {
         return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
     }

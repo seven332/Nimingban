@@ -57,8 +57,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name="com.hippo.nimingban.ui.ReplyActivity"
-            android:label="@string/reply"
+            android:name="com.hippo.nimingban.ui.TypeSendActivity"
             android:theme="@style/AppTheme"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"

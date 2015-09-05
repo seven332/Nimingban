@@ -265,10 +265,10 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
                 return true;
             case R.id.action_reply:
                 if (!TextUtils.isEmpty(mId)) {
-                    Intent intent = new Intent(this, ReplyActivity.class);
-                    intent.setAction(ReplyActivity.ACTION_REPLY);
-                    intent.putExtra(ReplyActivity.KEY_SITE, mSite.getId());
-                    intent.putExtra(ReplyActivity.KEY_ID, mId);
+                    Intent intent = new Intent(this, TypeSendActivity.class);
+                    intent.setAction(TypeSendActivity.ACTION_REPLY);
+                    intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
+                    intent.putExtra(TypeSendActivity.KEY_ID, mId);
                     startActivityForResult(intent, REQUEST_CODE_REPLY);
                 }
                 return true;
@@ -537,11 +537,11 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
                 case 0:
                     // Reply
                     if (!TextUtils.isEmpty(mId)) {
-                        Intent intent = new Intent(PostActivity.this, ReplyActivity.class);
-                        intent.setAction(ReplyActivity.ACTION_REPLY);
-                        intent.putExtra(ReplyActivity.KEY_SITE, mSite.getId());
-                        intent.putExtra(ReplyActivity.KEY_ID, mId);
-                        intent.putExtra(ReplyActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
+                        Intent intent = new Intent(PostActivity.this, TypeSendActivity.class);
+                        intent.setAction(TypeSendActivity.ACTION_REPLY);
+                        intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
+                        intent.putExtra(TypeSendActivity.KEY_ID, mId);
+                        intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
                         startActivityForResult(intent, REQUEST_CODE_REPLY);
                     }
                     break;

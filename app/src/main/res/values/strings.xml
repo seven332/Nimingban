@@ -55,6 +55,10 @@
 
     <string name="show_thread">Show thread</string>
 
+    <string name="create_post">Post</string>
+    <string name="creating_post">Posting…</string>
+    <string name="create_post_successfully">Post successfully</string>
+    <string name="create_post_failed">Post failed</string>
     <string name="replying">Replying…</string>
     <string name="reply_successfully">Reply successfully</string>
     <string name="reply_failed">Reply failed</string>
