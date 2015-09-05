@@ -17,13 +17,13 @@
 package com.hippo.nimingban.ui;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.widget.DoodleView;
@@ -91,7 +91,11 @@ public final class DoodleActivity extends StyleableActivity implements View.OnCl
     @Override
     public void onBackPressed() {
         if (mOutputFile != null) {
-            mExitWaitingDialog = ProgressDialog.show(this, null, getString(R.string.saving), true, false);
+            mExitWaitingDialog = new ProgressDialogBuilder(this)
+                    .setTitle(R.string.please_wait)
+                    .setMessage(R.string.saving)
+                    .setCancelable(false)
+                    .show();
             mDoodleView.save(mOutputFile);
         } else {
             super.onBackPressed();

@@ -17,7 +17,7 @@
 package com.hippo.nimingban.ui;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
@@ -39,6 +39,7 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -78,6 +79,8 @@ public class SortForumsActivity extends StyleableActivity {
     private boolean mNeedUpdate;
 
     private Dialog mProgressDialog;
+
+    private NMBRequest mNMBRequest;
 
     // TODO support other site
     private LazyList<ACForumRaw> mLazyList;
@@ -159,10 +162,30 @@ public class SortForumsActivity extends StyleableActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                mProgressDialog = ProgressDialog.show(this, null, getString(R.string.refreshing_forum_list), true, true);
+                if (mNMBRequest != null) {
+                    return true;
+                }
+
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mNMBRequest != null) {
+                            mNMBRequest.cancel();
+                            mNMBRequest = null;
+                        }
+                    }
+                };
+
+                mProgressDialog = new ProgressDialogBuilder(this)
+                        .setTitle(R.string.please_wait)
+                        .setMessage(R.string.refreshing_forum_list)
+                        .setCancelable(false)
+                        .setNegativeButton(android.R.string.cancel, listener)
+                        .show();
 
                 NMBClient client = NMBApplication.getNMBClient(this);
                 NMBRequest request = new NMBRequest();
+                mNMBRequest = request;
                 request.setSite(mSite);
                 request.setMethod(NMBClient.METHOD_GET_FORUM_LIST);
                 request.setCallback(new ForumsListener());
@@ -203,6 +226,11 @@ public class SortForumsActivity extends StyleableActivity {
 
         if (mLazyList != null) {
             mLazyList.close();
+        }
+
+        if (mNMBRequest != null) {
+            mNMBRequest.cancel();
+            mNMBRequest = null;
         }
     }
 
@@ -327,8 +355,11 @@ public class SortForumsActivity extends StyleableActivity {
 
         @Override
         public void onSuccess(List<ACForumGroup> result) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             List<ACForum> list = new LinkedList<>();
             for (ACForumGroup forumGroup : result) {
@@ -346,16 +377,22 @@ public class SortForumsActivity extends StyleableActivity {
 
         @Override
         public void onFailure(Exception e) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Toast.makeText(SortForumsActivity.this, R.string.refresh_forum_list_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCancelled() {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Log.d("TAG", "ForumsListener onCancelled");
         }

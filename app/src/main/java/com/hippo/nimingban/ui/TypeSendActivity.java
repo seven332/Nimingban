@@ -18,7 +18,6 @@ package com.hippo.nimingban.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.io.UriInputStreamPipe;
 import com.hippo.nimingban.Emoji;
 import com.hippo.nimingban.NMBApplication;
@@ -102,8 +102,8 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     private String mSeletedImageType;
     private Bitmap mSeletedImageBitmap;
 
-    private ProgressDialog mGetCookiePDiglog;
-    private ProgressDialog mActionPDiglog;
+    private Dialog mProgressDialog;
+    private NMBRequest mNMBRequest;
 
     private enum Method {
         Reply,
@@ -185,6 +185,11 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         super.onDestroy();
 
         clearImagePreview();
+
+        if (mNMBRequest != null) {
+            mNMBRequest.cancel();
+            mNMBRequest = null;
+        }
     }
 
     @Override
@@ -235,8 +240,40 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         }
     }
 
+    private void showProgressDialog(int resId) {
+        if (mProgressDialog != null) {
+            return;
+        }
+
+        DialogInterface.OnClickListener clicklistener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mNMBRequest != null) {
+                    mNMBRequest.cancel();
+                    mNMBRequest = null;
+                }
+            }
+        };
+
+        DialogInterface.OnDismissListener dismissListener = new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mProgressDialog = null;
+            }
+        };
+
+        mProgressDialog = new ProgressDialogBuilder(this)
+                .setTitle(R.string.please_wait)
+                .setMessage(resId)
+                .setCancelable(false)
+                .setNegativeButton(android.R.string.cancel, clicklistener)
+                .setOnDismissListener(dismissListener)
+                .show();
+    }
+
     private void doReply() {
-        mActionPDiglog = ProgressDialog.show(this, null, getString(R.string.replying), true, false);
+        showProgressDialog(R.string.replying);
+
         ACReplyStruct struct = new ACReplyStruct();
         struct.name = null;
         struct.email = null;
@@ -247,6 +284,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         struct.imageType = mSeletedImageType;
 
         NMBRequest request = new NMBRequest();
+        mNMBRequest = request;
         request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_REPLY);
         request.setArgs(struct);
@@ -255,7 +293,8 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     }
 
     private void doCreatePost() {
-        mActionPDiglog = ProgressDialog.show(this, null, getString(R.string.creating_post), true, false);
+        showProgressDialog(R.string.creating_post);
+
         ACPostStruct struct = new ACPostStruct();
         struct.name = null;
         struct.email = null;
@@ -266,6 +305,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         struct.imageType = mSeletedImageType;
 
         NMBRequest request = new NMBRequest();
+        mNMBRequest = request;
         request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_CREATE_POST);
         request.setArgs(struct);
@@ -274,9 +314,10 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     }
 
     private void getCookies() {
-        mGetCookiePDiglog = ProgressDialog.show(this, getString(R.string.getting_cookies), null, true, false);
+        showProgressDialog(R.string.getting_cookies);
 
         NMBRequest request = new NMBRequest();
+        mNMBRequest = request;
         request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_GET_COOKIE);
         request.setCallback(new GetCookieListener());
@@ -316,7 +357,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
             EasyRecyclerView recyclerView = (EasyRecyclerView) TypeSendActivity.this
                     .getLayoutInflater().inflate(R.layout.dialog_emoji, null);
             recyclerView.setAdapter(new EmojiAdapter());
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)); // TODO
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));// TODO adjust by view width
             recyclerView.setSelector(RippleSalon.generateRippleDrawable(false)); // TODO darktheme
             recyclerView.setOnItemClickListener(this);
             mView = recyclerView;
@@ -380,13 +421,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     @Override
     public void onClick(View v) {
         if (mSend == v) {
-            if (mActionPDiglog != null) {
-                Toast.makeText(this, mMethod == Method.Reply ? R.string.replying : R.string.creating_post,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (mGetCookiePDiglog != null) {
-                Toast.makeText(this, R.string.getting_cookies, Toast.LENGTH_SHORT).show();
+            if (mProgressDialog != null || mNMBRequest != null) {
                 return;
             }
 
@@ -500,8 +535,11 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     private class ActionListener implements NMBClient.Callback<Void> {
         @Override
         public void onSuccess(Void result) {
-            mActionPDiglog.dismiss();
-            mActionPDiglog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Toast.makeText(TypeSendActivity.this, mMethod == Method.Reply ? R.string.reply_successfully :
                     R.string.create_post_successfully, Toast.LENGTH_SHORT).show();
@@ -511,8 +549,11 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
 
         @Override
         public void onFailure(Exception e) {
-            mActionPDiglog.dismiss();
-            mActionPDiglog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Toast.makeText(TypeSendActivity.this, getString(mMethod == Method.Reply ? R.string.reply_failed :
                     R.string.create_post_failed) +
@@ -521,8 +562,11 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
 
         @Override
         public void onCancelled() {
-            mActionPDiglog.dismiss();
-            mActionPDiglog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Log.d(TAG, "ActionListener onCancel");
         }
@@ -531,16 +575,22 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     private class GetCookieListener implements NMBClient.Callback<Boolean> {
         @Override
         public void onSuccess(Boolean result) {
-            mGetCookiePDiglog.dismiss();
-            mGetCookiePDiglog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Toast.makeText(TypeSendActivity.this, R.string.got_cookies, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onFailure(Exception e) {
-            mGetCookiePDiglog.dismiss();
-            mGetCookiePDiglog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Toast.makeText(TypeSendActivity.this, getString(R.string.cant_get_cookies) +
                     ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
@@ -548,8 +598,11 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
 
         @Override
         public void onCancelled() {
-            mGetCookiePDiglog.dismiss();
-            mGetCookiePDiglog = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
 
             Log.d(TAG, "GetCookieListener onCancel");
         }
