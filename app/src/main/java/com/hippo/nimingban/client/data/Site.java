@@ -24,7 +24,6 @@ public abstract class Site {
 
     public static final int RANDOM = 0;
     public static final int AC = 1;
-    public static final int KUKUKU = 2;
     public static final int SITE_MIN = AC;
     public static final int SITE_MAX = AC;
 
