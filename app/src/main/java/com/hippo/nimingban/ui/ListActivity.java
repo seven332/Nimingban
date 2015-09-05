@@ -309,11 +309,6 @@ public final class ListActivity extends StyleableActivity
     }
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-    }
-
-    @Override
     public void onSelectForum(Forum forum) {
         if (mCurrentForum == null ||
                 (mCurrentForum.getNMBSite() != forum.getNMBSite() ||

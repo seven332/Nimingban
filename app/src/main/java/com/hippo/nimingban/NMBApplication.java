@@ -69,11 +69,6 @@ public class NMBApplication extends StyleableApplication {
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-    }
-
     public static SimpleCookieStore getSimpleCookieStore(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mSimpleCookieStore == null) {

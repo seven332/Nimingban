@@ -170,11 +170,6 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
     }
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_post, menu);
         return true;
@@ -417,8 +412,8 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
         private void onGetReference(final Reply reply, boolean animation) {
             mReply = reply;
 
-            mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayTime(), "  ", highlightOp(reply)));
-            mRightText.setText(reply.getNMBId());
+            mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayUsername(), "    ",
+                    ReadableTime.getDisplayTime(reply.getNMBTime())));
             mContent.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
