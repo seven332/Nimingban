@@ -78,6 +78,10 @@ public class ACSite extends Site {
         WifiInfo info = wifi.getConnectionInfo();
         String mac = info.getMacAddress();
 
+        if (mac == null) {
+            return "zhaobudaomac"; // TODO generate a key ?
+        }
+
         String id;
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
