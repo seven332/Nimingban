@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban;
+package com.hippo.nimingban.daogenerator;
 
-import java.io.File;
+public class Main {
 
-public final class Utilities {
-
-    public static boolean deleteContents(File dir) {
-        File[] files = dir.listFiles();
-        boolean success = true;
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    success &= deleteContents(file);
-                }
-                if (!file.delete()) {
-                    success = false;
-                }
-            }
-        }
-        return success;
+    public static void main(String args[]) throws Exception {
+        NMBDaoGenerator.generate();
+        HttpCookieDaoGenerator.generate();
     }
 }

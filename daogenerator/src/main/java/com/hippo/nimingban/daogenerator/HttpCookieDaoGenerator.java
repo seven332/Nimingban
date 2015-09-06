@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban;
+package com.hippo.nimingban.daogenerator;
 
 import java.io.File;
 
@@ -25,8 +25,8 @@ import de.greenrobot.daogenerator.Schema;
 public class HttpCookieDaoGenerator {
 
     private static final String PACKAGE = "com.hippo.network.dao";
-    private static final String OUT_DIR = "./app/src/main/java-gen";
-    private static final String DELETE_DIR = "./app/src/main/java-gen/com/hippo/network/dao";
+    private static final String OUT_DIR = "../app/src/main/java-gen";
+    private static final String DELETE_DIR = "../app/src/main/java-gen/com/hippo/network/dao";
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
