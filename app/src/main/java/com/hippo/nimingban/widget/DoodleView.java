@@ -55,6 +55,8 @@ public class DoodleView extends View {
 
     private float mX, mY;
 
+    private boolean mIsDot;
+
     private Recycler mRecycler;
 
     private Helper mHelper;
@@ -118,7 +120,11 @@ public class DoodleView extends View {
 
         mPaint.setColor(mColor);
         mPaint.setStrokeWidth(mWidth);
-        canvas.drawPath(mPath, mPaint);
+        if (mIsDot) {
+            canvas.drawPoint(mX, mY, mPaint);
+        } else {
+            canvas.drawPath(mPath, mPaint);
+        }
     }
 
     private boolean isLocked() {
@@ -126,16 +132,17 @@ public class DoodleView extends View {
     }
 
     private void touch_start(float x, float y) {
+        mIsDot = true;
+
         mPath.reset();
         mPath.moveTo(x, y);
-        // A trick to draw dot
-        // http://stackoverflow.com/a/26847526
-        mPath.quadTo(x, y, x + 0.1f, y);
         mX = x;
         mY = y;
     }
 
     private void touch_move(float x, float y) {
+        mIsDot = false;
+
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
@@ -152,7 +159,7 @@ public class DoodleView extends View {
         if (drawInfo == null) {
             drawInfo = new DrawInfo();
         }
-        drawInfo.set(mColor, mWidth, mPath);
+        drawInfo.set(mColor, mWidth, mPath, mX, mY, mIsDot);
         DrawInfo legacy = push(drawInfo);
 
         // Draw legacy
@@ -318,21 +325,31 @@ public class DoodleView extends View {
         private int mColor;
         private float mWidth;
         private Path mPath;
+        private float mStartX;
+        private float mStartY;
+        private boolean mIsDot;
 
         public DrawInfo() {
             mPath = new Path();
         }
 
-        public void set(int color, float width, Path path) {
+        public void set(int color, float width, Path path, float startX, float startY, boolean isDot) {
             mColor = color;
             mWidth = width;
             mPath.set(path);
+            mStartX = startX;
+            mStartY = startY;
+            mIsDot = isDot;
         }
 
         public void draw(Canvas canvas, Paint paint) {
             paint.setColor(mColor);
             paint.setStrokeWidth(mWidth);
-            canvas.drawPath(mPath, paint);
+            if (mIsDot) {
+                canvas.drawPoint(mStartX, mStartY, paint);
+            } else {
+                canvas.drawPath(mPath, paint);
+            }
         }
     }
 
