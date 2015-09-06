@@ -21,6 +21,9 @@
     <string name="drawer_open">打开抽屉</string>
     <string name="drawer_close">关闭抽屉</string>
 
+    <string name="it_is_important">这很重要</string>
+    <string name="crash_tip">上次该应用崩溃了。你愿意把错误日志发送给开发者以便以后得到更好的用户体验么？（以电子邮件的形式发送）</string>
+
     <string name="cant_make_sure_image_save_location">似乎图片存储位置用不了了，需要重新设置</string>
 
     <string name="press_twice_exit">再按一下退出</string>
