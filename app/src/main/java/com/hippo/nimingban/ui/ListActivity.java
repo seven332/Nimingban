@@ -405,6 +405,14 @@ public final class ListActivity extends StyleableActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                } else {
+                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                }
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                return true;
             case R.id.action_create_post:
                 if (mCurrentForum != null) {
                     intent = new Intent(this, TypeSendActivity.class);
@@ -423,11 +431,7 @@ public final class ListActivity extends StyleableActivity
                 startActivityForResult(intent, REQUEST_CODE_SORT_FORUMS);
                 return true;
             default:
-                if (mDrawerToggle.onOptionsItemSelected(item)) {
-                    return true;
-                } else {
-                    return super.onOptionsItemSelected(item);
-                }
+                return super.onOptionsItemSelected(item);
         }
     }
 
