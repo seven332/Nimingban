@@ -97,6 +97,8 @@ public final class DoodleActivity extends StyleableActivity implements View.OnCl
                     .setCancelable(false)
                     .show();
             mDoodleView.save(mOutputFile);
+        } else if (mExitWaitingDialog != null) {
+            // Wait here, it might be fast click back button
         } else {
             super.onBackPressed();
         }
