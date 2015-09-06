@@ -23,6 +23,20 @@
 生成的 apk 文件在 app\build\outputs\apk 目录下
 
 
+# Thanks
+
+本项目受到了诸多开源项目的帮助
+
+- [AOSP](http://source.android.com/)
+- [android-advancedrecyclerview](https://github.com/h6ah4i/android-advancedrecyclerview)
+- [android-gif-drawable](https://github.com/koral--/android-gif-drawable)
+- [fastjson](https://github.com/alibaba/fastjson)
+- [greenDAO](https://github.com/greenrobot/greenDAO)
+- [jsoup](https://github.com/jhy/jsoup)
+- [leakcanary](https://github.com/square/leakcanary)
+- [PhotoView](https://github.com/chrisbanes/PhotoView)
+
+
 # License
 
     Copyright (C) 2015 Hippo Seven
