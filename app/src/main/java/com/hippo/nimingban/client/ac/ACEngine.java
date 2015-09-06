@@ -199,9 +199,7 @@ public class ACEngine {
 
             return reference;
 
-        } catch (Exception | ExceptionInInitializerError e) {
-            // TODO org.jsoup.nodes.Document$OutputSettings.<init> may raise
-            // java.lang.ExceptionInInitializerError in VS simulator
+        } catch (Exception e) {
             if (httpRequest.isCancelled()) {
                 throw new CancelledException();
             } else {
