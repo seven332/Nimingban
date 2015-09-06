@@ -228,7 +228,7 @@ public final class HeaderImageView extends FixedAspectImageView
         boolean onLongClickImage(File imageFile);
     }
 
-    private class TempDataContainer implements DataContainer {
+    private static class TempDataContainer implements DataContainer {
 
         private File mTempFile;
 
