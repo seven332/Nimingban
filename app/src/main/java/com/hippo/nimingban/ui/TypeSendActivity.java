@@ -385,7 +385,12 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         @Override
         public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
             if (mDialog != null) {
-                mEditText.append(Emoji.EMOJI_VALUE[position]);
+                EditText editText = mEditText;
+                String emoji = Emoji.EMOJI_VALUE[position];
+                int start = Math.max(editText.getSelectionStart(), 0);
+                int end = Math.max(editText.getSelectionEnd(), 0);
+                editText.getText().replace(Math.min(start, end), Math.max(start, end),
+                        emoji, 0, emoji.length());
                 mDialog.dismiss();
                 mDialog = null;
             }
