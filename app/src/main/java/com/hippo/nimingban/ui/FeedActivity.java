@@ -89,7 +89,7 @@ public final class FeedActivity extends StyleableActivity implements EasyRecycle
         return true;
     }
 
-    private class FeedHolder extends RecyclerView.ViewHolder {
+    private class FeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView leftText;
         private TextView rightText;
@@ -103,6 +103,25 @@ public final class FeedActivity extends StyleableActivity implements EasyRecycle
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+
+            thumb.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position >= 0 && position < mFeedHelper.size()) {
+                Post post = mFeedHelper.getDataAt(position);
+                String image = post.getNMBImageUrl();
+                if (!TextUtils.isEmpty(image)) {
+                    Intent intent = new Intent(FeedActivity.this, GalleryActivity2.class);
+                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
+                    intent.putExtra(GalleryActivity2.KEY_SITE, post.getNMBSite().getId());
+                    intent.putExtra(GalleryActivity2.KEY_ID, post.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
+                    FeedActivity.this.startActivity(intent);
+                }
+            }
         }
     }
 
