@@ -27,6 +27,7 @@ import android.support.annotation.Nullable;
 import com.hippo.conaco.BitmapPool;
 import com.hippo.conaco.DrawableHelper;
 import com.hippo.conaco.DrawableHolder;
+import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
@@ -79,6 +80,9 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 isPipe.close();
                 isPipe.release();
                 return new TempGifDrawable(temp);
+            } else if (options.outWidth >= 1024 || options.outHeight >= 1024) { // TODO get the threshold runtime
+                return TiledBitmapDrawable.from(
+                        isPipe.open(), options.outWidth, options.outHeight, mBitmapPool);
             } else {
                 options.inJustDecodeBounds = false;
                 options.inMutable = true;
@@ -105,6 +109,8 @@ public class SimpleDrawableHelper implements DrawableHelper {
     public int sizeOf(@NonNull String key, @NonNull Drawable value) {
         if (value instanceof GifDrawable) {
             return (int) ((GifDrawable) value).getAllocationByteCount();
+        } else if (value instanceof TiledBitmapDrawable) {
+            return ((TiledBitmapDrawable) value).getByteCount();
         } else if (value instanceof BitmapDrawable) {
             return ((BitmapDrawable) value).getBitmap().getByteCount();
         } else {
@@ -118,6 +124,8 @@ public class SimpleDrawableHelper implements DrawableHelper {
             Drawable drawable = oldValue.getDrawable();
             if (drawable instanceof BitmapDrawable) {
                 mBitmapPool.addReusableBitmap(((BitmapDrawable) drawable).getBitmap());
+            } else if (drawable instanceof TiledBitmapDrawable) {
+                ((TiledBitmapDrawable) drawable).recycle(mBitmapPool);
             } else if (drawable instanceof GifDrawable) {
                 ((GifDrawable) drawable).recycle();
             }
