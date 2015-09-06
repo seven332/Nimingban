@@ -27,11 +27,7 @@ import android.text.style.ForegroundColorSpan;
 
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Post;
-import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
-
-import java.text.ParseException;
-import java.util.Date;
 
 public class ACFeed extends Post {
 
@@ -70,17 +66,7 @@ public class ACFeed extends Post {
     public void generate(Site site) {
         mSite = site;
 
-        try {
-            Date date;
-            synchronized (ACPost.sDateFormatLock) {
-                date = ACPost.DATE_FORMAT.parse(ACReply.removeDayOfWeek(now));
-            }
-            mTime = date.getTime();
-            mTimeStr = Reply.generateTimeString(date);
-        } catch (ParseException e) {
-            // Can't parse date, may be the format has changed
-            mTimeStr = now;
-        }
+        mTime = ACPost.parseTime(now);
 
         if ("1".equals(admin)) {
             Spannable spannable = new SpannableString(userid);
@@ -116,11 +102,6 @@ public class ACFeed extends Post {
     @Override
     public long getNMBTime() {
         return mTime;
-    }
-
-    @Override
-    public CharSequence getNMBDisplayTime() {
-        return mTimeStr;
     }
 
     @Override

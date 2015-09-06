@@ -29,7 +29,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
-import com.hippo.util.ReadableTime;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.yorozuya.MathUtils;
 
 import java.io.File;

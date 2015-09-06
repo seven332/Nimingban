@@ -30,7 +30,7 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.styleable.StyleableApplication;
-import com.hippo.util.ReadableTime;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.squareup.leakcanary.LeakCanary;
 

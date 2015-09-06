@@ -23,7 +23,6 @@ import android.os.Build;
 
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.util.PackageUtils;
-import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.IOUtils;
 
 import java.io.File;

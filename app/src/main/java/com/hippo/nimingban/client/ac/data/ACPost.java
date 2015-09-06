@@ -30,7 +30,6 @@ import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
-import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.yorozuya.NumberUtils;
 
@@ -40,17 +39,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ACPost extends Post {
 
-    static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
+    /**
+     * Parse the time string from website
+     */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
     static final Object sDateFormatLock = new Object();
 
     static final Pattern REFERENCE_PATTERN = Pattern.compile(">>(?:No.)?(\\d+)");
     static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
     static final Pattern GREEN_PATTERN = Pattern.compile("^>>.+?$");
+
+    static {
+        // The website use GMT+08:00
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+    }
 
     public String id = "";
     public String img = "";
@@ -69,7 +77,6 @@ public class ACPost extends Post {
     private Site mSite;
 
     private long mTime;
-    private String mTimeStr;
     private CharSequence mUser;
     private int mReplyCount;
     private CharSequence mContent;
@@ -209,21 +216,44 @@ public class ACPost extends Post {
         return charSequence;
     }
 
+    private static String removeDayOfWeek(String time) {
+        StringBuilder sb = new StringBuilder(time.length() - 3);
+        boolean inBrackets = false;
+        for (int i = 0, n = time.length(); i < n; i++) {
+            char c = time.charAt(i);
+            if (inBrackets) {
+                if (c == ')') {
+                    inBrackets = false;
+                } else {
+                    // Skip
+                }
+            } else {
+                if (c == '(') {
+                    inBrackets = true;
+                } else {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static long parseTime(String time) {
+        try {
+            synchronized (sDateFormatLock) {
+                Date date = DATE_FORMAT.parse(removeDayOfWeek(time));
+                return date.getTime();
+            }
+        } catch (ParseException e) {
+            return 0;
+        }
+    }
+
     @Override
     public void generate(Site site) {
         mSite = site;
 
-        try {
-            Date date;
-            synchronized (sDateFormatLock) {
-                date = DATE_FORMAT.parse(ACReply.removeDayOfWeek(now));
-            }
-            mTime = date.getTime();
-            mTimeStr = Reply.generateTimeString(date);
-        } catch (ParseException e) {
-            // Can't parse date, may be the format has changed
-            mTimeStr = now;
-        }
+        mTime = parseTime(now);
 
         if ("1".equals(admin)) {
             Spannable spannable = new SpannableString(userid);
@@ -276,11 +306,6 @@ public class ACPost extends Post {
     @Override
     public long getNMBTime() {
         return mTime;
-    }
-
-    @Override
-    public CharSequence getNMBDisplayTime() {
-        return mTimeStr;
     }
 
     @Override

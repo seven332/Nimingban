@@ -29,9 +29,6 @@ import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 
-import java.text.ParseException;
-import java.util.Date;
-
 public class ACReference extends Reply {
 
     public String id = "";
@@ -49,7 +46,6 @@ public class ACReference extends Reply {
     private Site mSite;
 
     private long mTime;
-    private String mTimeStr;
     private CharSequence mUser;
     private CharSequence mContent;
     private String mThumb;
@@ -67,17 +63,7 @@ public class ACReference extends Reply {
     public void generate(Site site) {
         mSite = site;
 
-        try {
-            Date date;
-            synchronized (ACPost.sDateFormatLock) {
-                date = ACPost.DATE_FORMAT.parse(ACReply.removeDayOfWeek(time));
-            }
-            mTime = date.getTime();
-            mTimeStr = Reply.generateTimeString(date);
-        } catch (ParseException e) {
-            // Can't parse date, may be the format has changed
-            mTimeStr = time;
-        }
+        mTime = ACPost.parseTime(time);
 
         if (admin) {
             Spannable spannable = new SpannableString(userId);
@@ -116,11 +102,6 @@ public class ACReference extends Reply {
     @Override
     public long getNMBTime() {
         return mTime;
-    }
-
-    @Override
-    public CharSequence getNMBDisplayTime() {
-        return mTimeStr;
     }
 
     @Override

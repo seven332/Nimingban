@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.hippo.util;
+package com.hippo.nimingban.util;
 
 import android.content.Context;
 import android.content.res.Resources;
 
 import com.hippo.nimingban.R;
-import com.hippo.nimingban.util.Settings;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public final class ReadableTime {
 
@@ -54,6 +54,9 @@ public final class ReadableTime {
             R.plurals.second
     };
 
+    /**
+     * Parse the time to user
+     */
     private static final SimpleDateFormat DATE_FORMAT =
             new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
     private static final Object sDateFormatLock1 = new Object();
@@ -61,6 +64,11 @@ public final class ReadableTime {
     private static final SimpleDateFormat FILENAMABLE_DATE_FORMAT =
             new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.getDefault());
     private static final Object sDateFormatLock2 = new Object();
+
+    static {
+        // The website use GMT+08:00, so tell user the same
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+    }
 
     public static void initialize(Context context) {
         sResources = context.getApplicationContext().getResources();

@@ -29,9 +29,6 @@ import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 
-import java.text.ParseException;
-import java.util.Date;
-
 public class ACReply extends Reply {
 
     public String id = "";
@@ -62,44 +59,11 @@ public class ACReply extends Reply {
                 ", title = " + title + ", content = " + content + ", admin = " + admin;
     }
 
-    static String removeDayOfWeek(String time) {
-        StringBuilder sb = new StringBuilder(time.length() - 3);
-        boolean inBrackets = false;
-        for (int i = 0, n = time.length(); i < n; i++) {
-            char c = time.charAt(i);
-            if (inBrackets) {
-                if (c == ')') {
-                    inBrackets = false;
-                } else {
-                    // Skip
-                }
-            } else {
-                if (c == '(') {
-                    inBrackets = true;
-                } else {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
-    }
-
     @Override
     public void generate(Site site) {
         mSite = site;
 
-        try {
-            Date date;
-            synchronized (ACPost.sDateFormatLock) {
-                date = ACPost.DATE_FORMAT.parse(removeDayOfWeek(now));
-            }
-            mTime = date.getTime();
-            mTimeStr = Reply.generateTimeString(date);
-        } catch (ParseException e) {
-            // Can't parse date, may be the format has changed
-            e.printStackTrace();
-            mTimeStr = now;
-        }
+        mTime = ACPost.parseTime(now);
 
         if ("1".equals(admin)) {
             Spannable spannable = new SpannableString(userid);
@@ -135,11 +99,6 @@ public class ACReply extends Reply {
     @Override
     public long getNMBTime() {
         return mTime;
-    }
-
-    @Override
-    public CharSequence getNMBDisplayTime() {
-        return mTimeStr;
     }
 
     @Override

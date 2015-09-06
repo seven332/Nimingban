@@ -68,7 +68,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.util.ReadableTime;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.MathUtils;

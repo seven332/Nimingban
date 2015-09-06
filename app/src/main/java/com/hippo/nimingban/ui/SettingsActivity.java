@@ -45,7 +45,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.util.ReadableTime;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.yorozuya.IOUtils;
 
 import java.io.File;
