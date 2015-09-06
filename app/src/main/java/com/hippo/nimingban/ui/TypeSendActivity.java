@@ -354,7 +354,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
                 .setMessage(R.string.no_cookies_ac)
                 .setPositiveButton(android.R.string.ok, listener)
                 .setNegativeButton(android.R.string.cancel, listener)
-                .setNeutralButton(R.string.i_dont_mind, listener).show();
+                .setNeutralButton(R.string.i_dont_care, listener).show();
     }
 
     private class EmojiDialogHelper implements EasyRecyclerView.OnItemClickListener,

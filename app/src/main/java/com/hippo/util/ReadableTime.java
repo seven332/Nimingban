@@ -92,12 +92,12 @@ public final class ReadableTime {
         if (diff < MINUTE_MILLIS) {
             return resources.getString(R.string.just_now);
         } else if (diff < 2 * MINUTE_MILLIS) {
-            return resources.getQuantityString(R.plurals.some_minutes_ago, 1);
+            return resources.getQuantityString(R.plurals.some_minutes_ago, 1, 1);
         } else if (diff < 50 * MINUTE_MILLIS) {
             int minutes = (int) (diff / MINUTE_MILLIS);
             return resources.getQuantityString(R.plurals.some_minutes_ago, minutes, minutes);
         } else if (diff < 90 * MINUTE_MILLIS) {
-            return resources.getQuantityString(R.plurals.some_hours_ago, 1);
+            return resources.getQuantityString(R.plurals.some_hours_ago, 1, 1);
         } else if (diff < 24 * HOUR_MILLIS) {
             int hours = (int) (diff / HOUR_MILLIS);
             return resources.getQuantityString(R.plurals.some_hours_ago, hours, hours);

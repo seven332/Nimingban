@@ -81,7 +81,7 @@
 
     <string name="no_cookies">No cookies</string>
     <string name="no_cookies_ac">It seems that you have no cookies of AC nimingban. Try getting cookies ?</string>
-    <string name="i_dont_mind">I don\'t mind</string>
+    <string name="i_dont_care">I don\'t care</string>
     <string name="getting_cookies">Getting Cookies…</string>
     <string name="got_cookies">Got cookies !</string>
     <string name="cant_get_cookies">Can\'t get cookies</string>
@@ -135,7 +135,7 @@
 
     <string name="doodle">Doodle</string>
     <string name="cant_create_image_file">Can\'t create image file</string>
-    <string name="saving">Saving</string>
+    <string name="saving">Saving…</string>
     <string name="save_successfully">Save successfully</string>
     <string name="save_failed">Save failed</string>
 
@@ -172,7 +172,7 @@
 
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Can\'t find any forum</string>
-    <string name="refreshing_forum_list">Refreshing forum list</string>
+    <string name="refreshing_forum_list">Refreshing forum list…</string>
     <string name="refresh_forum_list_failed">Refresh forum list failed</string>
 
     <string name="version">Version</string>

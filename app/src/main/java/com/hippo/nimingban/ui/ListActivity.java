@@ -572,7 +572,7 @@ public final class ListActivity extends StyleableActivity
             }
 
             if (mCurrentForum == null) {
-                onGetExpection(taskId, new NMBException(DumpSite.getInstance(), "current forum is null")); // TODO hardcode
+                onGetExpection(taskId, new NMBException(DumpSite.getInstance(), getString(R.string.no_forum)));
             } else {
                 NMBRequest request = new NMBRequest();
                 mNMBRequest = request;

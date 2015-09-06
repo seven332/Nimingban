@@ -1,0 +1,177 @@
+<!--
+  ~ Copyright 2015 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <string name="app_name">匿名版</string>
+
+    <string name="drawer_open">打开抽屉</string>
+    <string name="drawer_close">关闭抽屉</string>
+
+    <string name="cant_make_sure_image_save_location">似乎图片存储位置用不了了，需要重新设置</string>
+
+    <string name="press_twice_exit">再按一下退出</string>
+
+    <string name="please_wait">请稍后</string>
+
+    <string name="no_post">没有找到串</string>
+
+    <string name="refresh">刷新</string>
+
+    <string name="reply">回复</string>
+    <string name="go_to">跳页</string>
+    <plurals name="go_to_hint">
+        <item quantity="other">第 %1$d 页，共 %2$d 页</item>
+    </plurals>
+    <string name="go_to_error_invalid">请输入有效页数</string>
+    <string name="go_to_error_out_of_range">目标页数在范围外</string>
+
+    <string name="add_feed">添加订阅</string>
+    <string name="remove_feed">删除订阅</string>
+    <string name="add_feed_successfully">添加订阅成功</string>
+    <string name="add_feed_failed">添加订阅失败</string>
+    <string name="remove_feed_successfully">删除订阅成功</string>
+    <string name="remove_feed_failed">删除订阅失败</string>
+
+    <string name="share">分享</string>
+    <string name="open_in_other_app">在其他应用打开</string>
+
+    <string name="feed">订阅</string>
+    <string name="no_feed">没有订阅</string>
+
+    <string name="reply_to_comment">回复评论</string>
+    <string name="copy_comment_text">复制评论文字</string>
+    <string name="report_comment">举报评论</string>
+
+    <string name="comment_copied_clipboard">评论文字已复制到剪贴板</string>
+
+    <string name="cant_get_the_reference">无法找到引用</string>
+    <string name="show_thread">显示原串</string>
+
+    <string name="report">举报</string>
+    <string name="report_tip">你将把这个串发送至值班室</string>
+    <string name="create_post">发串</string>
+    <string name="creating_post">发串中…</string>
+    <string name="create_post_successfully">发串成功</string>
+    <string name="create_post_failed">发串失败</string>
+    <string name="replying">回复中…</string>
+    <string name="reply_successfully">回复成功</string>
+    <string name="reply_failed">回复失败</string>
+    <string name="save_text_draft">把你输入的文字保存为草稿？</string>
+    <string name="save">保存</string>
+    <string name="dont_save">不保存</string>
+
+    <string name="select_picture">选择图片</string>
+
+    <string name="gallery">图片欣赏</string>
+
+    <string name="no_cookies">没有 Cookies</string>
+    <string name="no_cookies_ac">似乎你没有饼干。尝试获取饼干？</string>
+    <string name="i_dont_care">我不在意</string>
+    <string name="getting_cookies">获取饼干中…</string>
+    <string name="got_cookies">拿到饼干了！</string>
+    <string name="cant_get_cookies">未获取饼干</string>
+
+    <string name="em_timeout">超时</string>
+    <string name="em_unknown_host">未知主机</string>
+    <string name="em_response_code">非预期响应码: %d</string>
+    <string name="em_redirection">太多重定向</string>
+    <string name="em_socket">网络错误</string>
+    <string name="em_unknown">奇怪的错误</string>
+
+    <string name="em_cant_find_activity">找不到对应的应用</string>
+
+    <string name="draft">草稿</string>
+    <string name="draft_copied_clipboard">草稿文本已复制到剪切板</string>
+    <string name="no_draft">没有草稿</string>
+
+    <string name="from_the_future">来自未来</string>
+    <string name="just_now">刚刚</string>
+    <plurals name="some_minutes_ago">
+        <item quantity="other">%d 分钟前</item>
+    </plurals>
+    <plurals name="some_hours_ago">
+        <item quantity="other">%d 小时前</item>
+    </plurals>
+    <string name="yesterday">昨天</string>
+    <string name="some_days_ago">%d 天前</string>
+
+    <plurals name="second">
+        <item quantity="other">秒</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="other">分</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="other">时</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="other">天</item>
+    </plurals>
+    <plurals name="year">
+        <item quantity="other">年</item>
+    </plurals>
+
+    <string name="doodle">涂鸦</string>
+    <string name="cant_create_image_file">无法保存图片文件</string>
+    <string name="saving">保存中…</string>
+    <string name="save_successfully">保存成功</string>
+    <string name="save_failed">保存失败</string>
+
+    <string name="settings">设置</string>
+    <string name="main_pretty_time">显示易读时间</string>
+    <string name="main_pretty_time_summary">显示 %1$s 而不是 %2$s</string>
+    <string name="main_ac_cookies">饼干</string>
+    <string name="main_ac_cookies_summary_no">理论上来说，你没有饼干</string>
+    <string name="main_ac_cookies_summary_valid">理论上来说，你的饼干将在 %s 后失效</string>
+    <string name="main_ac_cookies_summary_forever">理论上来说，你拥有永恒的饼干</string>
+    <string name="main_save_cookies">保存饼干</string>
+    <string name="main_save_cookies_summary">保存至外置存储器</string>
+    <string name="main_restore_cookies">恢复饼干</string>
+    <string name="main_restore_cookies_summary">从外置存储器的饼干文件中恢复饼干</string>
+    <string name="main_image_save_location">图片存储路径</string>
+    <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+
+    <string name="save_cookies_failed">保存饼干失败</string>
+    <string name="save_cookies_to">保存饼干至 %s</string>
+
+    <string name="restore_cookies_successfully">恢复饼干成功</string>
+    <string name="not_valid_cookie_file">这不是有效饼干文件</string>
+    <string name="cant_find_cookie_file">找不到饼干文件</string>
+    <string name="select_cookie_file">选择饼干文件</string>
+
+    <string name="dir_picker">选择文件夹</string>
+    <string name="directory_not_writable">该文件夹不可写</string>
+    <string name="cant_get_image_save_location">无法获取图片存储路径</string>
+
+    <string name="pick_dir_kk">在 KitKat 中你无法把数据写入外置 SD 卡，除非你做了奇怪的事情</string>
+    <string name="pick_dir_l">Lollipop 提供了新的写入外置 SD 卡的 API。如果你想把图片存储路径设置到外置 SD 卡上，点击 \"文档\" 按钮</string>
+
+    <string name="document">文档</string>
+
+    <string name="sort_forums">板块排序</string>
+    <string name="no_forum">找不到任何板块</string>
+    <string name="refreshing_forum_list">刷新板块中</string>
+    <string name="refresh_forum_list_failed">刷新板块失败</string>
+
+    <string name="version">版本</string>
+    <string name="size">大小</string>
+    <string name="download_update">下载更新</string>
+    <string name="download">下载</string>
+    <string name="downloading_update">下载更新中</string>
+    <string name="download_update_failde">下载更新失败</string>
+
+</resources>
