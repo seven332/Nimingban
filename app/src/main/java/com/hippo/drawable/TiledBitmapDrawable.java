@@ -53,11 +53,13 @@ public class TiledBitmapDrawable extends Drawable {
         }
 
         for (Tile tile : mTiles) {
-            Bitmap bitmap = tile.bitmap;
-            if (bitmap != null) {
-                pool.addReusableBitmap(bitmap);
-                tile.bitmap = null;
+            if (pool != null) {
+                Bitmap bitmap = tile.bitmap;
+                if (bitmap != null) {
+                    pool.addReusableBitmap(bitmap);
+                }
             }
+            tile.bitmap = null;
         }
 
         mTiles = null;

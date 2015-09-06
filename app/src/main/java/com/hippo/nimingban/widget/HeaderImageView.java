@@ -18,6 +18,7 @@ package com.hippo.nimingban.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -30,6 +31,7 @@ import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
+import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.io.FileInputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
@@ -119,6 +121,17 @@ public final class HeaderImageView extends FixedAspectImageView
         mConaco.load(builder);
     }
 
+    public void unload() {
+        mConaco.cancel(this);
+        setImageDrawableSafely(null);
+
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+            mHolder = null;
+        }
+    }
+
     @Override
     public void setTaskId(int id) {
         mTaskId = id;
@@ -141,13 +154,29 @@ public final class HeaderImageView extends FixedAspectImageView
     public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
     }
 
-    @Override
-    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
-        // Can't use GifDrawable again
-        if (holder.getDrawable() instanceof GifDrawable && !holder.isFree()) {
-            return false;
+    private void setImageDrawableSafely(Drawable drawable) {
+        Drawable oldDrawable = getDrawable();
+        if (oldDrawable instanceof TransitionDrawable) {
+            TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
+            int number = tDrawable.getNumberOfLayers();
+            if (number > 0) {
+                oldDrawable = tDrawable.getDrawable(number - 1);
+            }
         }
 
+        if (oldDrawable instanceof GifDrawable) {
+            ((GifDrawable) oldDrawable).recycle();
+        }
+
+        if (oldDrawable instanceof TiledBitmapDrawable) {
+            ((TiledBitmapDrawable) oldDrawable).recycle(null);
+        }
+
+        setImageDrawable(drawable);
+    }
+
+    @Override
+    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
         // Update image file
         FileUtils.delete(mImageFile);
         if (mContainer != null) {
@@ -164,7 +193,7 @@ public final class HeaderImageView extends FixedAspectImageView
             ((GifDrawable) drawable).start();
         }
 
-        setImageDrawable(drawable);
+        setImageDrawableSafely(drawable);
 
         if (olderHolder != null) {
             olderHolder.release();
@@ -175,7 +204,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setImageDrawable(drawable);
+        setImageDrawableSafely(drawable);
 
         // Release old holder
         if (mHolder != null) {

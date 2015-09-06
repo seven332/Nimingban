@@ -31,6 +31,7 @@ import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
+import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.FixedAspectImageView;
@@ -149,6 +150,20 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         mConaco.load(builder);
     }
 
+    public void unload() {
+        mConaco.cancel(this);
+        mKey = null;
+        mUrl = null;
+        mContainer = null;
+        setImageDrawableSafely(null);
+
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+            mHolder = null;
+        }
+    }
+
     public void cancel() {
         mConaco.cancel(this);
     }
@@ -177,6 +192,10 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
             ((GifDrawable) oldDrawable).recycle();
         }
 
+        if (oldDrawable instanceof TiledBitmapDrawable) {
+            ((TiledBitmapDrawable) oldDrawable).recycle(null);
+        }
+
         setImageDrawable(drawable);
     }
 
@@ -201,11 +220,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
 
     @Override
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
-        // Can't use GifDrawable again
-        if (holder.getDrawable() instanceof GifDrawable && !holder.isFree()) {
-            return false;
-        }
-
         // Release
         mKey = null;
         mUrl = null;

@@ -134,8 +134,13 @@ public class SimpleDrawableHelper implements DrawableHelper {
 
     @Override
     public boolean useMemoryCache(@NonNull String key, DrawableHolder holder) {
-        if (holder != null && holder.getDrawable() instanceof GifDrawable) {
-            return false;
+        if (holder != null) {
+            Drawable drawable = holder.getDrawable();
+            if (drawable instanceof GifDrawable || drawable instanceof TiledBitmapDrawable) {
+                return false;
+            } else {
+                return false;
+            }
         } else {
             return true;
         }

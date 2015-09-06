@@ -82,6 +82,10 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         mDrawerListView.setOnItemClickListener(this);
     }
 
+    public void unloadHeaderImageView() {
+        mHeader.unload();
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // Avoid qiuck click action

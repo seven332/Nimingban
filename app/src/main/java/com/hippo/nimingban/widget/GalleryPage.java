@@ -30,6 +30,7 @@ import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
+import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.ProgressView;
@@ -97,6 +98,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         if (oldDrawable instanceof GifDrawable) {
             ((GifDrawable) oldDrawable).recycle();
+        }
+
+        if (oldDrawable instanceof TiledBitmapDrawable) {
+            ((TiledBitmapDrawable) oldDrawable).recycle(null);
         }
 
         mImageView.setImageDrawable(drawable);
@@ -176,11 +181,6 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
     @Override
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
-        // Can't use GifDrawable again
-        if (holder.getDrawable() instanceof GifDrawable && !holder.isFree()) {
-            return false;
-        }
-
         // Release
         mId = null;
         mUrl = null;
