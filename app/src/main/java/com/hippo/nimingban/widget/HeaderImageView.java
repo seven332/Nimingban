@@ -207,7 +207,7 @@ public final class HeaderImageView extends FixedAspectImageView
         public boolean save(InputStream is, ProgressNotify notify) {
             FileOutputStream os = null;
             try {
-                mTempFile = NMBAppConfig.createTempFile(getContext());
+                mTempFile = NMBAppConfig.createTempFile();
                 if (mTempFile == null) {
                     return false;
                 }

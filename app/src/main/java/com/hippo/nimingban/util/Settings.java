@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -115,5 +116,17 @@ public final class Settings {
         putString(KEY_IMAGE_SAVE_PATH, uri.getEncodedPath());
         putString(KEY_IMAGE_SAVE_QUERY, uri.getEncodedQuery());
         putString(KEY_IMAGE_SAVE_FRAGMENT, uri.getEncodedFragment());
+    }
+
+    public static final String KEY_CRASH_FILENAME = "crash_filename";
+    public static final String VALUE_CRASH_FILENAME = null;
+
+    public static String getCrashFilename() {
+        return getString(KEY_CRASH_FILENAME, VALUE_CRASH_FILENAME);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void putCrashFilename(String value) {
+        sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
     }
 }

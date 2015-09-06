@@ -70,7 +70,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
             }
 
             if ("image/gif".equals(options.outMimeType)) {
-                File temp = NMBAppConfig.createTempFile(mContext);
+                File temp = NMBAppConfig.createTempFile();
                 if (temp == null) {
                     return null;
                 }

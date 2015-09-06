@@ -56,6 +56,7 @@ import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.UpdateInfo;
 import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -65,6 +66,7 @@ import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ActivityHelper;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -232,6 +234,23 @@ public final class ListActivity extends StyleableActivity
     }
 
     private void checkForAppStart() {
+        // Check crash
+        if (Crash.hasCrashFile()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.it_is_important)
+                    .setMessage(R.string.crash_tip)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String content = Crash.getCrashContent();
+                            Crash.resetCrashFile();
+                            ActivityHelper.sendEmail(ListActivity.this, "hipposeven332$gmail.com",
+                                    "I found a bug in nimingban", content);
+                        }
+                    }).setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        }
+
         // Check image save location
         UniFile uniFile = Settings.getImageSaveLocation();
         if (uniFile == null || !uniFile.ensureDir()) {

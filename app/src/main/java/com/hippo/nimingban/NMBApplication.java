@@ -25,6 +25,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
@@ -35,7 +36,10 @@ import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 
-public class NMBApplication extends StyleableApplication {
+public final class NMBApplication extends StyleableApplication
+        implements Thread.UncaughtExceptionHandler {
+
+    private Thread.UncaughtExceptionHandler mDefaultHandler;
 
     private SimpleCookieStore mSimpleCookieStore;
     private NMBHttpClient mNMBHttpClient;
@@ -47,15 +51,20 @@ public class NMBApplication extends StyleableApplication {
     public void onCreate() {
         super.onCreate();
 
-        // Remove temp file
-        FileUtils.deleteContent(NMBAppConfig.getTempDir(this));
+        // Prepare to crash
+        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(this);
 
+        NMBAppConfig.initialize(this);
         Settings.initialize(this);
         DB.initialize(this);
         HttpCookieDB.initialize(this);
         ReadableTime.initialize(this);
 
         LeakCanary.install(this);
+
+        // Remove temp file
+        FileUtils.deleteContent(NMBAppConfig.getTempDir());
     }
 
     @Override
@@ -111,7 +120,7 @@ public class NMBApplication extends StyleableApplication {
             builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
             builder.hasDiskCache = true;
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
-            builder.diskCacheMaxSize = 20 * 1024 * 1024; // 20MB
+            builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
             builder.httpClient = getNMBHttpClient(context);
             builder.drawableHelper = getSimpleDrawableHelper(context);
             application.mConaco = builder.build();
@@ -126,5 +135,27 @@ public class NMBApplication extends StyleableApplication {
             application.mDrawableHelper = new SimpleDrawableHelper(context);
         }
         return application.mDrawableHelper;
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        if (!handleException(ex) && mDefaultHandler != null) {
+            mDefaultHandler.uncaughtException(thread, ex);
+        }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+    }
+
+    private boolean handleException(Throwable ex) {
+        if (ex == null) {
+            return false;
+        }
+        try {
+            ex.printStackTrace();
+            Crash.saveCrashInfo2File(this, ex);
+            return true;
+        } catch (Throwable tr) {
+            return false;
+        }
     }
 }

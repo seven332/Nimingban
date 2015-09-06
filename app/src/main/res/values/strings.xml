@@ -21,6 +21,9 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <string name="it_is_important">It is important</string>
+    <string name="crash_tip">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+
     <string name="cant_make_sure_image_save_location">It seems the image save location is not available, you should go to Settings to set it</string>
 
     <string name="press_twice_exit">Press twice to exit</string>

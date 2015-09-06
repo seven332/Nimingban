@@ -33,6 +33,12 @@ public class NMBAppConfig {
     private static final String IMAGE_DIRNAME = "image";
     private static final String COOKIES_DIRNAME = "cookies";
 
+    private static Context sContext;
+
+    public static void initialize(Context context) {
+        sContext = context.getApplicationContext();
+    }
+
     public static @Nullable File getExternalAppDir() {
         if (Environment.getExternalStorageState()
                 .equals(Environment.MEDIA_MOUNTED)) {
@@ -78,8 +84,8 @@ public class NMBAppConfig {
         return getFileInAppDir(COOKIES_DIRNAME);
     }
 
-    public static @Nullable File getTempDir(Context context) {
-        File temp = new File(context.getCacheDir(), "temp");
+    public static @Nullable File getTempDir() {
+        File temp = new File(sContext.getCacheDir(), "temp");
         if (FileUtils.ensureDirectory(temp)) {
             return temp;
         } else {
@@ -87,15 +93,15 @@ public class NMBAppConfig {
         }
     }
 
-    public static @Nullable File createTempFile(Context context) {
-        return createTempFile(context, null);
+    public static @Nullable File createTempFile() {
+        return createTempFile(null);
     }
 
-    public static @Nullable File createTempFile(Context context, String extension) {
-        return FileUtils.createTempFile(getTempDir(context), extension);
+    public static @Nullable File createTempFile(String extension) {
+        return FileUtils.createTempFile(getTempDir(), extension);
     }
 
-    public static @Nullable File createTempDir(Context context) {
-        return FileUtils.createTempDir(getTempDir(context));
+    public static @Nullable File createTempDir() {
+        return FileUtils.createTempDir(getTempDir());
     }
 }
