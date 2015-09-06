@@ -30,7 +30,6 @@ public class ActivityHelper {
 
     public static boolean sendEmail(@NonNull Activity from, @NonNull String address,
             @Nullable String subject, @Nullable String text) {
-        address = address.replaceAll("\\$", "@");
         Intent i = new Intent(Intent.ACTION_SENDTO);
         i.setData(Uri.parse("mailto:" + address));
         if (subject != null) {

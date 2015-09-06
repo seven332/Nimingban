@@ -244,7 +244,8 @@ public final class ListActivity extends StyleableActivity
                         public void onClick(DialogInterface dialog, int which) {
                             String content = Crash.getCrashContent();
                             Crash.resetCrashFile();
-                            ActivityHelper.sendEmail(ListActivity.this, "hipposeven332$gmail.com",
+                            ActivityHelper.sendEmail(ListActivity.this,
+                                    "hipposeven332$gmail.com".replaceAll("\\$", "@"),
                                     "I found a bug in nimingban", content);
                         }
                     }).setNegativeButton(android.R.string.cancel, null)

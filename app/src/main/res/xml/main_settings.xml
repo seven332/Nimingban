@@ -41,4 +41,13 @@
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>
 
+    <Preference
+        android:key="author"
+        android:title="@string/main_author"/>
+
+    <Preference
+        android:key="source"
+        android:title="@string/main_source"
+        android:summary="@string/main_source_summary"/>
+
 </PreferenceScreen>

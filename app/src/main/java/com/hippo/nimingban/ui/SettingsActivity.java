@@ -44,6 +44,7 @@ import com.hippo.nimingban.network.TransportableHttpCookie;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ActivityHelper;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.IOUtils;
 
@@ -74,6 +75,8 @@ public class SettingsActivity extends StyleableActivity {
         private static final String KEY_AC_COOKIES = "ac_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
+        private static final String KEY_AUTHOR = "author";
+        private static final String KEY_SOURCE = "source";
 
         private Context mContext;
 
@@ -82,6 +85,8 @@ public class SettingsActivity extends StyleableActivity {
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
         private Preference mImageSaveLocation;
+        private Preference mAuthor;
+        private Preference mSource;
 
         private TimingLife mTimingLife;
 
@@ -117,6 +122,8 @@ public class SettingsActivity extends StyleableActivity {
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
+            mAuthor = findPreference(KEY_AUTHOR);
+            mSource = findPreference(KEY_SOURCE);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
 
@@ -124,6 +131,8 @@ public class SettingsActivity extends StyleableActivity {
             mSaveCookies.setOnPreferenceClickListener(this);
             mRestoreCookies.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
+            mAuthor.setOnPreferenceClickListener(this);
+            mSource.setOnPreferenceClickListener(this);
 
             long time = System.currentTimeMillis() - 3 * ReadableTime.HOUR_MILLIS;
             String plain = ReadableTime.getPlainTime(time);
@@ -135,6 +144,8 @@ public class SettingsActivity extends StyleableActivity {
             setACCookiesSummary(maxAge);
 
             updateImageSaveLocation();
+
+            mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
         }
 
         private void setACCookiesSummary(long maxAge) {
@@ -359,6 +370,13 @@ public class SettingsActivity extends StyleableActivity {
                 } else {
                     showDirPickerDialogL();
                 }
+            } else if (KEY_AUTHOR.equals(key)) {
+                ActivityHelper.sendEmail(getActivity(),
+                        "hipposeven332$gmail.com".replaceAll("\\$", "@"),
+                        "About Nimingban",
+                        null);
+            } else if (KEY_SOURCE.equals(key)) {
+                ActivityHelper.openUri(getActivity(), Uri.parse("https://github.com/seven332/Nimingban"));
             }
             return false;
         }

@@ -155,6 +155,9 @@
     <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+    <string name="main_author">Author</string>
+    <string name="main_source">Source</string>
+    <string name="main_source_summary" translatable="false">https://github.com/seven332/EhViewer</string>
 
     <string name="save_cookies_failed">Save cookies failed</string>
     <string name="save_cookies_to">Save cookies to %s</string>
