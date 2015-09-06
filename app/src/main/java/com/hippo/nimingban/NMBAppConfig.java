@@ -30,7 +30,8 @@ public class NMBAppConfig {
 
     private static final String CRASH_DIRNAME = "crash";
     private static final String DOODLE_DIRNAME = "doodle";
-    private static final String DOODLE_IMAGE = "image";
+    private static final String IMAGE_DIRNAME = "image";
+    private static final String COOKIES_DIRNAME = "cookies";
 
     public static @Nullable File getExternalAppDir() {
         if (Environment.getExternalStorageState()
@@ -70,7 +71,11 @@ public class NMBAppConfig {
     }
 
     public static @Nullable File getImageDir() {
-        return getFileInAppDir(DOODLE_IMAGE);
+        return getFileInAppDir(IMAGE_DIRNAME);
+    }
+
+    public static @Nullable File getCookiesDir() {
+        return getFileInAppDir(COOKIES_DIRNAME);
     }
 
     public static @Nullable File getTempDir(Context context) {

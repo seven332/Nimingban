@@ -275,4 +275,13 @@ public class SimpleCookieStore {
     public synchronized boolean contain(@NonNull URL url, String name) {
         return getCookie(url, name) != null;
     }
+
+    public synchronized List<TransportableHttpCookie> getTransportableCookies() {
+        List<TransportableHttpCookie> result = new ArrayList<>();
+        for (URL url : map.keySet()) {
+            List<HttpCookieWithId> list = map.get(url);
+            result.addAll(TransportableHttpCookie.from(url, list));
+        }
+        return result;
+    }
 }

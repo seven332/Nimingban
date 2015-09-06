@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -33,14 +34,28 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.hippo.nimingban.NMBAppConfig;
+import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.network.TransportableHttpCookie;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ReadableTime;
+import com.hippo.yorozuya.IOUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.net.HttpCookie;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 
 public class SettingsActivity extends StyleableActivity {
 
@@ -57,11 +72,15 @@ public class SettingsActivity extends StyleableActivity {
         public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
 
         private static final String KEY_AC_COOKIES = "ac_cookies";
+        private static final String KEY_SAVE_COOKIES = "save_cookies";
+        private static final String KEY_RESTORE_COOKIES = "restore_cookies";
 
         private Context mContext;
 
         private SwitchPreference mPrettyTime;
         private Preference mACCookies;
+        private Preference mSaveCookies;
+        private Preference mRestoreCookies;
         private Preference mImageSaveLocation;
 
         private TimingLife mTimingLife;
@@ -95,11 +114,15 @@ public class SettingsActivity extends StyleableActivity {
 
             mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mACCookies = findPreference(KEY_AC_COOKIES);
+            mSaveCookies = findPreference(KEY_SAVE_COOKIES);
+            mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
 
             mACCookies.setOnPreferenceClickListener(this);
+            mSaveCookies.setOnPreferenceClickListener(this);
+            mRestoreCookies.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
 
             long time = System.currentTimeMillis() - 3 * ReadableTime.HOUR_MILLIS;
@@ -190,17 +213,143 @@ public class SettingsActivity extends StyleableActivity {
                     .show();
         }
 
+        private class SaveCookieTask extends AsyncTask<Void, Void, String> {
+
+            @Override
+            protected String doInBackground(Void... params) {
+                File dir = NMBAppConfig.getCookiesDir();
+                if (dir == null) {
+                    return null;
+                }
+
+                SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getContext());
+                List<TransportableHttpCookie> list = cookieStore.getTransportableCookies();
+
+                boolean ok;
+                File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()));
+                FileWriter fileWriter = null;
+                try {
+                    boolean first = true;
+                    fileWriter = new FileWriter(file);
+                    fileWriter.append('[');
+                    for (TransportableHttpCookie thc : list) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            fileWriter.append(',');
+                        }
+                        fileWriter.append(JSON.toJSONString(thc));
+                    }
+                    fileWriter.append(']');
+                    fileWriter.flush();
+                    ok = true;
+                } catch (Exception e) {
+                    ok = false;
+                } finally {
+                    IOUtils.closeQuietly(fileWriter);
+                }
+
+                if (!ok) {
+                    file.delete();
+                    return null;
+                } else {
+                    return file.getPath();
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String path) {
+                mSaveCookies.setEnabled(true);
+                Context context = getContext();
+                Toast.makeText(getContext(), path == null ? context.getString(R.string.save_cookies_failed) :
+                        context.getString(R.string.save_cookies_to, path), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private class RestoreCookieDialogHelper implements DialogInterface.OnClickListener {
+
+            private File[] mFiles;
+
+            public RestoreCookieDialogHelper() {
+                File dir = NMBAppConfig.getCookiesDir();
+                if (dir == null) {
+                    mFiles = new File[0];
+                } else {
+                    mFiles = dir.listFiles();
+                    Arrays.sort(mFiles);
+                }
+            }
+
+            private String[] getList() {
+                int n = mFiles.length;
+                String[] strings = new String[n];
+                for (int i = 0; i < n; i++) {
+                    strings[i] = mFiles[i].getName();
+                }
+                return strings;
+            }
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                File file = mFiles[which];
+                InputStream is = null;
+                try {
+                    is = new FileInputStream(file);
+                    String str = IOUtils.readString(is, "UTF-8");
+                    List<TransportableHttpCookie> list = JSON.parseArray(str, TransportableHttpCookie.class);
+                    SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getContext());
+                    cookieStore.removeAll();
+                    for (TransportableHttpCookie thc : list) {
+                        URL url;
+                        try {
+                            url = new URL(thc.url);
+                        } catch (MalformedURLException e) {
+                            continue;
+                        }
+                        HttpCookie cookie = thc.to();
+                        if (cookie == null) {
+                            continue;
+                        }
+                        cookieStore.add(url, cookie);
+                    }
+                    Toast.makeText(getContext(), R.string.restore_cookies_successfully, Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), R.string.not_valid_cookie_file, Toast.LENGTH_SHORT).show();
+                } finally {
+                    IOUtils.closeQuietly(is);
+                    // Restore timing
+                    setACCookiesSummary(-2);
+                    setACCookiesSummary(ACSite.getInstance().getCookieMaxAge(getContext()));
+                }
+            }
+        }
+
         @Override
         public boolean onPreferenceClick(Preference preference) {
             String key = preference.getKey();
             if (KEY_AC_COOKIES.equals(key)) {
                 System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
-                mHits[mHits.length-1] = SystemClock.uptimeMillis();
+                mHits[mHits.length - 1] = SystemClock.uptimeMillis();
                 if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
                     Arrays.fill(mHits, 0);
                     // TODO
                 }
                 return true;
+            } else if (KEY_SAVE_COOKIES.equals(key)) {
+                mSaveCookies.setEnabled(false);
+                new SaveCookieTask().execute();
+                return true;
+            } else if (KEY_RESTORE_COOKIES.equals(key)) {
+                RestoreCookieDialogHelper helper = new RestoreCookieDialogHelper();
+                String[] list = helper.getList();
+                if (list.length == 0) {
+                    Toast.makeText(getContext(), R.string.cant_find_cookie_file, Toast.LENGTH_SHORT).show();
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.select_cookie_file)
+                            .setItems(list, helper)
+                            .show();
+                }
             } else if (Settings.KEY_IMAGE_SAVE_LOACTION.equals(key)) {
                 int sdk = Build.VERSION.SDK_INT;
                 if (sdk < Build.VERSION_CODES.KITKAT) {

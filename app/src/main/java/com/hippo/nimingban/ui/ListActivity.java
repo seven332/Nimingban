@@ -19,6 +19,8 @@ package com.hippo.nimingban.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -237,31 +239,41 @@ public final class ListActivity extends StyleableActivity
         }
 
         // Check for update
-        NMBRequest request = new NMBRequest();
-        mUpdateRequest = request;
-        request.setMethod(NMBClient.METHOD_UPDATE);
-        request.setArgs(0);
-        request.setCallback(new NMBClient.Callback<UpdateStatus>() {
-            @Override
-            public void onSuccess(UpdateStatus result) {
-                mUpdateRequest = null;
-                if ("need update".equals(result.status)) {
-                    showUpdateDialog(result.obj);
+        int versionCode;
+        try {
+            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionCode = pi.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionCode = -1;
+        }
+
+        if (versionCode != -1) {
+            NMBRequest request = new NMBRequest();
+            mUpdateRequest = request;
+            request.setMethod(NMBClient.METHOD_UPDATE);
+            request.setArgs(versionCode);
+            request.setCallback(new NMBClient.Callback<UpdateStatus>() {
+                @Override
+                public void onSuccess(UpdateStatus result) {
+                    mUpdateRequest = null;
+                    if ("need update".equals(result.status)) {
+                        showUpdateDialog(result.obj);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Exception e) {
-                mUpdateRequest = null;
-                e.printStackTrace();
-            }
+                @Override
+                public void onFailure(Exception e) {
+                    mUpdateRequest = null;
+                    e.printStackTrace();
+                }
 
-            @Override
-            public void onCancelled() {
-                mUpdateRequest = null;
-            }
-        });
-        mNMBClient.execute(request);
+                @Override
+                public void onCancelled() {
+                    mUpdateRequest = null;
+                }
+            });
+            mNMBClient.execute(request);
+        }
     }
 
     private void updateForums(boolean firstTime) {

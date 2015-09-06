@@ -146,8 +146,20 @@
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you have no cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
     <string name="main_ac_cookies_summary_forever">Theoretically speaking, you have everlasting cookies</string>
+    <string name="main_save_cookies">Save cookies</string>
+    <string name="main_save_cookies_summary">Save cookies to external storage</string>
+    <string name="main_restore_cookies">Restore cookies</string>
+    <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+
+    <string name="save_cookies_failed">Save cookies failed</string>
+    <string name="save_cookies_to">Save cookies to %s</string>
+
+    <string name="restore_cookies_successfully">Restore cookies successfully</string>
+    <string name="not_valid_cookie_file">It is not valid cookie file</string>
+    <string name="cant_find_cookie_file">Can\'t find any cookie file</string>
+    <string name="select_cookie_file">Select cookie file</string>
 
     <string name="dir_picker">Dir picker</string>
     <string name="directory_not_writable">The directory is not writable</string>

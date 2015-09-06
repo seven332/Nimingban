@@ -28,6 +28,16 @@
         android:title="@string/main_ac_cookies"/>
 
     <Preference
+        android:key="save_cookies"
+        android:title="@string/main_save_cookies"
+        android:summary="@string/main_save_cookies_summary"/>
+
+    <Preference
+        android:key="restore_cookies"
+        android:title="@string/main_restore_cookies"
+        android:summary="@string/main_restore_cookies_summary"/>
+
+    <Preference
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>
 
