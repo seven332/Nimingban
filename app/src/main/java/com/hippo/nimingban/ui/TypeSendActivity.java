@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -40,6 +41,7 @@ import android.widget.Toast;
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.io.UriInputStreamPipe;
 import com.hippo.nimingban.Emoji;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -51,6 +53,7 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ExceptionUtils;
@@ -59,6 +62,7 @@ import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LayoutUtils;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -78,6 +82,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     public static final int REQUEST_CODE_SELECT_IMAGE = 0;
     public static final int REQUEST_CODE_DRAFT = 1;
     public static final int REQUEST_CODE_DOODLE = 2;
+    public static final int REQUEST_CODE_CAMERA = 3;
 
     private Method mMethod;
 
@@ -100,6 +105,8 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     private Uri mSeletedImageUri;
     private String mSeletedImageType;
     private Bitmap mSeletedImageBitmap;
+
+    private Uri mCameraImageUri;
 
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
@@ -432,6 +439,36 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         dialog.show();
     }
 
+    private void showImageDialog() {
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent;
+                switch (which) {
+                    case 0:
+                        intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent,
+                                getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
+                        break;
+                    case 1:
+                        File dir = NMBAppConfig.getPhotoDir();
+                        if (dir == null)
+                            break;
+                        File temp = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".jpg");
+                        mCameraImageUri = Uri.fromFile(temp);
+                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraImageUri);
+                        startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
+                        break;
+                }
+            }
+        };
+
+        new AlertDialog.Builder(this).setItems(R.array.image_dialog, listener).show();
+    }
+
     @Override
     public void onClick(View v) {
         if (mSend == v) {
@@ -447,11 +484,7 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         } else if (mEmoji == v) {
             showEmojiDialog();
         } else if (mImage == v) {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-                    getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
+            showImageDialog();
         } else if (mDraft == v) {
             Intent intent = new Intent(TypeSendActivity.this, DraftActivity.class);
             startActivityForResult(intent, REQUEST_CODE_DRAFT);
@@ -531,11 +564,13 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
         if ((requestCode == REQUEST_CODE_SELECT_IMAGE || requestCode == REQUEST_CODE_DOODLE) && resultCode == RESULT_OK) {
             handleSelectedImageUri(data.getData());
+        } else if (requestCode == REQUEST_CODE_CAMERA && resultCode == RESULT_OK) {
+            handleSelectedImageUri(mCameraImageUri);
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private class ActionListener implements NMBClient.Callback<Void> {

@@ -33,6 +33,7 @@ public class NMBAppConfig {
     private static final String DOODLE_DIRNAME = "doodle";
     private static final String IMAGE_DIRNAME = "image";
     private static final String COOKIES_DIRNAME = "cookies";
+    private static final String PHOTO_DIRNAME = "photo";
 
     private static Context sContext;
 
@@ -83,6 +84,10 @@ public class NMBAppConfig {
 
     public static @Nullable File getCookiesDir() {
         return getFileInAppDir(COOKIES_DIRNAME);
+    }
+
+    public static @Nullable File getPhotoDir() {
+        return getFileInAppDir(PHOTO_DIRNAME);
     }
 
     public static @Nullable File getTempDir() {

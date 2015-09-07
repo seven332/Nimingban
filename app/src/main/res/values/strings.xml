@@ -60,6 +60,9 @@
     <string name="copy_comment_text">Copy comment text</string>
     <string name="report_comment">Report comment</string>
 
+    <string name="select_image">Select a picture</string>
+    <string name="take_photo">Take a photo</string>
+
     <string name="comment_copied_clipboard">Comment text copied to clipboard</string>
 
     <string name="cant_get_the_reference">Can\'t get the reference</string>

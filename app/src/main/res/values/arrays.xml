@@ -23,6 +23,11 @@
         <item>@string/report_comment</item>
     </string-array>
 
+    <string-array name="image_dialog">
+        <item>@string/select_image</item>
+        <item>@string/take_photo</item>
+    </string-array>
+
     <string-array name="image_loading_strategy_entries">
         <item>@string/image_loading_strategy_all</item>
         <item>@string/image_loading_strategy_wifi</item>

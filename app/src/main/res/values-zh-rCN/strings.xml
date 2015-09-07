@@ -59,6 +59,9 @@
     <string name="copy_comment_text">复制评论文字</string>
     <string name="report_comment">举报评论</string>
 
+    <string name="select_image">选择图片</string>
+    <string name="take_photo">拍个照</string>
+
     <string name="comment_copied_clipboard">评论文字已复制到剪贴板</string>
 
     <string name="cant_get_the_reference">无法找到引用</string>
