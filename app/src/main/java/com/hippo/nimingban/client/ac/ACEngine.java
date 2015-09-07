@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.client.ac;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -28,7 +30,9 @@ import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
 import com.hippo.httpclient.StringData;
+import com.hippo.io.FileInputStreamPipe;
 import com.hippo.network.InputStreamPipeData;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.ac.data.ACFeed;
@@ -40,12 +44,17 @@ import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -225,23 +234,30 @@ public class ACEngine {
             StringData resto = new StringData(struct.resto);
             resto.setName("resto");
 
-            // TODO down size image
             InputStreamPipeData image;
             InputStreamPipe isp = struct.image;
             if (isp == null) {
                 image = null;
             } else {
-                image = new InputStreamPipeData(isp);
-                String filename;
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
-                if (TextUtils.isEmpty(extension)) {
-                    // TODO on extension ?
-                    extension = "jpg";
+                InputStreamPipe newIsp = compressBitmap(isp);
+                if (newIsp == null) {
+                    image = new InputStreamPipeData(isp);
+                    String filename;
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
+                    if (TextUtils.isEmpty(extension)) {
+                        extension = "jpg";
+                    }
+                    filename = "a." + extension;
+                    image.setName("image");
+                    image.setFilename(filename);
+                    image.setProperty("Content-Type", struct.imageType == null ? "image/*" : struct.imageType);
+                } else {
+                    Log.d("TAG", "image = new InputStreamPipeData(newIsp)");
+                    image = new InputStreamPipeData(newIsp);
+                    image.setName("image");
+                    image.setFilename("a.jpg");
+                    image.setProperty("Content-Type", "image/jpeg");
                 }
-                filename = "a." + extension;
-                image.setName("image");
-                image.setFilename(filename);
-                image.setProperty("Content-Type", struct.imageType);
             }
 
             FormDataPoster httpImpl = new FormDataPoster(name, email, title, content, resto, image);
@@ -294,23 +310,29 @@ public class ACEngine {
             StringData content = new StringData(struct.content);
             content.setName("content");
 
-            // TODO down size image
             InputStreamPipeData image;
             InputStreamPipe isp = struct.image;
             if (isp == null) {
                 image = null;
             } else {
-                image = new InputStreamPipeData(isp);
-                String filename;
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
-                if (TextUtils.isEmpty(extension)) {
-                    // TODO on extension ?
-                    extension = "jpg";
+                InputStreamPipe newIsp = compressBitmap(isp);
+                if (newIsp == null) {
+                    image = new InputStreamPipeData(isp);
+                    String filename;
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
+                    if (TextUtils.isEmpty(extension)) {
+                        extension = "jpg";
+                    }
+                    filename = "a." + extension;
+                    image.setName("image");
+                    image.setFilename(filename);
+                    image.setProperty("Content-Type", struct.imageType == null ? "image/*" : struct.imageType);
+                } else {
+                    image = new InputStreamPipeData(newIsp);
+                    image.setName("image");
+                    image.setFilename("a.jpg");
+                    image.setProperty("Content-Type", "image/jpeg");
                 }
-                filename = "a." + extension;
-                image.setName("image");
-                image.setFilename(filename);
-                image.setProperty("Content-Type", struct.imageType);
             }
 
             FormDataPoster httpImpl = new FormDataPoster(name, email, title, emotion, content, image);
@@ -443,23 +465,29 @@ public class ACEngine {
             StringData resto = new StringData(struct.fid);
             resto.setName("fid");
 
-            // TODO down size image
             InputStreamPipeData image;
             InputStreamPipe isp = struct.image;
             if (isp == null) {
                 image = null;
             } else {
-                image = new InputStreamPipeData(isp);
-                String filename;
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
-                if (TextUtils.isEmpty(extension)) {
-                    // TODO on extension ?
-                    extension = "jpg";
+                InputStreamPipe newIsp = compressBitmap(isp);
+                if (newIsp == null) {
+                    image = new InputStreamPipeData(isp);
+                    String filename;
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
+                    if (TextUtils.isEmpty(extension)) {
+                        extension = "jpg";
+                    }
+                    filename = "a." + extension;
+                    image.setName("image");
+                    image.setFilename(filename);
+                    image.setProperty("Content-Type", struct.imageType == null ? "image/*" : struct.imageType);
+                } else {
+                    image = new InputStreamPipeData(newIsp);
+                    image.setName("image");
+                    image.setFilename("a.jpg");
+                    image.setProperty("Content-Type", "image/jpeg");
                 }
-                filename = "a." + extension;
-                image.setName("image");
-                image.setFilename(filename);
-                image.setProperty("Content-Type", struct.imageType);
             }
 
             FormDataPoster httpImpl = new FormDataPoster(name, email, title, content, resto, image);
@@ -496,6 +524,61 @@ public class ACEngine {
             }
         } finally {
             httpRequest.disconnect();
+        }
+    }
+
+    private static final long MAX_IMAGE_SIZE = 500 * 1024;
+
+    /**
+     * @return null for not changed
+     */
+    public static InputStreamPipe compressBitmap(InputStreamPipe isp) throws IOException {
+        OutputStream os = null;
+        try {
+            isp.obtain();
+
+            File temp = NMBAppConfig.createTempFile();
+            if (temp == null) {
+                throw new IOException("Can't create temp file");
+            }
+
+            os = new FileOutputStream(temp);
+            IOUtils.copy(isp.open(), os);
+            isp.close();
+            os.close();
+
+            // Check file size
+            long size = temp.length();
+
+            if (size < MAX_IMAGE_SIZE) {
+                temp.delete();
+                return null;
+            }
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            int i = 0;
+            while (true) {
+                options.inSampleSize = (int) Math.pow(2, i);
+                Bitmap bitmap = BitmapFactory.decodeStream(isp.open(), null, options);
+                isp.close();
+
+                os = new FileOutputStream(temp);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, os);
+                os.close();
+
+                bitmap.recycle();
+
+                size = temp.length();
+                if (size < MAX_IMAGE_SIZE) {
+                    return new FileInputStreamPipe(temp);
+                }
+
+                i++;
+            }
+        } finally {
+            isp.close();
+            isp.release();
+            IOUtils.closeQuietly(os);
         }
     }
 }
