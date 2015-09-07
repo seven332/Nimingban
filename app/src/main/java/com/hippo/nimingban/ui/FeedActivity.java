@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -140,7 +141,7 @@ public final class FeedActivity extends StyleableActivity implements EasyRecycle
             holder.content.setText(post.getNMBDisplayContent());
 
             String thumbUrl = post.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(FeedActivity.this)) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.load(thumbUrl, thumbUrl);
             } else {

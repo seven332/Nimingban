@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -552,7 +553,7 @@ public final class ListActivity extends StyleableActivity
             holder.content.setText(post.getNMBDisplayContent());
 
             String thumbUrl = post.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(ListActivity.this)) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.load(thumbUrl, thumbUrl);
             } else {

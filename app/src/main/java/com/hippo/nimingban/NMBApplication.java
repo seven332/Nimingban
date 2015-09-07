@@ -31,6 +31,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.styleable.StyleableApplication;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -46,6 +47,8 @@ public final class NMBApplication extends StyleableApplication
     private NMBClient mNMBClient;
     private Conaco mConaco;
     private SimpleDrawableHelper mDrawableHelper;
+
+    private boolean mConnectedWifi;
 
     @Override
     public void onCreate() {
@@ -65,6 +68,8 @@ public final class NMBApplication extends StyleableApplication
 
         // Remove temp file
         FileUtils.deleteContent(NMBAppConfig.getTempDir());
+
+        updateNetworkState(this);
     }
 
     @Override
@@ -76,6 +81,15 @@ public final class NMBApplication extends StyleableApplication
                 mConaco.clearMemoryCache();
             }
         }
+    }
+
+    public static void updateNetworkState(Context context) {
+        ((NMBApplication) context.getApplicationContext()).mConnectedWifi =
+                NetworkUtils.isConnectedWifi(context);
+    }
+
+    public static boolean isConnectedWifi(Context context) {
+        return ((NMBApplication) context.getApplicationContext()).mConnectedWifi;
     }
 
     public static SimpleCookieStore getSimpleCookieStore(@NonNull Context context) {

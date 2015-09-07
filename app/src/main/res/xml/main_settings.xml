@@ -23,6 +23,14 @@
         android:title="@string/main_pretty_time"
         android:defaultValue="true"/>
 
+    <ListPreference
+        android:key="image_loading_strategy"
+        android:title="@string/main_image_loading_strategy"
+        android:summary="%s"
+        android:entries="@array/image_loading_strategy_entries"
+        android:entryValues="@array/image_loading_strategy_entry_values"
+        android:defaultValue="0"/>
+
     <Preference
         android:key="ac_cookies"
         android:title="@string/main_ac_cookies"/>

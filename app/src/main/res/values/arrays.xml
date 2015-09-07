@@ -23,4 +23,16 @@
         <item>@string/report_comment</item>
     </string-array>
 
+    <string-array name="image_loading_strategy_entries">
+        <item>@string/image_loading_strategy_all</item>
+        <item>@string/image_loading_strategy_wifi</item>
+        <item>@string/image_loading_strategy_no</item>
+    </string-array>
+
+    <string-array name="image_loading_strategy_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

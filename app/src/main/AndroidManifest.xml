@@ -117,6 +117,16 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
 
+        <receiver
+            android:name="com.hippo.nimingban.receiver.NetworkReceiver"
+            android:label="@string/network_receiver">
+
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+
+        </receiver>
+
     </application>
 
 </manifest>

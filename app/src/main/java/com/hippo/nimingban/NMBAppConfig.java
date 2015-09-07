@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 
+import com.hippo.nimingban.util.Settings;
 import com.hippo.yorozuya.FileUtils;
 
 import java.io.File;
@@ -103,5 +104,17 @@ public class NMBAppConfig {
 
     public static @Nullable File createTempDir() {
         return FileUtils.createTempDir(getTempDir());
+    }
+
+    public static boolean needloadImage(Context context) {
+        switch (Settings.getImageLoadingStrategy()) {
+            case Settings.IMAGE_LOADING_STRATEGY_ALL:
+                return true;
+            case Settings.IMAGE_LOADING_STRATEGY_WIFI:
+                return NMBApplication.isConnectedWifi(context);
+            default:
+            case Settings.IMAGE_LOADING_STRATEGY_NO:
+                return false;
+        }
     }
 }

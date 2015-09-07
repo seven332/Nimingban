@@ -145,6 +145,7 @@
     <string name="settings">Settings</string>
     <string name="main_pretty_time">Display pretty time</string>
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
+    <string name="main_image_loading_strategy">Picture loading strategy</string>
     <string name="main_ac_cookies">Cookies</string>
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you have no cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
@@ -158,6 +159,10 @@
     <string name="main_author">Author</string>
     <string name="main_source">Source</string>
     <string name="main_source_summary" translatable="false">https://github.com/seven332/Nimingban</string>
+
+    <string name="image_loading_strategy_all">Just load them</string>
+    <string name="image_loading_strategy_wifi">Only Wi-Fi</string>
+    <string name="image_loading_strategy_no">No pictures</string>
 
     <string name="save_cookies_failed">Save cookies failed</string>
     <string name="save_cookies_to">Save cookies to %s</string>
@@ -187,5 +192,7 @@
     <string name="download">Download</string>
     <string name="downloading_update">Downloading update</string>
     <string name="download_update_failde">Download update failed</string>
+
+    <string name="network_receiver">Network receiver</string>
 
 </resources>

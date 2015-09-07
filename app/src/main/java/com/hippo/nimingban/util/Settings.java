@@ -26,6 +26,7 @@ import android.support.annotation.Nullable;
 
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.NumberUtils;
 
 public final class Settings {
 
@@ -77,9 +78,23 @@ public final class Settings {
         sSettingsPre.edit().putString(key, value).apply();
     }
 
+    public static int getIntFromStr(String key, int defValue) {
+        return NumberUtils.parseIntSafely(sSettingsPre.getString(key, Integer.toString(defValue)), defValue);
+    }
+
+    public static void putIntToStr(String key, int value) {
+        sSettingsPre.edit().putString(key, Integer.toString(value)).apply();
+    }
+
+    public static final int IMAGE_LOADING_STRATEGY_ALL = 0;
+    public static final int IMAGE_LOADING_STRATEGY_WIFI = 1;
+    public static final int IMAGE_LOADING_STRATEGY_NO = 2;
 
     public static final String KEY_PRETTY_TIME = "pretty_time";
     public static final boolean DEFAULT_PRETTY_TIME = true;
+
+    public static final String KEY_IMAGE_LOADING_STRATEGY = "image_loading_strategy";
+    public static final int DEFAULT_IMAGE_LOADING_STRATEGY = 0;
     public static final String KEY_IMAGE_SAVE_LOACTION = "image_save_location";
 
     public static final String KEY_IMAGE_SAVE_SCHEME = "image_scheme";
@@ -90,6 +105,10 @@ public final class Settings {
 
     public static boolean getPrettyTime() {
         return getBoolean(KEY_PRETTY_TIME, DEFAULT_PRETTY_TIME);
+    }
+
+    public static int getImageLoadingStrategy() {
+        return getIntFromStr(KEY_IMAGE_LOADING_STRATEGY, DEFAULT_IMAGE_LOADING_STRATEGY);
     }
 
     @Nullable

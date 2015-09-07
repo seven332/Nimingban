@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.effect.ViewTransition;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -431,7 +432,7 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
             mContent.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(PostActivity.this)) {
                 mThumb.setVisibility(View.VISIBLE);
                 mThumb.load(thumbUrl, thumbUrl);
             } else {
@@ -654,7 +655,7 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
             holder.content.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(PostActivity.this)) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.load(thumbUrl, thumbUrl);
             } else {
