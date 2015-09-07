@@ -35,6 +35,7 @@ import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 import com.squareup.leakcanary.LeakCanary;
+import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
 
@@ -76,6 +77,9 @@ public final class NMBApplication extends StyleableApplication
         setTheme(Settings.getDarkTheme() ? R.style.AppTheme_Dark : R.style.AppTheme);
 
         Messenger.getInstance().register(Constants.MESSENGER_ID_CHANGE_THEME, this);
+
+        // TCAgent
+        TCAgent.init(this);
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.yorozuya.Messenger;
+import com.tendcloud.tenddata.TCAgent;
 
 public abstract class AbsActivity extends StyleableActivity implements Messenger.Receiver {
 
@@ -43,6 +44,18 @@ public abstract class AbsActivity extends StyleableActivity implements Messenger
         Messenger.getInstance().unregister(Constants.MESSENGER_ID_CHANGE_THEME, this);
 
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TCAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        TCAgent.onPause(this);
     }
 
     @Override

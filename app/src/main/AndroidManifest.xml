@@ -128,6 +128,8 @@
 
         </receiver>
 
+        <meta-data android:name="TD_APP_ID" android:value="ECDBE5F450D956538FC80DFBB1A7EC00" />
+
     </application>
 
 </manifest>
