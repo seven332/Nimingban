@@ -130,13 +130,25 @@ public class TiledBitmapDrawable extends Drawable {
                 int w = Math.min(TILE_SIZE, width - x);
                 for (int y = 0; y < height; y += TILE_SIZE) {
                     int h = Math.min(TILE_SIZE, height - y);
-                    rect.set(x, y, x + w, y + h);
+                    boolean bottom = y + TILE_SIZE >= height;
+                    boolean tryCutBottom = false;
+                    Bitmap bitmap;
 
-                    final BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inMutable = true;
-                    options.inSampleSize = 1;
-                    options.inBitmap = pool.getInBitmap(options);
-                    Bitmap bitmap = decoder.decodeRegion(rect, options);
+                    while (true) {
+                        rect.set(x, y, x + w, y + h);
+                        final BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inMutable = true;
+                        options.inSampleSize = 1;
+                        options.inBitmap = pool.getInBitmap(options);
+                        bitmap = decoder.decodeRegion(rect, options);
+
+                        if (bitmap == null && bottom && !tryCutBottom && h > 1) {
+                            tryCutBottom = true;
+                            h--;
+                        } else {
+                            break;
+                        }
+                    }
 
                     if (bitmap != null) {
                         Tile tile = new Tile();
