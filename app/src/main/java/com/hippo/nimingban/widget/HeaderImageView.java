@@ -84,7 +84,10 @@ public final class HeaderImageView extends FixedAspectImageView
         setSoundEffectsEnabled(false);
         setOnClickListener(this);
         setOnLongClickListener(this);
-        load();
+
+        if (NMBAppConfig.needloadImage(context)) {
+            load();
+        }
     }
 
     public void setOnLongClickImageListener(OnLongClickImageListener listener) {
