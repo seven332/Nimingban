@@ -39,8 +39,9 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.recyclerview.MarginItemDecoration;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
@@ -85,8 +86,13 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         recyclerView.setAdapter(mFeedAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
+        recyclerView.setDrawSelectorOnTop(true);
         recyclerView.setOnItemClickListener(this);
         recyclerView.hasFixedSize();
+        recyclerView.setClipToPadding(false);
+        int halfInterval = LayoutUtils.dp2pix(this, 4);
+        recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+        recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 
         mFeedHelper.firstRefresh();
     }
@@ -102,8 +108,9 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
     private class FeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView leftText;
-        private TextView rightText;
+        public TextView leftText;
+        public TextView centerText;
+        public TextView rightText;
         private TextView content;
         private LoadImageView thumb;
 
@@ -111,6 +118,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
             super(itemView);
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
+            centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
@@ -146,8 +154,9 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         @Override
         public void onBindViewHolder(FeedHolder holder, int i) {
             Post post = mFeedHelper.getDataAt(i);
-            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayUsername(), "    ",
-                    ReadableTime.getDisplayTime(post.getNMBTime())));
+            holder.leftText.setText(post.getNMBDisplayUsername());
+            holder.centerText.setText("No." + post.getNMBId());
+            holder.rightText.setText(ReadableTime.getDisplayTime(post.getNMBTime()));
             holder.content.setText(post.getNMBDisplayContent());
 
             String thumbUrl = post.getNMBThumbUrl();

@@ -39,6 +39,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,7 +72,7 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
+import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -192,14 +193,16 @@ public final class ListActivity extends AbsActivity
 
         mPostAdapter = new PostAdapter();
         mRecyclerView.setAdapter(mPostAdapter);
-        mRecyclerView.addItemDecoration(new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL,
-                ResourcesUtils.getAttrColor(this, R.attr.colorDivider),
-                LayoutUtils.dp2pix(this, 1)));
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(
+                ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
+        mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();
+        mRecyclerView.setClipToPadding(false);
+        int halfInterval = LayoutUtils.dp2pix(this, 4);
+        mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+        mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 
         mLeftDrawer.setHelper(this);
 
@@ -513,16 +516,20 @@ public final class ListActivity extends AbsActivity
     private class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView leftText;
+        public TextView centerText;
         public TextView rightText;
         public TextView content;
+        public TextView bottomText;
         public LoadImageView thumb;
 
         public ListHolder(View itemView) {
             super(itemView);
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
+            centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
+            bottomText = (TextView) itemView.findViewById(R.id.bottom_text);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
 
             thumb.setOnClickListener(this);
@@ -556,18 +563,29 @@ public final class ListActivity extends AbsActivity
         @Override
         public void onBindViewHolder(ListHolder holder, int position) {
             Post post = mPostHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(post.getNMBDisplayUsername(), "    ",
-                    ReadableTime.getDisplayTime(post.getNMBTime())));
-            holder.rightText.setText(post.getNMBReplyDisplayCount());
+            holder.leftText.setText(post.getNMBDisplayUsername());
+            holder.centerText.setText("No." + post.getNMBId());
+            holder.rightText.setText(ReadableTime.getDisplayTime(post.getNMBTime()));
             holder.content.setText(post.getNMBDisplayContent());
+            holder.bottomText.setText(post.getNMBReplyDisplayCount());
 
+            TextView bottomText = holder.bottomText;
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottomText.getLayoutParams();
             String thumbUrl = post.getNMBThumbUrl();
             if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(ListActivity.this)) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.load(thumbUrl, thumbUrl);
+
+                lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);
+                lp.addRule(RelativeLayout.BELOW, 0);
+                bottomText.setLayoutParams(lp);
             } else {
                 holder.thumb.setVisibility(View.GONE);
-                mConaco.load(holder.thumb, null);
+                holder.thumb.unload();
+
+                lp.addRule(RelativeLayout.ALIGN_BOTTOM, 0);
+                lp.addRule(RelativeLayout.BELOW, R.id.content);
+                bottomText.setLayoutParams(lp);
             }
         }
 

@@ -350,8 +350,9 @@ public final class PostActivity extends AbsActivity
         private View mView;
         private ViewTransition mViewTransition;
 
-        private TextView mLeftText;
-        private TextView mRightText;
+        public TextView mLeftText;
+        public TextView mCenterText;
+        public TextView mRightText;
         private LinkifyTextView mContent;
         private LoadImageView mThumb;
         private View mButton;
@@ -374,6 +375,7 @@ public final class PostActivity extends AbsActivity
             mViewTransition = new ViewTransition(progress, reference);
 
             mLeftText = (TextView) reference.findViewById(R.id.left_text);
+            mCenterText = (TextView) reference.findViewById(R.id.center_text);
             mRightText = (TextView) reference.findViewById(R.id.right_text);
             mContent = (LinkifyTextView) reference.findViewById(R.id.content);
             mThumb = (LoadImageView) reference.findViewById(R.id.thumb);
@@ -438,8 +440,9 @@ public final class PostActivity extends AbsActivity
         private void onGetReference(final Reply reply, boolean animation) {
             mReply = reply;
 
-            mLeftText.setText(TextUtils2.combine(reply.getNMBDisplayUsername(), "    ",
-                    ReadableTime.getDisplayTime(reply.getNMBTime())));
+            mLeftText.setText(reply.getNMBDisplayUsername());
+            mCenterText.setText("No." + reply.getNMBId());
+            mRightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
             mContent.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
@@ -618,6 +621,7 @@ public final class PostActivity extends AbsActivity
     private class ReplyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView leftText;
+        public TextView centerText;
         public TextView rightText;
         public LinkifyTextView content;
         public LoadImageView thumb;
@@ -626,6 +630,7 @@ public final class PostActivity extends AbsActivity
             super(itemView);
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
+            centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (LinkifyTextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
@@ -661,8 +666,9 @@ public final class PostActivity extends AbsActivity
         @Override
         public void onBindViewHolder(ReplyHolder holder, int position) {
             Reply reply = mReplyHelper.getDataAt(position);
-            holder.leftText.setText(TextUtils2.combine(highlightOp(reply), "    ",
-                    ReadableTime.getDisplayTime(reply.getNMBTime())));
+            holder.leftText.setText(reply.getNMBDisplayUsername());
+            holder.centerText.setText("No." + reply.getNMBId());
+            holder.rightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
             holder.content.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();

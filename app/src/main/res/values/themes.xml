@@ -30,6 +30,7 @@
         <item name="dark">false</item>
 
         <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
+        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_light_x16</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -46,6 +47,7 @@
         <item name="dark">false</item>
 
         <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
+        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_light_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
     </style>
@@ -70,6 +72,7 @@
         <item name="dark">true</item>
 
         <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
+        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
@@ -86,6 +89,7 @@
         <item name="dark">true</item>
 
         <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
+        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme.Dark</item>
     </style>

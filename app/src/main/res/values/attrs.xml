@@ -28,6 +28,7 @@
         <attr format="boolean" name="dark"/>
         
         <attr format="reference" name="ic_visibility_x24"/>
+        <attr format="reference" name="ic_comment_multiple_outline_x16"/>
     </declare-styleable>
 
     <declare-styleable name="MonoRecyclerView">

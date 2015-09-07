@@ -31,6 +31,12 @@
         android:layout_height="wrap_content"/>
 
     <TextView
+        android:id="@+id/center_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
         android:id="@+id/right_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +50,7 @@
         android:layout_marginTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textSize="@dimen/text_little_small"
-        android:textColorLink="@color/green_ntr"/>
+        android:textColorLink="?attr/colorAccent"/>
 
     <com.hippo.nimingban.widget.LoadImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"

@@ -15,44 +15,71 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/CardView"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/keyline_margin_horizontal"
-    android:paddingRight="@dimen/keyline_margin_horizontal"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    app:cardBackgroundColor="?attr/colorPure">
 
-    <TextView
-        android:id="@+id/left_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/right_text"
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
+        android:paddingLeft="@dimen/keyline_margin_horizontal"
+        android:paddingRight="@dimen/keyline_margin_horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/left_text"
-        android:layout_marginTop="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        android:textSize="@dimen/text_little_small"
-        android:textColorLink="@color/green_ntr"/>
+        <TextView
+            android:id="@+id/left_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <com.hippo.nimingban.widget.LoadImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/thumb"
-        android:layout_width="@dimen/list_thumb_width"
-        android:layout_height="@dimen/list_thumb_height"
-        android:layout_below="@id/content"
-        android:layout_marginTop="8dp"
-        app:retryType="longClick"/>
+        <TextView
+            android:id="@+id/center_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"/>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/right_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/left_text"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/text_little_small"
+            android:maxLines="8"
+            android:ellipsize="end"
+            android:textColorLink="?attr/colorAccent"/>
+
+        <com.hippo.nimingban.widget.LoadImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/thumb"
+            android:layout_width="@dimen/list_thumb_width"
+            android:layout_height="@dimen/list_thumb_height"
+            android:layout_below="@id/content"
+            android:layout_marginTop="8dp"
+            app:retryType="longClick"/>
+
+        <TextView
+            android:id="@+id/bottom_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:drawableLeft="?attr/ic_comment_multiple_outline_x16"
+            android:drawablePadding="8dp"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

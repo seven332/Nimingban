@@ -53,6 +53,7 @@ dependencies {
     compile project(':unifile')
     compile project(':yorozuya')
     compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.alibaba:fastjson:1.1.45.android'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'

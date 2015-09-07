@@ -51,6 +51,12 @@
                     android:layout_height="wrap_content"/>
 
                 <TextView
+                    android:id="@+id/center_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
                     android:id="@+id/right_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
