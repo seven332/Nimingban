@@ -22,7 +22,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -50,6 +49,7 @@ import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.styleable.StyleableActivity;
@@ -57,10 +57,8 @@ import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.LayoutUtils;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -515,25 +513,17 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         }
 
         ContentResolver resolver = getContentResolver();
-        InputStream is = null;
-        try {
-            String type = resolver.getType(uri);
-            if (type == null) {
-                type =  MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                        FileUtils.getExtensionFromFilename(uri.toString()));
-            }
+        String type = resolver.getType(uri);
+        if (type == null) {
+            type =  MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    FileUtils.getExtensionFromFilename(uri.toString()));
+        }
 
-            is = resolver.openInputStream(uri);
-            // TODO downsize
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            if (bitmap != null) {
-                setImagePreview(uri, type, bitmap);
-                return true;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            IOUtils.closeQuietly(is);
+        int maxSize = LayoutUtils.dp2pix(this, 256);
+        Bitmap bitmap = BitmapUtils.decodeStream(new UriInputStreamPipe(this, uri), maxSize, maxSize);
+        if (bitmap != null) {
+            setImagePreview(uri, type, bitmap);
+            return true;
         }
 
         return false;
