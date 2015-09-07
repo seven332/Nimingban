@@ -19,7 +19,6 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.AsyncTask;
@@ -29,8 +28,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.hippo.nimingban.R;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,8 +41,6 @@ import java.util.Stack;
 
 public class DoodleView extends View {
 
-    private static final int BG_COLOR = Color.WHITE;
-
     private static final float TOUCH_TOLERANCE = 4;
 
     private Bitmap mBitmap;
@@ -49,6 +48,8 @@ public class DoodleView extends View {
     private Paint mBitmapPaint;
     private Path mPath;
     private Paint mPaint;
+
+    private int mBgColor;
 
     private int mColor;
     private int mWidth;
@@ -81,7 +82,9 @@ public class DoodleView extends View {
     private void init(Context context) {
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
-        mColor = Color.BLACK;
+        mBgColor = ResourcesUtils.getAttrColor(context, R.attr.colorPure);
+
+        mColor = ResourcesUtils.getAttrColor(context, R.attr.colorPureInverse);
         mWidth = LayoutUtils.dp2pix(context, 4);
 
         mPath = new Path();
@@ -109,7 +112,7 @@ public class DoodleView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
-        mCanvas.drawColor(BG_COLOR);
+        mCanvas.drawColor(mBgColor);
     }
 
     @Override
@@ -203,7 +206,7 @@ public class DoodleView extends View {
             return;
         }
 
-        mCanvas.drawColor(BG_COLOR);
+        mCanvas.drawColor(mBgColor);
         mPath.reset();
         clearStore();
         invalidate();

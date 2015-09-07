@@ -19,6 +19,7 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.LinearLayout;
 
 import com.hippo.nimingban.R;
 import com.hippo.widget.DrawerListView;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 
@@ -69,9 +71,15 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
 
         Resources resources = context.getResources();
 
+        int tintColor = ResourcesUtils.getAttrColor(context, R.attr.colorDrawablePrimary);
+        Drawable feed = DrawableCompat.wrap(resources.getDrawable(R.drawable.ic_rss_black_x24));
+        DrawableCompat.setTint(feed, tintColor);
+        Drawable settings = DrawableCompat.wrap(resources.getDrawable(R.drawable.ic_settings_black_x24));
+        DrawableCompat.setTint(settings, tintColor);
+
         Drawable[] drawables = {
-                resources.getDrawable(R.drawable.ic_rss_light_x24), // TODO darktheme
-                resources.getDrawable(R.drawable.ic_setting_light_x24)
+                feed,
+                settings
         };
         String[] strings = {
                 resources.getString(R.string.feed),

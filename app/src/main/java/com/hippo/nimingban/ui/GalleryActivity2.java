@@ -39,7 +39,6 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
@@ -53,7 +52,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 // TODO show all image in post
-public class GalleryActivity2 extends StyleableActivity {
+public class GalleryActivity2 extends AbsActivity {
 
     public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity2.action.SINGLE_IMAGE";
     public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity2.action.IMAGE_FILE";
@@ -91,6 +90,16 @@ public class GalleryActivity2 extends StyleableActivity {
             }
         }
         return false;
+    }
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
     }
 
     @Override

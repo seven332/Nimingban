@@ -60,16 +60,15 @@ import com.hippo.nimingban.client.data.UpdateInfo;
 import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
@@ -80,7 +79,7 @@ import com.hippo.yorozuya.ResourcesUtils;
 import java.io.File;
 import java.util.List;
 
-public final class ListActivity extends StyleableActivity
+public final class ListActivity extends AbsActivity
         implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
 
     private static final int BACK_PRESSED_INTERVAL = 2000;
@@ -113,6 +112,16 @@ public final class ListActivity extends StyleableActivity
 
     // Double click back exit
     private long mPressBackTime = 0;
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +196,7 @@ public final class ListActivity extends StyleableActivity
                 LinearDividerItemDecoration.VERTICAL,
                 ResourcesUtils.getAttrColor(this, R.attr.colorDivider),
                 LayoutUtils.dp2pix(this, 1)));
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();

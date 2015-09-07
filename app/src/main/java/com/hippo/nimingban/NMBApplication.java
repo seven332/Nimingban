@@ -33,12 +33,13 @@ import com.hippo.styleable.StyleableApplication;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.Messenger;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 
 public final class NMBApplication extends StyleableApplication
-        implements Thread.UncaughtExceptionHandler {
+        implements Thread.UncaughtExceptionHandler, Messenger.Receiver {
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
@@ -70,6 +71,11 @@ public final class NMBApplication extends StyleableApplication
         FileUtils.deleteContent(NMBAppConfig.getTempDir());
 
         updateNetworkState(this);
+
+        // Theme
+        setTheme(Settings.getDarkTheme() ? R.style.AppTheme_Dark : R.style.AppTheme);
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_CHANGE_THEME, this);
     }
 
     @Override
@@ -171,5 +177,10 @@ public final class NMBApplication extends StyleableApplication
         } catch (Throwable tr) {
             return false;
         }
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        setTheme((Boolean) obj ? R.style.AppTheme_Dark : R.style.AppTheme);
     }
 }

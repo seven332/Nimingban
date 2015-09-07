@@ -30,6 +30,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -73,11 +74,11 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
         setAdapter(mAdapter);
         setLayoutManager(new LinearLayoutManager(context));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider_light),
+                LinearDividerItemDecoration.VERTICAL, ResourcesUtils.getAttrColor(context, R.attr.colorDivider),
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         addItemDecoration(decoration);
-        setSelector(RippleSalon.generateRippleDrawable(false));
+        setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(context, R.attr.dark)));
         setOnItemClickListener(this);
 
         mCurrentFile = Environment.getExternalStorageDirectory();

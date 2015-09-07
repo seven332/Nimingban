@@ -24,8 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@android:color/white">
-        <!-- TODO draktheme -->
+        android:background="?attr/colorPure">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +36,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="12dp"
-                android:src="@drawable/ic_visibility_light_x24"/>
+                android:src="?attr/ic_visibility_x24"/>
 
             <TextView
                 android:id="@+id/forum"

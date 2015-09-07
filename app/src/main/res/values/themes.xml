@@ -23,6 +23,13 @@
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorShadow">@color/shadow_light</item>
         <item name="colorTextPrimary">@color/primary_text_default_light</item>
+        <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
+        <item name="colorPure">@color/pure_light</item>
+        <item name="colorPureInverse">@color/pure_inverse_light</item>
+
+        <item name="dark">false</item>
+
+        <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -32,11 +39,58 @@
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorShadow">@color/shadow_light</item>
         <item name="colorTextPrimary">@color/primary_text_default_light</item>
+        <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
+        <item name="colorPure">@color/pure_light</item>
+        <item name="colorPureInverse">@color/pure_inverse_light</item>
+
+        <item name="dark">false</item>
+
+        <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="AppAlertDialogTheme.Dark" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/green_ntr</item>
+        <item name="colorDivider">@color/divider_dark</item>
+        <item name="colorShadow">@color/shadow_dark</item>
+        <item name="colorTextPrimary">@color/primary_text_default_dark</item>
+        <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
+        <item name="colorPure">@color/pure_dark</item>
+        <item name="colorPureInverse">@color/pure_inverse_dark</item>
+
+        <item name="dark">true</item>
+
+        <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/green_ntr</item>
+        <item name="colorDivider">@color/divider_dark</item>
+        <item name="colorShadow">@color/shadow_dark</item>
+        <item name="colorTextPrimary">@color/primary_text_default_dark</item>
+        <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
+        <item name="colorPure">@color/pure_dark</item>
+        <item name="colorPureInverse">@color/pure_inverse_dark</item>
+
+        <item name="dark">true</item>
+
+        <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
+
+        <item name="alertDialogTheme">@style/AppAlertDialogTheme.Dark</item>
+    </style>
+
+    <style name="AppTheme.Dark.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

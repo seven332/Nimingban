@@ -26,8 +26,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="8dp"
-        android:background="@android:color/white">
-        <!-- TODO draktheme -->
+        android:background="?attr/colorPure">
 
         <TextView
             android:id="@+id/time"

@@ -38,12 +38,11 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import de.greenrobot.dao.query.LazyList;
 
-public final class DraftActivity extends StyleableActivity implements EasyRecyclerView.OnItemClickListener {
+public final class DraftActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
 
     private LazyList<DraftRaw> mLazyList;
 
@@ -56,6 +55,16 @@ public final class DraftActivity extends StyleableActivity implements EasyRecycl
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_NoActionBar;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -138,6 +138,7 @@
     <string name="save_failed">保存失败</string>
 
     <string name="settings">设置</string>
+    <string name="main_dark_theme">夜间模式</string>
     <string name="main_pretty_time">显示易读时间</string>
     <string name="main_image_loading_strategy">图片加载策略</string>
     <string name="main_pretty_time_summary">显示 %1$s 而不是 %2$s</string>
@@ -186,5 +187,7 @@
     <string name="download">下载</string>
     <string name="downloading_update">下载更新中</string>
     <string name="download_update_failde">下载更新失败</string>
+
+    <string name="network_receiver">网络监视器</string>
 
 </resources>

@@ -55,19 +55,19 @@ import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 // TODO add edit text for name, title and so on
-public final class TypeSendActivity extends StyleableActivity implements View.OnClickListener {
+public final class TypeSendActivity extends AbsActivity implements View.OnClickListener {
 
     private static final String TAG = TypeSendActivity.class.getSimpleName();
 
@@ -153,6 +153,16 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
         }
 
         return false;
+    }
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
     }
 
     @Override
@@ -373,8 +383,10 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
             EasyRecyclerView recyclerView = (EasyRecyclerView) TypeSendActivity.this
                     .getLayoutInflater().inflate(R.layout.dialog_emoji, null);
             recyclerView.setAdapter(new EmojiAdapter());
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));// TODO adjust by view width
-            recyclerView.setSelector(RippleSalon.generateRippleDrawable(false)); // TODO darktheme
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
+                    3, StaggeredGridLayoutManager.VERTICAL));// TODO adjust by view width
+            recyclerView.setSelector(RippleSalon.generateRippleDrawable(
+                    ResourcesUtils.getAttrBoolean(TypeSendActivity.this, R.attr.dark)));
             recyclerView.setOnItemClickListener(this);
             mView = recyclerView;
         }
@@ -539,7 +551,6 @@ public final class TypeSendActivity extends StyleableActivity implements View.On
     }
 
     // TODO do not do it in UI thread
-    // TODO resize image if it is to large
     private boolean handleSelectedImageUri(Uri uri) {
         if (uri == null) {
             return false;

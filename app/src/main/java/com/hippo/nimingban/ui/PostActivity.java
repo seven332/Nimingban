@@ -62,21 +62,22 @@ import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public final class PostActivity extends StyleableActivity implements EasyRecyclerView.OnItemClickListener,
+public final class PostActivity extends AbsActivity
+        implements EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
@@ -144,6 +145,16 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
     }
 
     @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -167,7 +178,7 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
 
         mReplyAdapter = new ReplyAdapter();
         mRecyclerView.setAdapter(mReplyAdapter);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
@@ -370,7 +381,7 @@ public final class PostActivity extends StyleableActivity implements EasyRecycle
 
             mContent.setOnClickListener(this);
             mThumb.setOnClickListener(this);
-            RippleSalon.addRipple(mButton, false); // TODO darktheme
+            RippleSalon.addRipple(mButton, ResourcesUtils.getAttrBoolean(PostActivity.this, R.attr.dark));
         }
 
         @Override

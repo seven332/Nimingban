@@ -35,18 +35,19 @@ import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.network.TransportableHttpCookie;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.Messenger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,7 +59,17 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-public class SettingsActivity extends StyleableActivity {
+public class SettingsActivity extends AbsActivity {
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +83,7 @@ public class SettingsActivity extends StyleableActivity {
         public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
         public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
 
+        private static final String KEY_DARK_THEME = "dark_theme";
         private static final String KEY_AC_COOKIES = "ac_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
@@ -80,6 +92,7 @@ public class SettingsActivity extends StyleableActivity {
 
         private Context mContext;
 
+        private Preference mDarkTheme;
         private SwitchPreference mPrettyTime;
         private Preference mACCookies;
         private Preference mSaveCookies;
@@ -117,6 +130,7 @@ public class SettingsActivity extends StyleableActivity {
             Context context = getContext();
             Resources resources = context.getResources();
 
+            mDarkTheme = findPreference(KEY_DARK_THEME);
             mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mACCookies = findPreference(KEY_AC_COOKIES);
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
@@ -125,6 +139,7 @@ public class SettingsActivity extends StyleableActivity {
             mAuthor = findPreference(KEY_AUTHOR);
             mSource = findPreference(KEY_SOURCE);
 
+            mDarkTheme.setOnPreferenceChangeListener(this);
             mPrettyTime.setOnPreferenceChangeListener(this);
 
             mACCookies.setOnPreferenceClickListener(this);
@@ -384,7 +399,9 @@ public class SettingsActivity extends StyleableActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String key = preference.getKey();
-            if (Settings.KEY_PRETTY_TIME.equals(key)) {
+            if (KEY_DARK_THEME.equals(key)) {
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_CHANGE_THEME, newValue);
+            } else if (Settings.KEY_PRETTY_TIME.equals(key)) {
                 ((SettingsActivity) getContext()).setResult(RESULT_OK);
                 return true;
             }

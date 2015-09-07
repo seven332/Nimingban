@@ -26,17 +26,27 @@ import android.widget.Toast;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.widget.DirExplorer;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.styleable.StyleableActivity;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 
-public class DirPickerActivity extends StyleableActivity implements View.OnClickListener, DirExplorer.OnChangeDirListener {
+public class DirPickerActivity extends AbsActivity implements View.OnClickListener, DirExplorer.OnChangeDirListener {
 
     public static final String KEY_FILE_URI = "file_uri";
 
     private TextView mPath;
     private DirExplorer mDirExplorer;
     private View mOk;
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +69,7 @@ public class DirPickerActivity extends StyleableActivity implements View.OnClick
         mDirExplorer.setCurrentFile(file);
         mDirExplorer.setOnChangeDirListener(this);
 
-        RippleSalon.addRipple(mOk, false); // TODO darktheme
+        RippleSalon.addRipple(mOk, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
 
         mOk.setOnClickListener(this);
 

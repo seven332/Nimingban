@@ -37,6 +37,11 @@
     <color name="secondary_text_default_dark">#61ffffff</color>
     <color name="secondary_text_disabled_light">#24000000</color>
 
+    <color name="pure_light">@android:color/white</color>
+    <color name="pure_dark">#ff212121</color>
+    <color name="pure_inverse_light">@color/pure_dark</color>
+    <color name="pure_inverse_dark">@color/pure_light</color>
+
     <color name="bule_500">#ff5677fc</color>
     <color name="deep_orange_500">#ffff5722</color>
     <color name="deep_orange_700">#ffe64a19</color>

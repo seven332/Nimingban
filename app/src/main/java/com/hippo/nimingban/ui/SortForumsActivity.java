@@ -50,7 +50,6 @@ import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.DB;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -60,7 +59,7 @@ import java.util.List;
 
 import de.greenrobot.dao.query.LazyList;
 
-public class SortForumsActivity extends StyleableActivity {
+public class SortForumsActivity extends AbsActivity {
 
     public static final String KEY_SITE = "site";
 
@@ -97,6 +96,16 @@ public class SortForumsActivity extends StyleableActivity {
         }
 
         return false;
+    }
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
     }
 
     @Override

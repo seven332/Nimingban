@@ -146,6 +146,7 @@
     <string name="save_failed">Save failed</string>
 
     <string name="settings">Settings</string>
+    <string name="main_dark_theme">Dark theme</string>
     <string name="main_pretty_time">Display pretty time</string>
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
     <string name="main_image_loading_strategy">Picture loading strategy</string>

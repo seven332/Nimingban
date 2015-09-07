@@ -37,6 +37,7 @@ import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.Say;
 
 import java.util.ArrayList;
@@ -95,6 +96,7 @@ public class ContentLayout extends FrameLayout {
                 R.color.loading_indicator_blue,
                 R.color.loading_indicator_green,
                 R.color.loading_indicator_orange);
+        mRefreshLayout.setHeaderProgressBackgroundColorSchemeColor(ResourcesUtils.getAttrColor(context, R.attr.colorPure));
 
         mRecyclerViewOriginTop = mRecyclerView.getPaddingTop();
         mRecyclerViewOriginBottom = mRecyclerView.getPaddingBottom();

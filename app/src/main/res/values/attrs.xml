@@ -21,6 +21,13 @@
         <attr format="color" name="colorDivider"/>
         <attr format="color" name="colorShadow"/>
         <attr format="color" name="colorTextPrimary"/>
+        <attr format="color" name="colorDrawablePrimary"/>
+        <attr format="color" name="colorPure"/>
+        <attr format="color" name="colorPureInverse"/>
+
+        <attr format="boolean" name="dark"/>
+        
+        <attr format="reference" name="ic_visibility_x24"/>
     </declare-styleable>
 
     <declare-styleable name="MonoRecyclerView">

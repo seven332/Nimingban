@@ -26,15 +26,14 @@ import android.widget.Toast;
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.styleable.StyleableActivity;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.yorozuya.MathUtils;
 
 import java.io.File;
 
-public final class DoodleActivity extends StyleableActivity implements View.OnClickListener, DoodleView.Helper {
+public final class DoodleActivity extends AbsActivity implements View.OnClickListener, DoodleView.Helper {
 
     private DoodleView mDoodleView;
 
@@ -47,6 +46,16 @@ public final class DoodleActivity extends StyleableActivity implements View.OnCl
     private File mOutputFile;
 
     private Dialog mExitWaitingDialog;
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme_NoActionBar;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark_NoActionBar;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

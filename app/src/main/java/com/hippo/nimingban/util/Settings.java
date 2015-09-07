@@ -90,6 +90,9 @@ public final class Settings {
     public static final int IMAGE_LOADING_STRATEGY_WIFI = 1;
     public static final int IMAGE_LOADING_STRATEGY_NO = 2;
 
+    public static final String KEY_DARK_THEME = "dark_theme";
+    public static final boolean DEFAULT_DARK_THEME = false;
+
     public static final String KEY_PRETTY_TIME = "pretty_time";
     public static final boolean DEFAULT_PRETTY_TIME = true;
 
@@ -102,6 +105,10 @@ public final class Settings {
     public static final String KEY_IMAGE_SAVE_PATH = "image_path";
     public static final String KEY_IMAGE_SAVE_QUERY = "image_query";
     public static final String KEY_IMAGE_SAVE_FRAGMENT = "image_fragment";
+
+    public static boolean getDarkTheme() {
+        return getBoolean(KEY_DARK_THEME, DEFAULT_DARK_THEME);
+    }
 
     public static boolean getPrettyTime() {
         return getBoolean(KEY_PRETTY_TIME, DEFAULT_PRETTY_TIME);

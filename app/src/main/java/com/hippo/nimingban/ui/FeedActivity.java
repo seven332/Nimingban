@@ -35,17 +35,17 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.styleable.StyleableActivity;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public final class FeedActivity extends StyleableActivity implements EasyRecyclerView.OnItemClickListener {
+public final class FeedActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
 
     private Conaco mConaco;
     private NMBClient mNMBClient;
@@ -54,6 +54,16 @@ public final class FeedActivity extends StyleableActivity implements EasyRecycle
     private FeedHelper mFeedHelper;
 
     private NMBRequest mNMBRequest;
+
+    @Override
+    protected int getLightThemeResId() {
+        return R.style.AppTheme;
+    }
+
+    @Override
+    protected int getDarkThemeResId() {
+        return R.style.AppTheme_Dark;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +84,7 @@ public final class FeedActivity extends StyleableActivity implements EasyRecycle
         mFeedAdapter = new FeedAdapter();
         recyclerView.setAdapter(mFeedAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        recyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         recyclerView.setOnItemClickListener(this);
         recyclerView.hasFixedSize();
 

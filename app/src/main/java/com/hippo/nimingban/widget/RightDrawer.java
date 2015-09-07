@@ -29,6 +29,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,8 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
         setAdapter(mAdapter);
         setLayoutManager(new LinearLayoutManager(context));
         setOnItemClickListener(this);
-        setSelector(RippleSalon.generateRippleDrawable(false)); // TODO darktheme
+        setSelector(RippleSalon.generateRippleDrawable(
+                ResourcesUtils.getAttrBoolean(context, R.attr.dark)));
     }
 
     public void setForums(List<? extends Forum> forums) {

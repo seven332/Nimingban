@@ -14,16 +14,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:gravity="center_vertical"
-    android:drawablePadding="32dp"
-    android:minHeight="48dp"
-    android:textSize="@dimen/text_little_small"
-    android:textColor="?attr/colorTextPrimary">
 
-</TextView>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_activated="true" android:drawable="@drawable/ic_eye_dark_x24"/>
+    <item android:drawable="@drawable/ic_eye_off_dark_x24"/>
+
+</selector>

@@ -272,7 +272,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     @Override
     public void onFailure() {
         mFailed = true;
-        setImageDrawableSafely(getContext().getResources().getDrawable(R.drawable.image_failed)); // TODO darktheme
+        setImageDrawableSafely(getContext().getResources().getDrawable(R.drawable.image_failed));
         if (mRetryType == RetryType.CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RetryType.LONG_CLICK) {
