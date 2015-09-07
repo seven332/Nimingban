@@ -37,6 +37,7 @@ import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
@@ -193,7 +194,7 @@ public final class DraftActivity extends StyleableActivity implements EasyRecycl
         @Override
         public void onBindViewHolder(DraftHolder holder, int position) {
             DraftRaw draftRaw = mLazyList.get(position);
-            holder.time.setText("" + draftRaw.getTime());
+            holder.time.setText(ReadableTime.getDisplayTime(draftRaw.getTime()));
             holder.content.setText(draftRaw.getContent());
         }
 
