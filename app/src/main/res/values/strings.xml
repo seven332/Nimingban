@@ -21,6 +21,9 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <string name="data_analysis">Data analysis</string>
+    <string name="data_analysis_plain">Would you mind if the developer collecting your device information and your usage? It will help the developing a lot.</string>
+
     <string name="it_is_important">It is important</string>
     <string name="crash_tip">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
 
@@ -160,6 +163,7 @@
     <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+    <string name="main_analysis">Enable data analysis</string>
     <string name="main_author">Author</string>
     <string name="main_source">Source</string>
     <string name="main_source_summary" translatable="false">https://github.com/seven332/Nimingban</string>

@@ -54,6 +54,10 @@
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>
 
+    <SwitchPreference
+        android:key="analysis"
+        android:title="@string/main_analysis"/>
+
     <Preference
         android:key="author"
         android:title="@string/main_author"/>

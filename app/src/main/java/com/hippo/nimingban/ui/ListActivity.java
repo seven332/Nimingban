@@ -320,6 +320,24 @@ public final class ListActivity extends AbsActivity
             });
             mNMBClient.execute(request);
         }
+
+        // Check analysis
+        if (!Settings.getSetAnalysis()) {
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Settings.putSetAnalysis(true);
+                    Settings.putAnalysis(which == DialogInterface.BUTTON_POSITIVE);
+                }
+            };
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.data_analysis)
+                    .setMessage(R.string.data_analysis_plain)
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.ok, listener)
+                    .setNegativeButton(android.R.string.cancel, listener)
+                    .show();
+        }
     }
 
     private void updateForums(boolean firstTime) {

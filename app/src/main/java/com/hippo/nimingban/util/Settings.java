@@ -106,6 +106,11 @@ public final class Settings {
     public static final String KEY_IMAGE_SAVE_QUERY = "image_query";
     public static final String KEY_IMAGE_SAVE_FRAGMENT = "image_fragment";
 
+    public static final String KEY_SET_ANALYSIS = "set_analysis";
+    public static final boolean DEFAULT_SET_ANALYSIS = false;
+    public static final String KEY_ANALYSIS = "analysis";
+    public static final boolean DEFAULT_ANALYSIS = false;
+
     public static boolean getDarkTheme() {
         return getBoolean(KEY_DARK_THEME, DEFAULT_DARK_THEME);
     }
@@ -142,6 +147,22 @@ public final class Settings {
         putString(KEY_IMAGE_SAVE_PATH, uri.getEncodedPath());
         putString(KEY_IMAGE_SAVE_QUERY, uri.getEncodedQuery());
         putString(KEY_IMAGE_SAVE_FRAGMENT, uri.getEncodedFragment());
+    }
+
+    public static boolean getSetAnalysis() {
+        return getBoolean(KEY_SET_ANALYSIS, DEFAULT_SET_ANALYSIS);
+    }
+
+    public static void putSetAnalysis(boolean value) {
+        putBoolean(KEY_SET_ANALYSIS, value);
+    }
+
+    public static boolean getAnalysis() {
+        return getBoolean(KEY_ANALYSIS, DEFAULT_ANALYSIS);
+    }
+
+    public static void putAnalysis(boolean value) {
+        putBoolean(KEY_ANALYSIS, value);
     }
 
     public static final String KEY_CRASH_FILENAME = "crash_filename";

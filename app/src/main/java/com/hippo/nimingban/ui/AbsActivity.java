@@ -19,6 +19,7 @@ package com.hippo.nimingban.ui;
 import android.os.Bundle;
 
 import com.hippo.nimingban.Constants;
+import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.styleable.StyleableActivity;
 import com.hippo.yorozuya.Messenger;
@@ -29,6 +30,8 @@ public abstract class AbsActivity extends StyleableActivity implements Messenger
     protected abstract int getLightThemeResId();
 
     protected abstract int getDarkThemeResId();
+
+    private boolean mHasResume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +52,22 @@ public abstract class AbsActivity extends StyleableActivity implements Messenger
     @Override
     protected void onResume() {
         super.onResume();
-        TCAgent.onResume(this);
+
+        if (NMBApplication.hasInitTCAgent(this) && Settings.getAnalysis()) {
+            mHasResume = true;
+            TCAgent.onResume(this);
+        } else {
+            mHasResume = false;
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        TCAgent.onPause(this);
+
+        if (mHasResume) {
+            TCAgent.onPause(this);
+        }
     }
 
     @Override

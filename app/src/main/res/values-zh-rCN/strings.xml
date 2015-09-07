@@ -21,6 +21,9 @@
     <string name="drawer_open">打开抽屉</string>
     <string name="drawer_close">关闭抽屉</string>
 
+    <string name="data_analysis">数据统计</string>
+    <string name="data_analysis_plain">你愿意让开发者收集你的设备信息与使用情况么？这将对开发有很大帮助。</string>
+
     <string name="it_is_important">这很重要</string>
     <string name="crash_tip">上次该应用崩溃了。你愿意把错误日志发送给开发者以便以后得到更好的用户体验么？（以电子邮件的形式发送）</string>
 
@@ -152,6 +155,7 @@
     <string name="main_restore_cookies_summary">从外置存储器的饼干文件中恢复饼干</string>
     <string name="main_image_save_location">图片存储路径</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+    <string name="main_analysis">启用数据统计</string>
     <string name="main_author">作者</string>
     <string name="main_source">源码</string>
 

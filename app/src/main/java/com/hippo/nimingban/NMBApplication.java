@@ -52,6 +52,8 @@ public final class NMBApplication extends StyleableApplication
 
     private boolean mConnectedWifi;
 
+    private boolean mHasInitTCAgent;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -79,7 +81,12 @@ public final class NMBApplication extends StyleableApplication
         Messenger.getInstance().register(Constants.MESSENGER_ID_CHANGE_THEME, this);
 
         // TCAgent
-        TCAgent.init(this);
+        if (Settings.getAnalysis()) {
+            mHasInitTCAgent = true;
+            TCAgent.init(this);
+        } else {
+            mHasInitTCAgent = false;
+        }
     }
 
     @Override
@@ -91,6 +98,10 @@ public final class NMBApplication extends StyleableApplication
                 mConaco.clearMemoryCache();
             }
         }
+    }
+
+    public static boolean hasInitTCAgent(Context context) {
+        return ((NMBApplication) context.getApplicationContext()).mHasInitTCAgent;
     }
 
     public static void updateNetworkState(Context context) {
