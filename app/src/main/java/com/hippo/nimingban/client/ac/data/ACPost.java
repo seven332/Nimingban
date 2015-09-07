@@ -21,6 +21,7 @@ import android.os.Parcel;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -69,6 +70,7 @@ public class ACPost extends Post {
     public String email = "";
     public String title = "";
     public String content = "";
+    public String sage = "";
     public String admin = "";
     public String replyCount = "";
     // Ingore when writeToParcel
@@ -181,7 +183,6 @@ public class ACPost extends Post {
         return spannable == null ? content : spannable;
     }
 
-    // TODO test
     public static CharSequence green(CharSequence content) {
         Matcher m = GREEN_PATTERN.matcher(content);
 
@@ -206,13 +207,31 @@ public class ACPost extends Post {
         return spannable == null ? content : spannable;
     }
 
-    public static CharSequence generateContent(String content) {
+    public static CharSequence handleSage(CharSequence content, String sage) {
+        SpannableStringBuilder builder = null;
+        if ("1".equals(sage)) {
+            if (content instanceof SpannableStringBuilder) {
+                builder = (SpannableStringBuilder) content;
+            } else {
+                builder = new SpannableStringBuilder(content);
+            }
+
+            builder.insert(0, "SAGE\r\n\r\n");
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
+            builder.setSpan(colorSpan, 0, "SAGE".length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return builder == null ? content : builder;
+    }
+
+    public static CharSequence generateContent(String content, String sage) {
         CharSequence charSequence;
         charSequence = Html.fromHtml(content);
         charSequence = fixURLSpan(charSequence);
         charSequence = handleReference(charSequence);
         charSequence = handleTextUrl(charSequence);
         charSequence = green(charSequence);
+        charSequence = handleSage(charSequence, sage);
         return charSequence;
     }
 
@@ -265,7 +284,7 @@ public class ACPost extends Post {
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
-        mContent = generateContent(content);
+        mContent = generateContent(content, sage);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;

@@ -40,6 +40,7 @@ public class ACReply extends Reply {
     public String email = "";
     public String title = "";
     public String content = "";
+    public String sage = "";
     public String admin = "";
 
     private Site mSite;
@@ -73,7 +74,7 @@ public class ACReply extends Reply {
             mUser = Html.fromHtml(userid);
         }
 
-        mContent = ACPost.generateContent(content);
+        mContent = ACPost.generateContent(content, sage);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
