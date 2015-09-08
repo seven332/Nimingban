@@ -57,6 +57,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textSize="@dimen/text_little_small"
+            android:lineSpacingExtra="2dp"
             android:maxLines="8"
             android:ellipsize="end"
             android:textColorLink="?attr/colorAccent"/>

@@ -605,6 +605,9 @@ public final class ListActivity extends AbsActivity
                 lp.addRule(RelativeLayout.BELOW, R.id.content);
                 bottomText.setLayoutParams(lp);
             }
+
+            holder.content.setTextSize(Settings.getFontSize());
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(ListActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override

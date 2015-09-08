@@ -63,6 +63,7 @@ import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
@@ -71,6 +72,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
@@ -454,6 +456,9 @@ public final class PostActivity extends AbsActivity
                 mConaco.load(mThumb, null);
             }
 
+            mContent.setTextSize(Settings.getFontSize());
+            mContent.setLineSpacing(LayoutUtils.dp2pix(PostActivity.this, Settings.getLineSpacing()), 1.0f);
+
             mViewTransition.showView(1, animation);
 
             String postId = reply.getNMBPostId();
@@ -679,6 +684,9 @@ public final class PostActivity extends AbsActivity
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);
             }
+
+            holder.content.setTextSize(Settings.getFontSize());
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(PostActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override

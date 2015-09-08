@@ -38,7 +38,9 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.LayoutUtils;
 
 import de.greenrobot.dao.query.LazyList;
 
@@ -205,6 +207,9 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
             DraftRaw draftRaw = mLazyList.get(position);
             holder.time.setText(ReadableTime.getDisplayTime(draftRaw.getTime()));
             holder.content.setText(draftRaw.getContent());
+
+            holder.content.setTextSize(Settings.getFontSize());
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(DraftActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override

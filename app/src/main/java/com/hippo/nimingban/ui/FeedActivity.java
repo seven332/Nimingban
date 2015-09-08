@@ -36,6 +36,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
@@ -167,6 +168,9 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);
             }
+
+            holder.content.setTextSize(Settings.getFontSize());
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(FeedActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override

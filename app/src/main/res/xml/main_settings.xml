@@ -28,6 +28,10 @@
         android:title="@string/main_pretty_time"
         android:defaultValue="true"/>
 
+    <Preference
+        android:key="text_format"
+        android:title="@string/main_text_format"/>
+
     <ListPreference
         android:key="image_loading_strategy"
         android:title="@string/main_image_loading_strategy"

@@ -96,6 +96,12 @@ public final class Settings {
     public static final String KEY_PRETTY_TIME = "pretty_time";
     public static final boolean DEFAULT_PRETTY_TIME = true;
 
+    public static final String KEY_FONT_SIZE = "font_size";
+    public static final int DEFAULT_FONT_SIZE = 16;
+
+    public static final String KEY_LINE_SPACING = "line_spacing";
+    public static final int DEFAULT_LINE_SPACING = 1;
+
     public static final String KEY_IMAGE_LOADING_STRATEGY = "image_loading_strategy";
     public static final int DEFAULT_IMAGE_LOADING_STRATEGY = 0;
     public static final String KEY_IMAGE_SAVE_LOACTION = "image_save_location";
@@ -117,6 +123,22 @@ public final class Settings {
 
     public static boolean getPrettyTime() {
         return getBoolean(KEY_PRETTY_TIME, DEFAULT_PRETTY_TIME);
+    }
+
+    public static int getFontSize() {
+        return getInt(KEY_FONT_SIZE, DEFAULT_FONT_SIZE);
+    }
+
+    public static void putFontSize(int value) {
+        putInt(KEY_FONT_SIZE, value);
+    }
+
+    public static int getLineSpacing() {
+        return getInt(KEY_LINE_SPACING, DEFAULT_LINE_SPACING);
+    }
+
+    public static void putLineSpacing(int value) {
+        putInt(KEY_LINE_SPACING, value);
     }
 
     public static int getImageLoadingStrategy() {

@@ -152,6 +152,8 @@
     <string name="main_dark_theme">Dark theme</string>
     <string name="main_pretty_time">Display pretty time</string>
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
+    <string name="main_text_format">Font size and line spacing</string>
+    <string name="main_text_format_summary">Font size: %1$d\nLine spacing: %2$d</string>
     <string name="main_image_loading_strategy">Picture loading strategy</string>
     <string name="main_ac_cookies">Cookies</string>
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you have no cookies</string>
@@ -167,6 +169,10 @@
     <string name="main_author">Author</string>
     <string name="main_source">Source</string>
     <string name="main_source_summary" translatable="false">https://github.com/seven332/Nimingban</string>
+
+    <string name="text_format">Text format</string>
+    <string name="font_size">Font size</string>
+    <string name="line_spacing">Line spacing</string>
 
     <string name="image_loading_strategy_all">Just load them</string>
     <string name="image_loading_strategy_wifi">Only Wi-Fi</string>
@@ -188,6 +194,8 @@
     <string name="pick_dir_l">Lollipop provides an API to write on external SD card. If you want to set image save location to SD card, click the \"DOCUMENT\" button</string>
 
     <string name="document">Document</string>
+
+    <string name="text_format_preview">the quick brown hippo jumps over the lazy monkey\nthe quick brown hippo jumps over the lazy monkey\nthe quick brown hippo jumps over the lazy monkey</string>
 
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Can\'t find any forum</string>

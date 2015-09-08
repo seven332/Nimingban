@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.ui;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -32,6 +33,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -46,7 +49,9 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
+import com.hippo.widget.slider.Slider;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 
 import java.io.File;
@@ -84,6 +89,7 @@ public class SettingsActivity extends AbsActivity {
         public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
 
         private static final String KEY_DARK_THEME = "dark_theme";
+        private static final String KEY_TEXT_FORMAT = "text_format";
         private static final String KEY_AC_COOKIES = "ac_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
@@ -94,6 +100,7 @@ public class SettingsActivity extends AbsActivity {
 
         private Preference mDarkTheme;
         private SwitchPreference mPrettyTime;
+        private Preference mTextFormat;
         private Preference mACCookies;
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
@@ -132,6 +139,7 @@ public class SettingsActivity extends AbsActivity {
 
             mDarkTheme = findPreference(KEY_DARK_THEME);
             mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
+            mTextFormat = findPreference(KEY_TEXT_FORMAT);
             mACCookies = findPreference(KEY_AC_COOKIES);
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
@@ -142,12 +150,15 @@ public class SettingsActivity extends AbsActivity {
             mDarkTheme.setOnPreferenceChangeListener(this);
             mPrettyTime.setOnPreferenceChangeListener(this);
 
+            mTextFormat.setOnPreferenceClickListener(this);
             mACCookies.setOnPreferenceClickListener(this);
             mSaveCookies.setOnPreferenceClickListener(this);
             mRestoreCookies.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
+
+            updateTextFormatSummary();
 
             long time = System.currentTimeMillis() - 3 * ReadableTime.HOUR_MILLIS;
             String plain = ReadableTime.getPlainTime(time);
@@ -350,10 +361,76 @@ public class SettingsActivity extends AbsActivity {
             }
         }
 
+        private void updateTextFormatSummary() {
+            mTextFormat.setSummary(getContext().getResources().getString(
+                    R.string.main_text_format_summary, Settings.getFontSize(),
+                    Settings.getLineSpacing()));
+        }
+
+        private class TextFormatDialogHelper implements Slider.OnSetProgressListener,
+                DialogInterface.OnClickListener {
+
+            public View mView;
+            public TextView mPreview;
+            public Slider mFontSize;
+            public Slider mLineSpacing;
+
+            @SuppressLint("InflateParams")
+            public TextFormatDialogHelper() {
+                mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_text_format, null);
+                mPreview = (TextView) mView.findViewById(R.id.preview);
+                mFontSize = (Slider) mView.findViewById(R.id.font_size);
+                mLineSpacing = (Slider) mView.findViewById(R.id.line_spacing);
+
+                int fontSize = Settings.getFontSize();
+                int lineSpacing = Settings.getLineSpacing();
+
+                mPreview.setTextSize(fontSize);
+                mPreview.setLineSpacing(LayoutUtils.dp2pix(getContext(), lineSpacing), 1.0f);
+
+                mFontSize.setProgress(fontSize);
+                mLineSpacing.setProgress(lineSpacing);
+                mFontSize.setOnSetProgressListener(this);
+                mLineSpacing.setOnSetProgressListener(this);
+            }
+
+            public View getView() {
+                return mView;
+            }
+
+            @Override
+            public void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm) {
+                if (slider == mFontSize && byUser) {
+                    mPreview.setTextSize(newProgress);
+                } else if (slider == mLineSpacing && byUser) {
+                    mPreview.setLineSpacing(LayoutUtils.dp2pix(getContext(), newProgress), 1.0f);
+                }
+            }
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    Settings.putFontSize(mFontSize.getProgress());
+                    Settings.putLineSpacing(mLineSpacing.getProgress());
+
+                    ((SettingsActivity) getContext()).setResult(RESULT_OK);
+
+                    updateTextFormatSummary();
+                }
+            }
+        }
+
         @Override
         public boolean onPreferenceClick(Preference preference) {
             String key = preference.getKey();
-            if (KEY_AC_COOKIES.equals(key)) {
+            if (KEY_TEXT_FORMAT.equals(key)) {
+                TextFormatDialogHelper helper = new TextFormatDialogHelper();
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.text_format)
+                        .setView(helper.getView())
+                        .setPositiveButton(android.R.string.ok, helper)
+                        .show();
+            } else if (KEY_AC_COOKIES.equals(key)) {
                 System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
                 mHits[mHits.length - 1] = SystemClock.uptimeMillis();
                 if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {

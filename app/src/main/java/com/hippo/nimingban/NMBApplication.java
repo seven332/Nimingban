@@ -17,6 +17,7 @@
 package com.hippo.nimingban;
 
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -27,10 +28,9 @@ import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
-import com.hippo.styleable.StyleableApplication;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
@@ -39,7 +39,7 @@ import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
 
-public final class NMBApplication extends StyleableApplication
+public final class NMBApplication extends Application
         implements Thread.UncaughtExceptionHandler, Messenger.Receiver {
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;

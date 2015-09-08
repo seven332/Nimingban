@@ -608,7 +608,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             mNMBRequest = null;
 
             Toast.makeText(TypeSendActivity.this, getString(mMethod == Method.Reply ? R.string.reply_failed :
-                    R.string.create_post_failed) +
+                    R.string.create_post_failed) + "\n" +
                     ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
         }
 
@@ -644,7 +644,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             }
             mNMBRequest = null;
 
-            Toast.makeText(TypeSendActivity.this, getString(R.string.cant_get_cookies) +
+            Toast.makeText(TypeSendActivity.this, getString(R.string.cant_get_cookies) + "\n" +
                     ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
         }
 
