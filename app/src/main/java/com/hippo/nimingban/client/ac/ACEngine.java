@@ -547,14 +547,6 @@ public class ACEngine {
             isp.close();
             os.close();
 
-            // Check file size
-            long size = temp.length();
-
-            if (size < MAX_IMAGE_SIZE) {
-                temp.delete();
-                return null;
-            }
-
             BitmapFactory.Options options = new BitmapFactory.Options();
             int i = 0;
             while (true) {
@@ -568,7 +560,7 @@ public class ACEngine {
 
                 bitmap.recycle();
 
-                size = temp.length();
+                long size = temp.length();
                 if (size < MAX_IMAGE_SIZE) {
                     return new FileInputStreamPipe(temp);
                 }
