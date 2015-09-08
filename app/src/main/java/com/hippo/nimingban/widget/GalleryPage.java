@@ -24,7 +24,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
@@ -34,8 +33,10 @@ import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.ProgressView;
+import com.hippo.yorozuya.MathUtils;
 
 import pl.droidsonroids.gif.GifDrawable;
+import uk.co.senab.photoview.PhotoView;
 
 public final class GalleryPage extends FrameLayout implements Unikery, View.OnClickListener {
 
@@ -45,7 +46,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
     private ProgressView mProgressView;
     private View mFailed;
-    private ImageView mImageView;
+    private PhotoView mPhotoView;
 
     private String mId;
     private String mUrl;
@@ -74,7 +75,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         mProgressView = (ProgressView) findViewById(R.id.progress_view);
         mFailed = findViewById(R.id.failed);
-        mImageView = (ImageView) findViewById(R.id.image_view);
+        mPhotoView = (PhotoView) findViewById(R.id.image_view);
     }
 
     private void addRetry() {
@@ -86,8 +87,37 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         setClickable(false);
     }
 
+    private void updateMaximumScale() {
+        Drawable drawable = mPhotoView.getDrawable();
+
+        if (drawable != null && drawable.getIntrinsicHeight() > 0) {
+            int drawableWidth = drawable.getIntrinsicWidth();
+            int drawableHeight = drawable.getIntrinsicHeight();
+            int height = getHeight();
+            int width = getHeight();
+            float scaleX = 3.0f;
+            float scaleY = 3.0f;
+
+            if (drawableWidth > 0 && width > 0) {
+                scaleX = ((float) drawableWidth / (float) width) * 1.5f;
+            }
+            if (drawableHeight > 0 && height > 0) {
+                scaleY = ((float) drawableHeight / (float) height) * 1.5f;
+            }
+
+            mPhotoView.setMaximumScale(MathUtils.max(3.0f, scaleX, scaleY));
+        }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        updateMaximumScale();
+    }
+
     private void setImageDrawableSafely(Drawable drawable) {
-        Drawable oldDrawable = mImageView.getDrawable();
+        Drawable oldDrawable = mPhotoView.getDrawable();
         if (oldDrawable instanceof TransitionDrawable) {
             TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
             int number = tDrawable.getNumberOfLayers();
@@ -104,7 +134,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
             ((TiledBitmapDrawable) oldDrawable).recycle(null);
         }
 
-        mImageView.setImageDrawable(drawable);
+        mPhotoView.setImageDrawable(drawable);
+
+        updateMaximumScale();
     }
 
     @Override
@@ -133,7 +165,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setVisibility(VISIBLE);
         mProgressView.setIndeterminate(true);
         mFailed.setVisibility(GONE);
-        mImageView.setVisibility(GONE);
+        mPhotoView.setVisibility(GONE);
         setImageDrawableSafely(null);
 
         // Release old holder
@@ -192,7 +224,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(GONE);
-        mImageView.setVisibility(VISIBLE);
+        mPhotoView.setVisibility(VISIBLE);
 
         Drawable drawable = holder.getDrawable();
         if (drawable instanceof GifDrawable) {
@@ -217,7 +249,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(VISIBLE);
-        mImageView.setVisibility(GONE);
+        mPhotoView.setVisibility(GONE);
         setImageDrawableSafely(null);
 
         // Release old holder
@@ -240,7 +272,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(GONE);
-        mImageView.setVisibility(VISIBLE);
+        mPhotoView.setVisibility(VISIBLE);
 
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
@@ -253,11 +285,11 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(VISIBLE);
-        mImageView.setVisibility(GONE);
+        mPhotoView.setVisibility(GONE);
         setImageDrawableSafely(null);
     }
 
     public boolean isLoaded() {
-        return mImageView.getDrawable() != null;
+        return mPhotoView.getDrawable() != null;
     }
 }
