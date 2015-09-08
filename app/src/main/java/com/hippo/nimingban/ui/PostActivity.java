@@ -440,7 +440,7 @@ public final class PostActivity extends AbsActivity
         private void onGetReference(final Reply reply, boolean animation) {
             mReply = reply;
 
-            mLeftText.setText(reply.getNMBDisplayUsername());
+            mLeftText.setText(highlightOp(reply));
             mCenterText.setText("No." + reply.getNMBId());
             mRightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
             mContent.setText(reply.getNMBDisplayContent());
@@ -666,7 +666,7 @@ public final class PostActivity extends AbsActivity
         @Override
         public void onBindViewHolder(ReplyHolder holder, int position) {
             Reply reply = mReplyHelper.getDataAt(position);
-            holder.leftText.setText(reply.getNMBDisplayUsername());
+            holder.leftText.setText(highlightOp(reply));
             holder.centerText.setText("No." + reply.getNMBId());
             holder.rightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
             holder.content.setText(reply.getNMBDisplayContent());
