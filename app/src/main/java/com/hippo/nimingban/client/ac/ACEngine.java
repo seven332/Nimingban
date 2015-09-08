@@ -281,7 +281,12 @@ public class ACEngine {
                 if (!elements.isEmpty()) {
                     return null;
                 } else {
-                    throw new NMBException(ACSite.getInstance(), "Unknown"); // Can't get error message from body
+                    elements = doc.getElementsByTag("h1");
+                    if (!elements.isEmpty()) {
+                        throw new NMBException(ACSite.getInstance(), elements.get(0).text());
+                    } else {
+                        throw new NMBException(ACSite.getInstance(), "Unknown");
+                    }
                 }
             }
 
@@ -357,7 +362,12 @@ public class ACEngine {
                 if (!elements.isEmpty()) {
                     return null;
                 } else {
-                    throw new NMBException(ACSite.getInstance(), "Unknown"); // Can't get error message from body
+                    elements = doc.getElementsByTag("h1");
+                    if (!elements.isEmpty()) {
+                        throw new NMBException(ACSite.getInstance(), elements.get(0).text());
+                    } else {
+                        throw new NMBException(ACSite.getInstance(), "Unknown");
+                    }
                 }
             }
         } catch (Exception e) {
@@ -513,7 +523,12 @@ public class ACEngine {
                 if (!elements.isEmpty()) {
                     return null;
                 } else {
-                    throw new NMBException(ACSite.getInstance(), "Unknown"); // Can't get error message from body
+                    elements = doc.getElementsByTag("h1");
+                    if (!elements.isEmpty()) {
+                        throw new NMBException(ACSite.getInstance(), elements.get(0).text());
+                    } else {
+                        throw new NMBException(ACSite.getInstance(), "Unknown");
+                    }
                 }
             }
         } catch (Exception e) {
