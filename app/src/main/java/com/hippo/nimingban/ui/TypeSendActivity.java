@@ -210,7 +210,9 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     protected void onDestroy() {
         super.onDestroy();
 
-        clearImagePreview();
+        if (mPreview != null && mImagePreview != null && mEditText != null) {
+            clearImagePreview();
+        }
 
         if (mNMBRequest != null) {
             mNMBRequest.cancel();

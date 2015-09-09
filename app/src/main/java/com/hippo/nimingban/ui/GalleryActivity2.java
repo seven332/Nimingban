@@ -122,11 +122,13 @@ public class GalleryActivity2 extends AbsActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        // Unload all pager
-        for (int i = 0, n = mViewPager.getChildCount(); i < n; i++) {
-            View child = mViewPager.getChildAt(i);
-            if (child instanceof GalleryPage) {
-                ((GalleryPage) child).unload();
+        if (mViewPager != null) {
+            // Unload all pager
+            for (int i = 0, n = mViewPager.getChildCount(); i < n; i++) {
+                View child = mViewPager.getChildAt(i);
+                if (child instanceof GalleryPage) {
+                    ((GalleryPage) child).unload();
+                }
             }
         }
 
