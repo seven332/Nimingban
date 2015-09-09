@@ -1036,6 +1036,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             mRightOpened = false;
         }
 
+        mShadow.removeTapAction();
+
         // Callback
         if (update && mListener != null) {
             mListener.onDrawerClosed(drawerView);
@@ -1052,6 +1054,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             update = !mRightOpened;
             mRightOpened = true;
         }
+
+        mShadow.addTapAction();
 
         // Callback
         if (update && mListener != null) {
@@ -1201,6 +1205,15 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             invalidate();
         }
 
+        public void addTapAction() {
+            setOnClickListener(this);
+        }
+
+        public void removeTapAction() {
+            setOnClickListener(null);
+            setClickable(false);
+        }
+
         @Override
         protected void onDraw(Canvas c) {
             c.drawARGB(MathUtils.lerp(mForm, mTo, mPercent), 0, 0, 0);
@@ -1225,13 +1238,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     mShadowRight.setAlpha((int) (0xff * mRightPercent));
                     mShadowRight.draw(c);
                 }
-            }
-
-            if (mLeftOpened || mRightOpened) {
-                setOnClickListener(this);
-            } else {
-                setOnClickListener(null);
-                setClickable(false);
             }
         }
 
