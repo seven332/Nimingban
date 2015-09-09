@@ -35,6 +35,7 @@
 - [jsoup](https://github.com/jhy/jsoup)
 - [leakcanary](https://github.com/square/leakcanary)
 - [PhotoView](https://github.com/chrisbanes/PhotoView)
+- [SwipeBackLayout](https://github.com/ikew0ng/SwipeBackLayout)
 
 
 # License

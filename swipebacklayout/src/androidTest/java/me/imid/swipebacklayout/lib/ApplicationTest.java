@@ -14,4 +14,16 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', ':daogenerator', ':swipebacklayout', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'unifile'
+package me.imid.swipebacklayout.lib;
+
+import android.app.Application;
+import android.test.ApplicationTestCase;
+
+/**
+ * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ */
+public class ApplicationTest extends ApplicationTestCase<Application> {
+    public ApplicationTest() {
+        super(Application.class);
+    }
+}

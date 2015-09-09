@@ -78,7 +78,7 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public final class PostActivity extends AbsActivity
+public final class PostActivity extends SwipeActivity
         implements EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener {
 
@@ -148,12 +148,12 @@ public final class PostActivity extends AbsActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_Transparent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_Transparent;
     }
 
     @Override

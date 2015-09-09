@@ -52,6 +52,12 @@
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
     </style>
 
+    <style name="AppTheme.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -92,6 +98,12 @@
         <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme.Dark</item>
+    </style>
+
+    <style name="AppTheme.Dark.Transparent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionBar">

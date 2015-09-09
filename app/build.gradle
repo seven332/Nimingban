@@ -50,6 +50,7 @@ dependencies {
     compile project(':hotspot')
     compile project(':httpclient')
     compile project(':rippleold')
+    compile project(':swipebacklayout')
     compile project(':unifile')
     compile project(':yorozuya')
     compile 'com.android.support:appcompat-v7:23.0.1'

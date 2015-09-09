@@ -46,7 +46,7 @@
 
         <activity
             android:name="com.hippo.nimingban.ui.PostActivity"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.Transparent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait">
 
