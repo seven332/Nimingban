@@ -59,6 +59,8 @@
     <string name="feed">Feed</string>
     <string name="no_feed">There is no feed</string>
 
+    <string name="search">Search</string>
+
     <string name="reply_to_comment">Reply to comment</string>
     <string name="copy_comment_text">Copy comment text</string>
     <string name="report_comment">Report comment</string>

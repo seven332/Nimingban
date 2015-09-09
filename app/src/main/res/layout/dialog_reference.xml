@@ -68,9 +68,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/left_text"
                     android:layout_marginTop="8dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat"
                     android:textSize="@dimen/text_little_small"
-                    android:textColorLink="@color/green_ntr"/>
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorLink="?attr/colorAccent"/>
 
                 <com.hippo.nimingban.widget.LoadImageView
                     xmlns:app="http://schemas.android.com/apk/res-auto"

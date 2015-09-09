@@ -22,7 +22,6 @@
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorShadow">@color/shadow_light</item>
-        <item name="colorTextPrimary">@color/primary_text_default_light</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
         <item name="colorPure">@color/pure_light</item>
         <item name="colorPureInverse">@color/pure_inverse_light</item>
@@ -31,6 +30,9 @@
 
         <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
         <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_light_x16</item>
+
+        <item name="android:textColorPrimary">@color/primary_text_light</item>
+        <item name="android:textColorSecondary">@color/secondary_text_light</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -39,7 +41,6 @@
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorShadow">@color/shadow_light</item>
-        <item name="colorTextPrimary">@color/primary_text_default_light</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
         <item name="colorPure">@color/pure_light</item>
         <item name="colorPureInverse">@color/pure_inverse_light</item>
@@ -50,6 +51,9 @@
         <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_light_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
+
+        <item name="android:textColorPrimary">@color/primary_text_light</item>
+        <item name="android:textColorSecondary">@color/secondary_text_light</item>
     </style>
 
     <style name="AppTheme.Transparent">
@@ -70,7 +74,6 @@
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_dark</item>
         <item name="colorShadow">@color/shadow_dark</item>
-        <item name="colorTextPrimary">@color/primary_text_default_dark</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
         <item name="colorPure">@color/pure_dark</item>
         <item name="colorPureInverse">@color/pure_inverse_dark</item>
@@ -79,6 +82,9 @@
 
         <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
         <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
+
+        <item name="android:textColorPrimary">@color/primary_text_dark</item>
+        <item name="android:textColorSecondary">@color/secondary_text_dark</item>
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
@@ -87,7 +93,6 @@
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_dark</item>
         <item name="colorShadow">@color/shadow_dark</item>
-        <item name="colorTextPrimary">@color/primary_text_default_dark</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
         <item name="colorPure">@color/pure_dark</item>
         <item name="colorPureInverse">@color/pure_inverse_dark</item>
@@ -98,6 +103,9 @@
         <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme.Dark</item>
+
+        <item name="android:textColorPrimary">@color/primary_text_dark</item>
+        <item name="android:textColorSecondary">@color/secondary_text_dark</item>
     </style>
 
     <style name="AppTheme.Dark.Transparent">

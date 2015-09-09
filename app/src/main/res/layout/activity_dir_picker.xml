@@ -32,7 +32,7 @@
         android:layout_marginBottom="8dp"
         android:singleLine="true"
         android:ellipsize="start"
-        android:textColor="?attr/colorTextPrimary"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_little_small"/>
 
     <com.hippo.nimingban.widget.DirExplorer

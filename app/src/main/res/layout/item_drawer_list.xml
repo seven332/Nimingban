@@ -24,6 +24,6 @@
     android:drawablePadding="32dp"
     android:minHeight="48dp"
     android:textSize="@dimen/text_little_small"
-    android:textColor="?attr/colorTextPrimary">
+    android:textColor="?android:attr/textColorPrimary">
 
 </TextView>
