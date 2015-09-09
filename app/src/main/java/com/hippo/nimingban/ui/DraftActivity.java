@@ -65,7 +65,7 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_NoActionBar;
+        return R.style.AppTheme_Dark;
     }
 
     @Override
