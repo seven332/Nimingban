@@ -138,6 +138,10 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         mFailed = false;
         cancelRetryType();
 
+        if (url == null || (key == null && container == null) || (key != null && container != null)) {
+            return;
+        }
+
         mKey = key;
         mUrl = url;
         mContainer = container;

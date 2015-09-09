@@ -159,6 +159,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     public void load(String id, String url) {
         removeRetry();
 
+        if (url == null) {
+            return;
+        }
+
         mId = id;
         mUrl = url;
 
