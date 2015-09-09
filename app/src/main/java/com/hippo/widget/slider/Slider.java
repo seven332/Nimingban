@@ -174,9 +174,7 @@ public class Slider extends View {
         }
 
         Paint.FontMetrics fm = mPaint.getFontMetrics();
-        float charOffsetY = -fm.top;
         mCharHeight = fm.bottom - fm.top;
-        mBubble.setCharInfo(charOffsetY);
     }
 
     private void updateBubbleSize() {
@@ -458,7 +456,7 @@ public class Slider extends View {
 
         private String mProgressStr = "";
 
-        private float mCharOffsetY;
+        private Rect mRect = new Rect();
 
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
@@ -472,14 +470,11 @@ public class Slider extends View {
             mDrawable.setColor(color);
         }
 
-        public void setCharInfo(float offsetY) {
-            mCharOffsetY = offsetY;
-        }
-
         public void setProgress(int progress) {
             String str = Integer.toString(progress);
             if (!str.equals(mProgressStr)) {
                 mProgressStr = str;
+                mTextPaint.getTextBounds(str, 0, str.length(), mRect);
                 invalidate();
             }
         }
@@ -496,7 +491,7 @@ public class Slider extends View {
             int width = getWidth();
             int height = getHeight();
             int x = width / 2;
-            int y = (int) (height * TEXT_CENTER + mCharOffsetY);
+            int y = (int) ((height * TEXT_CENTER) + (mRect.height() / 2));
             canvas.drawText(mProgressStr, x, y, mTextPaint);
         }
     }
