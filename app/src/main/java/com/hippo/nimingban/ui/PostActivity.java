@@ -38,13 +38,10 @@ import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +69,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.slider.Slider;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -199,12 +197,12 @@ public final class PostActivity extends SwipeActivity
     }
 
     private class GoToDialogHelper implements View.OnClickListener,
-            DialogInterface.OnDismissListener, EditText.OnEditorActionListener {
+            DialogInterface.OnDismissListener {
 
         private int mPages;
 
         private View mView;
-        private EditText mEditText;
+        private Slider mSlider;
 
         private Dialog mDialog;
 
@@ -212,9 +210,14 @@ public final class PostActivity extends SwipeActivity
         private GoToDialogHelper(int pages, int currentPage) {
             mPages = pages;
             mView = getLayoutInflater().inflate(R.layout.dialog_go_to, null);
-            mEditText = (EditText) mView.findViewById(R.id.edit_text);
-            mEditText.setHint(getResources().getQuantityString(R.plurals.go_to_hint, pages, currentPage + 1, pages));
-            mEditText.setOnEditorActionListener(this);
+            ((TextView) mView.findViewById(R.id.start)).setText("1");
+            ((TextView) mView.findViewById(R.id.end)).setText(Integer.toString(pages));
+            mSlider = (Slider) mView.findViewById(R.id.slider);
+            mSlider.setRange(1, pages);
+
+            Log.d("TAG", "pages = " + pages);
+
+            mSlider.setProgress(currentPage + 1);
         }
 
         public View getView() {
@@ -228,32 +231,16 @@ public final class PostActivity extends SwipeActivity
         }
 
         @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
-                onClick(null);
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
         public void onClick(View v) {
-            // Do not check v, because onEditorAction pass null
-            String str = mEditText.getText().toString();
-            try {
-                int page = Integer.parseInt(str) - 1;
-                if (page >= 0 && page < mPages) {
-                    mReplyHelper.goTo(page);
-                    if (mDialog != null) {
-                        mDialog.dismiss();
-                        mDialog = null;
-                    }
-                } else {
-                    Toast.makeText(PostActivity.this, R.string.go_to_error_out_of_range, Toast.LENGTH_SHORT).show();
+            int page = mSlider.getProgress() - 1;
+            if (page >= 0 && page < mPages) {
+                mReplyHelper.goTo(page);
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                    mDialog = null;
                 }
-            } catch (Exception e) {
-                Toast.makeText(PostActivity.this, R.string.go_to_error_invalid, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(PostActivity.this, R.string.go_to_error_out_of_range, Toast.LENGTH_SHORT).show();
             }
         }
 
