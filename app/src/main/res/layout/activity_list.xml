@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.DrawerLayout
+<com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
@@ -40,4 +40,4 @@
         android:layout_gravity="right"
         android:background="?android:attr/colorBackground"/>
 
-</android.support.v4.widget.DrawerLayout>
+</com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout>

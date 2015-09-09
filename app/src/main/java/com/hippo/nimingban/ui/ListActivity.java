@@ -23,12 +23,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -71,6 +69,8 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.TextUtils2;
+import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
+import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.FileUtils;
@@ -92,7 +92,7 @@ public final class ListActivity extends AbsActivity
     private NMBClient mNMBClient;
     private Conaco mConaco;
 
-    private DrawerLayout mDrawerLayout;
+    private SlidingDrawerLayout mSlidingDrawerLayout;
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
     private LeftDrawer mLeftDrawer;
@@ -132,13 +132,13 @@ public final class ListActivity extends AbsActivity
         mNMBClient = NMBApplication.getNMBClient(this);
         mConaco = NMBApplication.getConaco(this);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mContentLayout = (ContentLayout) mDrawerLayout.findViewById(R.id.content_layout);
+        mSlidingDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawer_layout);
+        mContentLayout = (ContentLayout) mSlidingDrawerLayout.findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
-        mLeftDrawer = (LeftDrawer) mDrawerLayout.findViewById(R.id.left_drawer);
-        mRightDrawer = (RightDrawer) mDrawerLayout.findViewById(R.id.right_drawer);
+        mLeftDrawer = (LeftDrawer) mSlidingDrawerLayout.findViewById(R.id.left_drawer);
+        mRightDrawer = (RightDrawer) mSlidingDrawerLayout.findViewById(R.id.right_drawer);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mSlidingDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 
             @Override
@@ -172,7 +172,7 @@ public final class ListActivity extends AbsActivity
                 }
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mSlidingDrawerLayout.setDrawerListener(mDrawerToggle);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -180,12 +180,8 @@ public final class ListActivity extends AbsActivity
             actionBar.setHomeButtonEnabled(true);
         }
 
-        // For lollip and above, use elevation
-        // @see DrawerLayout#measure(int, int)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
-            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_right, Gravity.RIGHT);
-        }
+        mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_left), Gravity.LEFT);
+        mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_right), Gravity.RIGHT);
 
         mPostHelper = new PostHelper();
         mPostHelper.setEmptyString(getString(R.string.no_post));
@@ -398,9 +394,9 @@ public final class ListActivity extends AbsActivity
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout != null && (mDrawerLayout.isDrawerOpen(Gravity.LEFT) ||
-                mDrawerLayout.isDrawerOpen(Gravity.RIGHT))) {
-            mDrawerLayout.closeDrawers();
+        if (mSlidingDrawerLayout != null && (mSlidingDrawerLayout.isDrawerOpen(Gravity.LEFT) ||
+                mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT))) {
+            mSlidingDrawerLayout.closeDrawers();
         } else {
             long time = System.currentTimeMillis();
             if (time - mPressBackTime > BACK_PRESSED_INTERVAL) {
@@ -432,7 +428,7 @@ public final class ListActivity extends AbsActivity
         mRefreshMenu = menu.findItem(R.id.action_refresh);
         mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
 
-        if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+        if (mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
             mCreatePost.setVisible(false);
             mRefreshMenu.setVisible(false);
             mSortForumsMenu.setVisible(true);
@@ -450,12 +446,12 @@ public final class ListActivity extends AbsActivity
         Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                if (mSlidingDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    mSlidingDrawerLayout.closeDrawer(Gravity.LEFT);
                 } else {
-                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    mSlidingDrawerLayout.openDrawer(Gravity.LEFT);
                 }
-                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                mSlidingDrawerLayout.closeDrawer(Gravity.RIGHT);
                 return true;
             case R.id.action_create_post:
                 if (mCurrentForum != null) {
@@ -494,7 +490,7 @@ public final class ListActivity extends AbsActivity
                         !mCurrentForum.getNMBId().equals(forum.getNMBId()))) {
             mCurrentForum = forum;
             updateTitleByForum(mCurrentForum);
-            mDrawerLayout.closeDrawer(Gravity.RIGHT);
+            mSlidingDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
     }
