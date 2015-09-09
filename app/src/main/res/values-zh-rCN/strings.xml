@@ -58,6 +58,8 @@
     <string name="feed">订阅</string>
     <string name="no_feed">没有订阅</string>
 
+    <string name="search">Search</string>
+
     <string name="reply_to_comment">回复评论</string>
     <string name="copy_comment_text">复制评论文字</string>
     <string name="report_comment">举报评论</string>
