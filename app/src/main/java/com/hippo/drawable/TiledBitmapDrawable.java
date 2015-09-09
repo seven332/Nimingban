@@ -25,8 +25,10 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.hippo.conaco.BitmapPool;
+import com.hippo.yorozuya.MathUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TiledBitmapDrawable extends Drawable {
+
+    private static final String TAG = TiledBitmapDrawable.class.getSimpleName();
 
     private static final int TILE_SIZE = 256;
 
@@ -121,6 +125,18 @@ public class TiledBitmapDrawable extends Drawable {
     public static TiledBitmapDrawable from(InputStream is, int width, int height, BitmapPool pool) {
         List<Tile> tiles = new ArrayList<>();
 
+        int scale;
+        if (width / height >= 5 || height / width >= 5) {
+            // It might be slender image, keep it
+            scale = 1;
+        } else {
+            scale = MathUtils.previousPowerOf2(Math.max((width * height / 1536 / 1536) + 1, 1));
+        }
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        options.inSampleSize = scale;
+
         BitmapRegionDecoder decoder = null;
         try {
             decoder = BitmapRegionDecoder.newInstance(is, true);
@@ -136,16 +152,20 @@ public class TiledBitmapDrawable extends Drawable {
 
                     while (true) {
                         rect.set(x, y, x + w, y + h);
-                        final BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inMutable = true;
-                        options.inSampleSize = 1;
                         options.inBitmap = pool.getInBitmap(options);
-                        bitmap = decoder.decodeRegion(rect, options);
 
-                        if (bitmap == null && bottom && !tryCutBottom && h > 1) {
-                            tryCutBottom = true;
-                            h--;
-                        } else {
+                        try {
+                            bitmap = decoder.decodeRegion(rect, options);
+
+                            if (bitmap == null && bottom && !tryCutBottom && h > 1) {
+                                tryCutBottom = true;
+                                h--;
+                            } else {
+                                break;
+                            }
+                        } catch (OutOfMemoryError e) {
+                            Log.e(TAG, "Out of memory");
+                            bitmap = null;
                             break;
                         }
                     }
@@ -153,15 +173,15 @@ public class TiledBitmapDrawable extends Drawable {
                     if (bitmap != null) {
                         Tile tile = new Tile();
                         tile.bitmap = bitmap;
-                        tile.width = w;
-                        tile.height = h;
-                        tile.x = x;
-                        tile.y = y;
+                        tile.width = w / scale;
+                        tile.height = h / scale;
+                        tile.x = x / scale;
+                        tile.y = y / scale;
                         tiles.add(tile);
                     }
                 }
             }
-            return new TiledBitmapDrawable(tiles, width, height);
+            return new TiledBitmapDrawable(tiles, width / scale, height / scale);
         } catch (IOException e) {
             // Recycle
             for (Tile tile : tiles) {
