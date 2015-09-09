@@ -304,7 +304,7 @@ public class SwipeBackLayout extends FrameLayout {
      * Set a drawable used for edge shadow.
      *
      * @param shadow    Drawable to use
-     * @param edgeFlags Combination of edge flags describing the edge to set
+     * @param edgeFlag Combination of edge flags describing the edge to set
      * @see #EDGE_LEFT
      * @see #EDGE_RIGHT
      * @see #EDGE_BOTTOM
@@ -324,7 +324,7 @@ public class SwipeBackLayout extends FrameLayout {
      * Set a drawable used for edge shadow.
      *
      * @param resId     Resource of drawable to use
-     * @param edgeFlags Combination of edge flags describing the edge to set
+     * @param edgeFlag Combination of edge flags describing the edge to set
      * @see #EDGE_LEFT
      * @see #EDGE_RIGHT
      * @see #EDGE_BOTTOM
@@ -356,17 +356,39 @@ public class SwipeBackLayout extends FrameLayout {
         invalidate();
     }
 
+    private boolean mSwipevertically = false;
+    private float mStartX;
+    private float mStartY;
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         if (!mEnable) {
             return false;
         }
-        try {
-            return mDragHelper.shouldInterceptTouchEvent(event);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // FIXME: handle exception
-            // issues #9
+
+        float x = event.getX();
+        float y = event.getY();
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mSwipevertically = false;
+            mStartX = x;
+            mStartY = y;
+        } else if (!mSwipevertically) {
+            float dx = Math.abs(mStartX - x);
+            float dy = Math.abs(mStartY - y);
+            mSwipevertically = dy > mDragHelper.getTouchSlop() && dy > 1.5 * dx;
+        }
+
+        if (mSwipevertically) {
             return false;
+        } else {
+            try {
+                return mDragHelper.shouldInterceptTouchEvent(event);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // FIXME: handle exception
+                // issues #9
+                return false;
+            }
         }
     }
 
