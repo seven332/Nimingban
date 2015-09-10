@@ -276,6 +276,10 @@ public class ACEngine {
                     throw new NMBException(ACSite.getInstance(), msg);
                 }
             } catch (Exception e) {
+                if  (e instanceof NMBException) {
+                    throw e;
+                }
+
                 Document doc = Jsoup.parse(body);
                 List<Element> elements = doc.getElementsByClass("success");
                 if (!elements.isEmpty()) {
@@ -357,6 +361,10 @@ public class ACEngine {
                     throw new NMBException(ACSite.getInstance(), msg);
                 }
             } catch (Exception e) {
+                if  (e instanceof NMBException) {
+                    throw e;
+                }
+
                 Document doc = Jsoup.parse(body);
                 List<Element> elements = doc.getElementsByClass("success");
                 if (!elements.isEmpty()) {
@@ -518,6 +526,10 @@ public class ACEngine {
                     throw new NMBException(ACSite.getInstance(), msg);
                 }
             } catch (Exception e) {
+                if  (e instanceof NMBException) {
+                    throw e;
+                }
+
                 Document doc = Jsoup.parse(body);
                 List<Element> elements = doc.getElementsByClass("success");
                 if (!elements.isEmpty()) {
