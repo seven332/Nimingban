@@ -99,10 +99,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
             float scaleY = 3.0f;
 
             if (drawableWidth > 0 && width > 0) {
-                scaleX = ((float) drawableWidth / (float) width) * 1.5f;
+                scaleX = ((float) drawableWidth / (float) width) * 3f;
             }
             if (drawableHeight > 0 && height > 0) {
-                scaleY = ((float) drawableHeight / (float) height) * 1.5f;
+                scaleY = ((float) drawableHeight / (float) height) * 3f;
             }
 
             mPhotoView.setMaximumScale(MathUtils.max(3.0f, scaleX, scaleY));
