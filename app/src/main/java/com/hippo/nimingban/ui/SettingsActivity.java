@@ -19,6 +19,7 @@ package com.hippo.nimingban.ui;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -216,7 +217,11 @@ public class SettingsActivity extends AbsActivity {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         private void openDirPickerL() {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR_L);
+            try {
+                startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR_L);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(getContext(), R.string.em_cant_find_activity, Toast.LENGTH_SHORT).show();
+            }
         }
 
         private void showDirPickerDialogKK() {
