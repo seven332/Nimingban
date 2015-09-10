@@ -23,6 +23,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.hippo.conaco.BitmapPool;
 import com.hippo.conaco.DrawableHelper;
@@ -90,7 +91,12 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 options.inBitmap = mBitmapPool.getInBitmap(options);
 
                 is = isPipe.open();
-                Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+                Bitmap bitmap = null;
+                try {
+                    bitmap = BitmapFactory.decodeStream(is, null, options);
+                } catch (OutOfMemoryError e) {
+                    Log.d("TAG", "Out of memory");
+                }
                 if (bitmap != null) {
                     return new BitmapDrawable(mContext.getResources(), bitmap);
                 } else {
