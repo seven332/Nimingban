@@ -69,7 +69,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.slider.Slider;
+import com.hippo.widget.Slider;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;

@@ -50,7 +50,7 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.widget.slider.Slider;
+import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;

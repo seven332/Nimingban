@@ -51,7 +51,7 @@
             android:text="12"
             tools:ignore="HardcodedText"/>
 
-        <com.hippo.widget.slider.Slider
+        <com.hippo.widget.Slider
             android:id="@+id/font_size"
             style="@style/Slider"
             android:layout_width="0dp"
@@ -89,7 +89,7 @@
             android:text="1"
             tools:ignore="HardcodedText"/>
 
-        <com.hippo.widget.slider.Slider
+        <com.hippo.widget.Slider
             android:id="@+id/line_spacing"
             style="@style/Slider"
             android:layout_width="0dp"

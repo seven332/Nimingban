@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.hippo.widget.slider;
+package com.hippo.widget;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -28,7 +29,6 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -88,8 +88,8 @@ public class Slider extends View {
 
     private float mDrawBubbleScale = 0f;
 
-    private FloatAnimation mProgressAnimation;
-    private FloatAnimation mBubbleScaleAnimation;
+    private ValueAnimator mProgressAnimation;
+    private ValueAnimator mBubbleScaleAnimation;
 
     private OnSetProgressListener mListener;
 
@@ -141,27 +141,31 @@ public class Slider extends View {
         setColor(a.getColor(R.styleable.Slider_color, Color.BLACK));
         a.recycle();
 
-        mProgressAnimation = new FloatAnimation() {
+        mProgressAnimation = new ValueAnimator();
+        mProgressAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        mProgressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            protected void onCalculate(float progress) {
-                super.onCalculate(progress);
-                mDrawPercent = get();
-                mDrawProgress = Math.round(MathUtils.lerp((float) mStart, mEnd, mDrawPercent));
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (Float) animation.getAnimatedValue();
+                mDrawPercent = value;
+                mDrawProgress = Math.round(MathUtils.lerp((float) mStart, mEnd, value));
                 updateBubblePosition();
                 mBubble.setProgress(mDrawProgress);
+                invalidate();
             }
-        };
-        mProgressAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        });
 
-        mBubbleScaleAnimation = new FloatAnimation() {
+        mBubbleScaleAnimation = new ValueAnimator();
+        mBubbleScaleAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            protected void onCalculate(float progress) {
-                super.onCalculate(progress);
-                mDrawBubbleScale = get();
-                mBubble.setScaleX(mDrawBubbleScale);
-                mBubble.setScaleY(mDrawBubbleScale);
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (Float) animation.getAnimatedValue();
+                mDrawBubbleScale = value;
+                mBubble.setScaleX(value);
+                mBubble.setScaleY(value);
+                invalidate();
             }
-        };
+        });
     }
 
     private void updateTextSize() {
@@ -228,7 +232,7 @@ public class Slider extends View {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        mPopup.showAtLocation(this, Gravity.TOP|Gravity.LEFT, mPopupX, mPopupY);
+        mPopup.showAtLocation(this, Gravity.TOP | Gravity.LEFT, mPopupX, mPopupY);
     }
 
     @Override
@@ -239,36 +243,33 @@ public class Slider extends View {
     }
 
     private void startProgressAnimation(float percent) {
-        boolean running = mProgressAnimation.isRunning();
-        mProgressAnimation.forceStop();
-        mProgressAnimation.setRange(mDrawPercent, percent);
-        mProgressAnimation.setDuration(Math.min(500, (long) (20 * getWidth() * Math.abs(mDrawPercent - percent))));
-        // Avoid fast swipe to block changing
-        long startTime = mProgressAnimation.getLastFrameTime();
-        if (running && startTime > 0) {
-            mProgressAnimation.startAt(startTime);
+        float currentValue;
+        Object value = mProgressAnimation.getAnimatedValue();
+        if (value instanceof  Float) {
+            currentValue = (float) value;
         } else {
-            mProgressAnimation.startNow();
+            currentValue = mDrawPercent;
         }
-        invalidate();
+        mProgressAnimation.cancel();
+        mProgressAnimation.setFloatValues(currentValue, percent);
+        mProgressAnimation.setDuration(Math.min(500, (long) (50 * getWidth() * Math.abs(currentValue - percent))));
+        mProgressAnimation.start();
     }
 
     private void startShowBubbleAnimation() {
-        mBubbleScaleAnimation.forceStop();
-        mBubbleScaleAnimation.setRange(mDrawBubbleScale, 1.0f);
+        mBubbleScaleAnimation.cancel();
+        mBubbleScaleAnimation.setFloatValues(mDrawBubbleScale, 1.0f);
         mBubbleScaleAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
         mBubbleScaleAnimation.setDuration((long) (300 * Math.abs(mDrawBubbleScale - 1.0f)));
         mBubbleScaleAnimation.start();
-        invalidate();
     }
 
     private void startHideBubbleAnimation() {
-        mBubbleScaleAnimation.forceStop();
-        mBubbleScaleAnimation.setRange(mDrawBubbleScale, 0.0f);
+        mBubbleScaleAnimation.cancel();
+        mBubbleScaleAnimation.setFloatValues(mDrawBubbleScale, 0.0f);
         mBubbleScaleAnimation.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
         mBubbleScaleAnimation.setDuration((long) (300 * Math.abs(mDrawBubbleScale - 0.0f)));
         mBubbleScaleAnimation.start();
-        invalidate();
     }
 
     public void setColor(int color) {
@@ -325,22 +326,8 @@ public class Slider extends View {
         mListener = listener;
     }
 
-    private void update() {
-        boolean invalidate;
-
-        long time = SystemClock.uptimeMillis();
-        invalidate = mProgressAnimation.calculate(time);
-        invalidate |= mBubbleScaleAnimation.calculate(time);
-
-        if (invalidate) {
-            invalidate();
-        }
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
-        update();
-
         int width = getWidth();
         int height = getHeight();
         if (width < LayoutUtils.dp2pix(mContext, 24)) {
@@ -365,6 +352,7 @@ public class Slider extends View {
             float currentX = paddingLeft + radius + (width - radius - radius - paddingLeft - paddingRight) *
                     (mReverse ? (1.0f - mDrawPercent) : mDrawPercent);
 
+            // Draw controller
             float scale = 1.0f - mDrawBubbleScale;
             if (scale != 0.0f) {
                 canvas.scale(scale, scale, currentX, 0);

@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical"
         android:gravity="center_horizontal"/>
 
-    <com.hippo.widget.slider.Slider
+    <com.hippo.widget.Slider
         android:id="@+id/slider"
         style="@style/Slider"
         android:layout_width="0dp"
