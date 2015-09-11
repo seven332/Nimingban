@@ -35,8 +35,9 @@ import java.io.File;
 public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickListener,
         HeaderImageView.OnLongClickImageListener {
 
-    private static final int INDEX_FEED = 0;
-    private static final int INDEX_SETTINGS = 1;
+    private static final int INDEX_SEARCH = 0;
+    private static final int INDEX_FEED = 1;
+    private static final int INDEX_SETTINGS = 2;
 
     private HeaderImageView mHeader;
     private DrawerListView mDrawerListView;
@@ -72,16 +73,20 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         Resources resources = context.getResources();
 
         int tintColor = ResourcesUtils.getAttrColor(context, R.attr.colorDrawablePrimary);
+        Drawable search = DrawableCompat.wrap(resources.getDrawable(R.drawable.ic_magnify_black_x24));
+        DrawableCompat.setTint(search, tintColor);
         Drawable feed = DrawableCompat.wrap(resources.getDrawable(R.drawable.ic_rss_black_x24));
         DrawableCompat.setTint(feed, tintColor);
         Drawable settings = DrawableCompat.wrap(resources.getDrawable(R.drawable.ic_settings_black_x24));
         DrawableCompat.setTint(settings, tintColor);
 
         Drawable[] drawables = {
+                search,
                 feed,
                 settings
         };
         String[] strings = {
+                resources.getString(R.string.search),
                 resources.getString(R.string.feed),
                 resources.getString(R.string.settings)
         };
@@ -100,6 +105,11 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
         long now = System.currentTimeMillis();
         if (now - mHit > 500) {
             switch (position) {
+                case INDEX_SEARCH:
+                    if (mHelper != null) {
+                        mHelper.onClickSearch();
+                    }
+                    break;
                 case INDEX_FEED:
                     if (mHelper != null) {
                         mHelper.onClickFeed();
@@ -132,6 +142,8 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
     public interface Helper {
 
         void OnLongClickImage(File imageFile);
+
+        void onClickSearch();
 
         void onClickFeed();
 

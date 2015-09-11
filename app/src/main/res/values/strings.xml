@@ -46,6 +46,11 @@
     <string name="go_to_error_invalid">Please enter a valid number</string>
     <string name="go_to_error_out_of_range">Target page is out of range</string>
 
+    <string name="go_to_post">Go to thread</string>
+    <string name="keyword_empty">Keyword is empty</string>
+    <string name="not_found">Nobody here but us chickens</string>
+    <string name="search_title">Search - %s   from Bing</string>
+
     <string name="add_feed">Add feed</string>
     <string name="remove_feed">Remove feed</string>
     <string name="add_feed_successfully">Add feed successfully</string>

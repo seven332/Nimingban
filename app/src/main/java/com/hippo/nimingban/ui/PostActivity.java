@@ -191,6 +191,16 @@ public final class PostActivity extends SwipeActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mNMBRequest != null) {
+            mNMBRequest.cancel();
+            mNMBRequest = null;
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_post, menu);
         return true;

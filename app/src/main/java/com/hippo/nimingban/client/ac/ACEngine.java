@@ -41,6 +41,7 @@ import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
+import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
@@ -50,6 +51,7 @@ import com.hippo.yorozuya.io.InputStreamPipe;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,6 +59,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // TODO let Engine create url
 public class ACEngine {
@@ -161,10 +165,9 @@ public class ACEngine {
         try {
             httpRequest.setUrl(url);
             HttpResponse response = httpClient.execute(httpRequest);
-            String body = response.getString();
 
             ACReference reference = new ACReference();
-            Document doc = Jsoup.parse(body);
+            Document doc = Jsoup.parse(response.getInputStream(), "UTF-8", ACUrl.HOST + "/");
             List<Element> elements = doc.getAllElements();
             for (Element element : elements) {
                 String className = element.className();
@@ -598,6 +601,62 @@ public class ACEngine {
             isp.close();
             isp.release();
             IOUtils.closeQuietly(os);
+        }
+    }
+
+    private static Pattern URL_PATTERN = Pattern.compile("http://h.nimingban.com/t/(\\d+)");
+
+    public static List<ACSearchItem> search(HttpClient httpClient, HttpRequest httpRequest,
+            String keyword, int page) throws Exception {
+        try {
+            httpRequest.setUrl(ACUrl.getBingSearchUrl(keyword, page));
+            HttpResponse response = httpClient.execute(httpRequest);
+
+            Document doc = Jsoup.parse(response.getInputStream(), "UTF-8", "http://www.bing.com/");
+            Elements elements = doc.getElementsByClass("b_algo");
+
+            List<ACSearchItem> result = new ArrayList<>();
+            for (int i = 0, n = elements.size(); i < n; i++) {
+                Element element = elements.get(i);
+
+                Elements urls = element.getElementsByTag("a");
+                if (urls.size() <= 0) {
+                    System.out.println("urls.size() <= 0");
+                    continue;
+                }
+                Matcher matcher = URL_PATTERN.matcher(urls.attr("href"));
+                String id;
+                if (matcher.find()) {
+                    id = matcher.group(1);
+                } else {
+                    continue;
+                }
+
+                Elements captions = elements.get(i).getElementsByClass("b_caption");
+                if (captions.size() <= 0) {
+                    continue;
+                }
+                Elements contents = captions.get(0).getElementsByTag("p");
+                if (contents.size() <= 0) {
+                    continue;
+                }
+                String content = contents.get(0).text();
+
+                ACSearchItem item = new ACSearchItem();
+                item.id = id;
+                item.context = content;
+                result.add(item);
+            }
+
+            return result;
+        } catch (Exception e) {
+            if (httpRequest.isCancelled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
         }
     }
 }

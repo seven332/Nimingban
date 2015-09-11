@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.ui;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +39,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -501,6 +504,70 @@ public final class ListActivity extends AbsActivity
         intent.setAction(GalleryActivity2.ACTION_IMAGE_FILE);
         intent.putExtra(GalleryActivity2.KEY_FILE_URI, Uri.fromFile(imageFile));
         startActivity(intent);
+    }
+
+    public class SearchDialogHelper implements View.OnClickListener {
+        public View mView;
+        public EditText mEditText;
+
+        public View mPositive;
+        public View mNeutral;
+
+        public Dialog mDialog;
+
+        @SuppressLint("InflateParams")
+        public SearchDialogHelper() {
+            mView = getLayoutInflater().inflate(R.layout.dialog_search, null);
+            mEditText = (EditText) mView.findViewById(R.id.edit_text);
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        public void setDialog(AlertDialog dialog) {
+            mDialog = dialog;
+            mPositive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            mNeutral = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+            mPositive.setOnClickListener(this);
+            mNeutral.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            String keyword = mEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(keyword)) {
+                Toast.makeText(ListActivity.this, R.string.keyword_empty, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (mPositive == v) {
+                Intent intent = new Intent(ListActivity.this, SearchActivity.class);
+                intent.setAction(SearchActivity.ACTION_SEARCH);
+                intent.putExtra(SearchActivity.KEY_KEYWORD, keyword);
+                startActivity(intent);
+                mDialog.dismiss();
+            } else if (mNeutral == v) {
+                Intent intent = new Intent(ListActivity.this, PostActivity.class);
+                intent.setAction(PostActivity.ACTION_SITE_ID);
+                intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
+                intent.putExtra(PostActivity.KEY_ID, keyword);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        }
+    }
+
+    @Override
+    public void onClickSearch() {
+        SearchDialogHelper helper = new SearchDialogHelper();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.search)
+                .setView(helper.getView())
+                .setPositiveButton(R.string.search, null)
+                .setNeutralButton(R.string.go_to_post, null)
+                .show();
+        helper.setDialog(dialog);
     }
 
     @Override

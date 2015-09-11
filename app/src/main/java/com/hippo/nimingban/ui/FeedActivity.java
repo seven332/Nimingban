@@ -99,6 +99,16 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mNMBRequest != null) {
+            mNMBRequest.cancel();
+            mNMBRequest = null;
+        }
+    }
+
+    @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         Intent intent = new Intent(this, PostActivity.class);
         intent.setAction(PostActivity.ACTION_POST);

@@ -34,6 +34,7 @@ import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.Say;
 import com.squareup.leakcanary.LeakCanary;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -63,6 +64,10 @@ public final class NMBApplication extends Application
         Thread.setDefaultUncaughtExceptionHandler(this);
 
         NMBAppConfig.initialize(this);
+        File logFile = NMBAppConfig.getFileInAppDir("nimingban.log");
+        if (logFile != null) {
+            Say.initSayFile(logFile);
+        }
         Settings.initialize(this);
         DB.initialize(this);
         HttpCookieDB.initialize(this);

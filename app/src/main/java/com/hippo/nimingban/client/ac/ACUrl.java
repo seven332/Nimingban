@@ -16,6 +16,9 @@
 
 package com.hippo.nimingban.client.ac;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class ACUrl {
 
     public static final String HOST = "http://h.nimingban.com";
@@ -65,5 +68,9 @@ public class ACUrl {
             sb.append("?page=").append(page + 1);
         }
         return sb.toString();
+    }
+
+    public static String getBingSearchUrl(String keyword, int page) throws UnsupportedEncodingException {
+        return "http://www.bing.com/search?q=" + URLEncoder.encode(keyword, "UTF-8") + "+site%3ah.nimingban.com&first=" + (page * 10 + 1);
     }
 }

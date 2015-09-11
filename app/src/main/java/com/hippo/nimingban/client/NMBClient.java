@@ -61,6 +61,8 @@ public class NMBClient {
 
     public static final int METHOD_CREATE_POST = 8;
 
+    public static final int METHOD_SEARCH = 9;
+
     private final ThreadPoolExecutor mRequestThreadPool;
     private final HttpClient mHttpClient;
 
@@ -213,6 +215,15 @@ public class NMBClient {
             }
         }
 
+        private Object search(Object... params) throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    return ACEngine.search(mHttpClient, mHttpRequest, (String) params[0], (Integer) params[1]);
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -239,6 +250,8 @@ public class NMBClient {
                         return delFeed(params);
                     case METHOD_CREATE_POST:
                         return createPost(params);
+                    case METHOD_SEARCH:
+                        return search(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

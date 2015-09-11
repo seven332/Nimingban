@@ -45,6 +45,11 @@
     <string name="go_to_error_invalid">请输入有效页数</string>
     <string name="go_to_error_out_of_range">目标页数在范围外</string>
 
+    <string name="go_to_post">去串</string>
+    <string name="keyword_empty">关键字为空</string>
+    <string name="not_found">啥都找不到</string>
+    <string name="search_title">搜索 - %s   来自 Bing</string>
+
     <string name="add_feed">添加订阅</string>
     <string name="remove_feed">删除订阅</string>
     <string name="add_feed_successfully">添加订阅成功</string>
