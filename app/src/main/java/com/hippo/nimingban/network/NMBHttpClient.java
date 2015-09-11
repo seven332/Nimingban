@@ -32,6 +32,8 @@ public class NMBHttpClient extends HttpClient {
 
     public NMBHttpClient(Context context) {
         mCookieStore = NMBApplication.getSimpleCookieStore(context);
+        setConnectTimeout(10000); // 10s
+        setReadTimeout(10000); // 10s
     }
 
     @Override
