@@ -55,6 +55,8 @@ public class DownloadClient {
             }
         }
 
+        out.flush();
+
         return receivedSize;
     }
 

@@ -20,22 +20,52 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.NumberUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public final class Settings {
 
     private static Context sContext;
     private static SharedPreferences sSettingsPre;
 
+    private static String sExtendFeedId;
+
     public static void initialize(Context context) {
         sContext = context.getApplicationContext();
         sSettingsPre = PreferenceManager.getDefaultSharedPreferences(sContext);
+
+        // Get extend feed id
+        File feedIdFile = NMBAppConfig.getFileInAppDir(KEY_FEED_ID);
+        if (feedIdFile != null) {
+            FileInputStream fis;
+            try {
+                fis = new FileInputStream(feedIdFile);
+                String feedId = IOUtils.readString(fis, "UTF-8");
+                if (!TextUtils.isEmpty(feedId)) {
+                    sExtendFeedId = feedId;
+                    putFeedId(sExtendFeedId);
+                }
+            } catch (IOException e) {
+                // Ignore
+            }
+        }
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
@@ -102,6 +132,9 @@ public final class Settings {
     public static final String KEY_LINE_SPACING = "line_spacing";
     public static final int DEFAULT_LINE_SPACING = 1;
 
+    public static final String KEY_FEED_ID = "feed_id";
+    public static final String DEFAULT_FEED_ID = null;
+
     public static final String KEY_IMAGE_LOADING_STRATEGY = "image_loading_strategy";
     public static final int DEFAULT_IMAGE_LOADING_STRATEGY = 0;
     public static final String KEY_IMAGE_SAVE_LOACTION = "image_save_location";
@@ -139,6 +172,40 @@ public final class Settings {
 
     public static void putLineSpacing(int value) {
         putInt(KEY_LINE_SPACING, value);
+    }
+
+    public static String getFeedId() {
+        if (sExtendFeedId != null) {
+            return sExtendFeedId;
+        } else {
+            String feedId = getString(KEY_FEED_ID, DEFAULT_FEED_ID);
+            if (!TextUtils.isEmpty(feedId)) {
+                return feedId;
+            } else {
+                return getMacFeedId();
+            }
+        }
+    }
+
+    public static void putFeedId(String value) {
+        putString(KEY_FEED_ID, value);
+
+        sExtendFeedId = value;
+
+        // Put it to file
+        File file = NMBAppConfig.getFileInAppDir(KEY_FEED_ID);
+        if (file != null) {
+            FileOutputStream os = null;
+            try {
+                os = new FileOutputStream(file);
+                IOUtils.copy(new ByteArrayInputStream(value.getBytes()), os);
+                os.flush();
+            } catch (IOException e) {
+                file.delete();
+            } finally {
+                IOUtils.closeQuietly(os);
+            }
+        }
     }
 
     public static int getImageLoadingStrategy() {
@@ -197,5 +264,45 @@ public final class Settings {
     @SuppressLint("CommitPrefEdits")
     public static void putCrashFilename(String value) {
         sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
+    }
+
+    public static String getMacFeedId() {
+        WifiManager wifi = (WifiManager) sContext.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        String mac = info.getMacAddress();
+
+        if (mac == null) {
+            return "zhaobudaomac"; // TODO generate a key ?
+        }
+
+        String id;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(mac.getBytes());
+            id = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            id = String.valueOf(mac.hashCode());
+        }
+
+        return id;
+    }
+
+    /**
+     * http://stackoverflow.com/questions/332079
+     *
+     * @param bytes The bytes to convert.
+     * @return A {@link String} converted from the bytes of a hashable key used
+     *         to store a filename on the disk, to hex digits.
+     */
+    private static String bytesToHexString(final byte[] bytes) {
+        final StringBuilder builder = new StringBuilder();
+        for (final byte b : bytes) {
+            final String hex = Integer.toHexString(0xFF & b);
+            if (hex.length() == 1) {
+                builder.append('0');
+            }
+            builder.append(hex);
+        }
+        return builder.toString();
     }
 }

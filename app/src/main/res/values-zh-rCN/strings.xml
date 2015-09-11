@@ -157,6 +157,8 @@
     <string name="main_save_cookies_summary">保存饼干至外置存储器</string>
     <string name="main_restore_cookies">恢复饼干</string>
     <string name="main_restore_cookies_summary">从外置存储器的饼干文件中恢复饼干</string>
+    <string name="main_feed_id">订阅 ID</string>
+    <string name="main_feed_id_summary">你的订阅 ID 是 %s</string>
     <string name="main_image_save_location">图片存储路径</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
     <string name="main_analysis">启用数据统计</string>
@@ -166,6 +168,10 @@
     <string name="text_format">文本格式</string>
     <string name="font_size">字体大小</string>
     <string name="line_spacing">行间距</string>
+
+    <string name="invalid_feed_id">无效的订阅 ID</string>
+    <string name="mac_addr">Mac 地址</string>
+    <string name="random">随机</string>
 
     <string name="image_loading_strategy_all">尽管加载</string>
     <string name="image_loading_strategy_wifi">只限 Wi-Fi</string>

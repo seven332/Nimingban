@@ -165,6 +165,8 @@
     <string name="main_save_cookies_summary">Save cookies to external storage</string>
     <string name="main_restore_cookies">Restore cookies</string>
     <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
+    <string name="main_feed_id">Feed id</string>
+    <string name="main_feed_id_summary">You feed id is %s</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
     <string name="main_analysis">Enable data analysis</string>
@@ -175,6 +177,10 @@
     <string name="text_format">Text format</string>
     <string name="font_size">Font size</string>
     <string name="line_spacing">Line spacing</string>
+
+    <string name="invalid_feed_id">Invalid feed id</string>
+    <string name="mac_addr">Mac addr</string>
+    <string name="random">Random</string>
 
     <string name="image_loading_strategy_all">Just load them</string>
     <string name="image_loading_strategy_wifi">Only Wi-Fi</string>

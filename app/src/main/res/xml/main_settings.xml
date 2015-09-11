@@ -55,6 +55,10 @@
         android:summary="@string/main_restore_cookies_summary"/>
 
     <Preference
+        android:key="feed_id"
+        android:title="@string/main_feed_id"/>
+
+    <Preference
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>
 

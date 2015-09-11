@@ -58,7 +58,7 @@ public class NMBAppConfig {
     /**
      * mkdirs and get
      */
-    public static @Nullable File getFileInAppDir(String filename) {
+    public static @Nullable File getDirInAppDir(String filename) {
         File appFolder = getExternalAppDir();
         if (appFolder != null) {
             File dir = new File(appFolder, filename);
@@ -70,24 +70,39 @@ public class NMBAppConfig {
         return null;
     }
 
+    /**
+     * No dir
+     */
+    public static @Nullable File getFileInAppDir(String filename) {
+        File appFolder = getExternalAppDir();
+        if (appFolder != null) {
+            File file = new File(appFolder, filename);
+            if (FileUtils.ensureFile(file)) {
+                return file;
+            }
+        }
+
+        return null;
+    }
+
     public static @Nullable File getCrashDir() {
-        return getFileInAppDir(CRASH_DIRNAME);
+        return getDirInAppDir(CRASH_DIRNAME);
     }
 
     public static @Nullable File getDoodleDir() {
-        return getFileInAppDir(DOODLE_DIRNAME);
+        return getDirInAppDir(DOODLE_DIRNAME);
     }
 
     public static @Nullable File getImageDir() {
-        return getFileInAppDir(IMAGE_DIRNAME);
+        return getDirInAppDir(IMAGE_DIRNAME);
     }
 
     public static @Nullable File getCookiesDir() {
-        return getFileInAppDir(COOKIES_DIRNAME);
+        return getDirInAppDir(COOKIES_DIRNAME);
     }
 
     public static @Nullable File getPhotoDir() {
-        return getFileInAppDir(PHOTO_DIRNAME);
+        return getDirInAppDir(PHOTO_DIRNAME);
     }
 
     public static @Nullable File getTempDir() {

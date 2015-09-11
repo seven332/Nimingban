@@ -19,6 +19,7 @@ package com.hippo.nimingban.ui;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +35,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 
 import java.io.File;
@@ -105,6 +109,7 @@ public class SettingsActivity extends AbsActivity {
         private Preference mACCookies;
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
+        private Preference mFeedId;
         private Preference mImageSaveLocation;
         private Preference mAuthor;
         private Preference mSource;
@@ -144,6 +149,7 @@ public class SettingsActivity extends AbsActivity {
             mACCookies = findPreference(KEY_AC_COOKIES);
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
+            mFeedId = findPreference(Settings.KEY_FEED_ID);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
             mAuthor = findPreference(KEY_AUTHOR);
             mSource = findPreference(KEY_SOURCE);
@@ -155,6 +161,7 @@ public class SettingsActivity extends AbsActivity {
             mACCookies.setOnPreferenceClickListener(this);
             mSaveCookies.setOnPreferenceClickListener(this);
             mRestoreCookies.setOnPreferenceClickListener(this);
+            mFeedId.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
@@ -169,6 +176,8 @@ public class SettingsActivity extends AbsActivity {
 
             long maxAge = ACSite.getInstance().getCookieMaxAge(context);
             setACCookiesSummary(maxAge);
+
+            updateFeedIdSummary();
 
             updateImageSaveLocation();
 
@@ -425,6 +434,77 @@ public class SettingsActivity extends AbsActivity {
             }
         }
 
+        private void updateFeedIdSummary() {
+            mFeedId.setSummary(getContext().getResources().getString(
+                    R.string.main_feed_id_summary, Settings.getFeedId()));
+        }
+
+        private class FeedIdDialogHelper implements View.OnClickListener {
+
+            public View mView;
+            public EditText mEditText;
+
+            public View mPositive;
+            public View mNegative;
+            public View mNeutral;
+
+            public Dialog mDialog;
+
+            @SuppressLint("InflateParams")
+            public FeedIdDialogHelper() {
+                mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_feed_id, null);
+                mEditText = (EditText) mView.findViewById(R.id.edit_text);
+                mEditText.setText(Settings.getFeedId());
+            }
+
+            public View getView() {
+                return mView;
+            }
+
+            public void setDialog(AlertDialog dialog) {
+                mDialog = dialog;
+                mPositive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                mNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                mNeutral = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+                mPositive.setOnClickListener(this);
+                mNegative.setOnClickListener(this);
+                mNeutral.setOnClickListener(this);
+            }
+
+            public String getRandomFeedId() {
+                int length = 20;
+                StringBuilder sb = new StringBuilder(length);
+
+                for (int i = 0; i < length; i++) {
+                    if (MathUtils.random(0, 1 + 1) == 0) {
+                        sb.append((char) MathUtils.random('a', 'z' + 1));
+                    } else {
+                        sb.append((char) MathUtils.random('0', '9' + 1));
+                    }
+                }
+
+                return sb.toString();
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (mPositive == v) {
+                    String feedId = mEditText.getText().toString();
+                    if (!TextUtils.isEmpty(feedId)) {
+                        Settings.putFeedId(feedId);
+                        mDialog.dismiss();
+                        updateFeedIdSummary();
+                    } else {
+                        Toast.makeText(getContext(), R.string.invalid_feed_id, Toast.LENGTH_SHORT).show();
+                    }
+                } else if (mNegative == v) {
+                    mEditText.setText(getRandomFeedId());
+                } else if (mNeutral == v) { // mac
+                    mEditText.setText(Settings.getMacFeedId());
+                }
+            }
+        }
+
         @Override
         public boolean onPreferenceClick(Preference preference) {
             String key = preference.getKey();
@@ -458,6 +538,16 @@ public class SettingsActivity extends AbsActivity {
                             .setItems(list, helper)
                             .show();
                 }
+            } else if (Settings.KEY_FEED_ID.equals(key)) {
+                FeedIdDialogHelper helper = new FeedIdDialogHelper();
+                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.main_feed_id)
+                        .setView(helper.getView())
+                        .setPositiveButton(android.R.string.ok, null)
+                        .setNegativeButton(R.string.random, null)
+                        .setNeutralButton(R.string.mac_addr, null)
+                        .show();
+                helper.setDialog(dialog);
             } else if (Settings.KEY_IMAGE_SAVE_LOACTION.equals(key)) {
                 int sdk = Build.VERSION.SDK_INT;
                 if (sdk < Build.VERSION_CODES.KITKAT) {
