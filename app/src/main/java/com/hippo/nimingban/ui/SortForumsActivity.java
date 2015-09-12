@@ -50,6 +50,8 @@ import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.DB;
+import com.hippo.vector.VectorDrawable;
+import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -122,6 +124,9 @@ public class SortForumsActivity extends AbsActivity {
         mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mViewTransition = new ViewTransition(mTip, mRecyclerView);
+        SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
+
+        imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
         mLayoutManager = new LinearLayoutManager(this);

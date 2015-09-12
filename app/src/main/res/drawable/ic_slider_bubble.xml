@@ -20,8 +20,7 @@
     app:width="26dp"
     app:height="32dp"
     app:viewportWidth="26"
-    app:viewportHeight="32"
-    app:allowCaching="false">
+    app:viewportHeight="32">
 
     <path
         app:pathData="@string/pd_slider_bubble"

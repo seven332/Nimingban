@@ -32,7 +32,9 @@ import com.hippo.conaco.Unikery;
 import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
+import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
+import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.MathUtils;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -45,7 +47,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     private Conaco mConaco;
 
     private ProgressView mProgressView;
-    private View mFailed;
+    private SimpleImageView mFailed;
     private PhotoView mPhotoView;
 
     private String mId;
@@ -74,8 +76,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         LayoutInflater.from(context).inflate(R.layout.widget_gallery_page, this);
 
         mProgressView = (ProgressView) findViewById(R.id.progress_view);
-        mFailed = findViewById(R.id.failed);
+        mFailed = (SimpleImageView) findViewById(R.id.failed);
         mPhotoView = (PhotoView) findViewById(R.id.image_view);
+
+        mFailed.setDrawable(VectorDrawable.create(context, R.drawable.ic_empty));
     }
 
     private void addRetry() {

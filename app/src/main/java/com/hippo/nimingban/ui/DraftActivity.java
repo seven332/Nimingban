@@ -39,6 +39,8 @@ import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.vector.VectorDrawable;
+import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 
@@ -77,6 +79,9 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
         mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mViewTransition = new ViewTransition(mTip, mRecyclerView);
+        SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
+
+        imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
         mLayoutManager = new LinearLayoutManager(this);

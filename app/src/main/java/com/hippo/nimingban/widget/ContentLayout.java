@@ -31,7 +31,9 @@ import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.LayoutManagerUtils;
+import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
+import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.IdIntGenerator;
@@ -83,6 +85,9 @@ public class ContentLayout extends FrameLayout {
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
         mImageView = mTipView.getChildAt(0);
         mTextView = (TextView) mTipView.getChildAt(1);
+        SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
+
+        imageView.setDrawable(VectorDrawable.create(context, R.drawable.ic_empty));
 
         mRefreshLayout.setHeaderColorSchemeResources(
                 R.color.loading_indicator_red,
