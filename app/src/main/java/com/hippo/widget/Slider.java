@@ -22,13 +22,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -39,7 +35,7 @@ import android.widget.PopupWindow;
 
 import com.hippo.nimingban.R;
 import com.hippo.util.AnimationUtils;
-import com.hippo.util.PathParser;
+import com.hippo.vector.VectorDrawable;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleHandler;
@@ -49,6 +45,9 @@ public class Slider extends View {
     private static char[] CHARACTERS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
+
+    private static final int BUBBLE_WIDTH = 26;
+    private static final int BUBBLE_HEIGHT = 32;
 
     private Context mContext;
 
@@ -111,8 +110,8 @@ public class Slider extends View {
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
-        mBubbleMinWidth = LayoutUtils.dp2pix(context, 26);
-        mBubbleMinHeight = LayoutUtils.dp2pix(context, 32);
+        mBubbleMinWidth = LayoutUtils.dp2pix(context, BUBBLE_WIDTH);
+        mBubbleMinHeight = LayoutUtils.dp2pix(context, BUBBLE_HEIGHT);
 
         mBubble = new BubbleView(context, textPaint);
         mBubble.setScaleX(0.0f);
@@ -145,7 +144,7 @@ public class Slider extends View {
         mProgressAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
         mProgressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                 float value = (Float) animation.getAnimatedValue();
                 mDrawPercent = value;
                 mDrawProgress = Math.round(MathUtils.lerp((float) mStart, mEnd, value));
@@ -158,7 +157,7 @@ public class Slider extends View {
         mBubbleScaleAnimation = new ValueAnimator();
         mBubbleScaleAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                 float value = (Float) animation.getAnimatedValue();
                 mDrawBubbleScale = value;
                 mBubble.setScaleX(value);
@@ -274,7 +273,6 @@ public class Slider extends View {
 
     public void setColor(int color) {
         mPaint.setColor(color);
-        mBubble.setColor(color);
         invalidate();
     }
 
@@ -327,7 +325,7 @@ public class Slider extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
         if (width < LayoutUtils.dp2pix(mContext, 24)) {
@@ -375,7 +373,7 @@ public class Slider extends View {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
 
         int action = event.getAction();
         switch (action) {
@@ -437,10 +435,9 @@ public class Slider extends View {
     @SuppressLint("ViewConstructor")
     private static class BubbleView extends View {
 
-        private static final float TEXT_CENTER = (float) BubbleDrawable.WIDTH / 2.0f / (float) BubbleDrawable.HEIGHT;
+        private static final float TEXT_CENTER = (float) BUBBLE_WIDTH / 2.0f / BUBBLE_HEIGHT;
 
         private Paint mTextPaint;
-        private BubbleDrawable mDrawable;
 
         private String mProgressStr = "";
 
@@ -449,13 +446,8 @@ public class Slider extends View {
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
             super(context);
-            mDrawable = new BubbleDrawable();
-            setBackgroundDrawable(mDrawable);
+            setBackgroundDrawable(VectorDrawable.create(context, R.drawable.ic_slider_bubble));
             mTextPaint = paint;
-        }
-
-        public void setColor(int color) {
-            mDrawable.setColor(color);
         }
 
         public void setProgress(int progress) {
@@ -475,76 +467,12 @@ public class Slider extends View {
         }
 
         @Override
-        protected void onDraw(Canvas canvas) {
+        protected void onDraw(@NonNull Canvas canvas) {
             int width = getWidth();
             int height = getHeight();
             int x = width / 2;
             int y = (int) ((height * TEXT_CENTER) + (mRect.height() / 2));
             canvas.drawText(mProgressStr, x, y, mTextPaint);
-        }
-    }
-
-    private static class BubbleDrawable extends Drawable {
-
-        private static final String PATH_DATA = "M13,0c7.2,0,13,5.9,13,13.2c0,3.7-2,7.6-7.3,12.9L13,32l-5.8-5.8C2,20.8,0,16.9,0,13.3C0,5.9,5.8,0,13,0z";
-        private static final int WIDTH = 26;
-        private static final int HEIGHT = 32;
-
-        private Path mPath;
-        private Paint mPaint;
-
-        private Matrix mMatrix;
-        private Path mRenderPath;
-
-        public BubbleDrawable() {
-            mPath = PathParser.createPathFromPathData(PATH_DATA);
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mMatrix = new Matrix();
-            mRenderPath = new Path();
-        }
-
-        @Override
-        public int getIntrinsicWidth() {
-            return WIDTH;
-        }
-
-        @Override
-        public int getIntrinsicHeight() {
-            return HEIGHT;
-        }
-
-        public void setColor(int color) {
-            mPaint.setColor(color);
-        }
-
-        @Override
-        protected void onBoundsChange(Rect bounds) {
-            super.onBoundsChange(bounds);
-
-            mMatrix.reset();
-            mMatrix.postScale((float) bounds.width() / (float) WIDTH, (float) bounds.height() / (float) HEIGHT);
-            mRenderPath.reset();
-            mRenderPath.addPath(mPath, mMatrix);
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            canvas.drawPath(mRenderPath, mPaint);
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-            // Empty
-        }
-
-        @Override
-        public void setColorFilter(ColorFilter colorFilter) {
-            // Empty
-        }
-
-        @Override
-        public int getOpacity() {
-            return PixelFormat.OPAQUE;
         }
     }
 
