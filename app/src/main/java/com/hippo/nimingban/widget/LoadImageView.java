@@ -28,7 +28,6 @@ import android.view.View;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
-import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.TiledBitmapDrawable;
@@ -47,7 +46,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
 
     private String mKey;
     private String mUrl;
-    private DataContainer mContainer;
 
     private DrawableHolder mHolder;
 
@@ -130,27 +128,22 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         }
     }
 
-    public void load(String key, String url) {
-        load(key, url, null);
-    }
-
-    public void load(String key, String url, DataContainer container) {
+    public void load(String key, String url, boolean useNetwork) {
         mFailed = false;
         cancelRetryType();
 
-        if (url == null || (key == null && container == null) || (key != null && container != null)) {
+        if (url == null || key == null) {
             return;
         }
 
         mKey = key;
         mUrl = url;
-        mContainer = container;
 
         ConacoTask.Builder builder = new ConacoTask.Builder()
                 .setUnikery(this)
                 .setKey(key)
                 .setUrl(url)
-                .setDataContainer(container);
+                .setUseNetwork(useNetwork);
         mConaco.load(builder);
     }
 
@@ -158,7 +151,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         mConaco.cancel(this);
         mKey = null;
         mUrl = null;
-        mContainer = null;
         setImageDrawableSafely(null);
 
         // Release old holder
@@ -227,7 +219,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         // Release
         mKey = null;
         mUrl = null;
-        mContainer = null;
 
         DrawableHolder olderHolder = mHolder;
         mHolder = holder;
@@ -285,7 +276,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
             // Can't retry, so release
             mKey = null;
             mUrl = null;
-            mContainer = null;
         }
 
         // Release old holder
@@ -302,17 +292,16 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         // release
         mKey = null;
         mUrl = null;
-        mContainer = null;
     }
 
     @Override
-    public void onClick(View v) {
-        load(mKey, mUrl, mContainer);
+    public void onClick(@NonNull View v) {
+        load(mKey, mUrl, true);
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        load(mKey, mUrl, mContainer);
+    public boolean onLongClick(@NonNull View v) {
+        load(mKey, mUrl, true);
         return true;
     }
 }

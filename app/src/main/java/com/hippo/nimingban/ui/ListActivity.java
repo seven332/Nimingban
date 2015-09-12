@@ -653,9 +653,9 @@ public final class ListActivity extends AbsActivity
             TextView bottomText = holder.bottomText;
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottomText.getLayoutParams();
             String thumbUrl = post.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(ListActivity.this)) {
+            if (!TextUtils.isEmpty(thumbUrl)) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(thumbUrl, thumbUrl);
+                holder.thumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(ListActivity.this));
 
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);
                 lp.addRule(RelativeLayout.BELOW, 0);

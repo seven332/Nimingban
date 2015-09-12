@@ -445,9 +445,9 @@ public final class PostActivity extends SwipeActivity
             mContent.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(PostActivity.this)) {
+            if (!TextUtils.isEmpty(thumbUrl)) {
                 mThumb.setVisibility(View.VISIBLE);
-                mThumb.load(thumbUrl, thumbUrl);
+                mThumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(PostActivity.this));
             } else {
                 mThumb.setVisibility(View.GONE);
                 mConaco.load(mThumb, null);
@@ -674,9 +674,9 @@ public final class PostActivity extends SwipeActivity
             holder.content.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(PostActivity.this)) {
+            if (!TextUtils.isEmpty(thumbUrl)) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(thumbUrl, thumbUrl);
+                holder.thumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(PostActivity.this));
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);

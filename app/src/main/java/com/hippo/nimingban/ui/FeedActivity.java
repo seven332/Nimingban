@@ -171,9 +171,9 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
             holder.content.setText(post.getNMBDisplayContent());
 
             String thumbUrl = post.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl) && NMBAppConfig.needloadImage(FeedActivity.this)) {
+            if (!TextUtils.isEmpty(thumbUrl)) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(thumbUrl, thumbUrl);
+                holder.thumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(FeedActivity.this));
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);
