@@ -17,6 +17,6 @@
 
 <resources>
 
-    <string name="pd_slider_bubble" translatable="false">M13,0c7.2,0,13,5.9,13,13.2c0,3.7-2,7.6-7.3,12.9L13,32l-5.8-5.8C2,20.8,0,16.9,0,13.3C0,5.9,5.8,0,13,0z</string>
+    <string name="pd_slider_bubble" translatable="false">M13,0C20.2,0,26,5.9,26,13.2,26,16.9,24,20.8,18.7,26.1L13,32,7.2,26.2C2,20.8,0,16.9,0,13.3,0,5.9,5.8,0,13,0Z</string>
 
 </resources>
