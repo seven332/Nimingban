@@ -184,6 +184,8 @@ public class EasyRecyclerView extends RecyclerView {
 
     private boolean mClipToPadding = false;
 
+    private boolean mTouchFromScrolling;
+
     public EasyRecyclerView(Context context) {
         super(context);
     }
@@ -755,6 +757,15 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mTouchFromScrolling = SCROLL_STATE_SETTLING == getScrollState();
+        }
+
+        return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (!isEnabled()) {
             // A disabled view that is clickable still consumes the touch
@@ -790,6 +801,10 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     private void onTouchDown(MotionEvent ev) {
+        if (isLayoutFrozen() || mTouchFromScrolling) {
+            return;
+        }
+
         final float x = ev.getX();
         final float y = ev.getY();
         mStartX = x;
@@ -817,6 +832,10 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     private void onTouchMove(MotionEvent ev) {
+        if (isLayoutFrozen() || mTouchFromScrolling) {
+            return;
+        }
+
         if (mTouchSlop == -1) {
             mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         }
@@ -836,6 +855,10 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     private void onTouchUp(MotionEvent ev) {
+        if (isLayoutFrozen() || mTouchFromScrolling) {
+            return;
+        }
+
         View motionView = mMotionView;
         int motionPosition = mMotionPosition;
 
@@ -857,7 +880,7 @@ public class EasyRecyclerView extends RecyclerView {
                 positionSelector(mMotionPosition, motionView);
                 if (mSelector != null) {
                     Drawable d = mSelector.getCurrent();
-                    if (d != null && d instanceof TransitionDrawable) {
+                    if (d instanceof TransitionDrawable) {
                         ((TransitionDrawable) d).resetTransition();
                     }
                     DrawableUtils.setHotspot(mSelector, x, y);
@@ -904,6 +927,10 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     private void onTouchCancel() {
+        if (isLayoutFrozen() || mTouchFromScrolling) {
+            return;
+        }
+
         if (mMotionView != null && mMotionPosition >= 0) {
             mMotionView.setPressed(false);
             setPressed(false);
