@@ -40,6 +40,13 @@
         android:entryValues="@array/image_loading_strategy_entry_values"
         android:defaultValue="0"/>
 
+    <SwitchPreference
+        android:key="image_loading_strategy_2"
+        android:title="@string/main_image_loading_strategy_2"
+        android:summaryOff="@string/main_image_loading_strategy_2_summary_off"
+        android:summaryOn="@string/main_image_loading_strategy_2_summary_on"
+        android:defaultValue="false"/>
+
     <Preference
         android:key="ac_cookies"
         android:title="@string/main_ac_cookies"/>

@@ -139,6 +139,9 @@ public final class Settings {
     public static final int DEFAULT_IMAGE_LOADING_STRATEGY = 0;
     public static final String KEY_IMAGE_SAVE_LOACTION = "image_save_location";
 
+    public static final String KEY_IMAGE_LOADING_STRATEGY_2 = "image_loading_strategy_2";
+    public static final boolean DEFAULT_IMAGE_LOADING_STRATEGY_2 = false;
+
     public static final String KEY_IMAGE_SAVE_SCHEME = "image_scheme";
     public static final String KEY_IMAGE_SAVE_AUTHORITY = "image_authority";
     public static final String KEY_IMAGE_SAVE_PATH = "image_path";
@@ -210,6 +213,10 @@ public final class Settings {
 
     public static int getImageLoadingStrategy() {
         return getIntFromStr(KEY_IMAGE_LOADING_STRATEGY, DEFAULT_IMAGE_LOADING_STRATEGY);
+    }
+
+    public static boolean getImageLoadingStrategy2() {
+        return getBoolean(KEY_IMAGE_LOADING_STRATEGY_2, DEFAULT_IMAGE_LOADING_STRATEGY_2);
     }
 
     @Nullable

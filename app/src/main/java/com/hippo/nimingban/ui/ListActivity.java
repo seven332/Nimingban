@@ -45,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
-import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -72,10 +71,10 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.TextUtils2;
-import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
-import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
+import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
+import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -653,9 +652,22 @@ public final class ListActivity extends AbsActivity
             TextView bottomText = holder.bottomText;
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottomText.getLayoutParams();
             String thumbUrl = post.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+
+            boolean showImage;
+            boolean loadFromNetwork;
+            int ils = Settings.getImageLoadingStrategy();
+            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
+                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(ListActivity.this))) {
+                showImage = true;
+                loadFromNetwork = true;
+            } else {
+                showImage = Settings.getImageLoadingStrategy2();
+                loadFromNetwork = false;
+            }
+
+            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(ListActivity.this));
+                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
 
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);
                 lp.addRule(RelativeLayout.BELOW, 0);

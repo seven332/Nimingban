@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
-import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -171,9 +170,22 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
             holder.content.setText(post.getNMBDisplayContent());
 
             String thumbUrl = post.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+
+            boolean showImage;
+            boolean loadFromNetwork;
+            int ils = Settings.getImageLoadingStrategy();
+            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
+                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(FeedActivity.this))) {
+                showImage = true;
+                loadFromNetwork = true;
+            } else {
+                showImage = Settings.getImageLoadingStrategy2();
+                loadFromNetwork = false;
+            }
+
+            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(FeedActivity.this));
+                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);

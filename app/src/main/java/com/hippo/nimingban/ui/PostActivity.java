@@ -47,7 +47,6 @@ import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.effect.ViewTransition;
-import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -68,8 +67,8 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.Slider;
+import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -445,9 +444,22 @@ public final class PostActivity extends SwipeActivity
             mContent.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+
+            boolean showImage;
+            boolean loadFromNetwork;
+            int ils = Settings.getImageLoadingStrategy();
+            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
+                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(PostActivity.this))) {
+                showImage = true;
+                loadFromNetwork = true;
+            } else {
+                showImage = Settings.getImageLoadingStrategy2();
+                loadFromNetwork = false;
+            }
+
+            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 mThumb.setVisibility(View.VISIBLE);
-                mThumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(PostActivity.this));
+                mThumb.load(thumbUrl, thumbUrl, loadFromNetwork);
             } else {
                 mThumb.setVisibility(View.GONE);
                 mConaco.load(mThumb, null);
@@ -674,9 +686,22 @@ public final class PostActivity extends SwipeActivity
             holder.content.setText(reply.getNMBDisplayContent());
 
             String thumbUrl = reply.getNMBThumbUrl();
-            if (!TextUtils.isEmpty(thumbUrl)) {
+
+            boolean showImage;
+            boolean loadFromNetwork;
+            int ils = Settings.getImageLoadingStrategy();
+            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
+                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(PostActivity.this))) {
+                showImage = true;
+                loadFromNetwork = true;
+            } else {
+                showImage = Settings.getImageLoadingStrategy2();
+                loadFromNetwork = false;
+            }
+
+            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.load(thumbUrl, thumbUrl, NMBAppConfig.needloadImage(PostActivity.this));
+                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 mConaco.load(holder.thumb, null);
