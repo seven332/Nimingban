@@ -23,7 +23,7 @@
     app:viewportHeight="32">
 
     <path
-        app:pathData="@string/pd_slider_bubble"
-        app:fillColor="?attr/colorPrimary"/>
+        app:name="bubble"
+        app:pathData="@string/pd_slider_bubble"/>
 
 </vector>

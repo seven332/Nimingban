@@ -63,8 +63,7 @@
     <color name="divider_dark">#20ffffff</color>
 
     <!-- shadow -->
-    <color name="shadow_light">#38000000</color>
-    <color name="shadow_dark">#38ffffff</color>
+    <color name="shadow">#38000000</color>
 
     <color name="loading_indicator_red">#ffe53935</color>
     <color name="loading_indicator_purple">@color/purple_a700</color>

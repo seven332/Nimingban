@@ -21,7 +21,6 @@
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
-        <item name="colorShadow">@color/shadow_light</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
         <item name="colorPure">@color/pure_light</item>
         <item name="colorPureInverse">@color/pure_inverse_light</item>
@@ -40,7 +39,6 @@
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_light</item>
-        <item name="colorShadow">@color/shadow_light</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
         <item name="colorPure">@color/pure_light</item>
         <item name="colorPureInverse">@color/pure_inverse_light</item>
@@ -73,7 +71,6 @@
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorShadow">@color/shadow_dark</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
         <item name="colorPure">@color/pure_dark</item>
         <item name="colorPureInverse">@color/pure_inverse_dark</item>
@@ -92,7 +89,6 @@
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/green_ntr</item>
         <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorShadow">@color/shadow_dark</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
         <item name="colorPure">@color/pure_dark</item>
         <item name="colorPureInverse">@color/pure_inverse_dark</item>

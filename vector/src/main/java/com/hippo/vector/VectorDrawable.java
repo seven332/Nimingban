@@ -229,7 +229,7 @@ public class VectorDrawable extends Drawable {
         return this;
     }
 
-    Object getTargetByName(String name) {
+    public Object getTargetByName(String name) {
         return mVectorState.mVPathRenderer.mVGTargetsMap.get(name);
     }
 
@@ -1176,7 +1176,7 @@ public class VectorDrawable extends Drawable {
     /**
      * Normal path, which contains all the fill / paint information.
      */
-    private static class VFullPath extends VPath {
+    public static class VFullPath extends VPath {
         /////////////////////////////////////////////////////
         // Variables below need to be copied (deep copy if applicable) for mutation.
         int mStrokeColor = Color.TRANSPARENT;
@@ -1288,82 +1288,82 @@ public class VectorDrawable extends Drawable {
 
         /* Setters and Getters, used by animator from AnimatedVectorDrawable. */
         @SuppressWarnings("unused")
-        int getStrokeColor() {
+        public int getStrokeColor() {
             return mStrokeColor;
         }
 
         @SuppressWarnings("unused")
-        void setStrokeColor(int strokeColor) {
+        public void setStrokeColor(int strokeColor) {
             mStrokeColor = strokeColor;
         }
 
         @SuppressWarnings("unused")
-        float getStrokeWidth() {
+        public float getStrokeWidth() {
             return mStrokeWidth;
         }
 
         @SuppressWarnings("unused")
-        void setStrokeWidth(float strokeWidth) {
+        public void setStrokeWidth(float strokeWidth) {
             mStrokeWidth = strokeWidth;
         }
 
         @SuppressWarnings("unused")
-        float getStrokeAlpha() {
+        public float getStrokeAlpha() {
             return mStrokeAlpha;
         }
 
         @SuppressWarnings("unused")
-        void setStrokeAlpha(float strokeAlpha) {
+        public void setStrokeAlpha(float strokeAlpha) {
             mStrokeAlpha = strokeAlpha;
         }
 
         @SuppressWarnings("unused")
-        int getFillColor() {
+        public int getFillColor() {
             return mFillColor;
         }
 
         @SuppressWarnings("unused")
-        void setFillColor(int fillColor) {
+        public void setFillColor(int fillColor) {
             mFillColor = fillColor;
         }
 
         @SuppressWarnings("unused")
-        float getFillAlpha() {
+        public float getFillAlpha() {
             return mFillAlpha;
         }
 
         @SuppressWarnings("unused")
-        void setFillAlpha(float fillAlpha) {
+        public void setFillAlpha(float fillAlpha) {
             mFillAlpha = fillAlpha;
         }
 
         @SuppressWarnings("unused")
-        float getTrimPathStart() {
+        public float getTrimPathStart() {
             return mTrimPathStart;
         }
 
         @SuppressWarnings("unused")
-        void setTrimPathStart(float trimPathStart) {
+        public void setTrimPathStart(float trimPathStart) {
             mTrimPathStart = trimPathStart;
         }
 
         @SuppressWarnings("unused")
-        float getTrimPathEnd() {
+        public float getTrimPathEnd() {
             return mTrimPathEnd;
         }
 
         @SuppressWarnings("unused")
-        void setTrimPathEnd(float trimPathEnd) {
+        public void setTrimPathEnd(float trimPathEnd) {
             mTrimPathEnd = trimPathEnd;
         }
 
         @SuppressWarnings("unused")
-        float getTrimPathOffset() {
+        public float getTrimPathOffset() {
             return mTrimPathOffset;
         }
 
         @SuppressWarnings("unused")
-        void setTrimPathOffset(float trimPathOffset) {
+        public void setTrimPathOffset(float trimPathOffset) {
             mTrimPathOffset = trimPathOffset;
         }
     }

@@ -17,15 +17,15 @@
 package com.hippo.nimingban.ui;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.styleable.StyleableActivity;
 import com.hippo.yorozuya.Messenger;
 import com.tendcloud.tenddata.TCAgent;
 
-public abstract class AbsActivity extends StyleableActivity implements Messenger.Receiver {
+public abstract class AbsActivity extends AppCompatActivity implements Messenger.Receiver {
 
     protected abstract int getLightThemeResId();
 

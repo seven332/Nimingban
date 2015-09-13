@@ -273,6 +273,7 @@ public class Slider extends View {
 
     public void setColor(int color) {
         mPaint.setColor(color);
+        mBubble.setColor(color);
         invalidate();
     }
 
@@ -437,6 +438,8 @@ public class Slider extends View {
 
         private static final float TEXT_CENTER = (float) BUBBLE_WIDTH / 2.0f / BUBBLE_HEIGHT;
 
+        private VectorDrawable mVectorDrawable;
+
         private Paint mTextPaint;
 
         private String mProgressStr = "";
@@ -446,8 +449,16 @@ public class Slider extends View {
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
             super(context);
-            setBackgroundDrawable(VectorDrawable.create(context, R.drawable.ic_slider_bubble));
+            mVectorDrawable = VectorDrawable.create(context, R.drawable.slider_bubble);
+            setBackgroundDrawable(mVectorDrawable);
             mTextPaint = paint;
+        }
+
+        public void setColor(int color) {
+            Object obj = mVectorDrawable.getTargetByName("bubble");
+            if (obj instanceof VectorDrawable.VFullPath) {
+                ((VectorDrawable.VFullPath) obj).setFillColor(color);
+            }
         }
 
         public void setProgress(int progress) {

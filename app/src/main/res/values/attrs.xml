@@ -19,7 +19,6 @@
 
     <declare-styleable name="Theme">
         <attr format="color" name="colorDivider"/>
-        <attr format="color" name="colorShadow"/>
         <attr format="color" name="colorDrawablePrimary"/>
         <attr format="color" name="colorPure"/>
         <attr format="color" name="colorPureInverse"/>
