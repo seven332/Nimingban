@@ -568,12 +568,12 @@ public class ContentLayout extends FrameLayout {
             if (mStartPage == page) {
                 return 0;
             } else {
-                return mPageDivider.get(page - 1);
+                return mPageDivider.get(page - mStartPage - 1);
             }
         }
 
         private int getPageEnd(int page) {
-            return mPageDivider.get(page);
+            return mPageDivider.get(page - mStartPage);
         }
 
         public int getCurrentPage() {
