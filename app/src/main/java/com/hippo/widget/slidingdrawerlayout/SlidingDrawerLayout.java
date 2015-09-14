@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -110,7 +111,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private Drawable mStatusBarBackground;
 
     private boolean mIntercepted;
-    private int mInterceptPointNum;
+    private boolean mCanIntercept;
 
     private Object mLastInsets;
     private boolean mDrawStatusBarBackground;
@@ -263,13 +264,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     public SlidingDrawerLayout(Context context, AttributeSet attrs,
             int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SlidingDrawerLayout(Context context, AttributeSet attrs,
-            int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
 
@@ -543,7 +537,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     /**
-     * @hide Internal use only; called to apply window insets when configured
+     * Internal use only; called to apply window insets when configured
      * with fitsSystemWindows="true"
      */
     public void setChildInsets(Object insets, boolean draw) {
@@ -832,12 +826,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
 
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
-        boolean interceptSlide = false;
 
         if (!isDrawersTouchable()) {
             return false;
@@ -846,7 +839,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         switch (action) {
         case MotionEvent.ACTION_DOWN:
             mIntercepted = false;
-            mInterceptPointNum = 0;
+            mCanIntercept = true;
             mInitialMotionX = x;
             mInitialMotionY = y;
             break;
@@ -854,8 +847,12 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             final float adx = Math.abs(x - mInitialMotionX);
             final float ady = Math.abs(y - mInitialMotionY);
             final int slop = mDragHelper.getTouchSlop();
-            if (adx > slop && adx > ady)
-                interceptSlide = true;
+            if (ady > slop && ady > adx) {
+                mCanIntercept = false;
+            }
+            if (mCanIntercept && adx > slop && adx > ady) {
+                mIntercepted = true;
+            }
             break;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
@@ -863,10 +860,12 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             break;
         }
 
-        if (++mInterceptPointNum > 8)
-            return false;
+        try {
+            mDragHelper.shouldInterceptTouchEvent(ev);
+        } catch (Throwable e) {
+            // Ignore
+        }
 
-        mIntercepted = mDragHelper.shouldInterceptTouchEvent(ev) || interceptSlide;
         return mIntercepted;
     }
 
@@ -880,7 +879,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(@NonNull MotionEvent ev) {
 
         // Cancel animate
         cancelAnimation();
@@ -888,7 +887,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         try {
             mDragHelper.processTouchEvent(ev);
         } catch (Throwable e) {
-            // TODO Another finger touch screen may make trouble
+            // Ignore
         }
 
         final int action = MotionEventCompat.getActionMasked(ev);
@@ -896,7 +895,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         final float y = ev.getY();
 
         if (action == MotionEvent.ACTION_DOWN) {
-            mInterceptPointNum = 1;
             mIntercepted = true;
         }
 
@@ -913,8 +911,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             break;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
-            mInterceptPointNum = 0;
-
             if (mLeftState == STATE_SLIDING) {
                 if (mLeftOpened && mLeftPercent < CLOSE_SENSITIVITY)
                     startAnimation(true, false, false);
