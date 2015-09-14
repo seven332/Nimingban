@@ -64,7 +64,7 @@
         <activity
             android:name="com.hippo.nimingban.ui.GalleryActivity2"
             android:label="@string/gallery"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.Transparent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
 

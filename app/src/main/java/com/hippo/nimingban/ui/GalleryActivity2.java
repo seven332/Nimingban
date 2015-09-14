@@ -52,7 +52,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 // TODO show all image in post
-public class GalleryActivity2 extends AbsActivity {
+public class GalleryActivity2 extends SwipeActivity {
 
     public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity2.action.SINGLE_IMAGE";
     public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity2.action.IMAGE_FILE";
@@ -94,12 +94,12 @@ public class GalleryActivity2 extends AbsActivity {
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_Transparent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_Transparent;
     }
 
     @Override
