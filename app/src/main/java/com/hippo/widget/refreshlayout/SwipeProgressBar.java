@@ -136,13 +136,14 @@ final class SwipeProgressBar {
     }
 
     void draw(Canvas canvas) {
-        final int width = mBounds.width();
-        final int height = mBounds.height();
-        final int cx = width / 2;
-        final int cy = height / 2;
+        Rect bounds = mBounds;
+        final int width = bounds.width();
+        final int height = bounds.height();
+        final int cx = bounds.centerX();
+        final int cy = bounds.centerY();
         boolean drawTriggerWhileFinishing = false;
         int restoreCount = canvas.save();
-        canvas.clipRect(mBounds);
+        canvas.clipRect(bounds);
 
         if (mRunning || (mFinishTime > 0)) {
             long now = AnimationUtils.currentAnimationTimeMillis();
@@ -225,12 +226,12 @@ final class SwipeProgressBar {
                 // just jump in at a larger width than expected.
                 canvas.restoreToCount(restoreCount);
                 restoreCount = canvas.save();
-                canvas.clipRect(mBounds);
+                canvas.clipRect(bounds);
                 drawTrigger(canvas, cx, cy);
             }
             // Keep running until we finish out the last cycle.
             ViewCompat.postInvalidateOnAnimation(
-                    mParent, mBounds.left, mBounds.top, mBounds.right, mBounds.bottom);
+                    mParent, bounds.left, bounds.top, bounds.right, bounds.bottom);
         } else {
             // Otherwise if we're in the middle of a trigger, draw that.
             if (mTriggerPercentage > 0 && mTriggerPercentage <= 1.0) {

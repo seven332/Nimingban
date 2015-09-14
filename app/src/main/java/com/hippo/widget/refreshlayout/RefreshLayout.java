@@ -717,16 +717,13 @@ public class RefreshLayout extends ViewGroup {
     @Override
     public void draw(@NonNull Canvas canvas) {
         super.draw(canvas);
-        int saved = canvas.save();
-        canvas.translate(0, getHeight() - mProgressBarHeight);
         mProgressBar.draw(canvas);
-        canvas.restoreToCount(saved);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        final int width = getMeasuredWidth();
-        final int height = getMeasuredHeight();
+        final int width = right - left;
+        final int height = bottom - top;
         if (getChildCount() == 0) {
             return;
         }
@@ -746,7 +743,7 @@ public class RefreshLayout extends ViewGroup {
         int circleHeight = mCircleView.getMeasuredHeight();
         mCircleView.layout((width / 2 - circleWidth / 2), mHeaderCurrentTargetOffsetTop,
                 (width / 2 + circleWidth / 2), mHeaderCurrentTargetOffsetTop + circleHeight);
-        mProgressBar.setBounds(0, 0, width, mProgressBarHeight);
+        mProgressBar.setBounds(0, height - mProgressBarHeight, width, height);
     }
 
     @Override
