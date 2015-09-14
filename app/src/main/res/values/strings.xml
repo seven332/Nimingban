@@ -90,6 +90,7 @@
     <string name="save_text_draft">Save the text you typed to draft ?</string>
     <string name="save">Save</string>
     <string name="dont_save">Don\'t save</string>
+    <string name="create_text_image">Text you typed contains offensive words. Create an image of the text?</string>
 
     <string name="select_picture">Select picture</string>
 

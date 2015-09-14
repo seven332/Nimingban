@@ -22,9 +22,12 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -45,6 +48,7 @@ import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
@@ -59,10 +63,13 @@ import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -586,6 +593,45 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private Uri saveEditTextToImage() {
+        View v = mEditText;
+        int width = v.getWidth();
+        int height = v.getHeight();
+        if (width == 0 && height == 0) {
+            width = v.getMeasuredWidth();
+            height = v.getMeasuredHeight();
+        }
+
+        Bitmap bitmap;
+        try {
+            bitmap = Bitmap.createBitmap(width, height,
+                    Bitmap.Config.ARGB_8888);
+        } catch (OutOfMemoryError e) {
+            return null;
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        canvas.translate(-v.getScrollX(), -v.getScrollY());
+        v.draw(canvas);
+
+        File file = NMBAppConfig.createTempFile("png");
+        if (file == null) {
+            return null;
+        }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            return Uri.fromFile(file);
+        } catch (IOException e) {
+            return null;
+        } finally {
+            IOUtils.closeQuietly(fos);
+        }
+    }
+
     private class ActionListener implements NMBClient.Callback<Void> {
         @Override
         public void onSuccess(Void result) {
@@ -609,9 +655,25 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             }
             mNMBRequest = null;
 
-            Toast.makeText(TypeSendActivity.this, getString(mMethod == Method.Reply ? R.string.reply_failed :
-                    R.string.create_post_failed) + "\n" +
-                    ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
+            if (e instanceof NMBException && "含有非法词语!".equals(e.getMessage())) {
+                new AlertDialog.Builder(TypeSendActivity.this)
+                        .setMessage(R.string.create_text_image)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(@NonNull DialogInterface dialog, int which) {
+                                Uri uri = saveEditTextToImage();
+                                if (uri != null) {
+                                    handleSelectedImageUri(uri);
+                                }
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+            } else {
+                Toast.makeText(TypeSendActivity.this, getString(mMethod == Method.Reply ? R.string.reply_failed :
+                        R.string.create_post_failed) + "\n" +
+                        ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override

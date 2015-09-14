@@ -89,6 +89,7 @@
     <string name="save_text_draft">把你输入的文字保存为草稿？</string>
     <string name="save">保存</string>
     <string name="dont_save">不保存</string>
+    <string name="create_text_image">你输入的文字中含有非法词语，要创建文字图片么？</string>
 
     <string name="select_picture">选择图片</string>
 
