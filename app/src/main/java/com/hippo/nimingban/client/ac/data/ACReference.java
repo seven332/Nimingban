@@ -77,10 +77,10 @@ public class ACReference extends Reply {
 
         // Make it could hit cache
         if (!TextUtils.isEmpty(thumb)) {
-            mThumb = ACUrl.HOST + thumb.replaceAll("/+", "/");
+            mThumb = thumb.replaceAll("http://[^/]+/", (ACUrl.HOST + "/"));
         }
         if (!TextUtils.isEmpty(image)) {
-            mImage = ACUrl.HOST + image.replaceAll("/+", "/");
+            mImage = image.replaceAll("http://[^/]+/", (ACUrl.HOST + "/"));
         }
     }
 
