@@ -151,7 +151,7 @@
     <string name="main_dark_theme">夜间模式</string>
     <string name="main_pretty_time">显示易读时间</string>
     <string name="main_image_loading_strategy">图片加载策略</string>
-    <string name="main_image_loading_strategy_2">图片加载策略 2</string>
+    <string name="main_image_loading_strategy_2">无图是啥</string>
     <string name="main_image_loading_strategy_2_summary_off">无图就是无图</string>
     <string name="main_image_loading_strategy_2_summary_on">无图是指尝试从缓存中加载，长按从网络中加载</string>
     <string name="main_pretty_time_summary">显示 %1$s 而不是 %2$s</string>

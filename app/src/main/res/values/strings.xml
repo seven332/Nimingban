@@ -162,7 +162,7 @@
     <string name="main_text_format">Font size and line spacing</string>
     <string name="main_text_format_summary">Font size: %1$d\nLine spacing: %2$d</string>
     <string name="main_image_loading_strategy">Picture loading strategy</string>
-    <string name="main_image_loading_strategy_2">Picture loading strategy 2</string>
+    <string name="main_image_loading_strategy_2">What is no pictures</string>
     <string name="main_image_loading_strategy_2_summary_off">No pictures is No pictures</string>
     <string name="main_image_loading_strategy_2_summary_on">No pictures is trying to load pictures from cache, long clicking to load from network</string>
     <string name="main_ac_cookies">Cookies</string>
