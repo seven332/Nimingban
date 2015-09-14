@@ -74,7 +74,7 @@ public class ACReply extends Reply {
             mUser = Html.fromHtml(userid);
         }
 
-        mContent = ACPost.generateContent(content, sage);
+        mContent = ACPost.generateContent(content, sage, title, name);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;

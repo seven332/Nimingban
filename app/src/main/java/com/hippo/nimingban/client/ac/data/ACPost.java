@@ -17,6 +17,7 @@
 package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.text.Html;
 import android.text.Spannable;
@@ -25,6 +26,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 
 import com.hippo.nimingban.client.ReferenceSpan;
@@ -33,6 +35,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.yorozuya.NumberUtils;
+import com.hippo.yorozuya.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,10 +53,13 @@ public class ACPost extends Post {
      * Parse the time string from website
      */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
-    static final Object sDateFormatLock = new Object();
+    private static final Object sDateFormatLock = new Object();
 
-    static final Pattern REFERENCE_PATTERN = Pattern.compile(">>(?:No.)?(\\d+)");
-    static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
+    private static final Pattern REFERENCE_PATTERN = Pattern.compile(">>(?:No.)?(\\d+)");
+    private static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
+
+    private static final String NO_TITLE = "无标题";
+    private static final String NO_NAME = "无名氏";
 
     static {
         // The website use GMT+08:00
@@ -199,13 +205,62 @@ public class ACPost extends Post {
         return builder == null ? content : builder;
     }
 
-    public static CharSequence generateContent(String content, String sage) {
+    public static CharSequence handleTitle(CharSequence content, String title) {
+        SpannableStringBuilder builder = null;
+        if (!TextUtils.isEmpty(title) && !NO_TITLE.equals(title)) {
+            if (content instanceof SpannableStringBuilder) {
+                builder = (SpannableStringBuilder) content;
+            } else {
+                builder = new SpannableStringBuilder(content);
+            }
+
+            int length = title.length();
+            builder.insert(0, title);
+            builder.insert(length, "\r\n");
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+            builder.setSpan(styleSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return builder == null ? content : builder;
+    }
+
+    public static CharSequence handleName(CharSequence content, String name) {
+        SpannableStringBuilder builder = null;
+        if (!TextUtils.isEmpty(name) && !NO_NAME.equals(name)) {
+            if (content instanceof SpannableStringBuilder) {
+                builder = (SpannableStringBuilder) content;
+            } else {
+                builder = new SpannableStringBuilder(content);
+            }
+
+            name = StringUtils.unescapeXml(name);
+
+            int length = name.length();
+            builder.insert(0, name);
+            builder.insert(length, "\r\n");
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+            builder.setSpan(styleSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return builder == null ? content : builder;
+    }
+
+    public static CharSequence generateContent(String content) {
         CharSequence charSequence;
         charSequence = Html.fromHtml(content);
         charSequence = fixURLSpan(charSequence);
         charSequence = handleReference(charSequence);
         charSequence = handleTextUrl(charSequence);
+
+        return charSequence;
+    }
+
+    public static CharSequence generateContent(String content, String sage, String title, String name) {
+        CharSequence charSequence = generateContent(content);
+        charSequence = handleName(charSequence, name);
+        charSequence = handleTitle(charSequence, title);
         charSequence = handleSage(charSequence, sage);
+
         return charSequence;
     }
 
@@ -258,7 +313,7 @@ public class ACPost extends Post {
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
-        mContent = generateContent(content, sage);
+        mContent = generateContent(content, sage, title, name);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;

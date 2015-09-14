@@ -75,7 +75,7 @@ public class ACFeed extends Post {
             mUser = Html.fromHtml(userid);
         }
 
-        mContent = ACPost.generateContent(content, "");
+        mContent = ACPost.generateContent(content);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
