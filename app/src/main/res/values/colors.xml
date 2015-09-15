@@ -33,10 +33,10 @@
     <color name="secondary_text_default_light">#8a000000</color>
     <color name="secondary_text_disabled_light">#24000000</color>
 
-    <color name="primary_text_default_dark">#deffffff</color>
-    <color name="primary_text_disabled_dark">#4dffffff</color>
-    <color name="secondary_text_default_dark">#61ffffff</color>
-    <color name="secondary_text_disabled_dark">#36ffffff</color>
+    <color name="primary_text_default_dark">#b3ffffff</color>
+    <color name="primary_text_disabled_dark">#2effffff</color>
+    <color name="secondary_text_default_dark">#73ffffff</color>
+    <color name="secondary_text_disabled_dark">#1cffffff</color>
 
     <color name="pure_light">@android:color/white</color>
     <color name="pure_dark">#ff212121</color>
