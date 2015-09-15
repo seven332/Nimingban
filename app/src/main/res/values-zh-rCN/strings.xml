@@ -29,6 +29,9 @@
 
     <string name="cant_make_sure_image_save_location">似乎图片存储位置用不了了，需要重新设置</string>
 
+    <string name="let_there_light">要有光</string>
+    <string name="let_there_dark">要有暗</string>
+
     <string name="press_twice_exit">再按一下退出</string>
 
     <string name="please_wait">请稍后</string>

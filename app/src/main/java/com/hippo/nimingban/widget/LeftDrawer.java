@@ -19,20 +19,27 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.util.Settings;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.DrawerListView;
+import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 
-public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickListener,
-        HeaderImageView.OnLongClickImageListener {
+public final class LeftDrawer extends ScrollView implements AdapterView.OnItemClickListener,
+        HeaderImageView.OnLongClickImageListener, View.OnClickListener {
 
     private static final int INDEX_SEARCH = 0;
     private static final int INDEX_FEED = 1;
@@ -40,8 +47,11 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
 
     private HeaderImageView mHeader;
     private DrawerListView mDrawerListView;
+    private TextView mDarkTheme;
 
     private long mHit;
+
+    private boolean mHitDarkTheme = false;
 
     private Helper mHelper;
 
@@ -61,11 +71,12 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
     }
 
     private void init(Context context) {
-        setOrientation(VERTICAL);
+        setFillViewport(true);
 
         LayoutInflater.from(context).inflate(R.layout.widget_left_drawer, this);
         mHeader = (HeaderImageView) findViewById(R.id.header);
         mDrawerListView = (DrawerListView) findViewById(R.id.drawer_list_view);
+        mDarkTheme = (TextView) findViewById(R.id.dark_theme);
 
         mHeader.setOnLongClickImageListener(this);
 
@@ -88,6 +99,10 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
 
         mDrawerListView.setData(drawables, strings);
         mDrawerListView.setOnItemClickListener(this);
+
+        mDarkTheme.setText(Settings.getDarkTheme() ? R.string.let_there_light : R.string.let_there_dark);
+        mDarkTheme.setOnClickListener(this);
+        RippleSalon.addRipple(mDarkTheme, ResourcesUtils.getAttrBoolean(context, R.attr.dark));
     }
 
     public void unloadHeaderImageView() {
@@ -131,6 +146,18 @@ public class LeftDrawer extends LinearLayout implements AdapterView.OnItemClickL
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void onClick(@NonNull View v) {
+        if (mDarkTheme == v) {
+            if (!mHitDarkTheme) {
+                mHitDarkTheme = true;
+                boolean darkTheme = !Settings.getDarkTheme();
+                Settings.putDarkTheme(darkTheme);
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_CHANGE_THEME, darkTheme);
+            }
         }
     }
 

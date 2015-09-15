@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public class DrawerListView extends ListView {
         init(context);
     }
 
+    @SuppressWarnings("deprecation")
     private void init(Context context) {
         mContext = context;
         mAdapter = new DrawerListAdapter();
@@ -103,6 +105,7 @@ public class DrawerListView extends ListView {
         return mActivatedPosition;
     }
 
+    @NonNull
     @Override
     public Parcelable onSaveInstanceState() {
         final Bundle state = new Bundle();
@@ -118,6 +121,11 @@ public class DrawerListView extends ListView {
             super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
             setActivatedPosition(savedState.getInt(STATE_KEY_ACTIVATED_POSITION));
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(~(0x3 << 30), MeasureSpec.AT_MOST));
     }
 
     private class DrawerListAdapter extends BaseAdapter {
@@ -154,7 +162,7 @@ public class DrawerListView extends ListView {
 
         @Override
         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             if (convertView == null) {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.item_drawer_list, parent, false);
             }

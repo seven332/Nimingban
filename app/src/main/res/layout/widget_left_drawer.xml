@@ -18,19 +18,39 @@
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.hippo.nimingban.widget.HeaderImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/header"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/default_header"
-        app:aspect="1"/>
+        android:orientation="vertical">
 
-    <com.hippo.widget.DrawerListView
-        android:id="@+id/drawer_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="8dp"/>
+        <com.hippo.nimingban.widget.HeaderImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/default_header"
+            app:aspect="1"/>
+
+        <com.hippo.widget.DrawerListView
+            android:id="@+id/drawer_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/dark_theme"
+            style="@style/CardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/keyline_margin_vertical"
+            android:layout_marginBottom="@dimen/keyline_margin_vertical"/>
+
+    </LinearLayout>
 
 </merge>

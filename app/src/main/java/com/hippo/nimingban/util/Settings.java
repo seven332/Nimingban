@@ -157,6 +157,10 @@ public final class Settings {
         return getBoolean(KEY_DARK_THEME, DEFAULT_DARK_THEME);
     }
 
+    public static void putDarkTheme(boolean value) {
+        putBoolean(KEY_DARK_THEME, value);
+    }
+
     public static boolean getPrettyTime() {
         return getBoolean(KEY_PRETTY_TIME, DEFAULT_PRETTY_TIME);
     }
