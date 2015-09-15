@@ -57,6 +57,7 @@ public class ACPost extends Post {
 
     private static final Pattern REFERENCE_PATTERN = Pattern.compile(">>(?:No.)?(\\d+)");
     private static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
+    private static final Pattern AC_PATTERN = Pattern.compile("ac\\d+");
 
     private static final String NO_TITLE = "无标题";
     private static final String NO_NAME = "无名氏";
@@ -188,6 +189,36 @@ public class ACPost extends Post {
         return spannable == null ? content : spannable;
     }
 
+    public static CharSequence handleAcUrl(CharSequence content) {
+        Matcher m = AC_PATTERN.matcher(content);
+
+        Spannable spannable = null;
+        while (m.find()) {
+            // Ensure spannable
+            if (spannable == null) {
+                if (content instanceof Spannable) {
+                    spannable = (Spannable) content;
+                } else {
+                    spannable = new SpannableString(content);
+                }
+            }
+
+            int start = m.start();
+            int end = m.end();
+
+            URLSpan[] links = spannable.getSpans(start, end, URLSpan.class);
+            if (links.length > 0) {
+                // There has been URLSpan already, leave it alone
+                continue;
+            }
+
+            URLSpan urlSpan = new URLSpan("http://www.acfun.tv/v/" + m.group(0));
+            spannable.setSpan(urlSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannable == null ? content : spannable;
+    }
+
     public static CharSequence handleSage(CharSequence content, String sage) {
         SpannableStringBuilder builder = null;
         if ("1".equals(sage)) {
@@ -251,6 +282,7 @@ public class ACPost extends Post {
         charSequence = fixURLSpan(charSequence);
         charSequence = handleReference(charSequence);
         charSequence = handleTextUrl(charSequence);
+        charSequence = handleAcUrl(charSequence);
 
         return charSequence;
     }
