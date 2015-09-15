@@ -23,7 +23,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +30,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -607,26 +607,22 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     }
 
     private Uri saveEditTextToImage() {
-        View v = mEditText;
-        int width = v.getWidth();
-        int height = v.getHeight();
-        if (width == 0 && height == 0) {
-            width = v.getMeasuredWidth();
-            height = v.getMeasuredHeight();
+        EditText v = mEditText;
+        Layout layout = v.getLayout();
+        if (layout == null) {
+            return null;
         }
 
         Bitmap bitmap;
         try {
-            bitmap = Bitmap.createBitmap(width, height,
-                    Bitmap.Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(layout.getWidth(), layout.getHeight(), Bitmap.Config.ARGB_8888);
         } catch (OutOfMemoryError e) {
             return null;
         }
 
         Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.WHITE);
-        canvas.translate(-v.getScrollX(), -v.getScrollY());
-        v.draw(canvas);
+        canvas.drawColor(ResourcesUtils.getAttrColor(this, R.attr.colorPure));
+        layout.draw(canvas);
 
         File file = NMBAppConfig.createTempFile("png");
         if (file == null) {
