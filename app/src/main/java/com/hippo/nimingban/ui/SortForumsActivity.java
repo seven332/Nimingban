@@ -122,6 +122,7 @@ public class SortForumsActivity extends AbsActivity {
         }
 
         setContentView(R.layout.activity_forum_sort);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
@@ -177,6 +178,9 @@ public class SortForumsActivity extends AbsActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.action_refresh:
                 if (mNMBRequest != null) {
                     return true;

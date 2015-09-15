@@ -21,6 +21,7 @@ import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -75,6 +76,7 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_draft);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
@@ -150,6 +152,17 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
 
         if (mLazyList != null) {
             mLazyList.close();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

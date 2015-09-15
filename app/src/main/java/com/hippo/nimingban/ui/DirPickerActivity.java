@@ -19,6 +19,8 @@ package com.hippo.nimingban.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +55,7 @@ public class DirPickerActivity extends AbsActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_dir_picker);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mPath = (TextView) findViewById(R.id.path);
         mDirExplorer = (DirExplorer) findViewById(R.id.dir_explorer);
@@ -77,7 +80,18 @@ public class DirPickerActivity extends AbsActivity implements View.OnClickListen
     }
 
     @Override
-    public void onClick(View v) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onClick(@NonNull View v) {
         if (mOk == v) {
             File file = mDirExplorer.getCurrentFile();
             if (!file.canWrite()) {

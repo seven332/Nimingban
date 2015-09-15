@@ -16,7 +16,10 @@
 
 package com.hippo.nimingban.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hippo.nimingban.Constants;
@@ -73,5 +76,17 @@ public abstract class AbsActivity extends AppCompatActivity implements Messenger
     @Override
     public void onReceive(final int id, final Object obj) {
         recreate();
+    }
+
+    protected void setActionBarUpIndicator(Drawable drawable) {
+        ActionBarDrawerToggle.Delegate delegate = getDrawerToggleDelegate();
+        if (delegate != null) {
+            delegate.setActionBarUpIndicator(drawable, 0);
+        }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
     }
 }

@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -74,6 +75,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         mNMBClient = NMBApplication.getNMBClient(this);
 
         setContentView(R.layout.activity_feed);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         ContentLayout contentLayout = (ContentLayout) findViewById(R.id.content_layout);
         EasyRecyclerView recyclerView = contentLayout.getRecyclerView();
@@ -104,6 +106,17 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
             mNMBRequest = null;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

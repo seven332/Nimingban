@@ -163,6 +163,7 @@ public final class PostActivity extends SwipeActivity
         }
 
         setContentView(R.layout.activity_post);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         setTitle(mSite.getPostTitle(this, mId));
 

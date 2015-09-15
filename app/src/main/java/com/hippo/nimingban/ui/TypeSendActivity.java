@@ -33,6 +33,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -184,6 +185,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         mNMBClient = NMBApplication.getNMBClient(this);
 
         setContentView(R.layout.activity_reply);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mEditText = (EditText) findViewById(R.id.edit_text);
         mEmoji = findViewById(R.id.emoji);
@@ -250,6 +252,17 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
                     .show();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

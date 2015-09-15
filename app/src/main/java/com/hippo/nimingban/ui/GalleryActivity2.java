@@ -112,6 +112,7 @@ public class GalleryActivity2 extends SwipeActivity {
         }
 
         setContentView(R.layout.activity_gallery_2);
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
 
