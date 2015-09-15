@@ -34,6 +34,7 @@ import android.os.SystemClock;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -43,7 +44,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -58,7 +58,6 @@ import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.Messenger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -106,7 +105,6 @@ public class SettingsActivity extends AbsActivity {
         public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
         public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
 
-        private static final String KEY_DARK_THEME = "dark_theme";
         private static final String KEY_TEXT_FORMAT = "text_format";
         private static final String KEY_AC_COOKIES = "ac_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
@@ -116,7 +114,6 @@ public class SettingsActivity extends AbsActivity {
 
         private Context mContext;
 
-        private Preference mDarkTheme;
         private SwitchPreference mPrettyTime;
         private Preference mTextFormat;
         private Preference mACCookies;
@@ -156,7 +153,6 @@ public class SettingsActivity extends AbsActivity {
             Context context = getContext();
             Resources resources = context.getResources();
 
-            mDarkTheme = findPreference(KEY_DARK_THEME);
             mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mTextFormat = findPreference(KEY_TEXT_FORMAT);
             mACCookies = findPreference(KEY_AC_COOKIES);
@@ -167,7 +163,6 @@ public class SettingsActivity extends AbsActivity {
             mAuthor = findPreference(KEY_AUTHOR);
             mSource = findPreference(KEY_SOURCE);
 
-            mDarkTheme.setOnPreferenceChangeListener(this);
             mPrettyTime.setOnPreferenceChangeListener(this);
 
             mTextFormat.setOnPreferenceClickListener(this);
@@ -354,7 +349,7 @@ public class SettingsActivity extends AbsActivity {
             }
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 File file = mFiles[which];
                 InputStream is = null;
                 try {
@@ -435,7 +430,7 @@ public class SettingsActivity extends AbsActivity {
             }
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
                     Settings.putFontSize(mFontSize.getProgress());
                     Settings.putLineSpacing(mLineSpacing.getProgress());
@@ -500,7 +495,7 @@ public class SettingsActivity extends AbsActivity {
             }
 
             @Override
-            public void onClick(View v) {
+            public void onClick(@NonNull View v) {
                 if (mPositive == v) {
                     String feedId = mEditText.getText().toString();
                     if (!TextUtils.isEmpty(feedId)) {
@@ -584,9 +579,7 @@ public class SettingsActivity extends AbsActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String key = preference.getKey();
-            if (KEY_DARK_THEME.equals(key)) {
-                Messenger.getInstance().notify(Constants.MESSENGER_ID_CHANGE_THEME, newValue);
-            } else if (Settings.KEY_PRETTY_TIME.equals(key)) {
+            if (Settings.KEY_PRETTY_TIME.equals(key)) {
                 ((SettingsActivity) getContext()).setResult(RESULT_OK);
                 return true;
             }
