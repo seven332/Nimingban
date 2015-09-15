@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -71,6 +72,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.TextUtils2;
+import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
@@ -613,6 +615,10 @@ public final class ListActivity extends AbsActivity
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
 
             thumb.setOnClickListener(this);
+
+            Drawable drawable = VectorDrawable.create(ListActivity.this, R.drawable.ic_comment_multiple_outline);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            bottomText.setCompoundDrawables(drawable, null, null, null);
         }
 
         @Override

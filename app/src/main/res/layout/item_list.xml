@@ -78,7 +78,6 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:drawableLeft="?attr/ic_comment_multiple_outline_x16"
             android:drawablePadding="8dp"/>
 
     </RelativeLayout>

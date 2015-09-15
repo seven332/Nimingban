@@ -387,11 +387,10 @@ public class VectorDrawable extends Drawable {
 
             return drawable;
         } catch (XmlPullParserException e) {
-            Log.e(LOGTAG, "parser error", e);
+            throw new IllegalStateException("parser error", e);
         } catch (IOException e) {
-            Log.e(LOGTAG, "parser error", e);
+            throw new IllegalStateException("parser error", e);
         }
-        return null;
     }
 
     private static int applyAlpha(int color, float alpha) {

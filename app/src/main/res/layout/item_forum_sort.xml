@@ -35,8 +35,7 @@
                 android:id="@+id/visibility"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="?attr/ic_visibility_x24"/>
+                android:padding="12dp"/>
 
             <TextView
                 android:id="@+id/forum"

@@ -24,7 +24,7 @@
     <!-- secondary_drawable_dark    30% -->
     <color name="primary_drawable_light">#8a000000</color>
     <color name="secondary_drawable_light">#42000000</color>
-    <color name="primary_drawable_dark">#ffffffff</color>
+    <color name="primary_drawable_dark">#b3ffffff</color>
     <color name="secondary_drawable_dark">#4dffffff</color>
 
     <!-- Text -->

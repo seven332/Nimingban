@@ -20,7 +20,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -269,22 +271,29 @@ public class SortForumsActivity extends AbsActivity {
 
     private class ForumHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
 
-        public View visibility;
+        public SimpleImageView visibility;
         public TextView forum;
         public View dragHandler;
 
         public ForumHolder(View itemView) {
             super(itemView);
 
-            visibility = itemView.findViewById(R.id.visibility);
+            visibility = (SimpleImageView) itemView.findViewById(R.id.visibility);
             forum = (TextView) itemView.findViewById(R.id.forum);
             dragHandler = itemView.findViewById(R.id.drag_handler);
 
             visibility.setOnClickListener(this);
+
+            StateListDrawable drawable = new StateListDrawable();
+            drawable.addState(new int[]{android.R.attr.state_activated},
+                    VectorDrawable.create(SortForumsActivity.this, R.drawable.ic_eye));
+            drawable.addState(new int[]{},
+                    VectorDrawable.create(SortForumsActivity.this, R.drawable.ic_eye_off));
+            visibility.setDrawable(drawable);
         }
 
         @Override
-        public void onClick(View v) {
+        public void onClick(@NonNull View v) {
             int position = getAdapterPosition();
             if (position >= 0 && position < mLazyList.size()) {
                 ACForumRaw raw = mLazyList.get(position);

@@ -27,9 +27,6 @@
 
         <item name="dark">false</item>
 
-        <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
-        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_light_x16</item>
-
         <item name="android:textColorPrimary">@color/primary_text_light</item>
         <item name="android:textColorSecondary">@color/secondary_text_light</item>
         <item name="android:textColorTertiary">@color/secondary_text_light</item>
@@ -45,9 +42,6 @@
         <item name="colorPureInverse">@color/pure_inverse_light</item>
 
         <item name="dark">false</item>
-
-        <item name="ic_visibility_x24">@drawable/ic_visibility_light_x24</item>
-        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_light_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
 
@@ -79,9 +73,6 @@
 
         <item name="dark">true</item>
 
-        <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
-        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
-
         <item name="android:textColorPrimary">@color/primary_text_dark</item>
         <item name="android:textColorSecondary">@color/secondary_text_dark</item>
         <item name="android:textColorTertiary">@color/secondary_text_dark</item>
@@ -97,9 +88,6 @@
         <item name="colorPureInverse">@color/pure_inverse_dark</item>
 
         <item name="dark">true</item>
-
-        <item name="ic_visibility_x24">@drawable/ic_visibility_dark_x24</item>
-        <item name="ic_comment_multiple_outline_x16">@drawable/ic_comment_multiple_outline_dark_x16</item>
 
         <item name="alertDialogTheme">@style/AppAlertDialogTheme.Dark</item>
 

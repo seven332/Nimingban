@@ -15,10 +15,15 @@
   ~ limitations under the License.
   -->
 
-<selector
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<vector
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:width="24dp"
+    app:height="24dp"
+    app:viewportWidth="24"
+    app:viewportHeight="24">
 
-    <item android:state_activated="true" android:drawable="@drawable/ic_eye_dark_x24"/>
-    <item android:drawable="@drawable/ic_eye_off_dark_x24"/>
+  <path
+      app:pathData="@string/pd_eye"
+      app:fillColor="?attr/colorDrawablePrimary"/>
 
-</selector>
+</vector>
