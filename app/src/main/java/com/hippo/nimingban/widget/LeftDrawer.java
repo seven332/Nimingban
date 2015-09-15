@@ -105,12 +105,16 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
         RippleSalon.addRipple(mDarkTheme, ResourcesUtils.getAttrBoolean(context, R.attr.dark));
     }
 
+    public void loadHeaderImageView() {
+        mHeader.load();
+    }
+
     public void unloadHeaderImageView() {
         mHeader.unload();
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(@NonNull AdapterView<?> parent, @NonNull View view, int position, long id) {
         // Avoid qiuck click action
         long now = System.currentTimeMillis();
         if (now - mHit > 500) {

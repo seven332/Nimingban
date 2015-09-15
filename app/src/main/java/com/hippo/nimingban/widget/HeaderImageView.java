@@ -19,6 +19,9 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -50,6 +53,9 @@ import pl.droidsonroids.gif.GifDrawable;
 
 public final class HeaderImageView extends FixedAspectImageView
         implements Unikery, View.OnClickListener, View.OnLongClickListener {
+
+    private static final String KEY_SUPER = "super";
+    private static final String KEY_IMAGE_FILE_URI = "image_file_uri";
 
     private int mTaskId = Unikery.INVAILD_ID;
 
@@ -84,10 +90,6 @@ public final class HeaderImageView extends FixedAspectImageView
         setSoundEffectsEnabled(false);
         setOnClickListener(this);
         setOnLongClickListener(this);
-
-        if (NMBAppConfig.needloadImage(context)) {
-            load();
-        }
     }
 
     public void setOnLongClickImageListener(OnLongClickImageListener listener) {
@@ -95,7 +97,7 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
         mHits[mHits.length-1] = SystemClock.uptimeMillis();
         if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
@@ -106,7 +108,7 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     @Override
-    public boolean onLongClick(View v) {
+    public boolean onLongClick(@NonNull View v) {
         if (mImageFile != null && mOnLongClickImageListener != null) {
             return mOnLongClickImageListener.onLongClickImage(mImageFile);
         } else {
@@ -114,7 +116,7 @@ public final class HeaderImageView extends FixedAspectImageView
         }
     }
 
-    private void load() {
+    public void load() {
         mContainer = new TempDataContainer();
         ConacoTask.Builder builder = new ConacoTask.Builder()
                 .setUnikery(this)
@@ -224,6 +226,54 @@ public final class HeaderImageView extends FixedAspectImageView
     @Override
     public void onCancel() {
         mContainer = null;
+    }
+
+    @NonNull
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle saved = new Bundle();
+        saved.putParcelable(KEY_SUPER, super.onSaveInstanceState());
+        if (mImageFile != null) {
+            saved.putParcelable(KEY_IMAGE_FILE_URI, Uri.fromFile(mImageFile));
+        }
+        return saved;
+    }
+
+    private void setImageFile(File file) {
+        Drawable drawable = NMBApplication.getSimpleDrawableHelper(getContext())
+                .decode(new FileInputStreamPipe(file));
+        if (drawable == null) {
+            return;
+        }
+
+        // Update image file
+        FileUtils.delete(mImageFile);
+        mImageFile = file;
+        mContainer = null;
+
+        if (drawable instanceof GifDrawable) {
+            ((GifDrawable) drawable).start();
+        }
+
+        setImageDrawableSafely(drawable);
+
+        if (mHolder != null) {
+            mHolder.release();
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Bundle saved = (Bundle) state;
+        Uri uri = saved.getParcelable(KEY_IMAGE_FILE_URI);
+        if (uri != null) {
+            File file = new File(uri.getPath());
+            if (file.exists()) {
+                setImageFile(file);
+            }
+        }
+
+        super.onRestoreInstanceState(saved.getParcelable(KEY_SUPER));
     }
 
     public interface OnLongClickImageListener {

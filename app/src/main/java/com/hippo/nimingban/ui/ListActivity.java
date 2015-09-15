@@ -208,6 +208,10 @@ public final class ListActivity extends AbsActivity
 
         mRightDrawer.setOnSelectForumListener(this);
 
+        if (savedInstanceState == null) {
+            mLeftDrawer.loadHeaderImageView();
+        }
+
         updateForums(true);
 
         checkForAppStart();

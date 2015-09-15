@@ -26,6 +26,8 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -46,6 +48,11 @@ import com.hippo.yorozuya.ViewUtils;
 @SuppressLint("RtlHardcoded")
 public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener,
         Animator.AnimatorListener {
+
+    private static final String KEY_SUPER = "super";
+    private static final String KEY_OPENED_DRAWER = "opened_drawer";
+    private static final String KEY_LEFT_LOCK_MODER = "left_lock_mode";
+    private static final String KEY_RIGHT_LOCK_MODER = "right_lock_mode";
 
     private static final int[] LAYOUT_ATTRS = new int[] {
         android.R.attr.layout_gravity
@@ -436,9 +443,9 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     public void setDrawerLockMode(int lockMode, int gravity) {
         if (gravity == Gravity.LEFT)
-            setDrawerLockMode(gravity, mLeftDrawer);
+            setDrawerLockMode(lockMode, mLeftDrawer);
         else if (gravity == Gravity.RIGHT)
-            setDrawerLockMode(gravity, mRightDrawer);
+            setDrawerLockMode(lockMode, mRightDrawer);
         else
             throw new IllegalArgumentException("gravity must be Gravity.LEFT or Gravity.RIGHT");
     }
@@ -740,7 +747,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     @Override
-    public void onAnimationUpdate(ValueAnimator animation) {
+    public void onAnimationUpdate(@NonNull ValueAnimator animation) {
         float value = (Float) animation.getAnimatedValue();
         int oldLeft = mTargetView.getLeft();
         int newLeft = MathUtils.lerp(mStartLeft, mEndLeft, value);
@@ -756,7 +763,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     @Override
-    public void onAnimationEnd(Animator animation) {
+    public void onAnimationEnd(@NonNull Animator animation) {
         if (!mCancelAnimation) {
             updateDrawerSlide(mTargetView, mToOpen ? 1.0f : 0.0f);
             updateDrawerState(mTargetView, mToOpen ? STATE_OPEN : STATE_CLOSED);
@@ -827,7 +834,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     @Override
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
-
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
@@ -1059,6 +1065,31 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         }
     }
 
+    @NonNull
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle saved = new Bundle();
+        saved.putParcelable(KEY_SUPER, super.onSaveInstanceState());
+
+        if (isDrawerOpen(Gravity.LEFT)) {
+            saved.putInt(KEY_OPENED_DRAWER, Gravity.LEFT);
+        } else if (isDrawerOpen(Gravity.RIGHT)) {
+            saved.putInt(KEY_OPENED_DRAWER, Gravity.RIGHT);
+        }
+        saved.putInt(KEY_LEFT_LOCK_MODER, mLeftLockMode);
+        saved.putInt(KEY_RIGHT_LOCK_MODER, mRightLockMode);
+        return saved;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Bundle saved = (Bundle) state;
+        setDrawerLockMode(saved.getInt(KEY_LEFT_LOCK_MODER, LOCK_MODE_UNLOCKED), Gravity.LEFT);
+        setDrawerLockMode(saved.getInt(KEY_RIGHT_LOCK_MODER, LOCK_MODE_UNLOCKED), Gravity.RIGHT);
+        openDrawer(saved.getInt(KEY_OPENED_DRAWER, Gravity.NO_GRAVITY));
+        super.onRestoreInstanceState(saved.getParcelable(KEY_SUPER));
+    }
+
     @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -1079,7 +1110,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     @Override
-    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+    public ViewGroup.LayoutParams generateLayoutParams(@NonNull AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
     }
 
