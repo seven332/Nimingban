@@ -243,9 +243,14 @@ public class Slider extends View {
 
     private void startProgressAnimation(float percent) {
         float currentValue;
-        Object value = mProgressAnimation.getAnimatedValue();
-        if (value instanceof  Float) {
-            currentValue = (float) value;
+        if (mProgressAnimation.isRunning()) {
+            mProgressAnimation.setCurrentPlayTime(mProgressAnimation.getCurrentPlayTime());
+            Object value = mProgressAnimation.getAnimatedValue();
+            if (value instanceof Float) {
+                currentValue = (float) value;
+            } else {
+                currentValue = mDrawPercent;
+            }
         } else {
             currentValue = mDrawPercent;
         }
