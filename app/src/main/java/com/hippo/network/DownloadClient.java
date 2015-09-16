@@ -19,7 +19,6 @@ package com.hippo.network;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
-import com.hippo.httpclient.ResponseCodeException;
 import com.hippo.io.UniFileOutputStreamPipe;
 import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.unifile.UniFile;

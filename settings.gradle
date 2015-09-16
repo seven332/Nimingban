@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include ':app', ':httpclient', ':daogenerator', ':swipebacklayout', ':vector', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'unifile'
+include ':app', ':daogenerator', ':swipebacklayout', ':vector', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'unifile'

@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.network.HttpCookieDB;
-import com.hippo.nimingban.network.NMBHttpClient;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
@@ -50,7 +49,6 @@ public final class NMBApplication extends Application
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
     private SimpleCookieStore mSimpleCookieStore;
-    private NMBHttpClient mNMBHttpClient;
     private NMBClient mNMBClient;
     private Conaco mConaco;
     private SimpleDrawableHelper mDrawableHelper;
@@ -134,15 +132,6 @@ public final class NMBApplication extends Application
     }
 
     @NonNull
-    public static NMBHttpClient getNMBHttpClient(@NonNull Context context) {
-        NMBApplication application = ((NMBApplication) context.getApplicationContext());
-        if (application.mNMBHttpClient == null) {
-            application.mNMBHttpClient = new NMBHttpClient(context);
-        }
-        return application.mNMBHttpClient;
-    }
-
-    @NonNull
     public static NMBClient getNMBClient(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mNMBClient == null) {
@@ -168,7 +157,7 @@ public final class NMBApplication extends Application
             builder.hasDiskCache = true;
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
-            builder.httpClient = getNMBHttpClient(context);
+            builder.okHttpClient = getOkHttpClient(context);
             builder.drawableHelper = getSimpleDrawableHelper(context);
             application.mConaco = builder.build();
         }

@@ -1,6 +1,3 @@
-[submodule "httpclient"]
-	path = httpclient
-	url = https://github.com/seven332/HttpClient
 [submodule "yorozuya"]
 	path = yorozuya
 	url = https://github.com/seven332/Yorozuya

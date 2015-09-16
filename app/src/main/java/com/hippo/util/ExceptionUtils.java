@@ -21,7 +21,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.hippo.httpclient.ResponseCodeException;
+import com.hippo.network.ResponseCodeException;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.yorozuya.Say;

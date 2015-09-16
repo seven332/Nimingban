@@ -18,7 +18,7 @@ package com.hippo.okhttp;
 
 import android.content.Context;
 
-import com.hippo.httpclient.Cookie;
+import com.hippo.network.Cookies;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.squareup.okhttp.Request;
@@ -54,11 +54,11 @@ public class GoodRequestBuilder extends Request.Builder {
 
         addHeader("User-Agent", sUserAgent);
 
-        Cookie cookie = new Cookie();
+        Cookies cookies = new Cookies();
         List<HttpCookie> httpCookies = sCookieStore.get(u);
         for (HttpCookie httpCookie : httpCookies) {
-            cookie.put(httpCookie.getName(), httpCookie.getValue());
+            cookies.put(httpCookie.getName(), httpCookie.getValue());
         }
-        addHeader("Cookie", cookie.toString());
+        addHeader("Cookie", cookies.toString());
     }
 }

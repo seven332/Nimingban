@@ -25,9 +25,6 @@ import android.webkit.MimeTypeMap;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.hippo.httpclient.HttpClient;
-import com.hippo.httpclient.HttpRequest;
-import com.hippo.httpclient.HttpResponse;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
@@ -665,59 +662,6 @@ public class ACEngine {
             } else {
                 throw e;
             }
-        }
-    }
-
-    public static List<ACSearchItem> search(HttpClient httpClient, HttpRequest httpRequest,
-            String keyword, int page) throws Exception {
-        try {
-            httpRequest.setUrl(ACUrl.getBingSearchUrl(keyword, page));
-            HttpResponse response = httpClient.execute(httpRequest);
-
-            Document doc = Jsoup.parse(response.getInputStream(), "UTF-8", "http://www.bing.com/");
-            Elements elements = doc.getElementsByClass("b_algo");
-
-            List<ACSearchItem> result = new ArrayList<>();
-            for (int i = 0, n = elements.size(); i < n; i++) {
-                Element element = elements.get(i);
-
-                Elements urls = element.getElementsByTag("a");
-                if (urls.size() <= 0) {
-                    continue;
-                }
-                Matcher matcher = URL_PATTERN.matcher(urls.attr("href"));
-                String id;
-                if (matcher.find()) {
-                    id = matcher.group(1);
-                } else {
-                    continue;
-                }
-
-                Elements captions = elements.get(i).getElementsByClass("b_caption");
-                if (captions.size() <= 0) {
-                    continue;
-                }
-                Elements contents = captions.get(0).getElementsByTag("p");
-                if (contents.size() <= 0) {
-                    continue;
-                }
-                String content = contents.get(0).text();
-
-                ACSearchItem item = new ACSearchItem();
-                item.id = id;
-                item.context = content;
-                result.add(item);
-            }
-
-            return result;
-        } catch (Exception e) {
-            if (httpRequest.isCancelled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
-        } finally {
-            httpRequest.disconnect();
         }
     }
 }
