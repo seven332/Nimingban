@@ -51,7 +51,6 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
-import com.hippo.nimingban.client.NMBUrl;
 import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
@@ -318,7 +317,7 @@ public final class ListActivity extends AbsActivity
                 }
 
                 @Override
-                public void onCancelled() {
+                public void onCancel() {
                     mUpdateRequest = null;
                 }
             });
@@ -749,7 +748,7 @@ public final class ListActivity extends AbsActivity
                 mNMBRequest = request;
                 request.setSite(mCurrentForum.getNMBSite());
                 request.setMethod(NMBClient.METHOD_GET_POST_LIST);
-                request.setArgs(NMBUrl.getPostListUrl(mCurrentForum.getNMBSite(), mCurrentForum.getNMBId(), page));
+                request.setArgs(mCurrentForum.getNMBId(), page);
                 request.setCallback(new ListListener(taskId, page, request));
                 mNMBClient.execute(request);
             }
@@ -803,7 +802,7 @@ public final class ListActivity extends AbsActivity
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             if (mNMBRequest == mRequest) {
                 // It is current request
 

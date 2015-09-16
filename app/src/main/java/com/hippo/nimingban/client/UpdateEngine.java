@@ -16,31 +16,42 @@
 
 package com.hippo.nimingban.client;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
-import com.hippo.httpclient.HttpClient;
-import com.hippo.httpclient.HttpRequest;
-import com.hippo.httpclient.HttpResponse;
 import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.okhttp.GoodRequestBuilder;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 public final class UpdateEngine {
 
+    private static final String TAG = UpdateEngine.class.getSimpleName();
+
     private static final String UPDATE_URL = "http://nimingban.herokuapp.com/update?version_code=";
 
-    public static UpdateStatus update(HttpClient httpClient, HttpRequest httpRequest, int versionCode) throws Exception {
+    public static Call prepareUpdate(OkHttpClient okHttpClient, int versionCode) {
+        String url = UPDATE_URL + versionCode;
+        Log.d(TAG, url);
+        Request request = new GoodRequestBuilder(url).build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static UpdateStatus doUpdate(Call call) throws Exception {
         try {
-            String url = UPDATE_URL + versionCode;
-            httpRequest.setUrl(url);
-            HttpResponse response = httpClient.execute(httpRequest);
-            String content = response.getString();
-            return JSON.parseObject(content, UpdateStatus.class);
-        } catch (Exception e) {
-            if (httpRequest.isCancelled()) {
+            Response response = call.execute();
+            String body = response.body().string();
+            return JSON.parseObject(body, UpdateStatus.class);
+        } catch (IOException e) {
+            if (call.isCanceled()) {
                 throw new CancelledException();
             } else {
                 throw e;
             }
-        } finally {
-            httpRequest.disconnect();
         }
     }
 }

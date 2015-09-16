@@ -263,7 +263,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             // Clear
             mNMBRequest = null;
         }

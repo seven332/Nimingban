@@ -431,7 +431,7 @@ public final class PostActivity extends SwipeActivity
             mRequest = request;
             request.setSite(mSite);
             request.setMethod(NMBClient.METHOD_GET_REFERENCE);
-            request.setArgs(NMBUrl.getReferenceUrl(mSite, mId));
+            request.setArgs(mId);
             request.setCallback(this);
             mNMBClient.execute(request);
         }
@@ -509,7 +509,7 @@ public final class PostActivity extends SwipeActivity
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             mRequest = null;
 
             if (mDialog != null) {
@@ -751,7 +751,7 @@ public final class PostActivity extends SwipeActivity
             mNMBRequest = request;
             request.setSite(mSite);
             request.setMethod(NMBClient.METHOD_GET_POST);
-            request.setArgs(NMBUrl.getPostUrl(mSite, mId, page));
+            request.setArgs(mId, page);
             request.setCallback(new PostListener(taskId, type, page, request));
             mNMBClient.execute(request);
         }
@@ -845,7 +845,7 @@ public final class PostActivity extends SwipeActivity
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             if (mNMBRequest == mRequest) {
                 // It is current request
 
@@ -880,8 +880,8 @@ public final class PostActivity extends SwipeActivity
         }
 
         @Override
-        public void onCancelled() {
-            Log.d("TAG", "FeedListener onCancelled");
+        public void onCancel() {
+            Log.d("TAG", "FeedListener onCancel");
         }
     }
 }

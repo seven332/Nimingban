@@ -296,7 +296,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             if (mNMBRequest == mRequest) {
                 // It is current request
 

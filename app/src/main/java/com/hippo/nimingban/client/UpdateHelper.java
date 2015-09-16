@@ -57,7 +57,7 @@ public final class UpdateHelper {
         request.setUrl(url);
         request.setFilename(filename);
         request.setDir(UniFile.fromFile(dir));
-        request.setHttpClient(NMBApplication.getNMBHttpClient(context));
+        request.setOkHttpClient(NMBApplication.getOkHttpClient(context));
         new DownloadApkTask(context, request, Uri.fromFile(new File(dir, filename))).execute();
     }
 

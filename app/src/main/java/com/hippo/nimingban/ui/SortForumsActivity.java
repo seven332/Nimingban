@@ -414,7 +414,7 @@ public class SortForumsActivity extends AbsActivity {
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;

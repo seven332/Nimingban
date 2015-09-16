@@ -19,22 +19,22 @@ package com.hippo.network;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
-import com.hippo.httpclient.HttpClient;
-import com.hippo.httpclient.HttpRequest;
-import com.hippo.httpclient.HttpResponse;
 import com.hippo.httpclient.ResponseCodeException;
 import com.hippo.io.UniFileOutputStreamPipe;
+import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.io.OutputStreamPipe;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class DownloadClient {
 
@@ -83,34 +83,24 @@ public class DownloadClient {
 
     public static boolean execute(DownloadRequest request) {
         OnDownloadListener listener = request.mListener;
-        HttpClient httpClient = request.mHttpClient;
-        HttpRequest httpRequest = request.mHttpRequest;
-        if (httpRequest == null) {
-            httpRequest = new HttpRequest();
-            request.mHttpRequest = httpRequest;
-        }
-        try {
-            httpRequest.setUrl(new URL(request.mUrl));
-        } catch (MalformedURLException e) {
-            // Listener
-            if (listener != null) {
-                listener.onFailed(e);
-            }
-            return false;
-        }
+        OkHttpClient okHttpClient = request.mOkHttpClient;
 
         UniFile uniFile = null;
         OutputStreamPipe osPipe = null;
         try {
+            Call call = okHttpClient.newCall(new GoodRequestBuilder(request.mUrl).build());
+            request.mCall = call;
+
             // Listener
             if (listener != null) {
                 listener.onStartDownloading();
             }
 
-            HttpResponse httpResponse = httpClient.execute(httpRequest);
+            Response response = call.execute();
+            ResponseBody body = response.body();
 
             // Check response code
-            int responseCode = httpResponse.getResponseCode();
+            int responseCode = response.code();
             if (responseCode >= 400) {
                 throw new ResponseCodeException(responseCode);
             }
@@ -120,13 +110,13 @@ public class DownloadClient {
                 String extension;
                 String name;
 
-                String dispositionFilename = getFilenameFromContentDisposition(httpResponse.getHeaderField("Content-Disposition"));
+                String dispositionFilename = getFilenameFromContentDisposition(response.header("Content-Disposition"));
                 if (dispositionFilename != null) {
                     name = FileUtils.getNameFromFilename(dispositionFilename);
                     extension = FileUtils.getExtensionFromFilename(dispositionFilename);
                 } else {
                     name = Utilities.getNameFromUrl(request.mUrl);
-                    extension = Utilities.getExtensionFromMimeType(httpResponse.getContentType());
+                    extension = Utilities.getExtensionFromMimeType(response.header("Content-Type"));
                     if (extension == null) {
                         extension = MimeTypeMap.getFileExtensionFromUrl(request.mUrl);
                     }
@@ -153,14 +143,14 @@ public class DownloadClient {
             }
             osPipe.obtain();
 
-            long contentLength = httpResponse.getContentLength();
+            long contentLength = body.contentLength();
 
             // Listener
             if (listener != null) {
                 listener.onConnect(contentLength);
             }
 
-            long receivedSize = transferData(httpResponse.getInputStream(), osPipe.open(), listener);
+            long receivedSize = transferData(body.byteStream(), osPipe.open(), listener);
 
             if (contentLength > 0 && contentLength != receivedSize) {
                 throw new IOException("contentLength is " + contentLength + ", but receivedSize is " + receivedSize);
@@ -187,7 +177,6 @@ public class DownloadClient {
             }
             return false;
         } finally {
-            httpRequest.disconnect();
             if (osPipe != null) {
                 osPipe.close();
                 osPipe.release();

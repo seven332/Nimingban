@@ -686,7 +686,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;
@@ -722,7 +722,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         }
 
         @Override
-        public void onCancelled() {
+        public void onCancel() {
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;

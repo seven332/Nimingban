@@ -16,27 +16,24 @@
 
 package com.hippo.network;
 
-import com.hippo.httpclient.HttpClient;
-import com.hippo.httpclient.HttpRequest;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.io.OutputStreamPipe;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
 
 public class DownloadRequest {
 
-    HttpClient mHttpClient;
-    HttpRequest mHttpRequest;
+    OkHttpClient mOkHttpClient;
     String mUrl;
     UniFile mDir;
     String mFilename;
     OutputStreamPipe mOSPipe;
     DownloadClient.OnDownloadListener mListener;
 
-    public void setHttpClient(HttpClient httpClient) {
-        mHttpClient = httpClient;
-    }
+    Call mCall;
 
-    public void setHttpRequest(HttpRequest httpRequest) {
-        mHttpRequest = httpRequest;
+    public void setOkHttpClient(OkHttpClient okHttpClient) {
+        mOkHttpClient = okHttpClient;
     }
 
     public void setUrl(String url) {
@@ -60,8 +57,8 @@ public class DownloadRequest {
     }
 
     public void cancel() {
-        if (mHttpRequest != null) {
-            mHttpRequest.cancel();
+        if (mCall != null) {
+            mCall.cancel();
         }
     }
 }

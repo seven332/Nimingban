@@ -31,11 +31,15 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
+import com.hippo.okhttp.GoodHttpClient;
+import com.hippo.okhttp.GoodRequestBuilder;
+import com.hippo.okhttp.ResponseUtils;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
 import com.squareup.leakcanary.LeakCanary;
+import com.squareup.okhttp.OkHttpClient;
 import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
@@ -50,6 +54,7 @@ public final class NMBApplication extends Application
     private NMBClient mNMBClient;
     private Conaco mConaco;
     private SimpleDrawableHelper mDrawableHelper;
+    private OkHttpClient mOkHttpClient;
 
     private boolean mConnectedWifi;
 
@@ -72,6 +77,8 @@ public final class NMBApplication extends Application
         DB.initialize(this);
         HttpCookieDB.initialize(this);
         ReadableTime.initialize(this);
+        GoodRequestBuilder.initialize(this);
+        ResponseUtils.initialize(this);
 
         LeakCanary.install(this);
 
@@ -175,6 +182,14 @@ public final class NMBApplication extends Application
             application.mDrawableHelper = new SimpleDrawableHelper(context);
         }
         return application.mDrawableHelper;
+    }
+
+    public static OkHttpClient getOkHttpClient(@NonNull Context context) {
+        NMBApplication application = ((NMBApplication) context.getApplicationContext());
+        if (application.mOkHttpClient == null) {
+            application.mOkHttpClient = new GoodHttpClient();
+        }
+        return application.mOkHttpClient;
     }
 
     @Override

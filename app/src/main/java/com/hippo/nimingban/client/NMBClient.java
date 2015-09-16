@@ -19,15 +19,15 @@ package com.hippo.nimingban.client;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.hippo.httpclient.HttpClient;
-import com.hippo.httpclient.HttpRequest;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACEngine;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Site;
-import com.hippo.nimingban.network.NMBHttpRequest;
 import com.hippo.yorozuya.PriorityThreadFactory;
+import com.hippo.yorozuya.SimpleHandler;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -64,7 +64,7 @@ public class NMBClient {
     public static final int METHOD_SEARCH = 9;
 
     private final ThreadPoolExecutor mRequestThreadPool;
-    private final HttpClient mHttpClient;
+    private final OkHttpClient mOkHttpClient;
 
     public NMBClient(Context context) {
         int poolSize = 3;
@@ -73,25 +73,25 @@ public class NMBClient {
                 android.os.Process.THREAD_PRIORITY_BACKGROUND);
         mRequestThreadPool = new ThreadPoolExecutor(poolSize, poolSize,
                 1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
-        mHttpClient = NMBApplication.getNMBHttpClient(context);
+        mOkHttpClient = NMBApplication.getOkHttpClient(context);
     }
 
     public void execute(NMBRequest request) {
-        if (!request.isCanceled()) {
+        if (!request.isCancelled()) {
             Task task = new Task(request.method, request.site, request.callback);
             task.executeOnExecutor(mRequestThreadPool, request.args);
             request.task = task;
         } else {
-            request.callback.onCancelled();
+            request.callback.onCancel();
         }
     }
 
-    class Task extends AsyncTask<Object, Void, Object> {
+    public class Task extends AsyncTask<Object, Void, Object> {
 
         private int mMethod;
         private Site mSite;
         private Callback mCallback;
-        private HttpRequest mHttpRequest;
+        private Call mCall;
 
         private boolean mStop;
 
@@ -99,7 +99,6 @@ public class NMBClient {
             mMethod = method;
             mSite = site;
             mCallback = callback;
-            mHttpRequest = new NMBHttpRequest(mSite);
         }
 
         public void stop() {
@@ -107,20 +106,26 @@ public class NMBClient {
                 mStop = true;
 
                 if (mCallback != null) {
-                    mCallback.onCancelled();
+                    final Callback finalCallback = mCallback;
+                    SimpleHandler.getInstance().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            finalCallback.onCancel();
+                        }
+                    });
                 }
 
                 Status status = getStatus();
                 if (status == Status.PENDING) {
                     cancel(false);
                 } else if (status == Status.RUNNING) {
-                    if (mHttpRequest != null) {
-                        mHttpRequest.cancel();
+                    if (mCall != null) {
+                        mCall.cancel();
                     }
                 }
 
                 // Clear
-                mHttpRequest = null;
+                mCall = null;
                 mCallback = null;
             }
         }
@@ -128,7 +133,13 @@ public class NMBClient {
         private Object getForumList() throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.getForumList(mHttpClient, mHttpRequest);
+                    Call call = ACEngine.prepareGetForumList(mOkHttpClient);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetForumList(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -137,7 +148,13 @@ public class NMBClient {
         private Object getCookie() throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.getCookie(mHttpClient, mHttpRequest);
+                    Call call = ACEngine.prepareGetCookie(mOkHttpClient);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetCookie(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -146,7 +163,13 @@ public class NMBClient {
         private Object getPostList(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.getPostList(mHttpClient, mHttpRequest, (String) params[0]);
+                    Call call = ACEngine.prepareGetPostList(mOkHttpClient, (String) params[0], (Integer) params[1]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetPostList(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -155,7 +178,13 @@ public class NMBClient {
         private Object getPost(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.getPost(mHttpClient, mHttpRequest, (String) params[0]);
+                    Call call = ACEngine.prepareGetPost(mOkHttpClient, (String) params[0], (Integer) params[1]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetPost(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -164,7 +193,13 @@ public class NMBClient {
         private Object getReference(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.getReference(mHttpClient, mHttpRequest, (String) params[0]);
+                    Call call = ACEngine.prepareGetReference(mOkHttpClient, (String) params[0]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetReference(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -173,16 +208,29 @@ public class NMBClient {
         private Object reply(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.reply(mHttpClient, mHttpRequest, (ACReplyStruct) params[0]);
+                    Call call = ACEngine.prepareReply(mOkHttpClient, (ACReplyStruct) params[0]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doReply(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
         }
 
+
         private Object getFeed(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.getFeed(mHttpClient, mHttpRequest, (String) params[0], (Integer) params[1]);
+                    Call call = ACEngine.prepareGetFeed(mOkHttpClient, (String) params[0], (Integer) params[1]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetFeed(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -191,7 +239,13 @@ public class NMBClient {
         private Object addFeed(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.addFeed(mHttpClient, mHttpRequest, (String) params[0], (String) params[1]);
+                    Call call = ACEngine.prepareAddFeed(mOkHttpClient, (String) params[0], (String) params[1]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doAddFeed(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -200,7 +254,13 @@ public class NMBClient {
         private Object delFeed(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.delFeed(mHttpClient, mHttpRequest, (String) params[0], (String) params[1]);
+                    Call call = ACEngine.prepareDelFeed(mOkHttpClient, (String) params[0], (String) params[1]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doDelFeed(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -209,7 +269,13 @@ public class NMBClient {
         private Object createPost(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.createPost(mHttpClient, mHttpRequest, (ACPostStruct) params[0]);
+                    Call call = ACEngine.prepareCreatePost(mOkHttpClient, (ACPostStruct) params[0]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doCreatePost(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -218,7 +284,13 @@ public class NMBClient {
         private Object search(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
-                    return ACEngine.search(mHttpClient, mHttpRequest, (String) params[0], (Integer) params[1]);
+                    Call call = ACEngine.prepareSearch(mOkHttpClient, (String) params[0], (Integer) params[1]);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doSearch(call);
+                    } else {
+                        throw new CancelledException();
+                    }
                 default:
                     return new IllegalStateException("Can't detect site " + mSite);
             }
@@ -229,7 +301,13 @@ public class NMBClient {
             try {
                 switch (mMethod) {
                     case METHOD_UPDATE:
-                        return UpdateEngine.update(mHttpClient, mHttpRequest, (Integer) params[0]);
+                        Call call = UpdateEngine.prepareUpdate(mOkHttpClient, (Integer) params[0]);
+                        if (!mStop) {
+                            mCall = call;
+                            return UpdateEngine.doUpdate(call);
+                        } else {
+                            throw new CancelledException();
+                        }
                     case METHOD_GET_FORUM_LIST:
                         return getForumList();
                     case METHOD_GET_COOKIE:
@@ -264,17 +342,19 @@ public class NMBClient {
         @Override
         protected void onPostExecute(Object result) {
             if (mCallback != null) {
-                if (result instanceof CancelledException) {
-                    mCallback.onCancelled();
-                } else if (result instanceof Exception) {
-                    mCallback.onFailure((Exception) result);
+                if (!(result instanceof CancelledException)) {
+                    if (result instanceof Exception) {
+                        mCallback.onFailure((Exception) result);
+                    } else {
+                        mCallback.onSuccess(result);
+                    }
                 } else {
-                    mCallback.onSuccess(result);
+                    // onCancel is called in stop
                 }
             }
 
             // Clear
-            mHttpRequest = null;
+            mCall = null;
             mCallback = null;
         }
     }
@@ -285,6 +365,6 @@ public class NMBClient {
 
         void onFailure(Exception e);
 
-        void onCancelled();
+        void onCancel();
     }
 }

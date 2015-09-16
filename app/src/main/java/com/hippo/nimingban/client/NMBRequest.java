@@ -54,7 +54,7 @@ public class NMBRequest {
         }
     }
 
-    public boolean isCanceled() {
+    public boolean isCancelled() {
         return mCancel;
     }
 }
