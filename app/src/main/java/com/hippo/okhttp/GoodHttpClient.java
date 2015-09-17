@@ -24,8 +24,8 @@ public class GoodHttpClient extends OkHttpClient {
 
     public GoodHttpClient() {
         setCookieHandler(new EmptyCookieHandler());
-        setConnectTimeout(10, TimeUnit.SECONDS);
-        setWriteTimeout(10, TimeUnit.SECONDS);
-        setReadTimeout(10, TimeUnit.SECONDS);
+        setConnectTimeout(15, TimeUnit.SECONDS);
+        setWriteTimeout(15, TimeUnit.SECONDS);
+        setReadTimeout(15, TimeUnit.SECONDS);
     }
 }
