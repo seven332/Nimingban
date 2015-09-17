@@ -613,15 +613,18 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             return null;
         }
 
+        int padding = LayoutUtils.dp2pix(this, 16);
         Bitmap bitmap;
         try {
-            bitmap = Bitmap.createBitmap(layout.getWidth(), layout.getHeight(), Bitmap.Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(layout.getWidth() + (2 * padding),
+                    layout.getHeight() + (2 * padding), Bitmap.Config.ARGB_8888);
         } catch (OutOfMemoryError e) {
             return null;
         }
 
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(ResourcesUtils.getAttrColor(this, R.attr.colorPure));
+        canvas.translate(padding, padding);
         layout.draw(canvas);
 
         File file = NMBAppConfig.createTempFile("png");
