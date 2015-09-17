@@ -245,6 +245,25 @@ public class SimpleCookieStore {
         }
     }
 
+    public synchronized void remove(URL url, String name) {
+        if (url == null) {
+            throw new NullPointerException("cookie == null");
+        }
+
+        url = cookiesUrl(url);
+        List<HttpCookieWithId> cookies = map.get(url);
+        if (cookies != null) {
+            for (Iterator<HttpCookieWithId> i = cookies.iterator(); i.hasNext(); ) {
+                HttpCookieWithId hcwi = i.next();
+                HttpCookie cookie = hcwi.httpCookie;
+                if (hcwi.hasExpired() || (ObjectUtils.equal(name, hcwi.httpCookie.getName()) &&
+                        pathMatches(cookie, url) && portMatches(cookie, url))) {
+                    i.remove(); // remove expired cookies
+                }
+            }
+        }
+    }
+
     public synchronized boolean removeAll() {
         boolean result = !map.isEmpty();
         map.clear();

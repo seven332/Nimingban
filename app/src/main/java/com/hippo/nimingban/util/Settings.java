@@ -265,6 +265,17 @@ public final class Settings {
         putBoolean(KEY_ANALYSIS, value);
     }
 
+    private static final String KEY_VERSION_CODE = "version_code";
+    private static final int DEFAULT_VERSION_CODE = 0;
+
+    public static int getVersionCode() {
+        return getInt(KEY_VERSION_CODE, DEFAULT_VERSION_CODE);
+    }
+
+    public static void putVersionCode(int value) {
+        putInt(KEY_VERSION_CODE, value);
+    }
+
     public static final String KEY_CRASH_FILENAME = "crash_filename";
     public static final String VALUE_CRASH_FILENAME = null;
 

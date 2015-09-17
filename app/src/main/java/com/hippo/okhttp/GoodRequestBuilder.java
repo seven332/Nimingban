@@ -30,10 +30,7 @@ import java.util.List;
 
 public class GoodRequestBuilder extends Request.Builder {
 
-    private static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) " +
-            "AppleWebKit/537.36 (KHTML, like Gecko) " +
-            "Chrome/43.0.2357.132 Safari/537.36";
-    private static final String sUserAgent = System.getProperty("http.agent", DEFAULT_USER_AGENT);
+    private static final String USER_AGENT = "havfun-nimingban";
 
     private static SimpleCookieStore sCookieStore;
 
@@ -52,7 +49,7 @@ public class GoodRequestBuilder extends Request.Builder {
 
         url(u);
 
-        addHeader("User-Agent", sUserAgent);
+        addHeader("User-Agent", USER_AGENT);
 
         Cookies cookies = new Cookies();
         List<HttpCookie> httpCookies = sCookieStore.get(u);

@@ -48,6 +48,10 @@ public class ACSite extends Site {
         }
     }
 
+    public URL getSiteUrl() {
+        return mSiteUrl;
+    }
+
     @Override
     public int getId() {
         return Site.AC;
@@ -61,7 +65,7 @@ public class ACSite extends Site {
     @Override
     public long getCookieMaxAge(Context context) {
         SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(context);
-        HttpCookieWithId cookie = cookieStore.getCookie(mSiteUrl, "userId");
+        HttpCookieWithId cookie = cookieStore.getCookie(mSiteUrl, "userhash");
         if (cookie == null) {
             return -2;
         } else {

@@ -19,11 +19,15 @@ package com.hippo.nimingban;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.HttpCookieDB;
+import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
@@ -42,6 +46,8 @@ import com.squareup.okhttp.OkHttpClient;
 import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
+import java.net.HttpCookie;
+import java.net.URL;
 
 public final class NMBApplication extends Application
         implements Thread.UncaughtExceptionHandler, Messenger.Receiver {
@@ -96,6 +102,46 @@ public final class NMBApplication extends Application
             TCAgent.init(this);
         } else {
             mHasInitTCAgent = false;
+        }
+
+        try {
+            update();
+        } catch (PackageManager.NameNotFoundException e) {
+            // Ignore
+        }
+    }
+
+    private void update() throws PackageManager.NameNotFoundException {
+        int oldVersionCode = Settings.getVersionCode();
+        PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_ACTIVITIES);
+        Settings.putVersionCode(pi.versionCode);
+
+        if (oldVersionCode < 6) {
+            updateCookies(this);
+        }
+    }
+
+    public static void updateCookies(Context context) {
+        SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(context);
+
+        URL url = ACSite.getInstance().getSiteUrl();
+        HttpCookieWithId hcwi = cookieStore.getCookie(url, "userId");
+        if (hcwi != null) {
+            HttpCookie oldCookie = hcwi.httpCookie;
+            cookieStore.remove(url, oldCookie);
+
+            HttpCookie newCookie = new HttpCookie("userhash", oldCookie.getValue());
+            newCookie.setComment(oldCookie.getComment());
+            newCookie.setCommentURL(oldCookie.getCommentURL());
+            newCookie.setDiscard(oldCookie.getDiscard());
+            newCookie.setDomain(oldCookie.getDomain());
+            newCookie.setMaxAge(oldCookie.getMaxAge());
+            newCookie.setPath(oldCookie.getPath());
+            newCookie.setPortlist(oldCookie.getPortlist());
+            newCookie.setSecure(oldCookie.getSecure());
+            newCookie.setVersion(oldCookie.getVersion());
+
+            cookieStore.add(url, newCookie);
         }
     }
 

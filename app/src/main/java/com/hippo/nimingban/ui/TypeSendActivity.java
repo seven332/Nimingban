@@ -275,7 +275,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             // WTF ?
             return true;
         }
-        return cookieStore.contain(url, "userId");
+        return cookieStore.contain(url, "userhash");
     }
 
     private void doAction() {

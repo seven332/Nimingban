@@ -371,6 +371,7 @@ public class SettingsActivity extends AbsActivity {
                         }
                         cookieStore.add(url, cookie);
                     }
+                    NMBApplication.updateCookies(getContext());
                     Toast.makeText(getContext(), R.string.restore_cookies_successfully, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(getContext(), R.string.not_valid_cookie_file, Toast.LENGTH_SHORT).show();
