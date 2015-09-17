@@ -34,6 +34,7 @@
 - [greenDAO](https://github.com/greenrobot/greenDAO)
 - [jsoup](https://github.com/jhy/jsoup)
 - [leakcanary](https://github.com/square/leakcanary)
+- [okhttp](https://github.com/square/okhttp)
 - [PhotoView](https://github.com/chrisbanes/PhotoView)
 - [SwipeBackLayout](https://github.com/ikew0ng/SwipeBackLayout)
 
