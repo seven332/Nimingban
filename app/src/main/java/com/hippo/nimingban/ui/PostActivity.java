@@ -460,10 +460,11 @@ public final class PostActivity extends SwipeActivity
 
             if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 mThumb.setVisibility(View.VISIBLE);
+                mThumb.unload();
                 mThumb.load(thumbUrl, thumbUrl, loadFromNetwork);
             } else {
                 mThumb.setVisibility(View.GONE);
-                mConaco.load(mThumb, null);
+                mThumb.unload();
             }
 
             mContent.setTextSize(Settings.getFontSize());
@@ -702,10 +703,11 @@ public final class PostActivity extends SwipeActivity
 
             if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
+                holder.thumb.unload();
                 holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
-                mConaco.load(holder.thumb, null);
+                holder.thumb.unload();
             }
 
             holder.content.setTextSize(Settings.getFontSize());

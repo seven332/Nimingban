@@ -174,6 +174,19 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         return mTaskId;
     }
 
+    @Override
+    public void onMiss(Conaco.Source source) {
+        if (source == Conaco.Source.MEMORY) {
+            setImageDrawableSafely(null);
+
+            // Release old holder
+            if (mHolder != null) {
+                mHolder.release();
+                mHolder = null;
+            }
+        }
+    }
+
     private void setImageDrawableSafely(Drawable drawable) {
         Drawable oldDrawable = getDrawable();
         if (oldDrawable instanceof TransitionDrawable) {
@@ -193,17 +206,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         }
 
         setImageDrawable(drawable);
-    }
-
-    @Override
-    public void onStart() {
-        setImageDrawableSafely(null);
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
     }
 
     @Override

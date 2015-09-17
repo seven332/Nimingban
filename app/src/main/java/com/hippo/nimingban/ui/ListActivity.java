@@ -676,6 +676,7 @@ public final class ListActivity extends AbsActivity
 
             if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
+                holder.thumb.unload();
                 holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
 
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);

@@ -50,6 +50,7 @@ public class NMBRequest {
             mCancel = true;
             if (task != null) {
                 task.stop();
+                task = null;
             }
         }
     }

@@ -22,11 +22,19 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -43,17 +51,26 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
 public final class FeedActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
 
+    private static final String TAG = FeedActivity.class.getSimpleName();
+
     private Conaco mConaco;
     private NMBClient mNMBClient;
 
-    private FeedAdapter mFeedAdapter;
     private FeedHelper mFeedHelper;
+
+    private EasyRecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter mWrappedAdapter;
+    private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
+    private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
     private NMBRequest mNMBRequest;
 
@@ -78,23 +95,53 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         ContentLayout contentLayout = (ContentLayout) findViewById(R.id.content_layout);
-        EasyRecyclerView recyclerView = contentLayout.getRecyclerView();
+        mRecyclerView = contentLayout.getRecyclerView();
 
         mFeedHelper = new FeedHelper();
         mFeedHelper.setEmptyString(getString(R.string.no_feed));
         contentLayout.setHelper(mFeedHelper);
 
-        mFeedAdapter = new FeedAdapter();
-        recyclerView.setAdapter(mFeedAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
-        recyclerView.setDrawSelectorOnTop(true);
-        recyclerView.setOnItemClickListener(this);
-        recyclerView.hasFixedSize();
-        recyclerView.setClipToPadding(false);
+
+        // Layout Manager
+        mLayoutManager = new LinearLayoutManager(this);
+
+        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
+        mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+
+        // swipe manager
+        mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
+
+        mAdapter = new FeedAdapter();
+        mAdapter.setHasStableIds(true);
+        mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mAdapter);      // wrap for swiping
+
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+
+        // Change animations are enabled by default since support-v7-recyclerview v22.
+        // Disable the change animation in order to make turning back animation of swiped item works properly.
+        animator.setSupportsChangeAnimations(false);
+
+        mRecyclerView.hasFixedSize();
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        mRecyclerView.setItemAnimator(animator);
+        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
+        mRecyclerView.setDrawSelectorOnTop(true);
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.setClipChildren(false);
         int halfInterval = LayoutUtils.dp2pix(this, 4);
-        recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-        recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+        mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+        mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+
+        // NOTE:
+        // The initialization order is very important! This order determines the priority of touch event handling.
+        //
+        // priority: TouchActionGuard > Swipe > DragAndDrop
+        mRecyclerViewTouchActionGuardManager.attachRecyclerView(mRecyclerView);
+        mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
 
         mFeedHelper.firstRefresh();
     }
@@ -102,6 +149,29 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (mRecyclerViewSwipeManager != null) {
+            mRecyclerViewSwipeManager.release();
+            mRecyclerViewSwipeManager = null;
+        }
+
+        if (mRecyclerViewTouchActionGuardManager != null) {
+            mRecyclerViewTouchActionGuardManager.release();
+            mRecyclerViewTouchActionGuardManager = null;
+        }
+
+        if (mRecyclerView != null) {
+            mRecyclerView.setItemAnimator(null);
+            mRecyclerView.setAdapter(null);
+            mRecyclerView = null;
+        }
+
+        if (mWrappedAdapter != null) {
+            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+            mWrappedAdapter = null;
+        }
+        mAdapter = null;
+        mLayoutManager = null;
 
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
@@ -129,8 +199,9 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         return true;
     }
 
-    private class FeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class FeedHolder extends AbstractSwipeableItemViewHolder implements View.OnClickListener {
 
+        public View cardView;
         public TextView leftText;
         public TextView centerText;
         public TextView rightText;
@@ -140,6 +211,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         public FeedHolder(View itemView) {
             super(itemView);
 
+            cardView = itemView.findViewById(R.id.card_view);
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
@@ -165,9 +237,14 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
                 }
             }
         }
+
+        @Override
+        public View getSwipeableContainerView() {
+            return cardView;
+        }
     }
 
-    private class FeedAdapter extends RecyclerView.Adapter<FeedHolder> {
+    private class FeedAdapter extends RecyclerView.Adapter<FeedHolder> implements SwipeableItemAdapter<FeedHolder> {
 
         @Override
         public FeedHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -198,10 +275,11 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
             if (!TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
+                holder.thumb.unload();
                 holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
-                mConaco.load(holder.thumb, null);
+                holder.thumb.unload();
             }
 
             holder.content.setTextSize(Settings.getFontSize());
@@ -209,8 +287,52 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         }
 
         @Override
+        public long getItemId(int position) {
+            Post post = mFeedHelper.getDataAt(position);
+            return NumberUtils.parseLongSafely(post.getNMBId(), 0l);
+        }
+
+        @Override
         public int getItemCount() {
             return mFeedHelper.size();
+        }
+
+        @Override
+        public int onGetSwipeReactionType(FeedHolder draftHolder, int i, int i1, int i2) {
+            return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        }
+
+        @Override
+        public void onSetSwipeBackground(FeedHolder draftHolder, int i, int i1) {
+            // Empty
+        }
+
+        @Override
+        public int onSwipeItem(FeedHolder holder, int position, int result) {
+            switch (result) {
+                // remove
+                case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
+                case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
+                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
+                // other --- do nothing
+                case RecyclerViewSwipeManager.RESULT_CANCELED:
+                default:
+                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+            }
+        }
+
+        @Override
+        public void onPerformAfterSwipeReaction(FeedHolder holder, int position, int result, int reaction) {
+            if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
+                NMBRequest request = new NMBRequest();
+                request.setSite(ACSite.getInstance());
+                request.setMethod(NMBClient.METHOD_DEL_FEED);
+                request.setArgs(ACSite.getInstance().getUserId(FeedActivity.this), mFeedHelper.getDataAt(position).getNMBId());
+                request.setCallback(new DelFeedListener());
+                mNMBClient.execute(request);
+
+                mFeedHelper.removeAt(position);
+            }
         }
     }
 
@@ -235,17 +357,17 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
         @Override
         protected void notifyDataSetChanged() {
-            mFeedAdapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
         }
 
         @Override
         protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            mFeedAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+            mAdapter.notifyItemRangeRemoved(positionStart, itemCount);
         }
 
         @Override
         protected void notifyItemRangeInserted(int positionStart, int itemCount) {
-            mFeedAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            mAdapter.notifyItemRangeInserted(positionStart, itemCount);
         }
     }
 
@@ -305,6 +427,24 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
             }
             // Clear
             mRequest = null;
+        }
+    }
+
+    private static class DelFeedListener implements NMBClient.Callback<Void> {
+
+        @Override
+        public void onSuccess(Void result) {
+            Log.d(TAG, "del feed onSuccess");
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Log.d(TAG, "del feed onFailure");
+        }
+
+        @Override
+        public void onCancel() {
+            Log.d(TAG, "del feed onCancel");
         }
     }
 }

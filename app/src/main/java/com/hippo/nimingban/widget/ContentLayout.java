@@ -324,6 +324,19 @@ public class ContentLayout extends FrameLayout {
             return mPages;
         }
 
+        public void removeAt(int index) {
+            mData.remove(index);
+
+            for (int i = 0, n = mPageDivider.size(); i < n; i++) {
+                int divider = mPageDivider.get(i);
+                if (index < divider) {
+                    mPageDivider.set(i, divider - 1);
+                }
+            }
+
+            notifyItemRangeRemoved(index, 1);
+        }
+
         public void onGetEmptyData(int taskId) {
             if (mCurrentTaskId != taskId) {
                 return;

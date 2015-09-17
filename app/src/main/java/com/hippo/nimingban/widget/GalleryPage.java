@@ -160,6 +160,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         return mTaskId;
     }
 
+    @Override
+    public void onMiss(Conaco.Source source) {
+    }
+
     public void load(String id, String url) {
         removeRetry();
 
@@ -201,10 +205,6 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
             mHolder.release();
             mHolder = null;
         }
-    }
-
-    @Override
-    public void onStart() {
     }
 
     @Override

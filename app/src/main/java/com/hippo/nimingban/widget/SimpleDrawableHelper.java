@@ -126,6 +126,10 @@ public class SimpleDrawableHelper implements DrawableHelper {
 
     @Override
     public void onRemove(@NonNull String key, @NonNull DrawableHolder oldValue) {
+
+        Log.d("TAG", "oldValue = " + oldValue);
+
+
         if (oldValue.isFree()) {
             Drawable drawable = oldValue.getDrawable();
             if (drawable instanceof BitmapDrawable) {
@@ -145,7 +149,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
             if (drawable instanceof GifDrawable || drawable instanceof TiledBitmapDrawable) {
                 return false;
             } else {
-                return false;
+                return true;
             }
         } else {
             return true;

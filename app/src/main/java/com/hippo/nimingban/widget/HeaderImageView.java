@@ -148,7 +148,7 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     @Override
-    public void onStart() {
+    public void onMiss(Conaco.Source source) {
     }
 
     @Override
