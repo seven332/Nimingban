@@ -332,6 +332,10 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
                 mNMBClient.execute(request);
 
                 mFeedHelper.removeAt(position);
+
+                if (mFeedHelper.size() == 0) {
+                    mFeedHelper.showEmptyString();
+                }
             }
         }
     }

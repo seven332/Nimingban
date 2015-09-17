@@ -519,6 +519,10 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        public void showEmptyString() {
+            showText(mEmptyString);
+        }
+
         /**
          * Be carefull
          */
