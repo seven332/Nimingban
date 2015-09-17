@@ -16,8 +16,14 @@
 
 package com.hippo.nimingban.client.data;
 
+import java.util.List;
+
 public class UpdateStatus {
 
-    public String status;
-    public UpdateInfo obj;
+    public int versionCode;
+    public String versionName;
+    public String info;
+    public long size;
+    public String apkUrl;
+    public List<DiscUrl> discUrl;
 }

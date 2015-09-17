@@ -32,10 +32,10 @@ public final class UpdateEngine {
 
     private static final String TAG = UpdateEngine.class.getSimpleName();
 
-    private static final String UPDATE_URL = "http://nimingban.herokuapp.com/update?version_code=";
+    private static final String UPDATE_URL = "http://nimingban.herokuapp.com/update2";
 
-    public static Call prepareUpdate(OkHttpClient okHttpClient, int versionCode) {
-        String url = UPDATE_URL + versionCode;
+    public static Call prepareUpdate(OkHttpClient okHttpClient) {
+        String url = UPDATE_URL;
         Log.d(TAG, url);
         Request request = new GoodRequestBuilder(url).build();
         return okHttpClient.newCall(request);

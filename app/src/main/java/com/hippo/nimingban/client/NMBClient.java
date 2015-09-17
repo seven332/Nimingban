@@ -39,6 +39,8 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
+    public static final int METHOD_DISC = -3;
+
     public static final int METHOD_UPDATE = -2;
 
     public static final int METHOD_GET_FORUM_LIST = -1;
@@ -300,8 +302,10 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_DISC:
+                        return DiscEngine.spider(mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_UPDATE:
-                        Call call = UpdateEngine.prepareUpdate(mOkHttpClient, (Integer) params[0]);
+                        Call call = UpdateEngine.prepareUpdate(mOkHttpClient);
                         if (!mStop) {
                             mCall = call;
                             return UpdateEngine.doUpdate(call);

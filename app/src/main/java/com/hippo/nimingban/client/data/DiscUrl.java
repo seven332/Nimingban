@@ -16,10 +16,8 @@
 
 package com.hippo.nimingban.client.data;
 
-public class UpdateInfo {
+public class DiscUrl {
 
-    public String versionName;
-    public String apkUrl;
-    public String info;
-    public long size;
+    public String site;
+    public String url;
 }

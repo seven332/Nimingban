@@ -16,12 +16,17 @@
 
 package com.hippo.nimingban.client;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
+import android.text.Html;
 import android.widget.Toast;
 
 import com.hippo.network.DownloadClient;
@@ -29,17 +34,58 @@ import com.hippo.network.DownloadRequest;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.client.data.DiscUrl;
+import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.TextUtils2;
 import com.hippo.util.Timer;
 import com.hippo.yorozuya.FileUtils;
 
 import java.io.File;
+import java.util.List;
 
 public final class UpdateHelper {
 
     private static boolean sUpdating = false;
 
-    public static void downloadApk(Context context, String url, String filename) {
+    public static void showUpdateDialog(final Activity activity, final UpdateStatus status) {
+        if (activity.isFinishing()) {
+            return;
+        }
+
+        if (status == null) {
+            return;
+        }
+
+        int versionCode = Settings.getVersionCode();
+        if (versionCode >= status.versionCode) {
+            return;
+        }
+
+        if (status.info == null || status.versionName == null || status.size == 0) {
+            return;
+        }
+
+        Resources resources = activity.getResources();
+        CharSequence message = TextUtils2.combine(
+                resources.getString(R.string.version) + ": " + status.versionName + '\n' +
+                        resources.getString(R.string.size) + ": " + FileUtils.humanReadableByteCount(status.size, false) + "\n\n",
+                Html.fromHtml(status.info));
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.download_update)
+                .setMessage(message)
+                .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        downloadApk(activity, status.apkUrl, status.discUrl,
+                                "nimingban-" + status.versionName + ".apk");
+                    }
+                })
+                .show();
+    }
+
+    public static void downloadApk(Context context, String url, List<DiscUrl> discUrls, String filename) {
         if (sUpdating) {
             return;
         }

@@ -21,8 +21,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -33,7 +31,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -57,7 +54,6 @@ import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
-import com.hippo.nimingban.client.data.UpdateInfo;
 import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
@@ -70,13 +66,11 @@ import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.util.TextUtils2;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
 import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
-import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
@@ -231,32 +225,6 @@ public final class ListActivity extends AbsActivity
         }
     }
 
-    private void showUpdateDialog(final UpdateInfo info) {
-        if (info == null) {
-            return;
-        }
-
-        if (info.info == null || info.apkUrl == null || info.versionName == null || info.size == 0) {
-            return;
-        }
-
-        CharSequence message = TextUtils2.combine(
-                getString(R.string.version) + ": " + info.versionName + '\n' +
-                        getString(R.string.size) + ": " + FileUtils.humanReadableByteCount(info.size, false) + "\n\n",
-                Html.fromHtml(info.info));
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.download_update)
-                .setMessage(message)
-                .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        UpdateHelper.downloadApk(ListActivity.this, info.apkUrl,
-                                "nimingban-" + info.versionName + ".apk");
-                    }
-                })
-                .show();
-    }
-
     private void checkForAppStart() {
         // Check crash
         if (Crash.hasCrashFile()) {
@@ -287,42 +255,29 @@ public final class ListActivity extends AbsActivity
             Toast.makeText(this, R.string.cant_make_sure_image_save_location, Toast.LENGTH_SHORT).show();
         }
 
-        // Check for update
-        int versionCode;
-        try {
-            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionCode = pi.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            versionCode = -1;
-        }
+        // Check update
+        NMBRequest request = new NMBRequest();
+        mUpdateRequest = request;
+        request.setMethod(NMBClient.METHOD_UPDATE);
+        request.setCallback(new NMBClient.Callback<UpdateStatus>() {
+            @Override
+            public void onSuccess(UpdateStatus result) {
+                mUpdateRequest = null;
+                UpdateHelper.showUpdateDialog(ListActivity.this, result);
+            }
 
-        if (versionCode != -1) {
-            NMBRequest request = new NMBRequest();
-            mUpdateRequest = request;
-            request.setMethod(NMBClient.METHOD_UPDATE);
-            request.setArgs(versionCode);
-            request.setCallback(new NMBClient.Callback<UpdateStatus>() {
-                @Override
-                public void onSuccess(UpdateStatus result) {
-                    mUpdateRequest = null;
-                    if ("need update".equals(result.status)) {
-                        showUpdateDialog(result.obj);
-                    }
-                }
+            @Override
+            public void onFailure(Exception e) {
+                mUpdateRequest = null;
+                e.printStackTrace();
+            }
 
-                @Override
-                public void onFailure(Exception e) {
-                    mUpdateRequest = null;
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onCancel() {
-                    mUpdateRequest = null;
-                }
-            });
-            mNMBClient.execute(request);
-        }
+            @Override
+            public void onCancel() {
+                mUpdateRequest = null;
+            }
+        });
+        mNMBClient.execute(request);
 
         // Check analysis
         if (!Settings.getSetAnalysis()) {
