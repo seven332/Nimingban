@@ -117,7 +117,7 @@ public final class DoodleActivity extends AbsActivity implements View.OnClickLis
         RippleSalon.addRipple(mRedo, true);
         RippleSalon.addRipple(mClear, true);
         RippleSalon.addRipple(mOk, true);
-        RippleSalon.addRipple(mMenu, true);
+        RippleSalon.addRipple(mMenu, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
 
         mSide.setOnClickListener(this);
         mPalette.setOnClickListener(this);
