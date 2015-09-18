@@ -15,15 +15,13 @@
   ~ limitations under the License.
   -->
 
-<vector
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:width="24dp"
-    app:height="24dp"
-    app:viewportWidth="24"
-    app:viewportHeight="24">
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
 
-    <path
-        app:pathData="@string/pd_eye"
-        app:fillColor="?attr/colorDrawablePrimary"/>
+    <gradient
+        android:startColor="@android:color/transparent"
+        android:endColor="@color/shadow"
+        android:angle="180"/>
 
-</vector>
+</shape>

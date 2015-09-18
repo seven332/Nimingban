@@ -22,8 +22,8 @@
     app:viewportWidth="24"
     app:viewportHeight="24">
 
-  <path
-      app:pathData="@string/pd_eye_off"
-      app:fillColor="?attr/colorDrawablePrimary"/>
+    <path
+        app:pathData="@string/pd_eye_off"
+        app:fillColor="?attr/colorDrawablePrimary"/>
 
 </vector>

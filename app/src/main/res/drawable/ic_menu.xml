@@ -23,7 +23,7 @@
     app:viewportHeight="24">
 
     <path
-        app:pathData="@string/pd_eye"
-        app:fillColor="?attr/colorDrawablePrimary"/>
+        app:name="menu"
+        app:pathData="@string/pd_menu"/>
 
 </vector>

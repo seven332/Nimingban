@@ -41,18 +41,29 @@
     <color name="pure_inverse_light">@color/pure_dark</color>
     <color name="pure_inverse_dark">@color/pure_light</color>
 
-    <color name="bule_500">#ff5677fc</color>
-    <color name="deep_orange_500">#ffff5722</color>
-    <color name="deep_orange_700">#ffe64a19</color>
-    <color name="light_blue_500">#ff03a9f4</color>
+    <color name="red_500">#fff44336</color>
+    <color name="pink_500">#ffe91e63</color>
     <color name="purple_500">#ff9c27b0</color>
     <color name="purple_700">#ff7b1fa2</color>
     <color name="purple_a700">#ffaa00ff</color>
+    <color name="deep_purple_500">#ff673ab7</color>
+    <color name="indigo_500">#ff3f51b5</color>
+    <color name="blue_500">#ff2196f3</color>
+    <color name="light_blue_500">#ff03a9f4</color>
+    <color name="cyan_500">#ff00bcd4</color>
     <color name="cyan_600">#ff00acc1</color>
+    <color name="teal_500">#ff009688</color>
+    <color name="green_500">#ff4caf50</color>
     <color name="light_green_500">#ff8bc34a</color>
     <color name="light_green_600">#ff7cb342</color>
+    <color name="lime_500">#ffcddc39</color>
+    <color name="yellow_500">#ffffeb3b</color>
     <color name="yellow_800">#fff9a825</color>
-    <color name="deep_Orange_400">#ffff7043</color>
+    <color name="amber_500">#ffffc107</color>
+    <color name="orange_500">#ffff9800</color>
+    <color name="deep_orange_400">#ffff7043</color>
+    <color name="deep_orange_500">#ffff5722</color>
+    <color name="deep_orange_700">#ffe64a19</color>
 
     <color name="green_ntr">#ff789922</color>
 
@@ -69,6 +80,6 @@
     <color name="loading_indicator_cyan">@color/cyan_600</color>
     <color name="loading_indicator_green">@color/light_green_600</color>
     <color name="loading_indicator_yellow">@color/yellow_800</color>
-    <color name="loading_indicator_orange">@color/deep_Orange_400</color>
+    <color name="loading_indicator_orange">@color/deep_orange_400</color>
 
 </resources>

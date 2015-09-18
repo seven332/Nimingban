@@ -15,76 +15,103 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <FrameLayout
+    <com.hippo.nimingban.widget.DoodleView
+        android:id="@+id/doodle_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <com.hippo.nimingban.widget.DoodleView
-            android:id="@+id/doodle_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/shadow_top"/>
-
-    </FrameLayout>
+        android:layout_height="match_parent"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:background="?attr/colorPrimary">
+        android:id="@+id/side"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/palette"
+        <LinearLayout
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_palette_dark_x24"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/undo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_undo_dark_x24"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/redo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_redo_dark_x24"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/clear"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_delete_dark_x24"/>
-
-        <Space
-            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:orientation="vertical"
+            android:background="?attr/colorPrimary">
 
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/save"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_content_save_dark_x24"/>
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/palette"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_palette_dark_x24"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/thickness"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_broom_dark_x24"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/draw_action"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_draw_action_dark_x24"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_file_image_box_dark_x24"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/undo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_undo_dark_x24"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/redo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_redo_dark_x24"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/clear"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_delete_dark_x24"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/ok"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_check_dark_x24"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/shadow_left"/>
 
     </LinearLayout>
 
-</LinearLayout>
+    <com.hippo.widget.SimpleImageView
+        android:id="@+id/menu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="right|top"
+        android:padding="12dp"/>
+
+</FrameLayout>

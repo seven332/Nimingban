@@ -146,6 +146,7 @@
     </plurals>
 
     <string name="doodle">涂鸦</string>
+    <string name="save_doodle">保存涂鸦？</string>
     <string name="cant_create_image_file">无法保存图片文件</string>
     <string name="saving">保存中…</string>
     <string name="save_successfully">保存成功</string>

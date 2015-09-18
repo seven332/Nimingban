@@ -154,6 +154,7 @@
     </plurals>
 
     <string name="doodle">Doodle</string>
+    <string name="save_doodle">Save doodle ?</string>
     <string name="cant_create_image_file">Can\'t create image file</string>
     <string name="saving">Saving…</string>
     <string name="save_successfully">Save successfully</string>
