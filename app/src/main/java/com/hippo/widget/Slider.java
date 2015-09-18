@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -38,6 +39,7 @@ import com.hippo.util.AnimationUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 public class Slider extends View {
@@ -52,6 +54,10 @@ public class Slider extends View {
     private Context mContext;
 
     private Paint mPaint;
+    private Paint mBgPaint;
+
+    private RectF mLeftRectF = new RectF();
+    private RectF mRightRectF = new RectF();
 
     private PopupWindow mPopup;
     private BubbleView mBubble;
@@ -109,6 +115,9 @@ public class Slider extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.CENTER);
+
+        mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBgPaint.setColor(ResourcesUtils.getAttrBoolean(context, R.attr.dark) ? 0x4dffffff : 0x42000000);
 
         mBubbleMinWidth = LayoutUtils.dp2pix(context, BUBBLE_WIDTH);
         mBubbleMinHeight = LayoutUtils.dp2pix(context, BUBBLE_HEIGHT);
@@ -349,12 +358,20 @@ public class Slider extends View {
 
             canvas.translate(0, paddingTop + ((height - paddingTop - paddingBottom) / 2));
 
-            // Draw bar
-            canvas.drawRect(paddingLeft + radius, -halfThickness,
-                    width - paddingRight - radius, halfThickness, mPaint);
-
             float currentX = paddingLeft + radius + (width - radius - radius - paddingLeft - paddingRight) *
                     (mReverse ? (1.0f - mDrawPercent) : mDrawPercent);
+
+            mLeftRectF.set(paddingLeft + radius, -halfThickness, currentX, halfThickness);
+            mRightRectF.set(currentX, -halfThickness, width - paddingRight - radius, halfThickness);
+
+            // Draw bar
+            if (mReverse) {
+                canvas.drawRect(mRightRectF, mPaint);
+                canvas.drawRect(mLeftRectF, mBgPaint);
+            } else {
+                canvas.drawRect(mLeftRectF, mPaint);
+                canvas.drawRect(mRightRectF, mBgPaint);
+            }
 
             // Draw controller
             float scale = 1.0f - mDrawBubbleScale;
