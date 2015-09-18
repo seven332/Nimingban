@@ -56,6 +56,7 @@
                 <data android:scheme="http"/>
                 <data android:host="h.nimingban.com"/>
                 <data android:host="h.acfun.tv"/>
+                <data android:host="hacfun.tv"/>
                 <data android:pathPrefix="/t/"/>
             </intent-filter>
 
