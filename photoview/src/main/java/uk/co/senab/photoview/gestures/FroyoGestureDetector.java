@@ -43,12 +43,13 @@ public class FroyoGestureDetector extends EclairGestureDetector {
 
             @Override
             public boolean onScaleBegin(ScaleGestureDetector detector) {
+                mListener.onScaleBegin();
                 return true;
             }
 
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
-                // NO-OP
+                mListener.onScaleEnd();
             }
         };
         mDetector = new ScaleGestureDetector(context, mScaleListener);

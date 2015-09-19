@@ -135,8 +135,13 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
     private float mFocusX;
     private float mFocusY;
+    private boolean mIsRotate = false;
+    private float mOnceRotate;
     private float mRotate = 0.0f;
     private float mStopRotate = 0.0f;
+
+    private float mOnceScale = 1.0f;
+    private boolean mIsScale = false;
 
     // These are set so we don't keep allocating them on the heap
     private final Matrix mBaseMatrix = new Matrix();
@@ -460,6 +465,12 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     }
 
     @Override
+    public void onScaleBegin() {
+        mIsScale = false;
+        mOnceScale = 1.0f;
+    }
+
+    @Override
     public void onScale(float scaleFactor, float focusX, float focusY) {
         if (DEBUG) {
             LogManager.getLogger().d(
@@ -470,6 +481,13 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
         mFocusX = focusX;
         mFocusY = focusY;
+
+        mOnceScale *= scaleFactor;
+
+        if (Math.abs(mOnceScale - 1.0f) > 0.3f) {
+            mIsScale = true;
+        }
+
         if (getScale() < mMaxScale || scaleFactor < 1f) {
             if (null != mScaleChangeListener) {
                 mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
@@ -480,16 +498,29 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     }
 
     @Override
+    public void onScaleEnd() {
+        mIsScale = false;
+    }
+
+    @Override
     public boolean onRotateBegin(RotateGestureDetector detector) {
+        mOnceRotate = 0;
+        mIsRotate = false;
         return true;
     }
 
     @Override
     public boolean onRotate(RotateGestureDetector detector) {
         float deltaRotate = -detector.getRotationDegreesDelta();
-        mRotate += deltaRotate;
-        mSuppMatrix.postRotate(deltaRotate, mFocusX, mFocusY);
-        checkAndDisplayMatrix();
+        mOnceRotate += deltaRotate;
+
+        if (mIsRotate || (!mIsScale && Math.abs(mOnceRotate) > 5)) {
+            mIsRotate = true;
+            mRotate += deltaRotate;
+            mSuppMatrix.postRotate(deltaRotate, mFocusX, mFocusY);
+            checkAndDisplayMatrix();
+        }
+
         return true;
     }
 
