@@ -51,6 +51,7 @@
         <item name="color">?attr/colorPrimary</item>
         <item name="textColor">@android:color/white</item>
         <item name="textSize">12sp</item>
+        <item name="dark">?attr/dark</item>
     </style>
 
 </resources>

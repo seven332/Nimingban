@@ -18,12 +18,12 @@
 <resources>
 
     <declare-styleable name="Theme">
-        <attr format="color" name="colorDivider"/>
-        <attr format="color" name="colorDrawablePrimary"/>
-        <attr format="color" name="colorPure"/>
-        <attr format="color" name="colorPureInverse"/>
+        <attr name="colorDivider" format="color"/>
+        <attr name="colorDrawablePrimary" format="color"/>
+        <attr name="colorPure" format="color"/>
+        <attr name="colorPureInverse" format="color"/>
 
-        <attr format="boolean" name="dark"/>
+        <attr name="dark" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="MonoRecyclerView">
@@ -61,6 +61,7 @@
         <attr name="color"/>
         <attr name="textColor" format="color"/>
         <attr name="textSize" format="dimension"/>
+        <attr name="dark"/>
     </declare-styleable>
 
     <declare-styleable name="ColorPickerView">

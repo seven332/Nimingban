@@ -39,7 +39,6 @@ import com.hippo.util.AnimationUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 public class Slider extends View {
@@ -116,9 +115,6 @@ public class Slider extends View {
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
-        mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBgPaint.setColor(ResourcesUtils.getAttrBoolean(context, R.attr.dark) ? 0x4dffffff : 0x42000000);
-
         mBubbleMinWidth = LayoutUtils.dp2pix(context, BUBBLE_WIDTH);
         mBubbleMinHeight = LayoutUtils.dp2pix(context, BUBBLE_HEIGHT);
 
@@ -147,6 +143,10 @@ public class Slider extends View {
         mThickness = a.getDimension(R.styleable.Slider_thickness, 2);
         mRadius = a.getDimension(R.styleable.Slider_radius, 6);
         setColor(a.getColor(R.styleable.Slider_color, Color.BLACK));
+
+        mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBgPaint.setColor(a.getBoolean(R.styleable.Slider_dark, false) ? 0x4dffffff : 0x42000000);
+
         a.recycle();
 
         mProgressAnimation = new ValueAnimator();
