@@ -84,16 +84,16 @@
     <string name="report">Report</string>
     <string name="report_tip">You will report it to duty room</string>
     <string name="create_post">Post</string>
-    <string name="creating_post">Posting…</string>
-    <string name="create_post_successfully">Post successfully</string>
-    <string name="create_post_failed">Post failed</string>
-    <string name="replying">Replying…</string>
-    <string name="reply_successfully">Reply successfully</string>
-    <string name="reply_failed">Reply failed</string>
-    <string name="save_text_draft">Save the text you typed to draft ?</string>
+    <string name="save_text_draft">Save the text you typed as draft ?</string>
     <string name="save">Save</string>
     <string name="dont_save">Don\'t save</string>
     <string name="create_text_image">Text you typed contains offensive words. Create an image of the text?</string>
+    <string name="start_creating_post">Start posting</string>
+    <string name="create_post_successfully">Post successfully</string>
+    <string name="reply_failed">Reply failed, the text you is saved as draft\nRefresh?</string>
+    <string name="start_reply">Start replying</string>
+    <string name="reply_successfully">Reply successfully</string>
+    <string name="create_post_failed">Post failed, the text is saved as draft\nRefresh?</string>
 
     <string name="select_picture">Select picture</string>
 

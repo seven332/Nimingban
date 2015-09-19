@@ -19,14 +19,15 @@ package com.hippo.nimingban.ui;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -49,7 +50,6 @@ import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
-import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
@@ -174,6 +174,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         return R.style.AppTheme_Dark;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -321,8 +322,6 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     }
 
     private void doReply() {
-        showProgressDialog(R.string.replying);
-
         ACReplyStruct struct = new ACReplyStruct();
         struct.name = null;
         struct.email = null;
@@ -333,17 +332,16 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         struct.imageType = mSeletedImageType;
 
         NMBRequest request = new NMBRequest();
-        mNMBRequest = request;
         request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_REPLY);
         request.setArgs(struct);
-        request.setCallback(new ActionListener());
+        request.setCallback(new ActionListener(this, mMethod, mId, struct.content, mSeletedImageBitmap));
         mNMBClient.execute(request);
+
+        finish();
     }
 
     private void doCreatePost() {
-        showProgressDialog(R.string.creating_post);
-
         ACPostStruct struct = new ACPostStruct();
         struct.name = null;
         struct.email = null;
@@ -354,12 +352,13 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         struct.imageType = mSeletedImageType;
 
         NMBRequest request = new NMBRequest();
-        mNMBRequest = request;
         request.setSite(mSite);
         request.setMethod(NMBClient.METHOD_CREATE_POST);
         request.setArgs(struct);
-        request.setCallback(new ActionListener());
+        request.setCallback(new ActionListener(this, mMethod, mId, struct.content, mSeletedImageBitmap));
         mNMBClient.execute(request);
+
+        finish();
     }
 
     private void getCookies() {
@@ -532,9 +531,6 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     }
 
     private void clearImagePreview() {
-        if (mSeletedImageBitmap != null) {
-            mSeletedImageBitmap.recycle();
-        }
         mSeletedImageUri = null;
         mSeletedImageType = null;
         mSeletedImageBitmap = null;
@@ -553,9 +549,6 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     }
 
     private void setImagePreview(Uri uri, String type, Bitmap bitmap) {
-        if (mSeletedImageBitmap != null) {
-            mSeletedImageBitmap.recycle();
-        }
         mSeletedImageUri = uri;
         mSeletedImageType = type;
         mSeletedImageBitmap = bitmap;
@@ -645,14 +638,29 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         }
     }
 
-    private class ActionListener implements NMBClient.Callback<Void> {
+    private static class ActionListener implements NMBClient.Callback<Void> {
 
-        private void addToRecord() {
+        private Context mContext;
+        private Method mMethod;
+        private String mId;
+        private String mContent;
+        private Bitmap mImage;
+
+        public ActionListener(Context context, Method method, String id, String content, Bitmap image) {
+            mContext = context.getApplicationContext();
+            mMethod = method;
+            mId = id;
+            mContent = content;
+            mImage = image;
+
+            Toast.makeText(context, method == Method.Reply ? R.string.start_reply : R.string.start_creating_post, Toast.LENGTH_SHORT).show();
+        }
+
+        private void addToRecord(String image) {
             int type;
             String recordid = null;
             String postid;
-            String content = mEditText.getText().toString();
-            String image = null;
+            String content = mContent;
             if (mMethod == Method.Reply) {
                 type = DB.AC_RECORD_REPLY;
                 postid = mId;
@@ -661,76 +669,63 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
                 postid = null;
             }
 
-            if (mSeletedImageBitmap != null) {
-                File imageFile = NMBAppConfig.createRecordImageFile();
-                if (imageFile != null) {
-                    try {
-                        mSeletedImageBitmap.compress(Bitmap.CompressFormat.PNG,
-                                100, new FileOutputStream(imageFile));
-                        image = imageFile.getPath();
-                    } catch (FileNotFoundException e) {
-                        // Ignore
-                    }
-                }
-            }
-
             DB.addACRecord(type, recordid, postid, content, image);
+            // TODO Notify RecordActivity
         }
-
 
         @Override
         public void onSuccess(Void result) {
-            addToRecord();
+            if (mImage != null) {
+                // Save image file in new thread
+                // TODO looks ugly
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void[] params) {
+                        String image = null;
+                        if (mImage != null) {
+                            File imageFile = NMBAppConfig.createRecordImageFile();
+                            if (imageFile != null) {
+                                try {
+                                    mImage.compress(Bitmap.CompressFormat.PNG,
+                                            100, new FileOutputStream(imageFile));
+                                    image = imageFile.getPath();
+                                } catch (FileNotFoundException e) {
+                                    // Ignore
+                                }
+                            }
+                            mImage = null;
+                        }
+                        return image;
+                    }
 
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
+                    @Override
+                    protected void onPostExecute(String image) {
+                        addToRecord(image);
+                    }
+                }.execute();
+            } else {
+                addToRecord(null);
             }
-            mNMBRequest = null;
 
-            Toast.makeText(TypeSendActivity.this, mMethod == Method.Reply ? R.string.reply_successfully :
+            Toast.makeText(mContext, mMethod == Method.Reply ? R.string.reply_successfully :
                     R.string.create_post_successfully, Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-            finish();
         }
 
         @Override
         public void onFailure(Exception e) {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            mNMBRequest = null;
+            mImage = null;
 
-            if (e instanceof NMBException && "含有非法词语!".equals(e.getMessage())) {
-                new AlertDialog.Builder(TypeSendActivity.this)
-                        .setMessage(R.string.create_text_image)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(@NonNull DialogInterface dialog, int which) {
-                                Uri uri = saveEditTextToImage();
-                                if (uri != null) {
-                                    handleSelectedImageUri(uri);
-                                }
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show();
-            } else {
-                Toast.makeText(TypeSendActivity.this, getString(mMethod == Method.Reply ? R.string.reply_failed :
-                        R.string.create_post_failed) + "\n" +
-                        ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
+            if (!TextUtils.isEmpty(mContent)) {
+                DB.addDraft(mContent);
             }
+            Context context = mContext;
+            Toast.makeText(context, context.getString(mMethod == Method.Reply ? R.string.reply_failed :
+                    R.string.create_post_failed) + "\n" +
+                    ExceptionUtils.getReadableString(context, e), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCancel() {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            mNMBRequest = null;
-
             Log.d(TAG, "ActionListener onCancel");
         }
     }
