@@ -69,6 +69,7 @@ import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -645,8 +646,42 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     }
 
     private class ActionListener implements NMBClient.Callback<Void> {
+
+        private void addToRecord() {
+            int type;
+            String recordid = null;
+            String postid;
+            String content = mEditText.getText().toString();
+            String image = null;
+            if (mMethod == Method.Reply) {
+                type = DB.AC_RECORD_REPLY;
+                postid = mId;
+            } else {
+                type = DB.AC_RECORD_POST;
+                postid = null;
+            }
+
+            if (mSeletedImageBitmap != null) {
+                File imageFile = NMBAppConfig.createRecordImageFile();
+                if (imageFile != null) {
+                    try {
+                        mSeletedImageBitmap.compress(Bitmap.CompressFormat.PNG,
+                                100, new FileOutputStream(imageFile));
+                        image = imageFile.getPath();
+                    } catch (FileNotFoundException e) {
+                        // Ignore
+                    }
+                }
+            }
+
+            DB.addACRecord(type, recordid, postid, content, image);
+        }
+
+
         @Override
         public void onSuccess(Void result) {
+            addToRecord();
+
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;

@@ -114,6 +114,19 @@ public class NMBAppConfig {
         }
     }
 
+    private static @Nullable File getRecordImageDir() {
+        File temp = sContext.getDir("record", 0);
+        if (FileUtils.ensureDirectory(temp)) {
+            return temp;
+        } else {
+            return null;
+        }
+    }
+
+    public static @Nullable File createRecordImageFile() {
+        return FileUtils.createTempFile(getRecordImageDir(), null);
+    }
+
     public static @Nullable File createTempFile() {
         return createTempFile(null);
     }

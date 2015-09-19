@@ -43,7 +43,8 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
     private static final int INDEX_SEARCH = 0;
     private static final int INDEX_FEED = 1;
-    private static final int INDEX_SETTINGS = 2;
+    private static final int INDEX_RECORD = 2;
+    private static final int INDEX_SETTINGS = 3;
 
     private HeaderImageView mHeader;
     private DrawerListView mDrawerListView;
@@ -84,16 +85,19 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
         Drawable search = VectorDrawable.create(context, R.drawable.ic_magnify);
         Drawable feed = VectorDrawable.create(context, R.drawable.ic_rss);
+        Drawable record = VectorDrawable.create(context, R.drawable.ic_history);
         Drawable settings = VectorDrawable.create(context, R.drawable.ic_settings);
 
         Drawable[] drawables = {
                 search,
                 feed,
+                record,
                 settings
         };
         String[] strings = {
                 resources.getString(R.string.search),
                 resources.getString(R.string.feed),
+                resources.getString(R.string.record),
                 resources.getString(R.string.settings)
         };
 
@@ -127,6 +131,11 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
                 case INDEX_FEED:
                     if (mHelper != null) {
                         mHelper.onClickFeed();
+                    }
+                    break;
+                case INDEX_RECORD:
+                    if (mHelper != null) {
+                        mHelper.onClickRecord();
                     }
                     break;
                 case INDEX_SETTINGS:
@@ -172,6 +181,8 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
         void onClickSearch();
 
         void onClickFeed();
+
+        void onClickRecord();
 
         void onClickSettings();
     }

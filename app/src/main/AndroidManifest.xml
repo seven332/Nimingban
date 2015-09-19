@@ -125,6 +125,13 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name="com.hippo.nimingban.ui.RecordActivity"
+            android:label="@string/record"
+            android:theme="@style/AppTheme"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name="com.hippo.nimingban.receiver.NetworkReceiver"
             android:label="@string/network_receiver">

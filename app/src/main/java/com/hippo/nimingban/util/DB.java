@@ -24,12 +24,15 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.dao.ACForumDao;
 import com.hippo.nimingban.dao.ACForumRaw;
+import com.hippo.nimingban.dao.ACRecordDao;
+import com.hippo.nimingban.dao.ACRecordRaw;
 import com.hippo.nimingban.dao.DaoMaster;
 import com.hippo.nimingban.dao.DaoSession;
 import com.hippo.nimingban.dao.DraftDao;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.yorozuya.AssertUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +58,11 @@ public final class DB {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            switch (oldVersion) {
+                case 1:
+                    ACRecordDao.createTable(db, true);
+                case 2:
+            }
         }
 
         public boolean isFirstTime() {
@@ -182,5 +190,31 @@ public final class DB {
 
     public static void removeDraft(long id) {
         sDaoSession.getDraftDao().deleteByKey(id);
+    }
+
+    public static final int AC_RECORD_POST = 0;
+    public static final int AC_RECORD_REPLY = 1;
+
+    public static LazyList<ACRecordRaw> getACRecordLazyList() {
+        return sDaoSession.getACRecordDao().queryBuilder().orderDesc(ACRecordDao.Properties.Time).listLazy();
+    }
+
+    public static void addACRecord(int type, String recordid, String postid, String content, String image) {
+        ACRecordRaw raw = new ACRecordRaw();
+        raw.setType(type);
+        raw.setRecordid(recordid);
+        raw.setPostid(postid);
+        raw.setContent(content);
+        raw.setImage(image);
+        raw.setTime(System.currentTimeMillis());
+        sDaoSession.getACRecordDao().insert(raw);
+    }
+
+    public static void removeACRecord(ACRecordRaw raw) {
+        String image = raw.getImage();
+        if (image != null) {
+            new File(image).delete();
+        }
+        sDaoSession.getACRecordDao().delete(raw);
     }
 }

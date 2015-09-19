@@ -119,6 +119,9 @@
     <string name="draft_copied_clipboard">Draft text copied to clipboard</string>
     <string name="no_draft">There is no draft</string>
 
+    <string name="record">Record</string>
+    <string name="no_record">There is no record</string>
+
     <string name="from_the_future">From the future</string>
     <string name="just_now">Just now</string>
     <plurals name="some_minutes_ago">

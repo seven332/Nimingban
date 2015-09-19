@@ -536,6 +536,12 @@ public final class ListActivity extends AbsActivity
     }
 
     @Override
+    public void onClickRecord() {
+        Intent intent = new Intent(this, RecordActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     public void onClickSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SETTINGS);

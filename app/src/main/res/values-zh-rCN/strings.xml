@@ -118,6 +118,9 @@
     <string name="draft_copied_clipboard">草稿文本已复制到剪切板</string>
     <string name="no_draft">没有草稿</string>
 
+    <string name="record">记录</string>
+    <string name="no_record">没有记录</string>
+
     <string name="from_the_future">来自未来</string>
     <string name="just_now">刚刚</string>
     <plurals name="some_minutes_ago">

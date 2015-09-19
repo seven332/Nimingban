@@ -28,15 +28,18 @@ public class NMBDaoGenerator {
     private static final String OUT_DIR = "../app/src/main/java-gen";
     private static final String DELETE_DIR = "../app/src/main/java-gen/com/hippo/nimingban/dao";
 
+    private static final int VERSION = 2;
+
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
         File outDir = new File(OUT_DIR);
         outDir.delete();
         outDir.mkdirs();
 
-        Schema schema = new Schema(1, PACKAGE);
+        Schema schema = new Schema(VERSION, PACKAGE);
         addACForum(schema);
         addDraft(schema);
+        addACRecord(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
@@ -57,6 +60,22 @@ public class NMBDaoGenerator {
         entity.setClassNameDao("DraftDao");
         entity.addIdProperty();
         entity.addStringProperty("content");
+        entity.addLongProperty("time");
+    }
+
+    /**
+     * @since 2
+     */
+    private static void addACRecord(Schema schema) {
+        Entity entity = schema.addEntity("ACRecordRaw");
+        entity.setTableName("AC_RECORD");
+        entity.setClassNameDao("ACRecordDao");
+        entity.addIdProperty();
+        entity.addIntProperty("type");
+        entity.addStringProperty("recordid");
+        entity.addStringProperty("postid");
+        entity.addStringProperty("content");
+        entity.addStringProperty("image");
         entity.addLongProperty("time");
     }
 }
