@@ -14,4 +14,16 @@
  * limitations under the License.
  */
 
-include ':app', ':daogenerator', ':swipebacklayout', ':vector', ':photoview', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'unifile'
+package uk.co.senab.photoview;
+
+import android.app.Application;
+import android.test.ApplicationTestCase;
+
+/**
+ * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ */
+public class ApplicationTest extends ApplicationTestCase<Application> {
+    public ApplicationTest() {
+        super(Application.class);
+    }
+}

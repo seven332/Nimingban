@@ -384,7 +384,7 @@ public class SwipeBackLayout extends FrameLayout {
         } else {
             try {
                 return mDragHelper.shouldInterceptTouchEvent(event);
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (Exception e) {
                 // FIXME: handle exception
                 // issues #9
                 return false;
@@ -397,7 +397,11 @@ public class SwipeBackLayout extends FrameLayout {
         if (!mEnable) {
             return false;
         }
-        mDragHelper.processTouchEvent(event);
+        try {
+            mDragHelper.processTouchEvent(event);
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 

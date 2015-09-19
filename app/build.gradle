@@ -48,6 +48,7 @@ dependencies {
     compile project(':beerbelly')
     compile project(':conaco')
     compile project(':hotspot')
+    compile project(':photoview')
     compile project(':rippleold')
     compile project(':swipebacklayout')
     compile project(':unifile')
@@ -57,7 +58,6 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.alibaba:fastjson:1.1.45.android'
-    compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'org.jsoup:jsoup:1.8.3'
