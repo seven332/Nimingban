@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.io.UriInputStreamPipe;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.Emoji;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
@@ -66,6 +67,7 @@ import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
@@ -670,7 +672,8 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             }
 
             DB.addACRecord(type, recordid, postid, content, image);
-            // TODO Notify RecordActivity
+            // Notify RecordActivity
+            Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_RECORD, null);
         }
 
         @Override

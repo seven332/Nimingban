@@ -37,6 +37,7 @@ import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.effect.ViewTransition;
 import com.hippo.io.FileInputStreamPipe;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.dao.ACRecordRaw;
@@ -57,7 +58,8 @@ import java.io.InputStream;
 
 import de.greenrobot.dao.query.LazyList;
 
-public class RecordActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
+public final class RecordActivity extends AbsActivity
+        implements EasyRecyclerView.OnItemClickListener {
 
     private LazyList<ACRecordRaw> mLazyList;
 
@@ -180,6 +182,17 @@ public class RecordActivity extends AbsActivity implements EasyRecyclerView.OnIt
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onReceive(final int id, final Object obj) {
+        if (id == Constants.MESSENGER_ID_UPDATE_RECORD) {
+            updateLazyList();
+            mAdapter.notifyDataSetChanged();
+            checkEmpty(true);
+        } else {
+            super.onReceive(id, obj);
         }
     }
 

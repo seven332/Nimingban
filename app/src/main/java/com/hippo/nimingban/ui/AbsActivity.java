@@ -75,7 +75,9 @@ public abstract class AbsActivity extends AppCompatActivity implements Messenger
 
     @Override
     public void onReceive(final int id, final Object obj) {
-        recreate();
+        if (id == Constants.MESSENGER_ID_CHANGE_THEME) {
+            recreate();
+        }
     }
 
     protected void setActionBarUpIndicator(Drawable drawable) {
