@@ -29,6 +29,7 @@
 
 - [AOSP](http://source.android.com/)
 - [android-advancedrecyclerview](https://github.com/h6ah4i/android-advancedrecyclerview)
+- [android-gesture-detectors](https://github.com/Almeros/android-gesture-detectors)
 - [android-gif-drawable](https://github.com/koral--/android-gif-drawable)
 - [fastjson](https://github.com/alibaba/fastjson)
 - [greenDAO](https://github.com/greenrobot/greenDAO)
