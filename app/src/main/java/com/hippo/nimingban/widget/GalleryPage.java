@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
+import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.TiledBitmapDrawable;
@@ -50,8 +51,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     private SimpleImageView mFailed;
     private PhotoView mPhotoView;
 
-    private String mId;
+    private String mKey;
     private String mUrl;
+    private DataContainer mContainer;
 
     private DrawableHolder mHolder;
 
@@ -145,8 +147,8 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
     @Override
     public void onClick(View v) {
-        if (mId != null && mUrl != null) {
-            load(mId, mUrl);
+        if (mUrl != null) {
+            load(mKey, mUrl, mContainer);
         }
     }
 
@@ -164,15 +166,16 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     public void onMiss(Conaco.Source source) {
     }
 
-    public void load(String id, String url) {
+    public void load(String key, String url, DataContainer container) {
         removeRetry();
 
         if (url == null) {
             return;
         }
 
-        mId = id;
+        mKey = key;
         mUrl = url;
+        mContainer = container;
 
         mProgressView.setVisibility(VISIBLE);
         mProgressView.setIndeterminate(true);
@@ -188,16 +191,19 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         ConacoTask.Builder builder = new ConacoTask.Builder()
                 .setUnikery(this)
-                .setKey(url)
-                .setUrl(url);
+                .setKey(key)
+                .setUrl(url)
+                .setDataContainer(container)
+                .setUseMemoryCache(false);
         mConaco.load(builder);
     }
 
     public void unload() {
         mConaco.cancel(this);
         removeRetry();
-        mId = null;
+        mKey = null;
         mUrl = null;
+        mContainer = null;
         setImageDrawableSafely(null);
 
         // Release old holder
@@ -222,8 +228,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     @Override
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
         // Release
-        mId = null;
+        mKey = null;
         mUrl = null;
+        mContainer = null;
 
         DrawableHolder olderHolder = mHolder;
         mHolder = holder;
@@ -272,8 +279,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     @Override
     public void onCancel() {
         removeRetry();
-        mId = null;
+        mKey = null;
         mUrl = null;
+        mContainer = null;
     }
 
     public void showDrawable(@NonNull Drawable drawable) {

@@ -135,6 +135,9 @@ public final class Settings {
     public static final String KEY_FEED_ID = "feed_id";
     public static final String DEFAULT_FEED_ID = null;
 
+    public static final String KEY_SAVE_IMAGE_AUTO = "save_image_auto";
+    public static final boolean DEFAULT_SAVE_IMAGE_AUTO = false;
+
     public static final String KEY_IMAGE_LOADING_STRATEGY = "image_loading_strategy";
     public static final int DEFAULT_IMAGE_LOADING_STRATEGY = 0;
     public static final String KEY_IMAGE_SAVE_LOACTION = "image_save_location";
@@ -213,6 +216,14 @@ public final class Settings {
                 IOUtils.closeQuietly(os);
             }
         }
+    }
+
+    public static boolean getSaveImageAuto() {
+        return getBoolean(KEY_SAVE_IMAGE_AUTO, DEFAULT_SAVE_IMAGE_AUTO);
+    }
+
+    public static void putSaveImageAuto(boolean value) {
+        putBoolean(KEY_SAVE_IMAGE_AUTO, value);
     }
 
     public static int getImageLoadingStrategy() {

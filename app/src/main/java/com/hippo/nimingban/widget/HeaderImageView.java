@@ -286,7 +286,7 @@ public final class HeaderImageView extends FixedAspectImageView
         private File mTempFile;
 
         @Override
-        public boolean save(InputStream is, ProgressNotify notify) {
+        public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
             FileOutputStream os = null;
             try {
                 mTempFile = NMBAppConfig.createTempFile();

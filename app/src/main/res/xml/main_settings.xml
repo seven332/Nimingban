@@ -60,6 +60,13 @@
         android:key="feed_id"
         android:title="@string/main_feed_id"/>
 
+    <SwitchPreference
+        android:key="save_image_auto"
+        android:title="@string/main_save_image_auto"
+        android:summaryOn="@string/main_save_image_auto_summary_on"
+        android:summaryOff="@string/main_save_image_auto_summary_off"
+        android:defaultValue="false"/>
+
     <Preference
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>

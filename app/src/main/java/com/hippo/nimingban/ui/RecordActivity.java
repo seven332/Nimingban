@@ -332,7 +332,7 @@ public final class RecordActivity extends AbsActivity
         }
     }
 
-    private class LocalPathDataContain implements DataContainer {
+    private static class LocalPathDataContain implements DataContainer {
 
         private File mFile;
 
@@ -344,7 +344,7 @@ public final class RecordActivity extends AbsActivity
         }
 
         @Override
-        public boolean save(InputStream is, ProgressNotify notify) {
+        public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
             return false;
         }
 

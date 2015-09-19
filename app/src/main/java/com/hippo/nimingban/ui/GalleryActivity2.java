@@ -24,7 +24,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +35,10 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.conaco.DataContainer;
+import com.hippo.conaco.ProgressNotify;
 import com.hippo.io.FileInputStreamPipe;
+import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
@@ -44,6 +49,7 @@ import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +59,13 @@ import java.io.OutputStream;
 
 // TODO show all image in post
 public class GalleryActivity2 extends SwipeActivity {
+
+    public static final String[] IMAGE_EXTENSIONS = {
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
+    };
 
     public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity2.action.SINGLE_IMAGE";
     public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity2.action.IMAGE_FILE";
@@ -200,6 +213,15 @@ public class GalleryActivity2 extends SwipeActivity {
             mImageFile = imageFile;
         }
 
+        public UniFile getCurrentImageSaveFile() {
+            UniFile dir = Settings.getImageSaveLocation();
+            if (dir != null) {
+                return dir.createFile(mImageFile.getName());
+            } else {
+                return null;
+            }
+        }
+
         @Override
         public void saveCurrentImage() {
             GalleryHolder holder = getPagerHolder(0);
@@ -208,13 +230,7 @@ public class GalleryActivity2 extends SwipeActivity {
                 return;
             }
 
-            UniFile dir = Settings.getImageSaveLocation();
-            if (dir == null) {
-                onSaveTaskOver(false);
-                return;
-            }
-
-            UniFile uniFile = dir.createFile(mImageFile.getName());
+            UniFile uniFile = getCurrentImageSaveFile();
             if (uniFile == null) {
                 onSaveTaskOver(false);
                 return;
@@ -260,7 +276,18 @@ public class GalleryActivity2 extends SwipeActivity {
 
         @Override
         public void bindPagerHolder(GalleryHolder holder, int position) {
-            holder.galleryPage.load(mId, mImage);
+            String key;
+            DataContainer container;
+            UniFile dir = Settings.getImageSaveLocation();
+            if (Settings.getSaveImageAuto() && dir != null) {
+                key = null;
+                container = new UniFileDataContain(dir, mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
+            } else {
+                key = mImage;
+                container = null;
+            }
+
+            holder.galleryPage.load(key, mImage, container);
         }
 
         @Override
@@ -273,6 +300,15 @@ public class GalleryActivity2 extends SwipeActivity {
             return 1;
         }
 
+        public UniFile getCurrentImageSaveFile() {
+            UniFile dir = Settings.getImageSaveLocation();
+            if (dir != null) {
+                return dir.createFile(mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
+            } else {
+                return null;
+            }
+        }
+
         @Override
         public void saveCurrentImage() {
             GalleryHolder holder = getPagerHolder(0);
@@ -281,20 +317,99 @@ public class GalleryActivity2 extends SwipeActivity {
                 return;
             }
 
-            UniFile dir = Settings.getImageSaveLocation();
-            if (dir == null) {
-                onSaveTaskOver(false);
-                return;
+            if (Settings.getSaveImageAuto()) {
+                onSaveTaskOver(true);
+            } else {
+                UniFile uniFile = getCurrentImageSaveFile();
+                if (uniFile == null) {
+                    onSaveTaskOver(false);
+                    return;
+                }
+
+                mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, uniFile, mImage);
+                mSaveTask.execute();
+            }
+        }
+    }
+
+    private static class UniFileDataContain implements DataContainer {
+
+        private UniFile mDir;
+        private String mName;
+        private @Nullable UniFile mFile;
+        private @Nullable String mExtension;
+
+        public UniFileDataContain(@NonNull UniFile dir, String name) {
+            mDir = dir;
+            mName = name;
+        }
+
+        @Override
+        public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
+            OutputStream os = null;
+            try {
+                if (mFile == null) {
+                    mFile = mDir.createFile(mName);
+                }
+                if (mFile == null) {
+                    return false;
+                }
+
+                os = mFile.openOutputStream();
+
+                final byte buffer[] = new byte[1024 * 4];
+                long receivedSize = 0;
+                int bytesRead;
+
+                while((bytesRead = is.read(buffer)) !=-1) {
+                    os.write(buffer, 0, bytesRead);
+                    receivedSize += bytesRead;
+                    if (length > 0) {
+                        notify.notifyProgress((long) bytesRead, receivedSize, length);
+                    }
+                }
+                os.flush();
+                IOUtils.closeQuietly(os);
+
+                // Get extension
+                String extension = null;
+                if (mediaType != null) {
+                    extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mediaType);
+                }
+                if (TextUtils.isEmpty(extension)) {
+                    extension = "jpg";
+                }
+
+                // Rename file if the extension is wrong
+                if (!extension.equals(mExtension)) {
+                    mFile.renameTo(mFile.getName() + '.' + extension);
+                }
+
+                return true;
+            } catch (IOException e) {
+                IOUtils.closeQuietly(os);
+                mFile.delete();
+                return false;
+            }
+        }
+
+        @Override
+        public InputStreamPipe get() {
+            for (String extension : IMAGE_EXTENSIONS) {
+                UniFile file = mDir.findFile(mName + '.' + extension);
+                if (file != null) {
+                    mFile = file;
+                    mExtension = extension;
+                    return new UniFileInputStreamPipe(mFile);
+                }
             }
 
-            UniFile uniFile = dir.createFile(mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
-            if (uniFile == null) {
-                onSaveTaskOver(false);
-                return;
-            }
+            return null;
+        }
 
-            mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, uniFile, mImage);
-            mSaveTask.execute();
+        @Override
+        public void remove() {
+            // Empty
         }
     }
 
@@ -324,7 +439,17 @@ public class GalleryActivity2 extends SwipeActivity {
             IOUtils.closeQuietly(is);
         }
 
-        return uniFile.renameTo(filename + "." + extension);
+        String newFilename = filename + "." + extension;
+        // Remove old file
+        UniFile parent = uniFile.getParentFile();
+        if (parent != null) {
+            UniFile oldFile = parent.findFile(newFilename);
+            if (oldFile != null) {
+                oldFile .delete();
+            }
+        }
+        // Rename
+        return uniFile.renameTo(newFilename);
     }
 
     private static class ImageFileSaveTask extends SaveTask {

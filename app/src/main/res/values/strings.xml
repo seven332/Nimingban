@@ -183,6 +183,9 @@
     <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
     <string name="main_feed_id">Feed id</string>
     <string name="main_feed_id_summary">You feed id is %s</string>
+    <string name="main_save_image_auto">Save image automatically</string>
+    <string name="main_save_image_auto_summary_on">Save image to your storage automatically, but you need to save the cover by yourself</string>
+    <string name="main_save_image_auto_summary_off">Image will be saved when you click the save button</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
     <string name="main_analysis">Enable data analysis</string>
