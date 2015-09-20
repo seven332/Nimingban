@@ -340,7 +340,7 @@ public final class ListActivity extends AbsActivity
     public void onReceive(int id, Object obj) {
         if (Constants.MESSENGER_ID_CREATE_POST == id) {
             if (mCurrentForum != null && mCurrentForum.getNMBId().equals(obj)) {
-                int currentPage = mPostHelper.getCurrentPage();
+                int currentPage = mPostHelper.getPageForBottom();
                 if (currentPage == 0) {
                     mPostHelper.refresh();
                 }

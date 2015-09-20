@@ -593,17 +593,27 @@ public class ContentLayout extends FrameLayout {
             return mPageDivider.get(page - mStartPage);
         }
 
-        public int getCurrentPage() {
-            int firstPosition = LayoutManagerUtils.getFirstVisibleItemPostion(mRecyclerView.getLayoutManager());
-            if (firstPosition != -1) {
-                IntList pageDivider = mPageDivider;
-                for (int i = 0, n = pageDivider.size(); i < n; i++) {
-                    if (firstPosition < pageDivider.get(i)) {
-                        return i + mStartPage;
-                    }
+        private int getPageForPosition(int position) {
+            if (position < 0) {
+                return -1;
+            }
+
+            IntList pageDivider = mPageDivider;
+            for (int i = 0, n = pageDivider.size(); i < n; i++) {
+                if (position < pageDivider.get(i)) {
+                    return i + mStartPage;
                 }
             }
+
             return -1;
+        }
+
+        public int getPageForTop() {
+            return getPageForPosition(LayoutManagerUtils.getFirstVisibleItemPostion(mRecyclerView.getLayoutManager()));
+        }
+
+        public int getPageForBottom() {
+            return getPageForPosition(LayoutManagerUtils.getLastVisibleItemPostion(mRecyclerView.getLayoutManager()));
         }
 
         public boolean canGoTo() {

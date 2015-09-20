@@ -211,7 +211,7 @@ public final class PostActivity extends SwipeActivity
     public void onReceive(int id, Object obj) {
         if (Constants.MESSENGER_ID_REPLY == id) {
             if (mId.equals(obj)) {
-                int currentPage = mReplyHelper.getCurrentPage();
+                int currentPage = mReplyHelper.getPageForBottom();
                 int pages = mReplyHelper.getPages();
                 if (currentPage >= 0 && currentPage + 1 == pages) {
                     // It is the last page, refresh it
@@ -287,7 +287,7 @@ public final class PostActivity extends SwipeActivity
             case R.id.action_go_to:
                 int pages = mReplyHelper.getPages();
                 if (pages > 0 && mReplyHelper.canGoTo()) {
-                    GoToDialogHelper helper = new GoToDialogHelper(pages, mReplyHelper.getCurrentPage());
+                    GoToDialogHelper helper = new GoToDialogHelper(pages, mReplyHelper.getPageForTop());
                     AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.go_to)
                             .setView(helper.getView())
                             .setPositiveButton(android.R.string.ok, null)
