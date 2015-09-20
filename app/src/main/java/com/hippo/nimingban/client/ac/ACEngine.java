@@ -37,6 +37,7 @@ import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.util.BitmapUtils;
@@ -251,7 +252,7 @@ public class ACEngine {
         }
     }
 
-    public static Call prepareReply(OkHttpClient okHttpClient, ACReplyStruct struct) throws IOException {
+    public static Call prepareReply(OkHttpClient okHttpClient, ACReplyStruct struct) throws Exception {
         MultipartBuilder builder = new MultipartBuilder();
         builder.type(MultipartBuilder.FORM);
         builder.addPart(
@@ -448,7 +449,7 @@ public class ACEngine {
         }
     }
 
-    public static Call prepareCreatePost(OkHttpClient okHttpClient, ACPostStruct struct) throws IOException {
+    public static Call prepareCreatePost(OkHttpClient okHttpClient, ACPostStruct struct) throws Exception {
         MultipartBuilder builder = new MultipartBuilder();
         builder.type(MultipartBuilder.FORM);
         builder.addPart(
@@ -562,14 +563,14 @@ public class ACEngine {
     /**
      * @return null for not changed
      */
-    public static File compressBitmap(InputStreamPipe isp, String imageType) throws IOException {
+    public static File compressBitmap(InputStreamPipe isp, String imageType) throws Exception {
         OutputStream os = null;
         try {
             isp.obtain();
 
             File temp = NMBAppConfig.createTempFile();
             if (temp == null) {
-                throw new IOException("Can't create temp file");
+                throw new NMBException(DumpSite.getInstance(), "Can't create temp file");
             }
 
             os = new FileOutputStream(temp);
@@ -587,7 +588,7 @@ public class ACEngine {
             BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);
             int sampleScale = sampleScaleArray[0];
             if (sampleScale < 1) {
-                return null;
+                throw new NMBException(DumpSite.getInstance(), "Can't get bitmap size");
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
