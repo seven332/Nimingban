@@ -147,15 +147,21 @@ public final class ListActivity extends AbsActivity
                 }
             }
 
+            private void setMenuItemVisible(MenuItem item, boolean visible) {
+                if (item != null) {
+                    item.setVisible(visible);
+                }
+            }
+
             @Override
             public void onDrawerClosed(View view) {
                 if (mLeftDrawer == view) {
                     super.onDrawerClosed(view);
                 }
                 if (mRightDrawer == view) {
-                    mCreatePost.setVisible(true);
-                    mRefreshMenu.setVisible(true);
-                    mSortForumsMenu.setVisible(false);
+                    setMenuItemVisible(mCreatePost, true);
+                    setMenuItemVisible(mRefreshMenu, true);
+                    setMenuItemVisible(mSortForumsMenu, false);
                 }
             }
 
@@ -165,9 +171,9 @@ public final class ListActivity extends AbsActivity
                     super.onDrawerOpened(view);
                 }
                 if (mRightDrawer == view) {
-                    mCreatePost.setVisible(false);
-                    mRefreshMenu.setVisible(false);
-                    mSortForumsMenu.setVisible(true);
+                    setMenuItemVisible(mCreatePost, false);
+                    setMenuItemVisible(mRefreshMenu, false);
+                    setMenuItemVisible(mSortForumsMenu, true);
                 }
             }
         };
