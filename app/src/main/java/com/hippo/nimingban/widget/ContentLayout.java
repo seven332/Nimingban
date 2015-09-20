@@ -299,6 +299,10 @@ public class ContentLayout extends FrameLayout {
         protected void onShowText() {
         }
 
+        public void setEnable(boolean enable) {
+            mRefreshLayout.setEnabled(enable);
+        }
+
         public void setEmptyString(String str) {
             mEmptyString = str;
         }

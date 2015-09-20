@@ -299,6 +299,8 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
         @Override
         public int onGetSwipeReactionType(FeedHolder draftHolder, int i, int i1, int i2) {
+            mFeedHelper.setEnable(false);
+
             return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
         }
 
@@ -323,6 +325,8 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
         @Override
         public void onPerformAfterSwipeReaction(FeedHolder holder, int position, int result, int reaction) {
+            mFeedHelper.setEnable(true);
+
             if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
                 NMBRequest request = new NMBRequest();
                 request.setSite(ACSite.getInstance());
