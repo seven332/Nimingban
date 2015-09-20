@@ -50,6 +50,7 @@ import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
@@ -140,11 +141,15 @@ public final class RecordActivity extends AbsActivity
 
         updateLazyList();
         checkEmpty(false);
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_UPDATE_RECORD, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_UPDATE_RECORD, this);
 
         if (mRecyclerViewSwipeManager != null) {
             mRecyclerViewSwipeManager.release();

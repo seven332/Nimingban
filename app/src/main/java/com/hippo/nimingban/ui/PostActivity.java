@@ -45,8 +45,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hippo.conaco.Conaco;
 import com.hippo.effect.ViewTransition;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -71,6 +71,7 @@ import com.hippo.widget.Slider;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
@@ -86,10 +87,7 @@ public final class PostActivity extends SwipeActivity
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
 
-    public static final int REQUEST_CODE_REPLY = 0;
-
     private NMBClient mNMBClient;
-    private Conaco mConaco;
 
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
@@ -168,7 +166,6 @@ public final class PostActivity extends SwipeActivity
         setTitle(mSite.getPostTitle(this, mId));
 
         mNMBClient = NMBApplication.getNMBClient(this);
-        mConaco = NMBApplication.getConaco(this);
 
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
@@ -188,11 +185,15 @@ public final class PostActivity extends SwipeActivity
 
         // Refresh
         mReplyHelper.firstRefresh();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_REPLY, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_REPLY, this);
 
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
@@ -204,6 +205,23 @@ public final class PostActivity extends SwipeActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_post, menu);
         return true;
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (Constants.MESSENGER_ID_REPLY == id) {
+            if (mId.equals(obj)) {
+                int currentPage = mReplyHelper.getCurrentPage();
+                int pages = mReplyHelper.getPages();
+                if (currentPage >= 0 && currentPage + 1 == pages) {
+                    // It is the last page, refresh it
+                    mReplyHelper.doGetData(ContentLayout.ContentHelper.TYPE_REFRESH_PAGE,
+                            currentPage, ContentLayout.ContentHelper.REFRESH_TYPE_FOOTER);
+                }
+            }
+        } else {
+            super.onReceive(id, obj);
+        }
     }
 
     private class GoToDialogHelper implements View.OnClickListener,
@@ -284,7 +302,7 @@ public final class PostActivity extends SwipeActivity
                     intent.setAction(TypeSendActivity.ACTION_REPLY);
                     intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
                     intent.putExtra(TypeSendActivity.KEY_ID, mId);
-                    startActivityForResult(intent, REQUEST_CODE_REPLY);
+                    startActivity(intent);
                 }
                 return true;
             case R.id.action_add_feed:
@@ -310,22 +328,6 @@ public final class PostActivity extends SwipeActivity
                 ActivityHelper.openUri(this, Uri.parse(NMBUrl.getBrowsablePostUrl(mSite, mId, 0)));
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_REPLY && resultCode == RESULT_OK) {
-            // Reply successfully
-            int currentPage = mReplyHelper.getCurrentPage();
-            int pages = mReplyHelper.getPages();
-            if (currentPage >= 0 && currentPage + 1 == pages) {
-                // It is the last page, refresh it
-                mReplyHelper.doGetData(ContentLayout.ContentHelper.TYPE_REFRESH_PAGE,
-                        currentPage, ContentLayout.ContentHelper.REFRESH_TYPE_FOOTER);
-            }
         }
     }
 
@@ -582,7 +584,7 @@ public final class PostActivity extends SwipeActivity
                         intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
                         intent.putExtra(TypeSendActivity.KEY_ID, mId);
                         intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
-                        startActivityForResult(intent, REQUEST_CODE_REPLY);
+                        startActivity(intent);
                     }
                     break;
                 case 1:

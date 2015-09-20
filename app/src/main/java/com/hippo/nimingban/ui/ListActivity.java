@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -72,6 +73,7 @@ import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
 import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
@@ -84,7 +86,6 @@ public final class ListActivity extends AbsActivity
 
     public static final int REQUEST_CODE_SETTINGS = 0;
     public static final int REQUEST_CODE_SORT_FORUMS = 1;
-    public static final int REQUEST_CODE_CREATE_POST = 2;
 
     private NMBClient mNMBClient;
     private Conaco mConaco;
@@ -208,11 +209,15 @@ public final class ListActivity extends AbsActivity
         updateForums(true);
 
         checkForAppStart();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_CREATE_POST, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_CREATE_POST, this);
 
         if (mUpdateRequest != null) {
             mUpdateRequest.cancel();
@@ -332,6 +337,20 @@ public final class ListActivity extends AbsActivity
     }
 
     @Override
+    public void onReceive(int id, Object obj) {
+        if (Constants.MESSENGER_ID_CREATE_POST == id) {
+            if (mCurrentForum != null && mCurrentForum.getNMBId().equals(obj)) {
+                int currentPage = mPostHelper.getCurrentPage();
+                if (currentPage == 0) {
+                    mPostHelper.refresh();
+                }
+            }
+        } else {
+            super.onReceive(id, obj);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
@@ -340,14 +359,6 @@ public final class ListActivity extends AbsActivity
         } else if (requestCode == REQUEST_CODE_SORT_FORUMS) {
             if (resultCode == RESULT_OK) {
                 updateForums(true);
-            }
-        } else if (requestCode == REQUEST_CODE_CREATE_POST) {
-            if (resultCode == RESULT_OK) {
-                // Create post successfully
-                int currentPage = mPostHelper.getCurrentPage();
-                if (currentPage == 0) {
-                    mPostHelper.refresh();
-                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -421,7 +432,7 @@ public final class ListActivity extends AbsActivity
                     intent.setAction(TypeSendActivity.ACTION_CREATE_POST);
                     intent.putExtra(TypeSendActivity.KEY_SITE, mCurrentForum.getNMBSite().getId());
                     intent.putExtra(TypeSendActivity.KEY_ID, mCurrentForum.getNMBId());
-                    startActivityForResult(intent, REQUEST_CODE_CREATE_POST);
+                    startActivity(intent);
                 }
                 return true;
             case R.id.action_refresh:

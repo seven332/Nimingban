@@ -89,10 +89,10 @@
     <string name="create_text_image">你输入的文字中含有非法词语，要创建文字图片么？</string>
     <string name="start_creating_post">开始发串</string>
     <string name="create_post_successfully">发串成功</string>
-    <string name="create_post_failed">发串失败，文字已保存为草稿\n刷新看看？</string>
+    <string name="create_post_failed">貌似发串失败，文字已保存为草稿</string>
     <string name="start_reply">开始回复</string>
     <string name="reply_successfully">回复成功</string>
-    <string name="reply_failed">回复失败，文字已保存为草稿\n刷新看看？</string>
+    <string name="reply_failed">貌似回复失败，文字已保存为草稿</string>
 
     <string name="select_picture">选择图片</string>
 

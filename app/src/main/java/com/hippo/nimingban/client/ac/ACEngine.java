@@ -577,6 +577,7 @@ public class ACEngine {
 
             long size = temp.length();
             if (size < MAX_IMAGE_SIZE && !"image/jpeg".equals(imageType) && !"image/jpg".equals(imageType)) {
+                temp.delete();
                 return null;
             }
 

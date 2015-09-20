@@ -90,10 +90,10 @@
     <string name="create_text_image">Text you typed contains offensive words. Create an image of the text?</string>
     <string name="start_creating_post">Start posting</string>
     <string name="create_post_successfully">Post successfully</string>
-    <string name="reply_failed">Reply failed, the text you is saved as draft\nRefresh?</string>
+    <string name="reply_failed">Maybe reply failed, the text you is saved as draft</string>
     <string name="start_reply">Start replying</string>
     <string name="reply_successfully">Reply successfully</string>
-    <string name="create_post_failed">Post failed, the text is saved as draft\nRefresh?</string>
+    <string name="create_post_failed">Maybe post failed, the text is saved as draft</string>
 
     <string name="select_picture">Select picture</string>
 

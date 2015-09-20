@@ -22,10 +22,14 @@ public final class Constants {
 
     public static final int MESSENGER_ID_CHANGE_THEME;
     public static final int MESSENGER_ID_UPDATE_RECORD;
+    public static final int MESSENGER_ID_REPLY;
+    public static final int MESSENGER_ID_CREATE_POST;
 
     static {
         Messenger messenger = Messenger.getInstance();
         MESSENGER_ID_CHANGE_THEME = messenger.newId();
         MESSENGER_ID_UPDATE_RECORD = messenger.newId();
+        MESSENGER_ID_REPLY = messenger.newId();
+        MESSENGER_ID_CREATE_POST = messenger.newId();
     }
 }

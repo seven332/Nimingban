@@ -69,6 +69,7 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -710,25 +711,40 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
                 addToRecord(null);
             }
 
-            Toast.makeText(mContext, mMethod == Method.Reply ? R.string.reply_successfully :
-                    R.string.create_post_successfully, Toast.LENGTH_SHORT).show();
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, mMethod == Method.Reply ? R.string.reply_successfully :
+                            R.string.create_post_successfully, Toast.LENGTH_SHORT).show();
+                    Messenger.getInstance().notify(Method.Reply == mMethod ? Constants.MESSENGER_ID_REPLY : Constants.MESSENGER_ID_CREATE_POST, mId);
+                }
+            }, 1000); // Wait a seconds to make sure the server has done with the post
         }
 
         @Override
-        public void onFailure(Exception e) {
+        public void onFailure(final Exception e) {
             mImage = null;
 
             if (!TextUtils.isEmpty(mContent)) {
                 DB.addDraft(mContent);
             }
-            Context context = mContext;
-            Toast.makeText(context, context.getString(mMethod == Method.Reply ? R.string.reply_failed :
-                    R.string.create_post_failed) + "\n" +
-                    ExceptionUtils.getReadableString(context, e), Toast.LENGTH_SHORT).show();
+
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Context context = mContext;
+                    Toast.makeText(context, context.getString(mMethod == Method.Reply ? R.string.reply_failed :
+                            R.string.create_post_failed) + "\n" +
+                            ExceptionUtils.getReadableString(context, e), Toast.LENGTH_SHORT).show();
+                    Messenger.getInstance().notify(Method.Reply == mMethod ? Constants.MESSENGER_ID_REPLY : Constants.MESSENGER_ID_CREATE_POST, mId);
+                }
+            }, 1000); // Wait a seconds to make sure the server has done with the post
         }
 
         @Override
         public void onCancel() {
+            mImage = null;
+
             Log.d(TAG, "ActionListener onCancel");
         }
     }
