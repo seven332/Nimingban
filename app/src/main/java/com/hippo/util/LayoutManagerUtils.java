@@ -26,7 +26,22 @@ import com.hippo.widget.recyclerview.SimpleSmoothScroller;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public final class LayoutManagerUtils {
+
+    private static Method sCsdfp = null;
+
+    static {
+        try {
+            sCsdfp = StaggeredGridLayoutManager.class.getDeclaredMethod("calculateScrollDirectionForPosition", int.class);
+            sCsdfp.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            // Ignore
+            e.printStackTrace();
+        }
+    }
 
     public static void scrollToPositionWithOffset(
             RecyclerView.LayoutManager layoutManager,int position, int offset) {
@@ -57,13 +72,21 @@ public final class LayoutManagerUtils {
                     return linearLayoutManager.computeScrollVectorForPosition(targetPosition);
                 }
             };
-        } /*else if (layoutManager instanceof StaggeredGridLayoutManager) {
 
+        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
             final StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
             smoothScroller = new SimpleSmoothScroller(context, millisecondsPerInch) {
                 @Override
                 public PointF computeScrollVectorForPosition(int targetPosition) {
-                    final int direction = staggeredGridLayoutManager.calculateScrollDirectionForPosition(targetPosition);
+                    int direction = 0;
+                    try {
+                        direction = (Integer) sCsdfp.invoke(staggeredGridLayoutManager, targetPosition);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+
                     if (direction == 0) {
                         return null;
                     }
@@ -75,7 +98,7 @@ public final class LayoutManagerUtils {
                 }
             };
 
-        } */else {
+        } else {
             throw new IllegalStateException("Can't do smoothScrollToPosition for " +
                     layoutManager.getClass().getName());
         }

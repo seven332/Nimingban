@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,13 +109,19 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
 
         mSearchAdapter = new SearchAdapter();
         recyclerView.setAdapter(mSearchAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.LayoutManager layoutManager;
+        if (LayoutUtils.isTable(this)) {
+            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            layoutManager = new LinearLayoutManager(this);
+        }
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         recyclerView.setDrawSelectorOnTop(true);
         recyclerView.setOnItemClickListener(this);
         recyclerView.hasFixedSize();
         recyclerView.setClipToPadding(false);
-        int halfInterval = LayoutUtils.dp2pix(this, 4);
+        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
         recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 

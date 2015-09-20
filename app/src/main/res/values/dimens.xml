@@ -21,6 +21,9 @@
     <dimen name="keyline_margin_horizontal">16dp</dimen>
     <dimen name="keyline_margin_vertical">16dp</dimen>
 
+    <dimen name="card_interval">8dp</dimen>
+    <dimen name="single_item_padding_horizontal">16dp</dimen>
+
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>

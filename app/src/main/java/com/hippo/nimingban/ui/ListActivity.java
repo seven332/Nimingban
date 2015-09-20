@@ -31,6 +31,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -191,10 +192,16 @@ public final class ListActivity extends AbsActivity
                 ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.LayoutManager layoutManager;
+        if (LayoutUtils.isTable(this)) {
+            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            layoutManager = new LinearLayoutManager(this);
+        }
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
-        int halfInterval = LayoutUtils.dp2pix(this, 4);
+        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
         mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 

@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,7 +100,11 @@ public final class RecordActivity extends AbsActivity
         imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
-        mLayoutManager = new LinearLayoutManager(this);
+        if (LayoutUtils.isTable(this)) {
+            mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            mLayoutManager = new LinearLayoutManager(this);
+        }
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
         mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
@@ -128,7 +133,7 @@ public final class RecordActivity extends AbsActivity
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setClipChildren(false);
-        int halfInterval = LayoutUtils.dp2pix(this, 4);
+        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
         mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 
