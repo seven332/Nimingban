@@ -147,7 +147,7 @@ public class ACEngine {
             List<Post> result = new ArrayList<>(acPosts.size());
             for (ACPost acPost : acPosts) {
                 if (acPost != null) {
-                    acPost.generate(ACSite.getInstance());
+                    acPost.generateSelfAndReplies(ACSite.getInstance());
                     result.add(acPost);
                 }
             }

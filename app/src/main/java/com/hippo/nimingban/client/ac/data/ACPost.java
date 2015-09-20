@@ -33,6 +33,7 @@ import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
@@ -48,6 +49,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ACPost extends Post {
+
+    public static final Reply[] EMPTY_REPLY_ARRAY = new Reply[0];
 
     /**
      * Parse the time string from website
@@ -90,6 +93,7 @@ public class ACPost extends Post {
     private CharSequence mContent;
     private String mThumb;
     private String mImage;
+    private Reply[] mReplies;
 
     @Override
     public String toString() {
@@ -351,6 +355,18 @@ public class ACPost extends Post {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
             mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext;
         }
+
+        List<ACReply> replyList = replys;
+        if (replyList != null && replyList.size() > 0) {
+            int n = replyList.size();
+            Reply[] replies = new Reply[n];
+            mReplies = replies;
+            for (int i = 0; i < n; i++) {
+                replies[i] = replyList.get(i);
+            }
+        } else {
+            mReplies = EMPTY_REPLY_ARRAY;
+        }
     }
 
     public void generateSelfAndReplies(Site site) {
@@ -406,6 +422,11 @@ public class ACPost extends Post {
     @Override
     public CharSequence getNMBReplyDisplayCount() {
         return replyCount;
+    }
+
+    @Override
+    public Reply[] getNMBReplies() {
+        return mReplies;
     }
 
     @Override

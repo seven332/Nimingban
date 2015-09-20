@@ -21,4 +21,6 @@ public abstract class Post extends Reply {
     public abstract int getNMBReplyCount();
 
     public abstract CharSequence getNMBReplyDisplayCount();
+
+    public abstract Reply[] getNMBReplies();
 }

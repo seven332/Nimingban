@@ -27,6 +27,7 @@ import android.text.style.ForegroundColorSpan;
 
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 
 public class ACFeed extends Post {
@@ -187,5 +188,10 @@ public class ACFeed extends Post {
     @Override
     public CharSequence getNMBReplyDisplayCount() {
         return "-1";
+    }
+
+    @Override
+    public Reply[] getNMBReplies() {
+        return ACPost.EMPTY_REPLY_ARRAY;
     }
 }

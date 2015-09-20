@@ -25,6 +25,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -40,8 +41,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.Constants;
@@ -56,6 +59,7 @@ import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
@@ -76,6 +80,7 @@ import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.util.List;
@@ -84,6 +89,7 @@ public final class ListActivity extends AbsActivity
         implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
 
     private static final int BACK_PRESSED_INTERVAL = 2000;
+    private static final int SHOW_REPLY_INTERVAL = 5000;
 
     public static final int REQUEST_CODE_SETTINGS = 0;
     public static final int REQUEST_CODE_SORT_FORUMS = 1;
@@ -227,6 +233,30 @@ public final class ListActivity extends AbsActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
+            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+            if (holder instanceof ListHolder) {
+                ((ListHolder) holder).resumeReplies();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
+            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+            if (holder instanceof ListHolder) {
+                ((ListHolder) holder).pauseReplies();
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -240,6 +270,13 @@ public final class ListActivity extends AbsActivity
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
             mNMBRequest = null;
+        }
+
+        for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
+            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+            if (holder instanceof ListHolder) {
+                ((ListHolder) holder).clearReplies();
+            }
         }
     }
 
@@ -583,7 +620,10 @@ public final class ListActivity extends AbsActivity
         }
     }
 
-    private class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            ViewSwitcher.ViewFactory, Runnable {
+
+        private Handler mHandler;
 
         public TextView leftText;
         public TextView centerText;
@@ -591,9 +631,15 @@ public final class ListActivity extends AbsActivity
         public TextView content;
         public TextView bottomText;
         public LoadImageView thumb;
+        public TextSwitcher reply;
+
+        private int mShowIndex;
+        private Reply[] mReplies;
 
         public ListHolder(View itemView) {
             super(itemView);
+
+            mHandler = SimpleHandler.getInstance();
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             centerText = (TextView) itemView.findViewById(R.id.center_text);
@@ -601,8 +647,11 @@ public final class ListActivity extends AbsActivity
             content = (TextView) itemView.findViewById(R.id.content);
             bottomText = (TextView) itemView.findViewById(R.id.bottom_text);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+            reply = (TextSwitcher) itemView.findViewById(R.id.reply);
 
             thumb.setOnClickListener(this);
+
+            reply.setFactory(this);
 
             Drawable drawable = VectorDrawable.create(ListActivity.this, R.drawable.ic_comment_multiple_outline);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -624,6 +673,57 @@ public final class ListActivity extends AbsActivity
                     ListActivity.this.startActivity(intent);
                 }
             }
+        }
+
+        public void setReplies(Reply[] replies) {
+            mHandler.removeCallbacks(this);
+
+            if (replies == null || replies.length == 0) {
+                mReplies = null;
+                reply.setVisibility(View.GONE);
+            } else {
+                mReplies = replies;
+                mShowIndex = 0;
+                reply.setVisibility(View.VISIBLE);
+                reply.setText(replies[0].getNMBDisplayContent());
+
+                if (replies.length > 1) {
+                    mHandler.postDelayed(this, SHOW_REPLY_INTERVAL);
+                }
+            }
+        }
+
+        public void resumeReplies() {
+            if (mReplies != null && mReplies.length > 1) {
+                mHandler.postDelayed(this, SHOW_REPLY_INTERVAL);
+            }
+        }
+
+        public void pauseReplies() {
+            if (mReplies != null && mReplies.length > 1) {
+                mHandler.removeCallbacks(this);
+            }
+        }
+
+        public void clearReplies() {
+            mHandler.removeCallbacks(this);
+            mReplies = null;
+        }
+
+        @Override
+        public View makeView() {
+            return getLayoutInflater().inflate(R.layout.item_list_reply, reply, false);
+        }
+
+        @Override
+        public void run() {
+            if (mReplies == null) {
+                return;
+            }
+
+            mShowIndex = (mShowIndex + 1) % mReplies.length;
+            reply.setText(mReplies[mShowIndex].getNMBDisplayContent());
+            mHandler.postDelayed(this, SHOW_REPLY_INTERVAL);
         }
     }
 
@@ -647,30 +747,45 @@ public final class ListActivity extends AbsActivity
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottomText.getLayoutParams();
             String thumbUrl = post.getNMBThumbUrl();
 
-            boolean showImage;
+            boolean tryShowImage;
             boolean loadFromNetwork;
             int ils = Settings.getImageLoadingStrategy();
             if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
                     (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(ListActivity.this))) {
-                showImage = true;
+                tryShowImage = true;
                 loadFromNetwork = true;
             } else {
-                showImage = Settings.getImageLoadingStrategy2();
+                tryShowImage = Settings.getImageLoadingStrategy2();
                 loadFromNetwork = false;
             }
 
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
+            boolean showImage;
+            if (!TextUtils.isEmpty(thumbUrl) && tryShowImage) {
+                showImage = true;
+
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
                 holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
+            } else {
+                showImage = false;
 
+                holder.thumb.setVisibility(View.GONE);
+                holder.thumb.unload();
+            }
+
+            Reply[] replies = post.getNMBReplies();
+
+            holder.setReplies(replies);
+
+            if (showImage && replies.length == 0) {
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);
                 lp.addRule(RelativeLayout.BELOW, 0);
                 bottomText.setLayoutParams(lp);
+            } else if (replies.length > 0) {
+                lp.addRule(RelativeLayout.ALIGN_BOTTOM, 0);
+                lp.addRule(RelativeLayout.BELOW, R.id.reply);
+                bottomText.setLayoutParams(lp);
             } else {
-                holder.thumb.setVisibility(View.GONE);
-                holder.thumb.unload();
-
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, 0);
                 lp.addRule(RelativeLayout.BELOW, R.id.content);
                 bottomText.setLayoutParams(lp);
@@ -683,6 +798,11 @@ public final class ListActivity extends AbsActivity
         @Override
         public int getItemCount() {
             return mPostHelper.size();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(ListHolder holder) {
+            holder.clearReplies();
         }
     }
 

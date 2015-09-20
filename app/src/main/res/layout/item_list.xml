@@ -71,6 +71,15 @@
             android:layout_marginTop="8dp"
             app:retryType="longClick"/>
 
+        <TextSwitcher
+            android:id="@+id/reply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/thumb"
+            android:layout_marginTop="8dp"
+            android:inAnimation="@anim/anim_fade_in"
+            android:outAnimation="@anim/anim_fade_out"/>
+
         <TextView
             android:id="@+id/bottom_text"
             android:layout_width="wrap_content"
