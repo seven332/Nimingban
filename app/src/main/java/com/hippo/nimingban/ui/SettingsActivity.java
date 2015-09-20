@@ -57,7 +57,6 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
-import com.hippo.yorozuya.MathUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -480,21 +479,6 @@ public class SettingsActivity extends AbsActivity {
                 mNeutral.setOnClickListener(this);
             }
 
-            public String getRandomFeedId() {
-                int length = 20;
-                StringBuilder sb = new StringBuilder(length);
-
-                for (int i = 0; i < length; i++) {
-                    if (MathUtils.random(0, 1 + 1) == 0) {
-                        sb.append((char) MathUtils.random('a', 'z' + 1));
-                    } else {
-                        sb.append((char) MathUtils.random('0', '9' + 1));
-                    }
-                }
-
-                return sb.toString();
-            }
-
             @Override
             public void onClick(@NonNull View v) {
                 if (mPositive == v) {
@@ -507,7 +491,7 @@ public class SettingsActivity extends AbsActivity {
                         Toast.makeText(getContext(), R.string.invalid_feed_id, Toast.LENGTH_SHORT).show();
                     }
                 } else if (mNegative == v) {
-                    mEditText.setText(getRandomFeedId());
+                    mEditText.setText(Settings.getRandomFeedId());
                 } else if (mNeutral == v) { // mac
                     mEditText.setText(Settings.getMacFeedId());
                 }

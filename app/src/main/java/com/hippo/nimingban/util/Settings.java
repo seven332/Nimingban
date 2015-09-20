@@ -30,6 +30,7 @@ import android.text.TextUtils;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.NumberUtils;
 
 import java.io.ByteArrayInputStream;
@@ -192,7 +193,12 @@ public final class Settings {
             if (!TextUtils.isEmpty(feedId)) {
                 return feedId;
             } else {
-                return getMacFeedId();
+                feedId = getMacFeedId();
+                if (feedId == null) {
+                    feedId = getRandomFeedId();
+                }
+                putFeedId(feedId);
+                return feedId;
             }
         }
     }
@@ -216,6 +222,45 @@ public final class Settings {
                 IOUtils.closeQuietly(os);
             }
         }
+    }
+
+    public static @NonNull String getRandomFeedId() {
+        int length = 20;
+        StringBuilder sb = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            if (MathUtils.random(0, 1 + 1) == 0) {
+                sb.append((char) MathUtils.random('a', 'z' + 1));
+            } else {
+                sb.append((char) MathUtils.random('0', '9' + 1));
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static String getMacFeedId() {
+        WifiManager wifi = (WifiManager) sContext.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        if (info == null) {
+            return null;
+        }
+
+        String mac = info.getMacAddress();
+        if (mac == null) {
+            return null;
+        }
+
+        String id;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(mac.getBytes());
+            id = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            id = String.valueOf(mac.hashCode());
+        }
+
+        return id;
     }
 
     public static boolean getSaveImageAuto() {
@@ -297,27 +342,6 @@ public final class Settings {
     @SuppressLint("CommitPrefEdits")
     public static void putCrashFilename(String value) {
         sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
-    }
-
-    public static String getMacFeedId() {
-        WifiManager wifi = (WifiManager) sContext.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = wifi.getConnectionInfo();
-        String mac = info.getMacAddress();
-
-        if (mac == null) {
-            return "zhaobudaomac"; // TODO generate a key ?
-        }
-
-        String id;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            digest.update(mac.getBytes());
-            id = bytesToHexString(digest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            id = String.valueOf(mac.hashCode());
-        }
-
-        return id;
     }
 
     /**
