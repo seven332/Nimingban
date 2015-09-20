@@ -25,6 +25,7 @@ import android.webkit.MimeTypeMap;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hippo.io.FileInputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
@@ -38,6 +39,7 @@ import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
+import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.okhttp.ResponseUtils;
 import com.hippo.yorozuya.IOUtils;
@@ -581,8 +583,15 @@ public class ACEngine {
                 return null;
             }
 
+            int[] sampleScaleArray = new int[1];
+            BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);
+            int sampleScale = sampleScaleArray[0];
+            if (sampleScale < 1) {
+                return null;
+            }
+
             BitmapFactory.Options options = new BitmapFactory.Options();
-            int i = 0;
+            int i = (int) (Math.log(sampleScale) / Math.log(2));
             while (true) {
                 options.inSampleSize = (int) Math.pow(2, i);
                 Bitmap bitmap = BitmapFactory.decodeStream(isp.open(), null, options);

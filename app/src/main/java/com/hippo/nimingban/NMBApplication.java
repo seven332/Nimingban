@@ -29,6 +29,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
@@ -83,6 +84,7 @@ public final class NMBApplication extends Application
         ReadableTime.initialize(this);
         GoodRequestBuilder.initialize(this);
         ResponseUtils.initialize(this);
+        BitmapUtils.initialize(this);
 
         LeakCanary.install(this);
 
