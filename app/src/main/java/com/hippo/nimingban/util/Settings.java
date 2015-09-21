@@ -149,6 +149,9 @@ public final class Settings {
     public static final String KEY_LINE_SPACING = "line_spacing";
     public static final int DEFAULT_LINE_SPACING = 1;
 
+    public static final String KEY_DYNAMIC_COMMENTS = "dynamic_comments";
+    public static final boolean DEFAULT_DYNAMIC_COMMENTS = true;
+
     public static final String KEY_FEED_ID = "feed_id";
     public static final String DEFAULT_FEED_ID = null;
 
@@ -199,6 +202,10 @@ public final class Settings {
 
     public static void putLineSpacing(int value) {
         putInt(KEY_LINE_SPACING, value);
+    }
+
+    public static boolean getDynamicComments() {
+        return getBoolean(KEY_DYNAMIC_COMMENTS, DEFAULT_DYNAMIC_COMMENTS);
     }
 
     public static String getFeedId() {

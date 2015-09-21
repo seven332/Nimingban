@@ -172,6 +172,9 @@
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
     <string name="main_text_format">Font size and line spacing</string>
     <string name="main_text_format_summary">Font size: %1$d\nLine spacing: %2$d</string>
+    <string name="main_dynamic_comments">Dynamic comments</string>
+    <string name="main_dynamic_comments_summary_on">Show recent comments dynamically below thread content in list</string>
+    <string name="main_dynamic_comments_summary_off">No dynamic comments</string>
     <string name="main_image_loading_strategy">Picture loading strategy</string>
     <string name="main_image_loading_strategy_2">What is no pictures</string>
     <string name="main_image_loading_strategy_2_summary_off">No pictures is No pictures</string>

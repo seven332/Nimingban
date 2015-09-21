@@ -27,6 +27,13 @@
         android:key="text_format"
         android:title="@string/main_text_format"/>
 
+    <SwitchPreference
+        android:key="dynamic_comments"
+        android:title="@string/main_dynamic_comments"
+        android:summaryOn="@string/main_dynamic_comments_summary_on"
+        android:summaryOff="@string/main_dynamic_comments_summary_off"
+        android:defaultValue="true"/>
+
     <ListPreference
         android:key="image_loading_strategy"
         android:title="@string/main_image_loading_strategy"

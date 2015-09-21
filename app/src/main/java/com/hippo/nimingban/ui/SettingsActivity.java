@@ -115,6 +115,7 @@ public class SettingsActivity extends AbsActivity {
 
         private SwitchPreference mPrettyTime;
         private Preference mTextFormat;
+        private Preference mDynamicComments;
         private Preference mACCookies;
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
@@ -154,6 +155,7 @@ public class SettingsActivity extends AbsActivity {
 
             mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mTextFormat = findPreference(KEY_TEXT_FORMAT);
+            mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
             mACCookies = findPreference(KEY_AC_COOKIES);
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
@@ -163,6 +165,7 @@ public class SettingsActivity extends AbsActivity {
             mSource = findPreference(KEY_SOURCE);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
+            mDynamicComments.setOnPreferenceChangeListener(this);
 
             mTextFormat.setOnPreferenceClickListener(this);
             mACCookies.setOnPreferenceClickListener(this);
@@ -565,7 +568,10 @@ public class SettingsActivity extends AbsActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String key = preference.getKey();
             if (Settings.KEY_PRETTY_TIME.equals(key)) {
-                ((SettingsActivity) getContext()).setResult(RESULT_OK);
+                getActivity().setResult(RESULT_OK);
+                return true;
+            } else if (Settings.KEY_DYNAMIC_COMMENTS.equals(key)) {
+                getActivity().setResult(RESULT_OK);
                 return true;
             }
             return true;

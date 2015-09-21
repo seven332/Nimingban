@@ -688,13 +688,14 @@ public final class ListActivity extends AbsActivity
             return MathUtils.random(3000, 5001);
         }
 
-        public void setReplies(Reply[] replies) {
+        public boolean setReplies(Reply[] replies) {
             mHandler.removeCallbacks(this);
             mRunning = false;
 
             if (replies == null || replies.length == 0) {
                 mReplies = null;
                 reply.setVisibility(View.GONE);
+                return false;
             } else {
                 mReplies = replies;
                 mShowIndex = 0;
@@ -705,6 +706,8 @@ public final class ListActivity extends AbsActivity
                     mRunning = true;
                     mHandler.postDelayed(this, getReplyInterval());
                 }
+
+                return true;
             }
         }
 
@@ -794,15 +797,19 @@ public final class ListActivity extends AbsActivity
                 holder.thumb.unload();
             }
 
+            boolean showReplies;
             Reply[] replies = post.getNMBReplies();
+            if (Settings.getDynamicComments()) {
+                showReplies = holder.setReplies(replies);
+            } else {
+                showReplies = holder.setReplies(null);
+            }
 
-            holder.setReplies(replies);
-
-            if (showImage && replies.length == 0) {
+            if (showImage && !showReplies) {
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);
                 lp.addRule(RelativeLayout.BELOW, 0);
                 bottomText.setLayoutParams(lp);
-            } else if (replies.length > 0) {
+            } else if (showReplies) {
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, 0);
                 lp.addRule(RelativeLayout.BELOW, R.id.reply);
                 bottomText.setLayoutParams(lp);
