@@ -685,7 +685,7 @@ public final class ListActivity extends AbsActivity
         }
 
         public long getReplyInterval() {
-            return MathUtils.random(4000, 6000);
+            return MathUtils.random(3000, 5001);
         }
 
         public void setReplies(Reply[] replies) {
