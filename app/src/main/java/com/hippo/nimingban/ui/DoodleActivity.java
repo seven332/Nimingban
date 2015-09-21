@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.io.UriInputStreamPipe;
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.BitmapUtils;
@@ -332,24 +333,45 @@ public final class DoodleActivity extends AbsActivity implements View.OnClickLis
         if (mSide == v) {
             hideSide();
         } else if (mPalette == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_palette");
+
             showPickColorDialog();
         } else if (mThickness == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_thickness");
+
             showThicknessDialog();
         } else if (mDrawAction == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_draw_action");
+
             boolean newActivated = !mDrawAction.isActivated();
             mDrawAction.setActivated(newActivated);
             mDoodleView.setEraser(newActivated);
         } else if (mImage == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_image");
+
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent,
                     getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
         } else if (mUndo == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_undo");
+
             mDoodleView.undo();
         } else if (mRedo == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_redo");
+
             mDoodleView.redo();
         } else if (mClear == v) {
+            // Analysis
+            Analysis.action(DoodleActivity.this, "doodle_clear");
+
             mDoodleView.clear();
         } else if (mOk == v) {
             if (mOutputFile != null) {

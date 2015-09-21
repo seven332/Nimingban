@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
@@ -74,6 +75,9 @@ public final class Settings {
     }
 
     public static void putBoolean(String key, boolean value) {
+        // Analysis
+        Analysis.setting(sContext, key, value);
+
         sSettingsPre.edit().putBoolean(key, value).apply();
     }
 
@@ -82,6 +86,9 @@ public final class Settings {
     }
 
     public static void putInt(String key, int value) {
+        // Analysis
+        Analysis.setting(sContext, key, value);
+
         sSettingsPre.edit().putInt(key, value).apply();
     }
 
@@ -90,6 +97,9 @@ public final class Settings {
     }
 
     public static void putLong(String key, long value) {
+        // Analysis
+        Analysis.setting(sContext, key, value);
+
         sSettingsPre.edit().putLong(key, value).apply();
     }
 
@@ -98,6 +108,9 @@ public final class Settings {
     }
 
     public static void putFloat(String key, float value) {
+        // Analysis
+        Analysis.setting(sContext, key, value);
+
         sSettingsPre.edit().putFloat(key, value).apply();
     }
 
@@ -106,6 +119,9 @@ public final class Settings {
     }
 
     public static void putString(String key, String value) {
+        // Analysis
+        Analysis.setting(sContext, key, value);
+
         sSettingsPre.edit().putString(key, value).apply();
     }
 
@@ -267,10 +283,6 @@ public final class Settings {
         return getBoolean(KEY_SAVE_IMAGE_AUTO, DEFAULT_SAVE_IMAGE_AUTO);
     }
 
-    public static void putSaveImageAuto(boolean value) {
-        putBoolean(KEY_SAVE_IMAGE_AUTO, value);
-    }
-
     public static int getImageLoadingStrategy() {
         return getIntFromStr(KEY_IMAGE_LOADING_STRATEGY, DEFAULT_IMAGE_LOADING_STRATEGY);
     }
@@ -303,6 +315,9 @@ public final class Settings {
         putString(KEY_IMAGE_SAVE_PATH, uri.getEncodedPath());
         putString(KEY_IMAGE_SAVE_QUERY, uri.getEncodedQuery());
         putString(KEY_IMAGE_SAVE_FRAGMENT, uri.getEncodedFragment());
+
+        // Analysis
+        Analysis.setting(sContext, KEY_IMAGE_SAVE_LOACTION, uri.toString());
     }
 
     public static boolean getSetAnalysis() {

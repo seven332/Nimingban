@@ -47,6 +47,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -174,9 +175,15 @@ public final class ListActivity extends AbsActivity
             @Override
             public void onDrawerOpened(View view) {
                 if (mLeftDrawer == view) {
+                    // Analysis
+                    Analysis.action(ListActivity.this, "open_left_drawer");
+
                     super.onDrawerOpened(view);
                 }
                 if (mRightDrawer == view) {
+                    // Analysis
+                    Analysis.action(ListActivity.this, "open_right_drawer");
+
                     setMenuItemVisible(mCreatePost, false);
                     setMenuItemVisible(mRefreshMenu, false);
                     setMenuItemVisible(mSortForumsMenu, true);
@@ -869,12 +876,13 @@ public final class ListActivity extends AbsActivity
             if (mCurrentForum == null) {
                 onGetExpection(taskId, new NMBException(DumpSite.getInstance(), getString(R.string.no_forum)));
             } else {
+                String forumId = mCurrentForum.getNMBId();
                 NMBRequest request = new NMBRequest();
                 mNMBRequest = request;
                 request.setSite(mCurrentForum.getNMBSite());
                 request.setMethod(NMBClient.METHOD_GET_POST_LIST);
-                request.setArgs(mCurrentForum.getNMBId(), page);
-                request.setCallback(new ListListener(taskId, page, request));
+                request.setArgs(forumId, page);
+                request.setCallback(new ListListener(taskId, page, forumId, request));
                 mNMBClient.execute(request);
             }
         }
@@ -884,16 +892,21 @@ public final class ListActivity extends AbsActivity
 
         private int mTaskId;
         private int mTaskPage;
+        private String mForumId;
         private NMBRequest mRequest;
 
-        public ListListener(int taskId, int taskPage, NMBRequest request) {
+        public ListListener(int taskId, int taskPage, String forumId, NMBRequest request) {
             mTaskId = taskId;
             mTaskPage = taskPage;
+            mForumId = forumId;
             mRequest = request;
         }
 
         @Override
         public void onSuccess(List<Post> result) {
+            // Analysis
+            Analysis.getPostList(ListActivity.this, mForumId, mTaskPage, true);
+
             if (mNMBRequest == mRequest) {
                 // It is current request
 
@@ -914,6 +927,9 @@ public final class ListActivity extends AbsActivity
 
         @Override
         public void onFailure(Exception e) {
+            // Analysis
+            Analysis.getPostList(ListActivity.this, mForumId, mTaskPage, false);
+
             if (mNMBRequest == mRequest) {
                 // It is current request
 

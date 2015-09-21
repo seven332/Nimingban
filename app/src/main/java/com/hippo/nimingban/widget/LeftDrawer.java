@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
@@ -166,6 +167,9 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
     public void onClick(@NonNull View v) {
         if (mDarkTheme == v) {
             if (!mHitDarkTheme) {
+                // Analysis
+                Analysis.action(getContext(), "dark_theme");
+
                 mHitDarkTheme = true;
                 boolean darkTheme = !Settings.getDarkTheme();
                 Settings.putDarkTheme(darkTheme);

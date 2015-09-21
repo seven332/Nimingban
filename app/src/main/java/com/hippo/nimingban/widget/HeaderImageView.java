@@ -36,6 +36,7 @@ import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.io.FileInputStreamPipe;
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.widget.FixedAspectImageView;
@@ -101,6 +102,9 @@ public final class HeaderImageView extends FixedAspectImageView
         System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
         mHits[mHits.length-1] = SystemClock.uptimeMillis();
         if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
+            // Analysis
+            Analysis.action(getContext(), "change_header");
+
             Arrays.fill(mHits, 0);
             Toast.makeText(getContext(), "（<ゝω・）☆ Kira", Toast.LENGTH_SHORT).show();
             load();
@@ -110,6 +114,9 @@ public final class HeaderImageView extends FixedAspectImageView
     @Override
     public boolean onLongClick(@NonNull View v) {
         if (mImageFile != null && mOnLongClickImageListener != null) {
+            // Analysis
+            Analysis.action(getContext(), "enlarge_header");
+
             return mOnLongClickImageListener.onLongClickImage(mImageFile);
         } else {
             return false;

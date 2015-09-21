@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.io.UriInputStreamPipe;
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.Emoji;
 import com.hippo.nimingban.NMBAppConfig;
@@ -679,6 +680,13 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
         @Override
         public void onSuccess(Void result) {
+            // Analysis
+            if (mMethod == Method.Reply) {
+                Analysis.replyPost(mContext, mId, true);
+            } else {
+                Analysis.createPost(mContext, mId, true);
+            }
+
             if (mImage != null) {
                 // Save image file in new thread
                 // TODO looks ugly
@@ -723,6 +731,13 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
         @Override
         public void onFailure(final Exception e) {
+            // Analysis
+            if (mMethod == Method.Reply) {
+                Analysis.replyPost(mContext, mId, false);
+            } else {
+                Analysis.createPost(mContext, mId, false);
+            }
+
             mImage = null;
 
             if (!TextUtils.isEmpty(mContent)) {

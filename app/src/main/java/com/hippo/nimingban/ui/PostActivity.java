@@ -46,6 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.effect.ViewTransition;
+import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -160,6 +161,9 @@ public final class PostActivity extends SwipeActivity
             return;
         }
 
+        // Analysis
+        Analysis.readPost(PostActivity.this, mId);
+
         setContentView(R.layout.activity_post);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
@@ -242,9 +246,6 @@ public final class PostActivity extends SwipeActivity
             ((TextView) mView.findViewById(R.id.end)).setText(Integer.toString(pages));
             mSlider = (Slider) mView.findViewById(R.id.slider);
             mSlider.setRange(1, pages);
-
-            Log.d("TAG", "pages = " + pages);
-
             mSlider.setProgress(currentPage + 1);
         }
 
