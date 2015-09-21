@@ -155,6 +155,9 @@
     <string name="save_successfully">保存成功</string>
     <string name="save_failed">保存失败</string>
 
+    <string name="share_image">分享图片</string>
+    <string name="cant_save_image">无法保存图片</string>
+
     <string name="settings">设置</string>
     <string name="main_dark_theme">夜间模式</string>
     <string name="main_pretty_time">显示易读时间</string>

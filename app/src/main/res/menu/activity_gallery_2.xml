@@ -25,4 +25,10 @@
         android:icon="@drawable/ic_content_save_dark_x24"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/save"
+        android:icon="@drawable/ic_share_dark_x24"
+        app:showAsAction="ifRoom"/>
+
 </menu>

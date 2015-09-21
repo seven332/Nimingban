@@ -18,6 +18,7 @@ package com.hippo.nimingban.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -42,6 +43,7 @@ import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
 import com.hippo.unifile.UniFile;
@@ -115,6 +117,7 @@ public class GalleryActivity2 extends SwipeActivity {
         return R.style.AppTheme_Dark_Transparent;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,7 +169,12 @@ public class GalleryActivity2 extends SwipeActivity {
                 return true;
             case R.id.action_save:
                 if (mSaveTask == null) {
-                    mGalleryAdapter.saveCurrentImage();
+                    mGalleryAdapter.saveCurrentImage(false);
+                }
+                return true;
+            case R.id.action_share:
+                if (mSaveTask == null) {
+                    mGalleryAdapter.saveCurrentImage(true);
                 }
                 return true;
             default:
@@ -174,11 +182,35 @@ public class GalleryActivity2 extends SwipeActivity {
         }
     }
 
-    public void onSaveTaskOver(boolean ok) {
+    /**
+     * @param uri the save image file url, null for fail
+     * @param share true for share
+     */
+    public void onSaveTaskOver(Uri uri, boolean share) {
         if (mSaveTask != null) {
             mSaveTask = null;
 
-            Toast.makeText(this, ok ? R.string.save_successfully : R.string.save_failed, Toast.LENGTH_SHORT).show();
+            if (share) {
+                if (uri == null) {
+                    Toast.makeText(this, R.string.cant_save_image, Toast.LENGTH_SHORT).show();
+                } else {
+                    String mimeType = getContentResolver().getType(uri);
+                    if (TextUtils.isEmpty(mimeType)) {
+                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                                MimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+                        if (TextUtils.isEmpty(mimeType)) {
+                            mimeType = "image/*";
+                        }
+                    }
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intent.setType(mimeType);
+                    startActivity(Intent.createChooser(intent, getString(R.string.cant_save_image)));
+                }
+            } else {
+                Toast.makeText(this, uri != null ? R.string.save_successfully : R.string.save_failed, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -202,7 +234,7 @@ public class GalleryActivity2 extends SwipeActivity {
                     .inflate(R.layout.item_gallery, container, false));
         }
 
-        public abstract void saveCurrentImage();
+        public abstract void saveCurrentImage(boolean share);
     }
 
     private class ImageFileAdapter extends GalleryAdapter {
@@ -223,20 +255,20 @@ public class GalleryActivity2 extends SwipeActivity {
         }
 
         @Override
-        public void saveCurrentImage() {
+        public void saveCurrentImage(boolean share) {
             GalleryHolder holder = getPagerHolder(0);
             if (holder == null || !holder.galleryPage.isLoaded()) {
-                onSaveTaskOver(false);
+                onSaveTaskOver(null, share);
                 return;
             }
 
             UniFile uniFile = getCurrentImageSaveFile();
             if (uniFile == null) {
-                onSaveTaskOver(false);
+                onSaveTaskOver(null, share);
                 return;
             }
 
-            mSaveTask = new ImageFileSaveTask(GalleryActivity2.this, mImageFile, uniFile);
+            mSaveTask = new ImageFileSaveTask(GalleryActivity2.this, mImageFile, uniFile, share);
             mSaveTask.execute();
         }
 
@@ -300,38 +332,42 @@ public class GalleryActivity2 extends SwipeActivity {
             return 1;
         }
 
-        public UniFile getCurrentImageSaveFile() {
-            UniFile dir = Settings.getImageSaveLocation();
-            if (dir != null) {
-                return dir.createFile(mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
-            } else {
-                return null;
-            }
-        }
-
         @Override
-        public void saveCurrentImage() {
+        public void saveCurrentImage(boolean share) {
             GalleryHolder holder = getPagerHolder(0);
             if (holder == null || !holder.galleryPage.isLoaded()) {
-                onSaveTaskOver(false);
+                onSaveTaskOver(null, share);
                 return;
             }
 
-            if (Settings.getSaveImageAuto()) {
-                onSaveTaskOver(true);
-            } else {
-                UniFile uniFile = getCurrentImageSaveFile();
-                if (uniFile == null) {
-                    onSaveTaskOver(false);
-                    return;
-                }
-
-                mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, uniFile, mImage);
-                mSaveTask.execute();
+            UniFile dir = Settings.getImageSaveLocation();
+            if (dir == null) {
+                onSaveTaskOver(null, share);
+                return;
             }
+            String name = mSite.getReadableName(GalleryActivity2.this) + "-" + mId;
+
+            mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, dir, name, mImage, share);
+            mSaveTask.execute();
         }
     }
 
+    private static UniFile findFileForName(UniFile dir, String name, String[] extensions, String[] resultExtension) {
+        for (String extension : extensions) {
+            UniFile file = dir.findFile(name + '.' + extension);
+            if (file != null) {
+                if (resultExtension != null && resultExtension.length > 0) {
+                    resultExtension[0] = extension;
+                }
+                return file;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Let conaco store image to image save location directly
+     */
     private static class UniFileDataContain implements DataContainer {
 
         private UniFile mDir;
@@ -395,13 +431,12 @@ public class GalleryActivity2 extends SwipeActivity {
 
         @Override
         public InputStreamPipe get() {
-            for (String extension : IMAGE_EXTENSIONS) {
-                UniFile file = mDir.findFile(mName + '.' + extension);
-                if (file != null) {
-                    mFile = file;
-                    mExtension = extension;
-                    return new UniFileInputStreamPipe(mFile);
-                }
+            String[] extension = new String[1];
+            UniFile file = findFileForName(mDir, mName, IMAGE_EXTENSIONS, extension);
+            if (file != null) {
+                mFile = file;
+                mExtension = extension[0];
+                return new UniFileInputStreamPipe(mFile);
             }
 
             return null;
@@ -413,7 +448,7 @@ public class GalleryActivity2 extends SwipeActivity {
         }
     }
 
-    private static abstract class SaveTask extends AsyncTask<Void, Void, Boolean> {
+    private static abstract class SaveTask extends AsyncTask<Void, Void, Uri> {
 
         public abstract void onActivityDestory();
     }
@@ -457,16 +492,18 @@ public class GalleryActivity2 extends SwipeActivity {
         private Context mContext;
         private File mFrom;
         private UniFile mTo;
+        private boolean mShare;
 
-        public ImageFileSaveTask(Context context, File from, UniFile to) {
+        public ImageFileSaveTask(Context context, File from, UniFile to, boolean share) {
             mContext = context;
             mFrom = from;
             mTo = to;
+            mShare = share;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            boolean ok = true;
+        protected Uri doInBackground(Void... params) {
+            boolean ok;
 
             InputStream is = null;
             OutputStream os = null;
@@ -484,16 +521,21 @@ public class GalleryActivity2 extends SwipeActivity {
 
             if (!ok) {
                 mTo.delete();
-                return false;
+                return null;
             }
 
-            return addImageExtension(mTo);
+            if (addImageExtension(mTo)) {
+                return mTo.getUri();
+            } else {
+                mTo.delete();
+                return null;
+            }
         }
 
         @Override
-        protected void onPostExecute(Boolean ok) {
+        protected void onPostExecute(Uri uri) {
             if (mContext instanceof GalleryActivity2) {
-                ((GalleryActivity2) mContext).onSaveTaskOver(ok);
+                ((GalleryActivity2) mContext).onSaveTaskOver(uri, mShare);
             }
         }
 
@@ -506,22 +548,41 @@ public class GalleryActivity2 extends SwipeActivity {
     private static class SingleImageSaveTask extends SaveTask {
 
         private Context mContext;
-        private UniFile mUniFile;
+        private UniFile mDir;
+        private String mName;
         private String mKey;
+        private boolean mShare;
 
-        public SingleImageSaveTask(Context context, UniFile uniFile, String key) {
+        public SingleImageSaveTask(Context context, UniFile dir, String name, String key, boolean share) {
             mContext = context;
-            mUniFile = uniFile;
+            mDir = dir;
+            mName = name;
             mKey = key;
+            mShare = share;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Uri doInBackground(Void... params) {
+            // First try to find file in dir
+            UniFile file = findFileForName(mDir, mName, IMAGE_EXTENSIONS, null);
+            if (file != null) {
+                // Check is it a image
+                Bitmap bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), 100, 100, -1, true, false, null);
+                if (bitmap != null) {
+                    // It is image
+                    bitmap.recycle();
+                    return file.getUri();
+                } else {
+                    file.delete();
+                }
+            }
+
+            file = mDir.createFile(mName);
             boolean ok = true;
 
             OutputStream os = null;
             try {
-                os = mUniFile.openOutputStream();
+                os = file.openOutputStream();
                 Conaco conaco = NMBApplication.getConaco(mContext);
                 ok = conaco.getBeerBelly().pullFromDiskCache(mKey, os);
             } catch (IOException e) {
@@ -531,17 +592,22 @@ public class GalleryActivity2 extends SwipeActivity {
             }
 
             if (!ok) {
-                mUniFile.delete();
-                return false;
+                file.delete();
+                return null;
             }
 
-            return addImageExtension(mUniFile);
+            if (addImageExtension(file)) {
+                return file.getUri();
+            } else {
+                file.delete();
+                return null;
+            }
         }
 
         @Override
-        protected void onPostExecute(Boolean ok) {
+        protected void onPostExecute(Uri uri) {
             if (mContext instanceof GalleryActivity2) {
-                ((GalleryActivity2) mContext).onSaveTaskOver(ok);
+                ((GalleryActivity2) mContext).onSaveTaskOver(uri, mShare);
             }
         }
 
