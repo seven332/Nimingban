@@ -33,6 +33,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -184,6 +185,9 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
             ACSearchItem item = mSearchHelper.getDataAt(position);
             holder.leftText.setText("No." + item.id);
             holder.content.setText(item.context);
+
+            holder.content.setTextSize(Settings.getFontSize());
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(SearchActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override

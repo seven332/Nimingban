@@ -44,6 +44,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.dao.ACRecordRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
@@ -295,6 +296,9 @@ public final class RecordActivity extends AbsActivity
                 holder.thumb.setVisibility(View.GONE);
                 holder.thumb.unload();
             }
+
+            holder.content.setTextSize(Settings.getFontSize());
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(RecordActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override
