@@ -206,7 +206,7 @@ public class GalleryActivity2 extends SwipeActivity {
                     intent.setAction(Intent.ACTION_SEND);
                     intent.putExtra(Intent.EXTRA_STREAM, uri);
                     intent.setType(mimeType);
-                    startActivity(Intent.createChooser(intent, getString(R.string.cant_save_image)));
+                    startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
                 }
             } else {
                 Toast.makeText(this, uri != null ? R.string.save_successfully : R.string.save_failed, Toast.LENGTH_SHORT).show();
