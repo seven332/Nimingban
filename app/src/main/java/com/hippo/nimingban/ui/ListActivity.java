@@ -78,6 +78,7 @@ import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
 import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
@@ -89,7 +90,6 @@ public final class ListActivity extends AbsActivity
         implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
 
     private static final int BACK_PRESSED_INTERVAL = 2000;
-    private static final int SHOW_REPLY_INTERVAL = 5000;
 
     public static final int REQUEST_CODE_SETTINGS = 0;
     public static final int REQUEST_CODE_SORT_FORUMS = 1;
@@ -636,6 +636,8 @@ public final class ListActivity extends AbsActivity
         private int mShowIndex;
         private Reply[] mReplies;
 
+        private boolean mRunning = false;
+
         public ListHolder(View itemView) {
             super(itemView);
 
@@ -675,8 +677,13 @@ public final class ListActivity extends AbsActivity
             }
         }
 
+        public long getReplyInterval() {
+            return MathUtils.random(4000, 6000);
+        }
+
         public void setReplies(Reply[] replies) {
             mHandler.removeCallbacks(this);
+            mRunning = false;
 
             if (replies == null || replies.length == 0) {
                 mReplies = null;
@@ -687,25 +694,29 @@ public final class ListActivity extends AbsActivity
                 reply.setVisibility(View.VISIBLE);
                 reply.setText(replies[0].getNMBDisplayContent());
 
-                if (replies.length > 1) {
-                    mHandler.postDelayed(this, SHOW_REPLY_INTERVAL);
+                if (replies.length > 1 && !mRunning) {
+                    mRunning = true;
+                    mHandler.postDelayed(this, getReplyInterval());
                 }
             }
         }
 
         public void resumeReplies() {
-            if (mReplies != null && mReplies.length > 1) {
-                mHandler.postDelayed(this, SHOW_REPLY_INTERVAL);
+            if (mReplies != null && mReplies.length > 1 && !mRunning) {
+                mRunning = true;
+                mHandler.postDelayed(this, getReplyInterval());
             }
         }
 
         public void pauseReplies() {
             if (mReplies != null && mReplies.length > 1) {
+                mRunning = false;
                 mHandler.removeCallbacks(this);
             }
         }
 
         public void clearReplies() {
+            mRunning = false;
             mHandler.removeCallbacks(this);
             mReplies = null;
         }
@@ -723,7 +734,10 @@ public final class ListActivity extends AbsActivity
 
             mShowIndex = (mShowIndex + 1) % mReplies.length;
             reply.setText(mReplies[mShowIndex].getNMBDisplayContent());
-            mHandler.postDelayed(this, SHOW_REPLY_INTERVAL);
+
+            if (mRunning) {
+                mHandler.postDelayed(this, getReplyInterval());
+            }
         }
     }
 
@@ -801,8 +815,13 @@ public final class ListActivity extends AbsActivity
         }
 
         @Override
+        public void onViewAttachedToWindow(ListHolder holder) {
+            holder.resumeReplies();
+        }
+
+        @Override
         public void onViewDetachedFromWindow(ListHolder holder) {
-            holder.clearReplies();
+            holder.pauseReplies();
         }
     }
 
