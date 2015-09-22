@@ -177,6 +177,11 @@ public class GalleryActivity2 extends SwipeActivity {
                     mGalleryAdapter.saveCurrentImage(true);
                 }
                 return true;
+            case R.id.action_refresh:
+                if (mSaveTask == null) {
+                    mGalleryAdapter.reloadCurrentImage();
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -234,6 +239,8 @@ public class GalleryActivity2 extends SwipeActivity {
                     .inflate(R.layout.item_gallery, container, false));
         }
 
+        public abstract void reloadCurrentImage();
+
         public abstract void saveCurrentImage(boolean share);
     }
 
@@ -252,6 +259,11 @@ public class GalleryActivity2 extends SwipeActivity {
             } else {
                 return null;
             }
+        }
+
+        @Override
+        public void reloadCurrentImage() {
+            // Empty
         }
 
         @Override
@@ -330,6 +342,35 @@ public class GalleryActivity2 extends SwipeActivity {
         @Override
         public int getCount() {
             return 1;
+        }
+
+        @Override
+        public void reloadCurrentImage() {
+            GalleryHolder holder = getPagerHolder(0);
+            if (holder == null) {
+                return;
+            }
+
+            // Unload
+            holder.galleryPage.unload();
+
+            // Remove in cache
+            NMBApplication.getConaco(GalleryActivity2.this).getBeerBelly().remove(mImage);
+
+            // Remove all in save location
+            UniFile dir = Settings.getImageSaveLocation();
+            if (dir != null) {
+                String name = mSite.getReadableName(GalleryActivity2.this) + "-" + mId;
+                for (String extension : IMAGE_EXTENSIONS) {
+                    UniFile file = dir.findFile(name + '.' + extension);
+                    if (file != null) {
+                        file.delete();
+                    }
+                }
+            }
+
+            // Load
+            bindPagerHolder(holder, 0);
         }
 
         @Override

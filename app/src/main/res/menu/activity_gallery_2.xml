@@ -31,4 +31,10 @@
         android:icon="@drawable/ic_share_dark_x24"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh"
+        android:icon="@drawable/ic_refresh_dark_x24"
+        app:showAsAction="ifRoom"/>
+
 </menu>
