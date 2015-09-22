@@ -26,7 +26,6 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class BitmapUtils {
 
@@ -51,12 +50,11 @@ public class BitmapUtils {
             int pixels, boolean checkMemory, boolean justCalc, int[] sampleSize) {
         try {
             isp.obtain();
-            InputStream is = isp.open();
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(is, null, options);
-            is.close();
+            BitmapFactory.decodeStream(isp.open(), null, options);
+            isp.close();
 
             int width = options.outWidth;
             int height = options.outHeight;
