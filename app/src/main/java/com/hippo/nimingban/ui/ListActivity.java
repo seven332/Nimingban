@@ -46,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
@@ -96,7 +95,6 @@ public final class ListActivity extends AbsActivity
     public static final int REQUEST_CODE_SORT_FORUMS = 1;
 
     private NMBClient mNMBClient;
-    private Conaco mConaco;
 
     private SlidingDrawerLayout mSlidingDrawerLayout;
     private ContentLayout mContentLayout;
@@ -136,7 +134,6 @@ public final class ListActivity extends AbsActivity
         setContentView(R.layout.activity_list);
 
         mNMBClient = NMBApplication.getNMBClient(this);
-        mConaco = NMBApplication.getConaco(this);
 
         mSlidingDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawer_layout);
         mContentLayout = (ContentLayout) mSlidingDrawerLayout.findViewById(R.id.content_layout);

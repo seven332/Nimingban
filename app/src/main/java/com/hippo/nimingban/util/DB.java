@@ -32,7 +32,6 @@ import com.hippo.nimingban.dao.DraftDao;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.yorozuya.AssertUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,9 +181,13 @@ public final class DB {
     }
 
     public static void addDraft(String content) {
+        addDraft(content, -1);
+    }
+
+    public static void addDraft(String content, long time) {
         DraftRaw raw = new DraftRaw();
         raw.setContent(content);
-        raw.setTime(System.currentTimeMillis());
+        raw.setTime(time == -1 ? System.currentTimeMillis() : time);
         sDaoSession.getDraftDao().insert(raw);
     }
 
@@ -200,21 +203,21 @@ public final class DB {
     }
 
     public static void addACRecord(int type, String recordid, String postid, String content, String image) {
+        addACRecord(type, recordid, postid, content, image, -1);
+    }
+
+    public static void addACRecord(int type, String recordid, String postid, String content, String image, long time) {
         ACRecordRaw raw = new ACRecordRaw();
         raw.setType(type);
         raw.setRecordid(recordid);
         raw.setPostid(postid);
         raw.setContent(content);
         raw.setImage(image);
-        raw.setTime(System.currentTimeMillis());
+        raw.setTime(time == -1 ? System.currentTimeMillis() : time);
         sDaoSession.getACRecordDao().insert(raw);
     }
 
     public static void removeACRecord(ACRecordRaw raw) {
-        String image = raw.getImage();
-        if (image != null) {
-            new File(image).delete();
-        }
         sDaoSession.getACRecordDao().delete(raw);
     }
 }

@@ -65,6 +65,7 @@
 
     <string name="feed">订阅</string>
     <string name="no_feed">没有订阅</string>
+    <string name="feed_deleted">已删除一条订阅</string>
 
     <string name="search">搜索</string>
 
@@ -114,12 +115,16 @@
 
     <string name="em_cant_find_activity">找不到对应的应用</string>
 
+    <string name="undo">撤销</string>
+
     <string name="draft">草稿</string>
     <string name="draft_copied_clipboard">草稿文本已复制到剪切板</string>
     <string name="no_draft">没有草稿</string>
+    <string name="draft_deleted">已删除一张草稿</string>
 
     <string name="record">记录</string>
     <string name="no_record">没有记录</string>
+    <string name="record_deleted">已删除一条记录</string>
 
     <string name="from_the_future">来自未来</string>
     <string name="just_now">刚刚</string>

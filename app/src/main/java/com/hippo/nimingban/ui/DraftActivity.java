@@ -42,6 +42,7 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
+import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 
@@ -251,6 +252,11 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
         }
 
         @Override
+        public void onSwipeItemStarted(DraftHolder holder, int position) {
+            // Empty
+        }
+
+        @Override
         public int onSwipeItem(DraftHolder holder, int position, int result) {
             switch (result) {
                 // remove
@@ -267,10 +273,25 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
         @Override
         public void onPerformAfterSwipeReaction(DraftHolder holder, int position, int result, int reaction) {
             if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                DB.removeDraft(getItemId(position));
-                updateLazyList();
-                notifyItemRemoved(position);
-                checkEmpty(true);
+                final DraftRaw raw = mLazyList.get(position);
+                if (raw != null) {
+                    DB.removeDraft(raw.getId());
+                    updateLazyList();
+                    notifyItemRemoved(position);
+                    checkEmpty(true);
+
+                    Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.draft_deleted, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DB.addDraft(raw.getContent(), raw.getTime());
+                            updateLazyList();
+                            notifyDataSetChanged();
+                            checkEmpty(true);
+                        }
+                    });
+                    snackbar.show();
+                }
             }
         }
     }

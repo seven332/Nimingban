@@ -328,6 +328,19 @@ public class ContentLayout extends FrameLayout {
             return mPages;
         }
 
+        public void addAt(int index, E data) {
+            mData.add(index, data);
+
+            for (int i = 0, n = mPageDivider.size(); i < n; i++) {
+                int divider = mPageDivider.get(i);
+                if (index < divider) {
+                    mPageDivider.set(i, divider + 1);
+                }
+            }
+
+            notifyItemRangeInserted(index, 1);
+        }
+
         public void removeAt(int index) {
             mData.remove(index);
 

@@ -82,4 +82,6 @@
     <color name="loading_indicator_yellow">@color/yellow_800</color>
     <color name="loading_indicator_orange">@color/deep_orange_400</color>
 
+    <color name="design_snackbar_background_color">#ff323232</color>
+
 </resources>

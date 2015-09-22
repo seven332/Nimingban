@@ -49,10 +49,12 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.NumberUtils;
+import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
@@ -302,15 +304,18 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         }
 
         @Override
-        public int onGetSwipeReactionType(FeedHolder draftHolder, int i, int i1, int i2) {
-            mFeedHelper.setEnable(false);
-
+        public int onGetSwipeReactionType(FeedHolder holder, int position, int x, int y) {
             return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
         }
 
         @Override
         public void onSetSwipeBackground(FeedHolder draftHolder, int i, int i1) {
             // Empty
+        }
+
+        @Override
+        public void onSwipeItemStarted(FeedHolder holder, int position) {
+            mFeedHelper.setEnable(false);
         }
 
         @Override
@@ -328,22 +333,73 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         }
 
         @Override
-        public void onPerformAfterSwipeReaction(FeedHolder holder, int position, int result, int reaction) {
+        public void onPerformAfterSwipeReaction(FeedHolder holder, final int position, int result, int reaction) {
             mFeedHelper.setEnable(true);
 
             if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                NMBRequest request = new NMBRequest();
-                request.setSite(ACSite.getInstance());
-                request.setMethod(NMBClient.METHOD_DEL_FEED);
-                request.setArgs(ACSite.getInstance().getUserId(FeedActivity.this), mFeedHelper.getDataAt(position).getNMBId());
-                request.setCallback(new DelFeedListener());
-                mNMBClient.execute(request);
+                String previousId;
+                String nextId;
+                if (position <= 0) {
+                    previousId = null;
+                } else {
+                    previousId = mFeedHelper.getDataAt(position - 1).getNMBId();
+                }
+                if (position >= mFeedHelper.size() - 1) {
+                    nextId = null;
+                } else {
+                    nextId = mFeedHelper.getDataAt(position + 1).getNMBId();
+                }
+                final Post post = mFeedHelper.getDataAt(position);
+                final String id = post.getNMBId();
+                final String oldPreviousId = previousId;
+                final String oldNextId = nextId;
 
                 mFeedHelper.removeAt(position);
-
                 if (mFeedHelper.size() == 0) {
                     mFeedHelper.showEmptyString();
                 }
+
+                Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.feed_deleted, Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String previousId;
+                        String nextId;
+                        if (position <= 0) {
+                            previousId = null;
+                        } else {
+                            previousId = mFeedHelper.getDataAt(position - 1).getNMBId();
+                        }
+                        if (position >= mFeedHelper.size()) {
+                            nextId = null;
+                        } else {
+                            nextId = mFeedHelper.getDataAt(position).getNMBId();
+                        }
+
+                        if (ObjectUtils.equal(previousId, oldPreviousId) && ObjectUtils.equal(nextId, oldNextId)) {
+                            mFeedHelper.addAt(position, post);
+                            if (mFeedHelper.size() != 0) {
+                                mFeedHelper.showContent();
+                            }
+                        } else {
+                            mFeedHelper.refresh();
+                        }
+                    }
+                });
+                snackbar.setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        if (event != DISMISS_EVENT_ACTION) {
+                            NMBRequest request = new NMBRequest();
+                            request.setSite(ACSite.getInstance());
+                            request.setMethod(NMBClient.METHOD_DEL_FEED);
+                            request.setArgs(ACSite.getInstance().getUserId(FeedActivity.this), id);
+                            request.setCallback(new DelFeedListener());
+                            mNMBClient.execute(request);
+                        }
+                    }
+                });
+                snackbar.show();
             }
         }
     }

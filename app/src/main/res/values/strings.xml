@@ -66,6 +66,7 @@
 
     <string name="feed">Feed</string>
     <string name="no_feed">There is no feed</string>
+    <string name="feed_deleted">Feed deleted</string>
 
     <string name="search">Search</string>
 
@@ -115,12 +116,16 @@
 
     <string name="em_cant_find_activity">Can\'t find activity</string>
 
+    <string name="undo">Undo</string>
+
     <string name="draft">Draft</string>
     <string name="draft_copied_clipboard">Draft text copied to clipboard</string>
     <string name="no_draft">There is no draft</string>
+    <string name="draft_deleted">Draft deleted</string>
 
     <string name="record">Record</string>
     <string name="no_record">There is no record</string>
+    <string name="record_deleted">Record deleted</string>
 
     <string name="from_the_future">From the future</string>
     <string name="just_now">Just now</string>

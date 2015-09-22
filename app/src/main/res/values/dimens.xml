@@ -33,6 +33,18 @@
     <dimen name="text_small">14sp</dimen>
     <dimen name="text_super_small">12sp</dimen>
 
+    <!-- SnackBar -->
+    <dimen name="design_snackbar_action_inline_max_width">128dp</dimen>
+    <dimen name="design_snackbar_background_corner_radius">0dp</dimen>
+    <dimen name="design_snackbar_elevation">6dp</dimen>
+    <dimen name="design_snackbar_extra_spacing_horizontal">0dp</dimen>
+    <dimen name="design_snackbar_max_width">-1px</dimen>
+    <dimen name="design_snackbar_min_width">-1px</dimen>
+    <dimen name="design_snackbar_padding_horizontal">12dp</dimen>
+    <dimen name="design_snackbar_padding_vertical">14dp</dimen>
+    <dimen name="design_snackbar_padding_vertical_2lines">24dp</dimen>
+    <dimen name="design_snackbar_text_size">14sp</dimen>
+
     <!-- DrawerList -->
     <dimen name="drawer_list_drawable_size">24dp</dimen>
 

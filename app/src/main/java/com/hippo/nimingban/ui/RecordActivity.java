@@ -49,6 +49,7 @@ import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
+import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
@@ -322,6 +323,11 @@ public final class RecordActivity extends AbsActivity
         }
 
         @Override
+        public void onSwipeItemStarted(RecordHolder holder, int position) {
+            // Empty
+        }
+
+        @Override
         public int onSwipeItem(RecordHolder holder, int position, int result) {
             switch (result) {
                 // remove
@@ -338,10 +344,37 @@ public final class RecordActivity extends AbsActivity
         @Override
         public void onPerformAfterSwipeReaction(RecordHolder holder, int position, int result, int reaction) {
             if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                DB.removeACRecord(mLazyList.get(position));
-                updateLazyList();
-                notifyItemRemoved(position);
-                checkEmpty(true);
+                final ACRecordRaw raw = mLazyList.get(position);
+                if (raw != null) {
+                    DB.removeACRecord(mLazyList.get(position));
+                    updateLazyList();
+                    notifyItemRemoved(position);
+                    checkEmpty(true);
+
+                    Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.record_deleted, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DB.addACRecord(raw.getType(), raw.getRecordid(), raw.getPostid(),
+                                    raw.getContent(), raw.getImage(), raw.getTime());
+                            updateLazyList();
+                            notifyDataSetChanged();
+                            checkEmpty(true);
+                        }
+                    });
+                    snackbar.setCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            if (event != DISMISS_EVENT_ACTION) {
+                                String image = raw.getImage();
+                                if (image != null) {
+                                    new File(image).delete();
+                                }
+                            }
+                        }
+                    });
+                    snackbar.show();
+                }
             }
         }
     }
