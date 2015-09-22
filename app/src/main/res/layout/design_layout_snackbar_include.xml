@@ -26,7 +26,8 @@
             android:paddingBottom="@dimen/design_snackbar_padding_vertical"
             android:paddingLeft="@dimen/design_snackbar_padding_horizontal"
             android:paddingRight="@dimen/design_snackbar_padding_horizontal"
-            android:textAppearance="@style/TextAppearance.Design.Snackbar.Message"
+            android:textSize="@dimen/design_snackbar_text_size"
+            android:textColor="?attr/colorPure"
             android:maxLines="@integer/design_snackbar_text_max_lines"
             android:layout_gravity="center_vertical|left|start"
             android:ellipsize="end"/>
