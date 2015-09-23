@@ -215,9 +215,14 @@
     <string name="cant_find_cookie_file">找不到饼干文件</string>
     <string name="select_cookie_file">选择饼干文件</string>
 
+    <string name="write_storage_permission_tip">如果你拒绝了权限请求也许应用在运行过程中会出错</string>
+
+    <string name="you_rejected_me">拒绝让人伤心</string>
+
     <string name="dir_picker">选择文件夹</string>
     <string name="directory_not_writable">该文件夹不可写</string>
     <string name="cant_get_image_save_location">无法获取图片存储路径</string>
+    <string name="dir_picker_permission_tip">你只有同意了权限请求才能浏览目录</string>
 
     <string name="pick_dir_kk">在 KitKat 中你无法把数据写入外置 SD 卡，除非你做了奇怪的事情</string>
     <string name="pick_dir_l">Lollipop 提供了新的写入外置 SD 卡的 API。如果你想把图片存储路径设置到外置 SD 卡上，点击 \"文档\" 按钮</string>

@@ -16,16 +16,19 @@
 
 package com.hippo.nimingban.ui;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -49,6 +52,7 @@ import android.widget.ViewSwitcher;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
+import com.hippo.nimingban.PermissionRequester;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
@@ -88,6 +92,8 @@ import java.util.List;
 
 public final class ListActivity extends AbsActivity
         implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
+
+    private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
     private static final int BACK_PRESSED_INTERVAL = 2000;
 
@@ -234,6 +240,22 @@ public final class ListActivity extends AbsActivity
         checkForAppStart();
 
         Messenger.getInstance().register(Constants.MESSENGER_ID_CREATE_POST, this);
+
+        // Check permission
+        PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                getString(R.string.write_storage_permission_tip), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, R.string.you_rejected_me, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override

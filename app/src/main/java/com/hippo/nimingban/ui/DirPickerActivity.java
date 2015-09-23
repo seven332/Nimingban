@@ -16,8 +16,12 @@
 
 package com.hippo.nimingban.ui;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.MenuItem;
@@ -25,6 +29,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.nimingban.PermissionRequester;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.widget.DirExplorer;
 import com.hippo.rippleold.RippleSalon;
@@ -33,6 +38,8 @@ import com.hippo.yorozuya.ResourcesUtils;
 import java.io.File;
 
 public class DirPickerActivity extends AbsActivity implements View.OnClickListener, DirExplorer.OnChangeDirListener {
+
+    private static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
 
     public static final String KEY_FILE_URI = "file_uri";
 
@@ -50,6 +57,7 @@ public class DirPickerActivity extends AbsActivity implements View.OnClickListen
         return R.style.AppTheme_Dark;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +85,23 @@ public class DirPickerActivity extends AbsActivity implements View.OnClickListen
         mOk.setOnClickListener(this);
 
         mPath.setText(mDirExplorer.getCurrentFile().getPath());
+
+        // Check permission
+        PermissionRequester.request(this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                getString(R.string.dir_picker_permission_tip), PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_READ_EXTERNAL_STORAGE) {
+            if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, R.string.you_rejected_me, Toast.LENGTH_SHORT).show();
+            }
+            mDirExplorer.updateFileList();
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override

@@ -224,9 +224,14 @@
     <string name="cant_find_cookie_file">Can\'t find any cookie file</string>
     <string name="select_cookie_file">Select cookie file</string>
 
+    <string name="write_storage_permission_tip">Something will go wrong if you deny the permission request</string>
+
+    <string name="you_rejected_me">It hurt when you rejected me</string>
+
     <string name="dir_picker">Dir picker</string>
     <string name="directory_not_writable">The directory is not writable</string>
     <string name="cant_get_image_save_location">Can\'t get image save location</string>
+    <string name="dir_picker_permission_tip">You can only browse list of files when you grant the permission</string>
 
     <string name="pick_dir_kk">You can\'t write any kind of data on your external SD card in KitKat unless you have hacked it</string>
     <string name="pick_dir_l">Lollipop provides an API to write on external SD card. If you want to set image save location to SD card, click the \"DOCUMENT\" button</string>

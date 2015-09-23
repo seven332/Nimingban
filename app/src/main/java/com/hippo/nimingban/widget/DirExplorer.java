@@ -93,7 +93,7 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
         mOnChangeDirListener = listener;
     }
 
-    private void updateFileList() {
+    public void updateFileList() {
         File[] files = mCurrentFile.listFiles(DIR_FILTER);
 
         mFiles.clear();
