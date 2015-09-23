@@ -74,6 +74,8 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
     private void init(Context context) {
         setFillViewport(true);
+        setHorizontalScrollBarEnabled(false);
+        setVerticalScrollBarEnabled(false);
 
         LayoutInflater.from(context).inflate(R.layout.widget_left_drawer, this);
         mHeader = (HeaderImageView) findViewById(R.id.header);
