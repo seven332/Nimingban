@@ -105,7 +105,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         contentLayout.setHelper(mFeedHelper);
 
         // Layout Manager
-        if (LayoutUtils.isTable(this)) {
+        if (getResources().getBoolean(R.bool.two_way)) {
             mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
             mLayoutManager = new LinearLayoutManager(this);

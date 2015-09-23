@@ -215,7 +215,7 @@ public final class ListActivity extends AbsActivity
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
         RecyclerView.LayoutManager layoutManager;
-        if (LayoutUtils.isTable(this)) {
+        if (getResources().getBoolean(R.bool.two_way)) {
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
             layoutManager = new LinearLayoutManager(this);
@@ -244,6 +244,17 @@ public final class ListActivity extends AbsActivity
         // Check permission
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_storage_permission_tip), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
+
+        /*
+        new GuideHelper.Builder(this)
+                .setGesture(GestureView.GESTURE_SWIPE_RIGHT)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                //.setBackgroundColor(ResourcesUtils.getAttrColor(this, R.attr.colorAccent) & 0x00ffffff | 0x30000000)
+                .setGesturePosition(Gravity.LEFT | Gravity.CENTER_VERTICAL)
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setMessage("左滑开启菜单")
+                .show();
+                */
     }
 
     @Override

@@ -111,7 +111,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
         mSearchAdapter = new SearchAdapter();
         recyclerView.setAdapter(mSearchAdapter);
         RecyclerView.LayoutManager layoutManager;
-        if (LayoutUtils.isTable(this)) {
+        if (getResources().getBoolean(R.bool.two_way)) {
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
             layoutManager = new LinearLayoutManager(this);

@@ -102,7 +102,7 @@ public final class RecordActivity extends AbsActivity
         imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
-        if (LayoutUtils.isTable(this)) {
+        if (getResources().getBoolean(R.bool.two_way)) {
             mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
             mLayoutManager = new LinearLayoutManager(this);
