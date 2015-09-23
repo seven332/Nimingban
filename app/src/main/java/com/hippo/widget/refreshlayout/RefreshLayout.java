@@ -1167,7 +1167,12 @@ public class RefreshLayout extends ViewGroup {
                     return false;
                 }
 
-                y = MotionEventCompat.getY(ev, pointerIndex);
+                try {
+                    y = MotionEventCompat.getY(ev, pointerIndex);
+                } catch (Throwable e) {
+                    y = 0;
+                }
+
                 yDiff = y - mInitialMotionY;
 
                 if (action == MotionEvent.ACTION_UP && -yDiff > mFooterDistanceToTriggerSync) {
