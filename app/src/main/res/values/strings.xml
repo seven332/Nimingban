@@ -29,6 +29,10 @@
 
     <string name="cant_make_sure_image_save_location">It seems the image save location is not available, you should go to Settings to set it</string>
 
+    <string name="swipe_right_open_menu">Swipe right to open menu</string>
+    <string name="swipe_left_open_forum_list">Swipe left to open forum list</string>
+    <string name="get_it">Get it</string>
+
     <string name="let_there_light">Let there be light</string>
     <string name="let_there_dark">Let there be dark</string>
 

@@ -53,4 +53,7 @@
 
     <dimen name="divider_height">1dp</dimen>
 
+    <dimen name="gesture_circle_radius">24dp</dimen>
+    <dimen name="gesture_circle_arrow_interval">16dp</dimen>
+
 </resources>

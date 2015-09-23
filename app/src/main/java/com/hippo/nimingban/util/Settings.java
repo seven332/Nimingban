@@ -354,6 +354,17 @@ public final class Settings {
         putInt(KEY_VERSION_CODE, value);
     }
 
+    public static final String KEY_GUIDE_LIST_ACTIVITY = "guide_list_activity";
+    public static final boolean VALUE_GUIDE_LIST_ACTIVITY = true;
+
+    public static boolean getGuideListActivity() {
+        return getBoolean(KEY_GUIDE_LIST_ACTIVITY, VALUE_GUIDE_LIST_ACTIVITY);
+    }
+
+    public static void putGuideListActivity(boolean value) {
+        putBoolean(KEY_GUIDE_LIST_ACTIVITY, value);
+    }
+
     public static final String KEY_CRASH_FILENAME = "crash_filename";
     public static final String VALUE_CRASH_FILENAME = null;
 

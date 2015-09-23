@@ -29,6 +29,10 @@
 
     <string name="cant_make_sure_image_save_location">似乎图片存储位置用不了了，需要重新设置</string>
 
+    <string name="swipe_right_open_menu">右滑打开菜单</string>
+    <string name="swipe_left_open_forum_list">左滑打开板块</string>
+    <string name="get_it">知道了</string>
+
     <string name="let_there_light">要有光</string>
     <string name="let_there_dark">要有暗</string>
 

@@ -51,6 +51,7 @@ import android.widget.ViewSwitcher;
 
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
+import com.hippo.nimingban.GuideHelper;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.PermissionRequester;
 import com.hippo.nimingban.R;
@@ -70,6 +71,7 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
+import com.hippo.nimingban.widget.GestureView;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
@@ -245,16 +247,42 @@ public final class ListActivity extends AbsActivity
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_storage_permission_tip), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
 
-        /*
+        if (Settings.getGuideListActivity()) {
+            showLeftDrawerGuide();
+        }
+    }
+
+    private void showLeftDrawerGuide() {
         new GuideHelper.Builder(this)
                 .setGesture(GestureView.GESTURE_SWIPE_RIGHT)
                 .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
-                //.setBackgroundColor(ResourcesUtils.getAttrColor(this, R.attr.colorAccent) & 0x00ffffff | 0x30000000)
                 .setGesturePosition(Gravity.LEFT | Gravity.CENTER_VERTICAL)
                 .setPadding(LayoutUtils.dp2pix(this, 16))
-                .setMessage("左滑开启菜单")
+                .setMessage(getString(R.string.swipe_right_open_menu))
+                .setButton(getString(R.string.get_it))
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showRightDrawerGuide();
+                    }
+                }).show();
+    }
+
+    private void showRightDrawerGuide() {
+        new GuideHelper.Builder(this)
+                .setGesture(GestureView.GESTURE_SWIPE_LEFT)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setGesturePosition(Gravity.RIGHT | Gravity.CENTER_VERTICAL)
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setMessage(getString(R.string.swipe_left_open_forum_list))
+                .setButton(getString(R.string.get_it))
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Settings.putGuideListActivity(false);
+                    }
+                })
                 .show();
-                */
     }
 
     @Override
