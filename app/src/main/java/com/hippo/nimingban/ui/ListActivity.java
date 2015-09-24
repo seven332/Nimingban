@@ -38,6 +38,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +67,7 @@ import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.nimingban.dao.ACCommonPostRaw;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
@@ -79,6 +81,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.vector.VectorDrawable;
+import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
@@ -93,7 +96,7 @@ import java.io.File;
 import java.util.List;
 
 public final class ListActivity extends AbsActivity
-        implements RightDrawer.OnSelectForumListener, LeftDrawer.Helper {
+        implements RightDrawer.RightDrawerHelper, LeftDrawer.Helper {
 
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
@@ -231,7 +234,7 @@ public final class ListActivity extends AbsActivity
 
         mLeftDrawer.setHelper(this);
 
-        mRightDrawer.setOnSelectForumListener(this);
+        mRightDrawer.setRightDrawerHelper(this);
 
         if (savedInstanceState == null) {
             mLeftDrawer.loadHeaderImageView();
@@ -568,6 +571,34 @@ public final class ListActivity extends AbsActivity
             setTitle(forum.getNMBDisplayname());
         } else {
             setTitle(getString(R.string.app_name));
+        }
+    }
+
+    @Override
+    public void onClickCommonPosts() {
+        AutoWrapLayout layout = new AutoWrapLayout(ListActivity.this);
+        final Dialog dialog = new AlertDialog.Builder(this).setView(layout).show();
+
+        List<ACCommonPostRaw> list = DB.getAllACCommentPost();
+        int padding = LayoutUtils.dp2pix(this, 4);
+        layout.setPadding(padding, 0, padding, 0);
+        LayoutInflater inflater = getLayoutInflater();
+        for (final ACCommonPostRaw raw : list) {
+            inflater.inflate(R.layout.item_dialog_comment_post, layout);
+            TextView tv = (TextView) layout.getChildAt(layout.getChildCount() - 1);
+            tv.setText(raw.getName());
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+
+                    Intent intent = new Intent(ListActivity.this, PostActivity.class);
+                    intent.setAction(PostActivity.ACTION_SITE_ID);
+                    intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
+                    intent.putExtra(PostActivity.KEY_ID, raw.getPostid());
+                    startActivity(intent);
+                }
+            });
         }
     }
 

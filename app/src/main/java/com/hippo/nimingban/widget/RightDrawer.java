@@ -17,6 +17,7 @@
 package com.hippo.nimingban.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.ResourcesUtils;
 
@@ -36,11 +38,13 @@ import java.util.List;
 
 public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerView.OnItemClickListener {
 
+    private static final Object COMMOM_POSTS = new Object();
+
     private ForumAdapter mAdapter;
 
-    private List<Forum> mForums;
+    private List<Object> mForums;
 
-    private OnSelectForumListener mOnSelectForumListener;
+    private RightDrawerHelper mRightDrawerHelper;
 
     public RightDrawer(Context context) {
         super(context);
@@ -68,21 +72,27 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
     }
 
     public void setForums(List<? extends Forum> forums) {
-        // TODO add tip for empty list
         mForums.clear();
+        mForums.add(COMMOM_POSTS);
         mForums.addAll(forums);
         mAdapter.notifyDataSetChanged();
     }
 
-    public void setOnSelectForumListener(OnSelectForumListener listener) {
-        mOnSelectForumListener = listener;
+    public void setRightDrawerHelper(RightDrawerHelper listener) {
+        mRightDrawerHelper = listener;
     }
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (mOnSelectForumListener != null) {
-            mOnSelectForumListener.onSelectForum(mForums.get(position));
+        if (mRightDrawerHelper != null) {
+            Object data = mForums.get(position);
+            if (data instanceof Forum) {
+                mRightDrawerHelper.onSelectForum((Forum) data);
+            } else {
+                mRightDrawerHelper.onClickCommonPosts();
+            }
         }
+
         return true;
     }
 
@@ -93,16 +103,42 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
         }
     }
 
+    private static final int TYPE_COMMOM_POSTS = 0;
+    private static final int TYPE_FORUM = 1;
+
     private class ForumAdapter extends RecyclerView.Adapter<ForumHolder> {
 
         @Override
         public ForumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ForumHolder(LayoutInflater.from(getContext()).inflate(R.layout.item_forum_drawer, parent, false));
+            View view;
+            if (viewType == TYPE_COMMOM_POSTS) {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.item_commom_posts, parent, false);
+                Drawable tag = VectorDrawable.create(getContext(), R.drawable.ic_tag);
+                tag.setBounds(0, 0, tag.getIntrinsicWidth(), tag.getIntrinsicHeight());
+                TextView tv = (TextView) view;
+                tv.setText(R.string.common_posts);
+                tv.setCompoundDrawables(tag, null, null, null);
+            } else {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.item_forum_drawer, parent, false);
+            }
+            return new ForumHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ForumHolder holder, int position) {
-            ((TextView) holder.itemView).setText(mForums.get(position).getNMBDisplayname());
+            Object data = mForums.get(position);
+            if (data instanceof Forum && getItemViewType(position) == TYPE_FORUM) {
+                ((TextView) holder.itemView).setText(((Forum) data).getNMBDisplayname());
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0) {
+                return TYPE_COMMOM_POSTS;
+            } else {
+                return TYPE_FORUM;
+            }
         }
 
         @Override
@@ -111,7 +147,10 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
         }
     }
 
-    public interface OnSelectForumListener {
+    public interface RightDrawerHelper {
+
+        void onClickCommonPosts();
+
         void onSelectForum(Forum forum);
     }
 }

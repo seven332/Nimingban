@@ -28,7 +28,7 @@ public class NMBDaoGenerator {
     private static final String OUT_DIR = "../app/src/main/java-gen";
     private static final String DELETE_DIR = "../app/src/main/java-gen/com/hippo/nimingban/dao";
 
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
@@ -40,6 +40,7 @@ public class NMBDaoGenerator {
         addACForum(schema);
         addDraft(schema);
         addACRecord(schema);
+        addACCommonPost(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
@@ -77,5 +78,17 @@ public class NMBDaoGenerator {
         entity.addStringProperty("content");
         entity.addStringProperty("image");
         entity.addLongProperty("time");
+    }
+
+    /**
+     * @since 3
+     */
+    private static void addACCommonPost(Schema schema) {
+        Entity entity = schema.addEntity("ACCommonPostRaw");
+        entity.setTableName("AC_COMMON_POST");
+        entity.setClassNameDao("ACCommonPostDao");
+        entity.addIdProperty();
+        entity.addStringProperty("name");
+        entity.addStringProperty("postid");
     }
 }

@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.hippo.nimingban.client.ac.data.ACForum;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
+import com.hippo.nimingban.dao.ACCommonPostDao;
+import com.hippo.nimingban.dao.ACCommonPostRaw;
 import com.hippo.nimingban.dao.ACForumDao;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.dao.ACRecordDao;
@@ -43,7 +45,10 @@ public final class DB {
 
     public static class DBOpenHelper extends DaoMaster.OpenHelper {
 
-        private boolean mFirstTime;
+        private boolean mCreate;
+        private boolean mUpgrade;
+        private int mOldVersion;
+        private int mNewVersion;
 
         public DBOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
             super(context, name, factory);
@@ -52,24 +57,41 @@ public final class DB {
         @Override
         public void onCreate(SQLiteDatabase db) {
             super.onCreate(db);
-            mFirstTime = true;
+            mCreate = true;
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            mUpgrade = true;
+            mOldVersion = oldVersion;
+            mNewVersion = newVersion;
+
             switch (oldVersion) {
                 case 1:
                     ACRecordDao.createTable(db, true);
                 case 2:
+                    ACCommonPostDao.createTable(db, true);
             }
         }
 
-        public boolean isFirstTime() {
-            return mFirstTime;
+        public boolean isCreate() {
+            return mCreate;
         }
 
-        public void clearFirstTime() {
-            mFirstTime = false;
+        public void clearCreate() {
+            mCreate = false;
+        }
+
+        public boolean isUpgrade() {
+            return mUpgrade;
+        }
+
+        public void clearUpgrade() {
+            mUpgrade = false;
+        }
+
+        public int getOldVersion() {
+            return mOldVersion;
         }
     }
 
@@ -82,15 +104,26 @@ public final class DB {
 
         sDaoSession = daoMaster.newSession();
 
-        if (helper.isFirstTime()) {
-            helper.clearFirstTime();
-            // Add default value
+        if (helper.isCreate()) {
+            helper.clearCreate();
+
             insertDefaultACForums();
+            insertDefaultACCommonPosts();
+        }
+
+        if (helper.isUpgrade()) {
+            helper.clearUpgrade();
+
+            switch (helper.getOldVersion()) {
+                case 2:
+                    insertDefaultACCommonPosts();
+            }
         }
     }
 
     private static void insertDefaultACForums() {
         ACForumDao dao = sDaoSession.getACForumDao();
+        dao.deleteAll();
 
         int size = 59;
         String[] ids = {"4", "20", "11", "30", "32", "40", "35", "56", "103", "17", "98",
@@ -114,6 +147,30 @@ public final class DB {
             raw.setForumid(ids[i]);
             raw.setDisplayname(names[i]);
             raw.setVisibility(true);
+            dao.insert(raw);
+        }
+    }
+
+    private static void insertDefaultACCommonPosts() {
+        ACCommonPostDao dao = sDaoSession.getACCommonPostDao();
+        dao.deleteAll();
+
+        int size = 13;
+        String[] names = {
+                "人，是会思考的芦苇", "丧尸图鉴", "壁纸楼", "足控福利", "淡定红茶",
+                "胸器福利", "黑妹", "总有一天", "这是芦苇", "赵日天",
+                "二次元女友", "什么鬼", "Banner画廊"};
+        String[] ids = {
+                "6064422", "585784", "117617", "103123", "114373",
+                "234446", "55255", "328934", "49607", "1738904",
+                "553505", "5739391", "6538597"};
+        AssertUtils.assertEquals("ids.size must be size", size, ids.length);
+        AssertUtils.assertEquals("names.size must be size", size, names.length);
+
+        for (int i = 0; i < size; i++) {
+            ACCommonPostRaw raw = new ACCommonPostRaw();
+            raw.setName(names[i]);
+            raw.setPostid(ids[i]);
             dao.insert(raw);
         }
     }
@@ -219,5 +276,10 @@ public final class DB {
 
     public static void removeACRecord(ACRecordRaw raw) {
         sDaoSession.getACRecordDao().delete(raw);
+    }
+
+    public static List<ACCommonPostRaw> getAllACCommentPost() {
+        ACCommonPostDao dao = sDaoSession.getACCommonPostDao();
+        return dao.queryBuilder().orderAsc(ACCommonPostDao.Properties.Id).list();
     }
 }
