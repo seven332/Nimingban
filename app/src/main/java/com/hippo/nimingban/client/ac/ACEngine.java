@@ -37,6 +37,7 @@ import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
@@ -93,6 +94,32 @@ public class ACEngine {
             String body = response.body().string();
 
             return body.equals("\"ok\"");
+        } catch (IOException e) {
+            if (call.isCanceled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    public static Call prepareGetCommonPosts(OkHttpClient okHttpClient) {
+        String url = ACUrl.API_COMMON_POSTS;
+        Log.d(TAG, url);
+        Request request = new GoodRequestBuilder(url).build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static List<CommonPost> doGetCommonPosts(Call call) throws Exception {
+        try {
+            Response response = call.execute();
+            String body = response.body().string();
+
+            List<CommonPost> result = JSON.parseArray(body, CommonPost.class);
+            if (result == null) {
+                throw new NMBException(ACSite.getInstance(), "Can't parse json when getForumList");
+            }
+            return result;
         } catch (IOException e) {
             if (call.isCanceled()) {
                 throw new CancelledException();

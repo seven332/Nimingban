@@ -43,6 +43,8 @@ public class ACUrl {
 
     public static final String API_REPLY = HOST + "/Home/Forum/doReplyThread.html";
 
+    public static final String API_COMMON_POSTS = "http://nimingban.herokuapp.com/common_posts";
+
     public static String getPostListUrl(String forum, int page) {
         return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
     }

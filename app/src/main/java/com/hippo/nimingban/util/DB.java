@@ -21,6 +21,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.hippo.nimingban.client.ac.data.ACForum;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.dao.ACCommonPostDao;
 import com.hippo.nimingban.dao.ACCommonPostRaw;
@@ -278,8 +279,31 @@ public final class DB {
         sDaoSession.getACRecordDao().delete(raw);
     }
 
-    public static List<ACCommonPostRaw> getAllACCommentPost() {
+    public static List<CommonPost> getAllACCommentPost() {
         ACCommonPostDao dao = sDaoSession.getACCommonPostDao();
-        return dao.queryBuilder().orderAsc(ACCommonPostDao.Properties.Id).list();
+        List<ACCommonPostRaw> list = dao.queryBuilder().orderAsc(ACCommonPostDao.Properties.Id).list();
+        List<CommonPost> result = new ArrayList<>();
+        for (ACCommonPostRaw raw : list) {
+            CommonPost cp = new CommonPost();
+            cp.name = raw.getName();
+            cp.id = raw.getPostid();
+            result.add(cp);
+        }
+        return result;
+    }
+
+    public static void setACCommonPost(List<CommonPost> list) {
+        ACCommonPostDao dao = sDaoSession.getACCommonPostDao();
+        dao.deleteAll();
+
+        List<ACCommonPostRaw> insertList = new ArrayList<>();
+        for (CommonPost cp : list) {
+            ACCommonPostRaw raw = new ACCommonPostRaw();
+            raw.setName(cp.name);
+            raw.setPostid(cp.id);
+            insertList.add(raw);
+        }
+
+        dao.insertInTx(insertList);
     }
 }

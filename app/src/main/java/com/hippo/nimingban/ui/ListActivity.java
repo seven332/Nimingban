@@ -61,13 +61,13 @@ import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.UpdateStatus;
-import com.hippo.nimingban.dao.ACCommonPostRaw;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
@@ -125,6 +125,7 @@ public final class ListActivity extends AbsActivity
 
     private NMBRequest mNMBRequest;
     private NMBRequest mUpdateRequest;
+    private NMBRequest mCommonPostsRequest;
 
     // Double click back exit
     private long mPressBackTime = 0;
@@ -340,6 +341,11 @@ public final class ListActivity extends AbsActivity
             mNMBRequest = null;
         }
 
+        if (mCommonPostsRequest != null) {
+            mCommonPostsRequest.cancel();
+            mCommonPostsRequest = null;
+        }
+
         for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
             RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
             if (holder instanceof ListHolder) {
@@ -419,6 +425,31 @@ public final class ListActivity extends AbsActivity
                     .setNegativeButton(android.R.string.cancel, listener)
                     .show();
         }
+
+        // Get common post
+        request = new NMBRequest();
+        mCommonPostsRequest = request;
+        request.setSite(ACSite.getInstance());
+        request.setMethod(NMBClient.METHOD_COMMON_POSTS);
+        request.setCallback(new NMBClient.Callback<List<CommonPost>>() {
+            @Override
+            public void onSuccess(List<CommonPost> result) {
+                mCommonPostsRequest = null;
+                DB.setACCommonPost(result);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                mCommonPostsRequest = null;
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onCancel() {
+                mCommonPostsRequest = null;
+            }
+        });
+        mNMBClient.execute(request);
     }
 
     private void updateForums(boolean firstTime) {
@@ -579,14 +610,14 @@ public final class ListActivity extends AbsActivity
         AutoWrapLayout layout = new AutoWrapLayout(ListActivity.this);
         final Dialog dialog = new AlertDialog.Builder(this).setView(layout).show();
 
-        List<ACCommonPostRaw> list = DB.getAllACCommentPost();
+        List<CommonPost> list = DB.getAllACCommentPost();
         int padding = LayoutUtils.dp2pix(this, 4);
         layout.setPadding(padding, 0, padding, 0);
         LayoutInflater inflater = getLayoutInflater();
-        for (final ACCommonPostRaw raw : list) {
+        for (final CommonPost cp : list) {
             inflater.inflate(R.layout.item_dialog_comment_post, layout);
             TextView tv = (TextView) layout.getChildAt(layout.getChildCount() - 1);
-            tv.setText(raw.getName());
+            tv.setText(cp.name);
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -595,7 +626,7 @@ public final class ListActivity extends AbsActivity
                     Intent intent = new Intent(ListActivity.this, PostActivity.class);
                     intent.setAction(PostActivity.ACTION_SITE_ID);
                     intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
-                    intent.putExtra(PostActivity.KEY_ID, raw.getPostid());
+                    intent.putExtra(PostActivity.KEY_ID, cp.id);
                     startActivity(intent);
                 }
             });

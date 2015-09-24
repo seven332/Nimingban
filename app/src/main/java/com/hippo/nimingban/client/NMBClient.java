@@ -39,6 +39,8 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
+    public static final int METHOD_COMMON_POSTS = -4;
+
     public static final int METHOD_DISC = -3;
 
     public static final int METHOD_UPDATE = -2;
@@ -129,6 +131,21 @@ public class NMBClient {
                 // Clear
                 mCall = null;
                 mCallback = null;
+            }
+        }
+
+        private Object getCommonPosts() throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    Call call = ACEngine.prepareGetCommonPosts(mOkHttpClient);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetCommonPosts(call);
+                    } else {
+                        throw new CancelledException();
+                    }
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
             }
         }
 
@@ -302,6 +319,8 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_COMMON_POSTS:
+                        return getCommonPosts();
                     case METHOD_DISC:
                         return DiscEngine.spider(mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_UPDATE:
