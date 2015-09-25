@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import com.hippo.nimingban.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -30,11 +31,12 @@ public final class ReadableTime {
 
     private static Resources sResources;
 
-    public static final long SECOND_MILLIS = 1000l;
-    public static final long MINUTE_MILLIS = 60l * SECOND_MILLIS;
-    public static final long HOUR_MILLIS = 60l * MINUTE_MILLIS;
-    public static final long DAY_MILLIS = 24l * HOUR_MILLIS;
-    public static final long YEAR_MILLIS = 365l * DAY_MILLIS;
+    public static final long SECOND_MILLIS = 1000;
+    public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
+    public static final long HOUR_MILLIS = 60 * MINUTE_MILLIS;
+    public static final long DAY_MILLIS = 24 * HOUR_MILLIS;
+    public static final long WEEK_MILLIS = 7 * DAY_MILLIS;
+    public static final long YEAR_MILLIS = 365 * DAY_MILLIS;
 
     public static final int SIZE = 5;
 
@@ -54,9 +56,15 @@ public final class ReadableTime {
             R.plurals.second
     };
 
-    /**
-     * Parse the time to user
-     */
+    private static final Calendar sCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+    private static final Object sCalendarLock = new Object();
+
+    private static final SimpleDateFormat DATE_FORMAT_WITHOUT_YEAR =
+            new SimpleDateFormat("MMM d", Locale.getDefault());
+
+    private static final SimpleDateFormat DATE_FORMAT_WIT_YEAR =
+            new SimpleDateFormat("yyy MMM d", Locale.getDefault());
+
     private static final SimpleDateFormat DATE_FORMAT =
             new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
     private static final Object sDateFormatLock1 = new Object();
@@ -68,6 +76,8 @@ public final class ReadableTime {
     static {
         // The website use GMT+08:00, so tell user the same
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+
+        DATE_FORMAT_WITHOUT_YEAR.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
     }
 
     public static void initialize(Context context) {
@@ -111,9 +121,24 @@ public final class ReadableTime {
             return resources.getQuantityString(R.plurals.some_hours_ago, hours, hours);
         } else if (diff < 48 * HOUR_MILLIS) {
             return resources.getString(R.string.yesterday);
-        } else {
+        } else if (diff < WEEK_MILLIS) {
             int days = (int) (diff / DAY_MILLIS);
             return resources.getString(R.string.some_days_ago, days);
+        } else {
+            synchronized (sCalendarLock) {
+                Date nowDate = new Date(now);
+                Date timeDate = new Date(time);
+                sCalendar.setTime(nowDate);
+                int nowYear = sCalendar.get(Calendar.YEAR);
+                sCalendar.setTime(timeDate);
+                int timeYear = sCalendar.get(Calendar.YEAR);
+
+                if (nowYear == timeYear) {
+                    return DATE_FORMAT_WITHOUT_YEAR.format(timeDate);
+                } else {
+                    return DATE_FORMAT_WIT_YEAR.format(timeDate);
+                }
+            }
         }
     }
 
