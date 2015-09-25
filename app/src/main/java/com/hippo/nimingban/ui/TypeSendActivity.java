@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -63,6 +64,8 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.vector.VectorDrawable;
+import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
@@ -110,6 +113,11 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     private View mImagePreview;
     private ImageView mPreview;
     private View mDelete;
+    private SimpleImageView mIndicator;
+    private View mWritableItem;
+    private EditText mName;
+    private EditText mEmail;
+    private EditText mTitle;
 
     private Site mSite;
     private String mId;
@@ -202,12 +210,18 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         mImagePreview = findViewById(R.id.image_preview);
         mPreview = (ImageView) mImagePreview.findViewById(R.id.preview);
         mDelete = mImagePreview.findViewById(R.id.delete);
+        mIndicator = (SimpleImageView) findViewById(R.id.indicator);
+        mWritableItem = findViewById(R.id.writable_item);
+        mName = (EditText) findViewById(R.id.name);
+        mEmail = (EditText) findViewById(R.id.email);
+        mTitle = (EditText) findViewById(R.id.title);
 
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
         RippleSalon.addRipple(mDraw, true);
         RippleSalon.addRipple(mDraft, true);
         RippleSalon.addRipple(mSend, true);
+        RippleSalon.addRipple(mIndicator, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
 
         mEmoji.setOnClickListener(this);
         mImage.setOnClickListener(this);
@@ -215,10 +229,18 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         mDraft.setOnClickListener(this);
         mSend.setOnClickListener(this);
         mDelete.setOnClickListener(this);
+        mIndicator.setOnClickListener(this);
 
         if (!TextUtils.isEmpty(mPresetText)) {
             mEditText.append(mPresetText);
         }
+
+        StateListDrawable drawable = new StateListDrawable();
+        drawable.addState(new int[]{android.R.attr.state_activated}, VectorDrawable.create(this, R.drawable.ic_chevron_up));
+        drawable.addState(new int[]{}, VectorDrawable.create(this, R.drawable.ic_chevron_down));
+        mIndicator.setDrawable(drawable);
+
+        mWritableItem.setVisibility(View.GONE);
     }
 
     @Override
@@ -327,9 +349,9 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
     private void doReply() {
         ACReplyStruct struct = new ACReplyStruct();
-        struct.name = null;
-        struct.email = null;
-        struct.title = null;
+        struct.name = mName.getText().toString();
+        struct.email = mEmail.getText().toString();
+        struct.title = mTitle.getText().toString();
         struct.content = mEditText.getText().toString();
         struct.resto = mId;
         struct.image = mSeletedImageUri != null ? new UriInputStreamPipe(getApplicationContext(), mSeletedImageUri) : null;
@@ -347,9 +369,9 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
     private void doCreatePost() {
         ACPostStruct struct = new ACPostStruct();
-        struct.name = null;
-        struct.email = null;
-        struct.title = null;
+        struct.name = mName.getText().toString();
+        struct.email = mEmail.getText().toString();
+        struct.title = mTitle.getText().toString();
         struct.content = mEditText.getText().toString();
         struct.fid = mId;
         struct.image = mSeletedImageUri != null ? new UriInputStreamPipe(getApplicationContext(), mSeletedImageUri) : null;
@@ -531,6 +553,15 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             startActivityForResult(intent, REQUEST_CODE_DOODLE);
         } else if (mDelete == v) {
             clearImagePreview();
+        } else if (mIndicator == v) {
+            View view = mWritableItem;
+            if (view.getVisibility() == View.GONE) {
+                view.setVisibility(View.VISIBLE);
+                v.setActivated(true);
+            } else {
+                view.setVisibility(View.GONE);
+                v.setActivated(false);
+            }
         }
     }
 

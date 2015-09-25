@@ -159,6 +159,11 @@
         <item quantity="other">年</item>
     </plurals>
 
+    <string name="more_writable_items">更多可填写项</string>
+    <string name="type_send_name">名称</string>
+    <string name="type_send_email">E-mail</string>
+    <string name="type_send_title">标题</string>
+
     <string name="doodle">涂鸦</string>
     <string name="save_doodle">保存涂鸦？</string>
     <string name="cant_create_image_file">无法保存图片文件</string>

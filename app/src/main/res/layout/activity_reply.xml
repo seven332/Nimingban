@@ -32,6 +32,113 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:paddingLeft="@dimen/keyline_margin_horizontal"
+                android:paddingRight="@dimen/keyline_margin_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/more_writable_items"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/text_little_small"/>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <com.hippo.widget.SimpleImageView
+                    android:id="@+id/indicator"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/colorDivider"/>
+
+            <LinearLayout
+                android:id="@+id/writable_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/keyline_margin_horizontal"
+                    android:paddingRight="@dimen/keyline_margin_horizontal"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:background="@null"
+                    android:inputType="textMultiLine"
+                    android:textSize="@dimen/text_little_small"
+                    android:textColorHint="@color/secondary_text_light"
+                    android:textColor="@color/primary_text_light"
+                    android:hint="@string/type_send_name"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorDivider"/>
+
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/keyline_margin_horizontal"
+                    android:paddingRight="@dimen/keyline_margin_horizontal"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:background="@null"
+                    android:inputType="textEmailAddress"
+                    android:textSize="@dimen/text_little_small"
+                    android:textColorHint="@color/secondary_text_light"
+                    android:textColor="@color/primary_text_light"
+                    android:hint="@string/type_send_email"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorDivider"/>
+
+                <EditText
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/keyline_margin_horizontal"
+                    android:paddingRight="@dimen/keyline_margin_horizontal"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:background="@null"
+                    android:inputType="textMultiLine"
+                    android:textSize="@dimen/text_little_small"
+                    android:textColorHint="@color/secondary_text_light"
+                    android:textColor="@color/primary_text_light"
+                    android:hint="@string/type_send_title"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorDivider"/>
+
+            </LinearLayout>
+
             <EditText
                 android:id="@+id/edit_text"
                 android:layout_width="match_parent"
