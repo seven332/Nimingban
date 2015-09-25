@@ -18,6 +18,7 @@
     $ cd Nimingban
     $ git submodule update --init
     $ gradlew daogenerator:executeDaoGenerator
+    $ gradlew app:copyNotice
     $ gradlew app:assembleDebug
 
 生成的 apk 文件在 app\build\outputs\apk 目录下

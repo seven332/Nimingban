@@ -43,6 +43,11 @@ android {
     }
 }
 
+task copyNotice(type: Copy) {
+    from '../NOTICE'
+    into './src/main/assets'
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':android-advancedrecyclerview')

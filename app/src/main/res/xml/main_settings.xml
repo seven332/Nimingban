@@ -91,4 +91,8 @@
         android:title="@string/main_source"
         android:summary="@string/main_source_summary"/>
 
+    <Preference
+        android:key="notice"
+        android:title="@string/main_notice"/>
+
 </PreferenceScreen>

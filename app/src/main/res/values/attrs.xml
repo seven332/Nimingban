@@ -86,4 +86,8 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="BothScrollView">
+        <attr name="fillViewport" format="boolean"/>
+    </declare-styleable>
+
 </resources>

@@ -61,6 +61,7 @@ import com.hippo.yorozuya.LayoutUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
@@ -110,6 +111,7 @@ public class SettingsActivity extends AbsActivity {
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_SOURCE = "source";
+        private static final String KEY_NOTICE = "notice";
 
         private Context mContext;
 
@@ -123,6 +125,7 @@ public class SettingsActivity extends AbsActivity {
         private Preference mImageSaveLocation;
         private Preference mAuthor;
         private Preference mSource;
+        private Preference mNotice;
 
         private TimingLife mTimingLife;
 
@@ -163,6 +166,7 @@ public class SettingsActivity extends AbsActivity {
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
             mAuthor = findPreference(KEY_AUTHOR);
             mSource = findPreference(KEY_SOURCE);
+            mNotice = findPreference(KEY_NOTICE);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
             mDynamicComments.setOnPreferenceChangeListener(this);
@@ -175,6 +179,7 @@ public class SettingsActivity extends AbsActivity {
             mImageSaveLocation.setOnPreferenceClickListener(this);
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
+            mNotice.setOnPreferenceClickListener(this);
 
             updateTextFormatSummary();
 
@@ -560,6 +565,16 @@ public class SettingsActivity extends AbsActivity {
                         null);
             } else if (KEY_SOURCE.equals(key)) {
                 ActivityHelper.openUri(getActivity(), Uri.parse("https://github.com/seven332/Nimingban"));
+            } else if (KEY_NOTICE.equals(key)) {
+                try {
+                    String str = IOUtils.readString(getContext().getResources().getAssets().open("NOTICE"), "UTF-8");
+                    View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_notice, null);
+                    TextView tv = (TextView) view.findViewById(R.id.text);
+                    tv.setText(str);
+                    new AlertDialog.Builder(getContext()).setView(view).show();
+                } catch (IOException e) {
+                    Toast.makeText(getContext(), R.string.cant_open_notice, Toast.LENGTH_SHORT).show();
+                }
             }
             return false;
         }

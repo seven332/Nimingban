@@ -214,6 +214,7 @@
     <string name="main_author">Author</string>
     <string name="main_source">Source</string>
     <string name="main_source_summary" translatable="false">https://github.com/seven332/Nimingban</string>
+    <string name="main_notice">NOTICE</string>
 
     <string name="text_format">Text format</string>
     <string name="font_size">Font size</string>
@@ -250,6 +251,8 @@
     <string name="document">Document</string>
 
     <string name="text_format_preview">the quick brown hippo jumps over the lazy monkey\nthe quick brown hippo jumps over the lazy monkey\nthe quick brown hippo jumps over the lazy monkey</string>
+
+    <string name="cant_open_notice">Can\'t open NOTICE</string>
 
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Can\'t find any forum</string>
