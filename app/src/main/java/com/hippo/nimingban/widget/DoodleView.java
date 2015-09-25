@@ -256,6 +256,8 @@ public class DoodleView extends View {
         mSrc.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
         mDst.set(0, 0, outWidth, outHeight);
         mCanvas.drawBitmap(bitmap, mSrc, mDst, null);
+
+        invalidate();
     }
 
     public void flush() {
