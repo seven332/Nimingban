@@ -73,8 +73,8 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
 
     public void setForums(List<? extends Forum> forums) {
         mForums.clear();
-        mForums.add(COMMOM_POSTS);
         mForums.addAll(forums);
+        mForums.add(COMMOM_POSTS);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -134,7 +134,7 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
 
         @Override
         public int getItemViewType(int position) {
-            if (position == 0) {
+            if (position == getItemCount() - 1) {
                 return TYPE_COMMOM_POSTS;
             } else {
                 return TYPE_FORUM;
