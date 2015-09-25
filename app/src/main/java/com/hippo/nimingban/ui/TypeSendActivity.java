@@ -198,7 +198,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
-        setContentView(R.layout.activity_reply);
+        setContentView(R.layout.activity_type_send);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mEditText = (EditText) findViewById(R.id.edit_text);

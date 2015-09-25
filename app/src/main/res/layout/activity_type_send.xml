@@ -84,8 +84,8 @@
                     android:background="@null"
                     android:inputType="textMultiLine"
                     android:textSize="@dimen/text_little_small"
-                    android:textColorHint="@color/secondary_text_light"
-                    android:textColor="@color/primary_text_light"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:hint="@string/type_send_name"/>
 
                 <View
@@ -106,8 +106,8 @@
                     android:background="@null"
                     android:inputType="textEmailAddress"
                     android:textSize="@dimen/text_little_small"
-                    android:textColorHint="@color/secondary_text_light"
-                    android:textColor="@color/primary_text_light"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:hint="@string/type_send_email"/>
 
                 <View
@@ -128,8 +128,8 @@
                     android:background="@null"
                     android:inputType="textMultiLine"
                     android:textSize="@dimen/text_little_small"
-                    android:textColorHint="@color/secondary_text_light"
-                    android:textColor="@color/primary_text_light"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:hint="@string/type_send_title"/>
 
                 <View
@@ -232,7 +232,6 @@
             android:layout_height="48dp"
             android:padding="12dp"
             android:src="@drawable/ic_send_dark_x24"/>
-
 
     </LinearLayout>
 
