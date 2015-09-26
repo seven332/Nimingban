@@ -23,6 +23,7 @@ public class DisplayForum extends Forum {
     public String displayname;
     public int priority;
     public boolean visibility;
+    public String msg;
 
     @Override
     public String toString() {
@@ -43,6 +44,11 @@ public class DisplayForum extends Forum {
     @Override
     public CharSequence getNMBDisplayname() {
         return displayname;
+    }
+
+    @Override
+    public String getNMBMsg() {
+        return msg;
     }
 
     public boolean getVisibility() {

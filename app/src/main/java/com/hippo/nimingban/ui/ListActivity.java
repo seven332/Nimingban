@@ -36,6 +36,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -78,6 +79,7 @@ import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.text.URLImageGetter;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.vector.VectorDrawable;
@@ -114,6 +116,7 @@ public final class ListActivity extends AbsActivity
     private RightDrawer mRightDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private MenuItem mRule;
     private MenuItem mCreatePost;
     private MenuItem mRefreshMenu;
     private MenuItem mSortForumsMenu;
@@ -175,6 +178,7 @@ public final class ListActivity extends AbsActivity
                     super.onDrawerClosed(view);
                 }
                 if (mRightDrawer == view) {
+                    setMenuItemVisible(mRule, true);
                     setMenuItemVisible(mCreatePost, true);
                     setMenuItemVisible(mRefreshMenu, true);
                     setMenuItemVisible(mSortForumsMenu, false);
@@ -193,6 +197,7 @@ public final class ListActivity extends AbsActivity
                     // Analysis
                     Analysis.action(ListActivity.this, "open_right_drawer");
 
+                    setMenuItemVisible(mRule, false);
                     setMenuItemVisible(mCreatePost, false);
                     setMenuItemVisible(mRefreshMenu, false);
                     setMenuItemVisible(mSortForumsMenu, true);
@@ -546,15 +551,18 @@ public final class ListActivity extends AbsActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_list, menu);
+        mRule = menu.findItem(R.id.action_rule);
         mCreatePost = menu.findItem(R.id.action_create_post);
         mRefreshMenu = menu.findItem(R.id.action_refresh);
         mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
 
         if (mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            mRule.setVisible(false);
             mCreatePost.setVisible(false);
             mRefreshMenu.setVisible(false);
             mSortForumsMenu.setVisible(true);
         } else {
+            mRule.setVisible(true);
             mCreatePost.setVisible(true);
             mRefreshMenu.setVisible(true);
             mSortForumsMenu.setVisible(false);
@@ -574,6 +582,15 @@ public final class ListActivity extends AbsActivity
                     mSlidingDrawerLayout.openDrawer(Gravity.LEFT);
                 }
                 mSlidingDrawerLayout.closeDrawer(Gravity.RIGHT);
+                return true;
+            case R.id.action_rule:
+                if (mCurrentForum != null && mCurrentForum.getNMBMsg() != null) {
+                    View view = getLayoutInflater().inflate(R.layout.dialog_rule, null);
+                    TextView tv = (TextView) view.findViewById(R.id.text);
+                    tv.setText(Html.fromHtml(mCurrentForum.getNMBMsg(),
+                            new URLImageGetter(tv, NMBApplication.getConaco(this)), null));
+                    new AlertDialog.Builder(this).setTitle(R.string.rule).setView(view).show();
+                }
                 return true;
             case R.id.action_create_post:
                 if (mCurrentForum != null) {

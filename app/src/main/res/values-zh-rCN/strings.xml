@@ -87,6 +87,8 @@
     <string name="cant_get_the_reference">无法找到引用</string>
     <string name="show_thread">显示原串</string>
 
+    <string name="rule">版规</string>
+
     <string name="report">举报</string>
     <string name="report_tip">你将把这个串发送至值班室</string>
     <string name="create_post">发串</string>

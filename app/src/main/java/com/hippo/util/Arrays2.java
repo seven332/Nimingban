@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.client.data;
+package com.hippo.util;
 
-public abstract class Forum {
+public class Arrays2 {
 
-    public abstract Site getNMBSite();
+    public static <T> int indexOf(T[] array, T item) {
+        for (int i = 0, n = array.length; i < n; i++) {
+            T t = array[i];
+            if ((t != null && t.equals(item))
+                    || (item == null && t == null)) {
+                return i;
+            }
+        }
 
-    public abstract String getNMBId();
-
-    public abstract CharSequence getNMBDisplayname();
-
-    public abstract String getNMBMsg();
+        return -1;
+    }
 }

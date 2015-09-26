@@ -88,6 +88,8 @@
     <string name="cant_get_the_reference">Can\'t get the reference</string>
     <string name="show_thread">Show thread</string>
 
+    <string name="rule">Rule</string>
+
     <string name="report">Report</string>
     <string name="report_tip">You will report it to duty room</string>
     <string name="create_post">Post</string>

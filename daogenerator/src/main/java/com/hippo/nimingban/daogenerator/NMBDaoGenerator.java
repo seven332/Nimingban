@@ -28,7 +28,7 @@ public class NMBDaoGenerator {
     private static final String OUT_DIR = "../app/src/main/java-gen";
     private static final String DELETE_DIR = "../app/src/main/java-gen/com/hippo/nimingban/dao";
 
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
@@ -53,6 +53,9 @@ public class NMBDaoGenerator {
         entity.addStringProperty("displayname");
         entity.addIntProperty("priority");
         entity.addBooleanProperty("visibility");
+
+        // @since 4
+        entity.addStringProperty("msg");
     }
 
     private static void addDraft(Schema schema) {
