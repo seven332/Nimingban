@@ -37,7 +37,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -61,6 +66,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.UpdateHelper;
+import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DisplayForum;
@@ -95,6 +101,8 @@ import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 public final class ListActivity extends AbsActivity
@@ -571,6 +579,47 @@ public final class ListActivity extends AbsActivity
         return true;
     }
 
+    private Spanned fixURLSpan(Spanned spanned) {
+        Spannable spannable;
+        if (spanned instanceof Spannable) {
+            spannable = (Spannable) spanned;
+        } else {
+            spannable = new SpannableString(spanned);
+        }
+
+        URLSpan[] urlSpans = spannable.getSpans(0, spanned.length(), URLSpan.class);
+        if (urlSpans == null) {
+            return spanned;
+        }
+
+        for (URLSpan urlSpan : urlSpans) {
+            String url = urlSpan.getURL();
+            if (TextUtils.isEmpty(url)) {
+                spannable.removeSpan(urlSpan);
+            }
+
+            try {
+                new URL(url);
+            } catch (MalformedURLException e) {
+                URL absoluteUrl;
+                // It might be relative path
+                try {
+                    // Use absolute url
+                    absoluteUrl = new URL(new URL(ACUrl.HOST), url);
+                    int start = spannable.getSpanStart(urlSpan);
+                    int end = spannable.getSpanEnd(urlSpan);
+                    spannable.removeSpan(urlSpan);
+                    spannable.setSpan(new URLSpan(absoluteUrl.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } catch (MalformedURLException e1) {
+                    // Can't get url
+                    spannable.removeSpan(urlSpan);
+                }
+            }
+        }
+
+        return spannable;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
@@ -587,8 +636,9 @@ public final class ListActivity extends AbsActivity
                 if (mCurrentForum != null && mCurrentForum.getNMBMsg() != null) {
                     View view = getLayoutInflater().inflate(R.layout.dialog_rule, null);
                     TextView tv = (TextView) view.findViewById(R.id.text);
-                    tv.setText(Html.fromHtml(mCurrentForum.getNMBMsg(),
-                            new URLImageGetter(tv, NMBApplication.getConaco(this)), null));
+                    tv.setText(fixURLSpan(Html.fromHtml(mCurrentForum.getNMBMsg(),
+                            new URLImageGetter(tv, NMBApplication.getConaco(this)), null)));
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
                     new AlertDialog.Builder(this).setTitle(R.string.rule).setView(view).show();
                 }
                 return true;
