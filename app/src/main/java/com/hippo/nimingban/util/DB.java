@@ -400,6 +400,7 @@ public final class DB {
             helper.clearUpgrade();
 
             switch (helper.getOldVersion()) {
+                case 1:
                 case 2:
                     insertDefaultACCommonPosts();
                 case 3:
