@@ -83,6 +83,7 @@ public final class PostActivity extends SwipeActivity
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
     public static final String ACTION_SITE_ID = "com.hippo.nimingban.ui.PostActivity.action.SITE_ID";
+    public static final String ACTION_SITE_REPLY_ID = "com.hippo.nimingban.ui.PostActivity.action.SITE_REPLY_ID";
 
     public static final String KEY_POST = "post";
     public static final String KEY_SITE = "site";
@@ -100,6 +101,7 @@ public final class PostActivity extends SwipeActivity
 
     private Site mSite;
     private String mId;
+    private String mReplyId;
 
     private CharSequence mPostUser;
 
@@ -128,6 +130,14 @@ public final class PostActivity extends SwipeActivity
             if (Site.isValid(site) && id != null) {
                 mSite = Site.fromId(site);
                 mId = id;
+                return true;
+            }
+        } else if (ACTION_SITE_REPLY_ID.equals(action)) {
+            int site = intent.getIntExtra(KEY_SITE, -1);
+            String id = intent.getStringExtra(KEY_ID);
+            if (Site.isValid(site) && id != null) {
+                mSite = Site.fromId(site);
+                mReplyId = id;
                 return true;
             }
         } else if (Intent.ACTION_VIEW.equals(action)) {
@@ -167,7 +177,9 @@ public final class PostActivity extends SwipeActivity
         setContentView(R.layout.activity_post);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
-        setTitle(mSite.getPostTitle(this, mId));
+        if (mId != null) {
+            setTitle(mSite.getPostTitle(this, mId));
+        }
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
@@ -752,13 +764,44 @@ public final class PostActivity extends SwipeActivity
                 mNMBRequest = null;
             }
 
-            NMBRequest request = new NMBRequest();
-            mNMBRequest = request;
-            request.setSite(mSite);
-            request.setMethod(NMBClient.METHOD_GET_POST);
-            request.setArgs(mId, page);
-            request.setCallback(new PostListener(taskId, type, page, request));
-            mNMBClient.execute(request);
+            if (mReplyId != null) {
+                mReplyHelper.showProgressBar();
+                NMBRequest request = new NMBRequest();
+                mNMBRequest = request;
+                request.setSite(mSite);
+                request.setMethod(NMBClient.METHOD_GET_REFERENCE);
+                request.setArgs(mReplyId);
+                request.setCallback(new GetPostIdFromReferenceListener());
+                mNMBClient.execute(request);
+            } else {
+                NMBRequest request = new NMBRequest();
+                mNMBRequest = request;
+                request.setSite(mSite);
+                request.setMethod(NMBClient.METHOD_GET_POST);
+                request.setArgs(mId, page);
+                request.setCallback(new PostListener(taskId, type, page, request));
+                mNMBClient.execute(request);
+            }
+        }
+    }
+
+    private class GetPostIdFromReferenceListener implements NMBClient.Callback<ACReference> {
+
+        @Override
+        public void onSuccess(ACReference result) {
+            mReplyId = null;
+            mId = result.postId;
+            setTitle(mSite.getPostTitle(PostActivity.this, mId));
+            mReplyHelper.refresh();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            mReplyHelper.showText(ExceptionUtils.getReadableString(PostActivity.this, e));
+        }
+
+        @Override
+        public void onCancel() {
         }
     }
 

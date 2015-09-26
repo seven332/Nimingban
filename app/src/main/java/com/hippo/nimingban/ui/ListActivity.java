@@ -763,7 +763,7 @@ public final class ListActivity extends AbsActivity
                 mDialog.dismiss();
             } else if (mNeutral == v) {
                 Intent intent = new Intent(ListActivity.this, PostActivity.class);
-                intent.setAction(PostActivity.ACTION_SITE_ID);
+                intent.setAction(PostActivity.ACTION_SITE_REPLY_ID);
                 intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
                 intent.putExtra(PostActivity.KEY_ID, keyword);
                 startActivity(intent);
