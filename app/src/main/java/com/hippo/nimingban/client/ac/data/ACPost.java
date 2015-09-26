@@ -58,7 +58,7 @@ public class ACPost extends Post {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
     private static final Object sDateFormatLock = new Object();
 
-    private static final Pattern REFERENCE_PATTERN = Pattern.compile(">>(?:No.)?(\\d+)");
+    private static final Pattern REFERENCE_PATTERN = Pattern.compile(">>?(?:No.)?(\\d+)");
     private static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
     private static final Pattern AC_PATTERN = Pattern.compile("ac\\d+");
 
