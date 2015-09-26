@@ -39,7 +39,6 @@ import android.view.ViewParent;
 import android.view.animation.AnimationUtils;
 import android.widget.EdgeEffect;
 import android.widget.FrameLayout;
-import android.widget.OverScroller;
 import android.widget.ScrollView;
 
 import com.hippo.nimingban.R;
@@ -62,7 +61,7 @@ public class BothScrollView extends FrameLayout {
 
     private final Rect mTempRect = new Rect();
 
-    private OverScroller mScroller;
+    private SmoothOverScroller mScroller;
     private EdgeEffect mEdgeGlowLeft;
     private EdgeEffect mEdgeGlowRight;
     private EdgeEffect mEdgeGlowTop;
@@ -175,7 +174,7 @@ public class BothScrollView extends FrameLayout {
     }
 
     private void initBothScrollView(Context context) {
-        mScroller = new OverScroller(context);
+        mScroller = new SmoothOverScroller(context);
         setFocusable(true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         setWillNotDraw(false);
@@ -754,11 +753,8 @@ public class BothScrollView extends FrameLayout {
 
                     // Calling overScrollBy will call onOverScrolled, which
                     // calls onScrollChanged if applicable.
-                    if (overScrollBy(deltaX, deltaY, oldX, oldY, horizontalRange, verticalRange,
-                            mOverscrollDistance, mOverscrollDistance, true)) {
-                        // Break our velocity if we hit a scroll barrier.
-                        mVelocityTracker.clear();
-                    }
+                    overScrollBy(deltaX, deltaY, oldX, oldY, horizontalRange, verticalRange,
+                            mOverscrollDistance, mOverscrollDistance, true);
 
                     if (canOverscroll) {
                         final int pulledToX = oldX + deltaX;
@@ -802,7 +798,7 @@ public class BothScrollView extends FrameLayout {
 
                     if (getChildCount() > 0) {
                         if (Math.abs(initialVelocityX) > mMinimumVelocity || Math.abs(initialVelocityY) > mMinimumVelocity) {
-                            fling(-initialVelocityX, - initialVelocityY);
+                            fling(-initialVelocityX, -initialVelocityY);
                         } else {
                             if (mScroller.springBack(getScrollX(), getScrollY(), 0,
                                     getHorizontalScrollRange(), 0, getVerticalScrollRange())) {
@@ -945,12 +941,19 @@ public class BothScrollView extends FrameLayout {
     @Override
     protected void onOverScrolled(int scrollX, int scrollY,
             boolean clampedX, boolean clampedY) {
+        if (clampedX && clampedY && mVelocityTracker != null) {
+            mVelocityTracker.clear();
+        }
+
         // Treat animating scrolls differently; see #computeScroll() for why.
         if (!mScroller.isFinished()) {
             setScrollX(scrollX);
             setScrollY(scrollY);
-            if (clampedX | clampedY) {
-                mScroller.springBack(scrollX, scrollY, 0, getHorizontalScrollRange(), 0, getVerticalScrollRange());
+            if (clampedX) {
+                mScroller.springBackX(scrollX, 0, getHorizontalScrollRange());
+            }
+            if (clampedY) {
+                mScroller.springBackY(scrollY, 0, getVerticalScrollRange());
             }
         } else {
             super.scrollTo(scrollX, scrollY);
