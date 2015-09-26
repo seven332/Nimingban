@@ -24,8 +24,8 @@ android {
         applicationId "com.hippo.nimingban"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 12
-        versionName "1.1.10"
+        versionCode 13
+        versionName "1.1.11"
         resConfigs "zh", "zh-rCN"
     }
 
