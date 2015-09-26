@@ -55,6 +55,7 @@
     <string name="go_to_error_invalid">Please enter a valid number</string>
     <string name="go_to_error_out_of_range">Target page is out of range</string>
 
+    <string name="lucky">Haha</string>
     <string name="go_to_post">Go to thread</string>
     <string name="keyword_empty">Keyword is empty</string>
     <string name="not_found">Nobody here but us chickens</string>

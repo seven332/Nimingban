@@ -725,6 +725,7 @@ public final class ListActivity extends AbsActivity
         public EditText mEditText;
 
         public View mPositive;
+        public View mNegative;
         public View mNeutral;
 
         public Dialog mDialog;
@@ -742,13 +743,25 @@ public final class ListActivity extends AbsActivity
         public void setDialog(AlertDialog dialog) {
             mDialog = dialog;
             mPositive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            mNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
             mNeutral = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
             mPositive.setOnClickListener(this);
+            mNegative.setOnClickListener(this);
             mNeutral.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
+            if (mNegative == v) {
+                Intent intent = new Intent(ListActivity.this, PostActivity.class);
+                intent.setAction(PostActivity.ACTION_SITE_REPLY_ID);
+                intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
+                intent.putExtra(PostActivity.KEY_ID, Integer.toString(MathUtils.random(1, 6666667))); // TODO how to get the max id
+                startActivity(intent);
+                mDialog.dismiss();
+                return;
+            }
+
             String keyword = mEditText.getText().toString().trim();
             if (TextUtils.isEmpty(keyword)) {
                 Toast.makeText(ListActivity.this, R.string.keyword_empty, Toast.LENGTH_SHORT).show();
@@ -779,6 +792,7 @@ public final class ListActivity extends AbsActivity
                 .setTitle(R.string.search)
                 .setView(helper.getView())
                 .setPositiveButton(R.string.search, null)
+                .setNegativeButton(R.string.lucky, null)
                 .setNeutralButton(R.string.go_to_post, null)
                 .show();
         helper.setDialog(dialog);
