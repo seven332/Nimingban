@@ -33,6 +33,7 @@ public abstract class SwipeActivity extends AbsActivity implements SwipeBackActi
         super.onCreate(savedInstanceState);
         mHelper = new SwipeBackActivityHelper(this);
         mHelper.onActivityCreate();
+        getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT | SwipeBackLayout.EDGE_RIGHT);
     }
 
     @Override
