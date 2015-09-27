@@ -17,11 +17,6 @@
 
 <resources>
 
-    <!-- Keyline -->
-    <dimen name="keyline_margin_horizontal">24dp</dimen>
-    <dimen name="keyline_margin_vertical">24dp</dimen>
-
-    <dimen name="card_interval">16dp</dimen>
-    <dimen name="single_item_padding_horizontal">64dp</dimen>
+    <dimen name="card_interval">24dp</dimen>
 
 </resources>

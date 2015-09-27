@@ -23,23 +23,33 @@ import android.view.View;
 
 public class MarginItemDecoration extends RecyclerView.ItemDecoration {
 
-    private int mMargin;
+    private int mMarginLeft;
+    private int mMarginTop;
+    private int mMarginRight;
+    private int mMarginBottom;
 
     public MarginItemDecoration(int margin) {
         setMargin(margin);
     }
 
+    public MarginItemDecoration(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+        setMargin(marginLeft, marginTop, marginRight, marginBottom);
+    }
+
     @Override
     public void getItemOffsets(Rect outRect, View view,
             RecyclerView parent, RecyclerView.State state) {
-        outRect.set(mMargin, mMargin, mMargin, mMargin);
+        outRect.set(mMarginLeft, mMarginTop, mMarginRight, mMarginBottom);
     }
 
     public void setMargin(int margin) {
-        mMargin = margin;
+        mMarginLeft = mMarginTop = mMarginRight = mMarginBottom = margin;
     }
 
-    public int getMargin() {
-        return mMargin;
+    public void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+        mMarginLeft = marginLeft;
+        mMarginTop = marginTop;
+        mMarginRight = marginRight;
+        mMarginBottom = marginBottom;
     }
 }

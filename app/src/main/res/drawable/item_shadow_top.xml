@@ -15,13 +15,13 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
 
-    <!-- Keyline -->
-    <dimen name="keyline_margin_horizontal">24dp</dimen>
-    <dimen name="keyline_margin_vertical">24dp</dimen>
+    <gradient
+        android:startColor="@android:color/transparent"
+        android:endColor="#1b000000"
+        android:angle="270"/>
 
-    <dimen name="card_interval">16dp</dimen>
-    <dimen name="single_item_padding_horizontal">64dp</dimen>
-
-</resources>
+</shape>

@@ -70,7 +70,6 @@ public final class RecordActivity extends AbsActivity
     private EasyRecyclerView mRecyclerView;
     private ViewTransition mViewTransition;
 
-    private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
@@ -102,10 +101,15 @@ public final class RecordActivity extends AbsActivity
         imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
+        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         if (getResources().getBoolean(R.bool.two_way)) {
-            mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+            mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+            mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
         } else {
-            mLayoutManager = new LinearLayoutManager(this);
+            mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setPadding(0, halfInterval, 0, halfInterval);
         }
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
@@ -127,7 +131,6 @@ public final class RecordActivity extends AbsActivity
         animator.setSupportsChangeAnimations(false);
 
         mRecyclerView.hasFixedSize();
-        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setOnItemClickListener(this);
@@ -135,9 +138,6 @@ public final class RecordActivity extends AbsActivity
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setClipChildren(false);
-        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
-        mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-        mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 
         // NOTE:
         // The initialization order is very important! This order determines the priority of touch event handling.
@@ -179,7 +179,6 @@ public final class RecordActivity extends AbsActivity
             mWrappedAdapter = null;
         }
         mAdapter = null;
-        mLayoutManager = null;
 
         if (mLazyList != null) {
             mLazyList.close();
@@ -243,7 +242,7 @@ public final class RecordActivity extends AbsActivity
 
     private class RecordHolder extends AbstractSwipeableItemViewHolder {
 
-        public View cardView;
+        public View swipable;
         public TextView leftText;
         public TextView rightText;
         private TextView content;
@@ -252,7 +251,7 @@ public final class RecordActivity extends AbsActivity
         public RecordHolder(View itemView) {
             super(itemView);
 
-            cardView = itemView.findViewById(R.id.card_view);
+            swipable = itemView.findViewById(R.id.swipable);
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
@@ -261,7 +260,7 @@ public final class RecordActivity extends AbsActivity
 
         @Override
         public View getSwipeableContainerView() {
-            return cardView;
+            return swipable;
         }
     }
 

@@ -233,18 +233,19 @@ public final class ListActivity extends AbsActivity
                 ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
-        RecyclerView.LayoutManager layoutManager;
-        if (getResources().getBoolean(R.bool.two_way)) {
-            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            layoutManager = new LinearLayoutManager(this);
-        }
-        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
+
         int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
-        mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-        mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+        if (getResources().getBoolean(R.bool.two_way)) {
+            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+            mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+            mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+        } else {
+            mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setPadding(0, halfInterval, 0, halfInterval);
+        }
 
         mLeftDrawer.setHelper(this);
 

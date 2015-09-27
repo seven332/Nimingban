@@ -110,21 +110,22 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
 
         mSearchAdapter = new SearchAdapter();
         recyclerView.setAdapter(mSearchAdapter);
-        RecyclerView.LayoutManager layoutManager;
-        if (getResources().getBoolean(R.bool.two_way)) {
-            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            layoutManager = new LinearLayoutManager(this);
-        }
-        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         recyclerView.setDrawSelectorOnTop(true);
         recyclerView.setOnItemClickListener(this);
         recyclerView.hasFixedSize();
         recyclerView.setClipToPadding(false);
+
         int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
-        recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-        recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+        if (getResources().getBoolean(R.bool.two_way)) {
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+            recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+            recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+        } else {
+            recyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setPadding(0, halfInterval, 0, halfInterval);
+        }
 
         mSearchHelper.firstRefresh();
     }

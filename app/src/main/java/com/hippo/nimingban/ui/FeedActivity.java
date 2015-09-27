@@ -69,7 +69,6 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
     private FeedHelper mFeedHelper;
 
     private EasyRecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
@@ -105,10 +104,15 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         contentLayout.setHelper(mFeedHelper);
 
         // Layout Manager
+        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         if (getResources().getBoolean(R.bool.two_way)) {
-            mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+            mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
+            mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
         } else {
-            mLayoutManager = new LinearLayoutManager(this);
+            mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setPadding(0, halfInterval, 0, halfInterval);
         }
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
@@ -130,7 +134,6 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         animator.setSupportsChangeAnimations(false);
 
         mRecyclerView.hasFixedSize();
-        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setOnItemClickListener(this);
@@ -138,9 +141,6 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setClipChildren(false);
-        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
-        mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-        mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
 
         // NOTE:
         // The initialization order is very important! This order determines the priority of touch event handling.
@@ -177,7 +177,6 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
             mWrappedAdapter = null;
         }
         mAdapter = null;
-        mLayoutManager = null;
 
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
@@ -207,7 +206,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
     private class FeedHolder extends AbstractSwipeableItemViewHolder implements View.OnClickListener {
 
-        public View cardView;
+        public View swipable;
         public TextView leftText;
         public TextView centerText;
         public TextView rightText;
@@ -217,7 +216,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         public FeedHolder(View itemView) {
             super(itemView);
 
-            cardView = itemView.findViewById(R.id.card_view);
+            swipable = itemView.findViewById(R.id.swipable);
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
@@ -246,7 +245,7 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
         @Override
         public View getSwipeableContainerView() {
-            return cardView;
+            return swipable;
         }
     }
 
