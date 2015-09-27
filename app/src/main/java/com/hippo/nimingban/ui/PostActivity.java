@@ -607,6 +607,10 @@ public final class PostActivity extends SwipeActivity
                     Toast.makeText(PostActivity.this, R.string.comment_copied_clipboard, Toast.LENGTH_SHORT).show();
                     break;
                 case 2:
+                    // Send
+                    ActivityHelper.share(PostActivity.this, mReply.getNMBDisplayContent().toString());
+                    break;
+                case 3:
                     // Report
                     Intent intent = new Intent(PostActivity.this, TypeSendActivity.class);
                     intent.setAction(TypeSendActivity.ACTION_REPORT);

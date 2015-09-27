@@ -79,6 +79,7 @@
 
     <string name="reply_to_comment">Reply to comment</string>
     <string name="copy_comment_text">Copy comment text</string>
+    <string name="send_comment_text">Send comment text</string>
     <string name="report_comment">Report comment</string>
 
     <string name="select_image">Select a picture</string>
