@@ -36,6 +36,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -143,12 +144,12 @@ public final class ListActivity extends AbsActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @Override
@@ -158,11 +159,14 @@ public final class ListActivity extends AbsActivity
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         mSlidingDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawer_layout);
         mContentLayout = (ContentLayout) mSlidingDrawerLayout.findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
         mLeftDrawer = (LeftDrawer) mSlidingDrawerLayout.findViewById(R.id.left_drawer);
         mRightDrawer = (RightDrawer) mSlidingDrawerLayout.findViewById(R.id.right_drawer);
+
+        setSupportActionBar(toolbar);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mSlidingDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
@@ -222,6 +226,7 @@ public final class ListActivity extends AbsActivity
 
         mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_left), Gravity.LEFT);
         mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_right), Gravity.RIGHT);
+        mSlidingDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
 
         mPostHelper = new PostHelper();
         mPostHelper.setEmptyString(getString(R.string.no_post));

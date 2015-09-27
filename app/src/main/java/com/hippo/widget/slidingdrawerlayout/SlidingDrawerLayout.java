@@ -19,17 +19,15 @@ package com.hippo.widget.slidingdrawerlayout;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -39,15 +37,21 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 
 import com.hippo.util.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ViewUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @SuppressLint("RtlHardcoded")
 public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener,
         Animator.AnimatorListener {
+
+    @IntDef({STATE_CLOSED, STATE_SLIDING, STATE_OPEN})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {}
 
     private static final String KEY_SUPER = "super";
     private static final String KEY_OPENED_DRAWER = "opened_drawer";
@@ -98,7 +102,9 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     private boolean mLeftOpened;
     private boolean mRightOpened;
+    @State
     private int mLeftState;
+    @State
     private int mRightState;
     private float mLeftPercent;
     private float mRightPercent;
@@ -115,109 +121,17 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     private DrawerListener mListener;
 
-    private Drawable mStatusBarBackground;
-
     private boolean mIntercepted;
     private boolean mCanIntercept;
 
-    private Object mLastInsets;
-    private boolean mDrawStatusBarBackground;
+    private int mFitPaddingTop = 0;
+    private int mFitPaddingBottom = 0;
+
+    private int mStatusBarColor;
+
+    private int[] mTemp = new int[2];
 
     private static int sDefaultMinDrawerMargin = 56;
-
-    private static final SlidingDrawerLayoutCompatImpl IMPL;
-
-    static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            IMPL = new SlidingDrawerLayoutCompatImplApi21();
-        } else {
-            IMPL = new SlidingDrawerLayoutCompatImplBase();
-        }
-    }
-
-    interface SlidingDrawerLayoutCompatImpl {
-        void configureApplyInsets(View drawerLayout);
-        void dispatchChildInsets(View child, Object insets, int drawerGravity);
-        void applyMarginInsets(MarginLayoutParams lp, Object insets, int drawerGravity);
-        int getTopInset(Object lastInsets);
-    }
-
-    static class SlidingDrawerLayoutCompatImplBase implements SlidingDrawerLayoutCompatImpl {
-        @Override
-        public void configureApplyInsets(View drawerLayout) {
-            // This space for rent
-        }
-
-        @Override
-        public void dispatchChildInsets(View child, Object insets, int drawerGravity) {
-            // This space for rent
-        }
-
-        @Override
-        public void applyMarginInsets(MarginLayoutParams lp, Object insets, int drawerGravity) {
-            // This space for rent
-        }
-
-        @Override
-        public int getTopInset(Object insets) {
-            return 0;
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    static class SlidingDrawerLayoutCompatImplApi21 implements SlidingDrawerLayoutCompatImpl {
-        @Override
-        public void configureApplyInsets(View drawerLayout) {
-            if (drawerLayout instanceof SlidingDrawerLayout) {
-                drawerLayout.setOnApplyWindowInsetsListener(new InsetsListener());
-                drawerLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-            }
-        }
-
-        @Override
-        public void dispatchChildInsets(View child, Object insets, int gravity) {
-            WindowInsets wi = (WindowInsets) insets;
-            if (gravity == Gravity.LEFT) {
-                wi = wi.replaceSystemWindowInsets(wi.getSystemWindowInsetLeft(),
-                        wi.getSystemWindowInsetTop(), 0, wi.getSystemWindowInsetBottom());
-            } else if (gravity == Gravity.RIGHT) {
-                wi = wi.replaceSystemWindowInsets(0, wi.getSystemWindowInsetTop(),
-                        wi.getSystemWindowInsetRight(), wi.getSystemWindowInsetBottom());
-            }
-            child.dispatchApplyWindowInsets(wi);
-        }
-
-        @Override
-        public void applyMarginInsets(MarginLayoutParams lp, Object insets, int gravity) {
-            WindowInsets wi = (WindowInsets) insets;
-            if (gravity == Gravity.LEFT) {
-                wi = wi.replaceSystemWindowInsets(wi.getSystemWindowInsetLeft(),
-                        wi.getSystemWindowInsetTop(), 0, wi.getSystemWindowInsetBottom());
-            } else if (gravity == Gravity.RIGHT) {
-                wi = wi.replaceSystemWindowInsets(0, wi.getSystemWindowInsetTop(),
-                        wi.getSystemWindowInsetRight(), wi.getSystemWindowInsetBottom());
-            }
-            lp.leftMargin = wi.getSystemWindowInsetLeft();
-            lp.topMargin = wi.getSystemWindowInsetTop();
-            lp.rightMargin = wi.getSystemWindowInsetRight();
-            lp.bottomMargin = wi.getSystemWindowInsetBottom();
-        }
-
-        @Override
-        public int getTopInset(Object insets) {
-            return insets != null ? ((WindowInsets) insets).getSystemWindowInsetTop() : 0;
-        }
-
-        static class InsetsListener implements OnApplyWindowInsetsListener {
-            @Override
-            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                final SlidingDrawerLayout drawerLayout = (SlidingDrawerLayout) v;
-                drawerLayout.setChildInsets(insets, insets.getSystemWindowInsetTop() > 0);
-                return insets.consumeSystemWindowInsets();
-            }
-        }
-    }
 
     /**
      * Listener for monitoring events about drawers.
@@ -543,17 +457,24 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         addView(mShadow, 1);
     }
 
-    /**
-     * Internal use only; called to apply window insets when configured
-     * with fitsSystemWindows="true"
-     */
-    public void setChildInsets(Object insets, boolean draw) {
-        mLastInsets = insets;
-        mDrawStatusBarBackground = draw;
-        setWillNotDraw(!draw && getBackground() == null);
-        requestLayout();
-    }
+    private void getShadowPadding(int[] paddings) {
+        View view = null;
+        if (mLeftPercent > 0.0f) {
+            view = mLeftDrawer;
+        }
+        if (mRightPercent > 0.0f) {
+            view = mRightDrawer;
+        }
 
+        if (view instanceof DrawerLayoutChild) {
+            DrawerLayoutChild dlc = (DrawerLayoutChild) view;
+            paddings[0] = dlc.getLayoutPaddingTop();
+            paddings[1] = dlc.getLayoutPaddingBottom();
+        } else {
+            paddings[0] = 0;
+            paddings[1] = 0;
+        }
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -568,9 +489,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         setMeasuredDimension(widthSize, heightSize);
 
-        final boolean applyInsets = mLastInsets != null && ViewCompat.getFitsSystemWindows(this);
-        final int layoutDirection = ViewCompat.getLayoutDirection(this);
-
         // Gravity value for each drawer we've seen. Only one of each permitted.
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -581,32 +499,32 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             }
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (applyInsets) {
-                final int cgrav = GravityCompat.getAbsoluteGravity(lp.gravity, layoutDirection);
-                if (ViewCompat.getFitsSystemWindows(child)) {
-                    IMPL.dispatchChildInsets(child, mLastInsets, cgrav);
-                } else {
-                    IMPL.applyMarginInsets(lp, mLastInsets, cgrav);
-                }
+            int paddingTop = 0;
+            int paddingBottom = 0;
+            if (child instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) child;
+                paddingTop = dlc.getLayoutPaddingTop();
+                paddingBottom = dlc.getLayoutPaddingBottom();
             }
-
             if (child == mContentView) {
                 // Content views get measured at exactly the layout's size.
                 final int contentWidthSpec = MeasureSpec.makeMeasureSpec(
                         widthSize - lp.leftMargin - lp.rightMargin, MeasureSpec.EXACTLY);
                 final int contentHeightSpec = MeasureSpec.makeMeasureSpec(
-                        heightSize - lp.topMargin - lp.bottomMargin, MeasureSpec.EXACTLY);
+                        heightSize - lp.topMargin - lp.bottomMargin - paddingTop - paddingBottom, MeasureSpec.EXACTLY);
                 child.measure(contentWidthSpec, contentHeightSpec);
             } else if (child == mLeftDrawer || child == mRightDrawer) {
                 final int drawerWidthSpec = getChildMeasureSpec(widthMeasureSpec,
                         lp.leftMargin + lp.rightMargin,
                         Math.min(widthSize - mMinDrawerMargin, lp.width));
                 final int drawerHeightSpec = getChildMeasureSpec(heightMeasureSpec,
-                        lp.topMargin + lp.bottomMargin,
+                        lp.topMargin + lp.bottomMargin + paddingTop + paddingBottom,
                         lp.height);
                 child.measure(drawerWidthSpec, drawerHeightSpec);
             } else if (child == mShadow) {
-                child.measure(widthMeasureSpec, heightMeasureSpec);
+                getShadowPadding(mTemp);
+                child.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(heightSize - mTemp[0] - mTemp[1], MeasureSpec.EXACTLY));
             } else {
                 throw new IllegalStateException("Don't call addView");
             }
@@ -626,13 +544,20 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             }
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
+            int paddingTop = 0;
+            int paddingBottom = 0;
+            if (child instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) child;
+                paddingTop = dlc.getLayoutPaddingTop();
+                paddingBottom = dlc.getLayoutPaddingBottom();
+            }
             if (child == mContentView) {
-                child.layout(lp.leftMargin, lp.topMargin,
+                child.layout(lp.leftMargin, lp.topMargin + paddingTop,
                         lp.leftMargin + child.getMeasuredWidth(),
-                        lp.topMargin + child.getMeasuredHeight());
+                        lp.topMargin + paddingTop + child.getMeasuredHeight());
             } else if (child == mShadow) {
-                child.layout(l, t, r, b);
+                getShadowPadding(mTemp);
+                child.layout(0, mTemp[0], child.getMeasuredWidth(), mTemp[0] + child.getMeasuredHeight());
             } else { // Drawer, if it wasn't onMeasure would have thrown an exception.
                 final int childWidth = child.getMeasuredWidth();
                 final int childHeight = child.getMeasuredHeight();
@@ -652,17 +577,17 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 switch (vgrav) {
                     default:
                     case Gravity.TOP: {
-                        child.layout(childLeft, lp.topMargin, childLeft + childWidth,
-                                lp.topMargin + childHeight);
+                        child.layout(childLeft, lp.topMargin + paddingTop, childLeft + childWidth,
+                                lp.topMargin + paddingTop + childHeight);
                         break;
                     }
 
                     case Gravity.BOTTOM: {
                         final int height = b - t;
                         child.layout(childLeft,
-                                height - lp.bottomMargin - child.getMeasuredHeight(),
+                                height - lp.bottomMargin - paddingBottom - child.getMeasuredHeight(),
                                 childLeft + childWidth,
-                                height - lp.bottomMargin);
+                                height - lp.bottomMargin - paddingBottom);
                         break;
                     }
 
@@ -672,8 +597,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
                         // Offset for margins. If things don't fit right because of
                         // bad measurement before, oh well.
-                        if (childTop < lp.topMargin) {
-                            childTop = lp.topMargin;
+                        if (childTop < lp.topMargin + paddingTop) {
+                            childTop = lp.topMargin + paddingTop;
                         } else if (childTop + childHeight > height - lp.bottomMargin) {
                             childTop = height - lp.bottomMargin - childHeight;
                         }
@@ -947,49 +872,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         return i;
     }
 
-    /**
-     * Set a drawable to draw in the insets area for the status bar.
-     * Note that this will only be activated if this DrawerLayout fitsSystemWindows.
-     *
-     * @param bg Background drawable to draw behind the status bar
-     */
-    public void setStatusBarBackground(Drawable bg) {
-        mStatusBarBackground = bg;
-    }
-
-    /**
-     * Set a drawable to draw in the insets area for the status bar.
-     * Note that this will only be activated if this DrawerLayout fitsSystemWindows.
-     *
-     * @param resId Resource id of a background drawable to draw behind the status bar
-     */
-    public void setStatusBarBackground(int resId) {
-        mStatusBarBackground = resId != 0 ? ContextCompat.getDrawable(getContext(), resId) : null;
-    }
-
-    /**
-     * Set a drawable to draw in the insets area for the status bar.
-     * Note that this will only be activated if this DrawerLayout fitsSystemWindows.
-     *
-     * @param color Color to use as a background drawable to draw behind the status bar
-     *              in 0xAARRGGBB format.
-     */
-    public void setStatusBarBackgroundColor(int color) {
-        mStatusBarBackground = new ColorDrawable(color);
-    }
-
-    @Override
-    public void onDraw(Canvas c) {
-        super.onDraw(c);
-        if (mDrawStatusBarBackground && mStatusBarBackground != null) {
-            final int inset = IMPL.getTopInset(mLastInsets);
-            if (inset > 0) {
-                mStatusBarBackground.setBounds(0, 0, getWidth(), inset);
-                mStatusBarBackground.draw(c);
-            }
-        }
-    }
-
     private void updateDrawerSlide(View drawerView, float percent) {
         boolean update = false;
         // Update percent
@@ -1001,8 +883,20 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             mRightPercent = percent;
         }
 
-        if (update)
+        if (update) {
+            // Update shadow size
+            int paddingTop = 0;
+            int paddingBottom = 0;
+            if (drawerView instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) drawerView;
+                paddingTop = dlc.getLayoutPaddingTop();
+                paddingBottom = dlc.getLayoutPaddingBottom();
+            }
+            mShadow.setTop(paddingTop);
+            mShadow.setBottom(getHeight() - paddingBottom);
+
             mShadow.setPercent(percent);
+        }
 
         // Callback
         if (update && mListener != null) {
@@ -1010,7 +904,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         }
     }
 
-    private void updateDrawerState(View drawerView, int state) {
+    private void updateDrawerState(View drawerView, @State int state) {
         boolean update = false;
         // Update state
         if (drawerView == mLeftDrawer) {
@@ -1063,6 +957,40 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         if (update && mListener != null) {
             mListener.onDrawerOpened(drawerView);
         }
+    }
+
+    public void setStatusBarColor(int statusBarColor) {
+        mStatusBarColor = statusBarColor;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        if (mFitPaddingTop != 0) {
+            int saved = canvas.save();
+            canvas.clipRect(0, 0, getWidth(), mFitPaddingTop);
+            canvas.drawColor(mStatusBarColor);
+            canvas.restoreToCount(saved);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected boolean fitSystemWindows(Rect insets) {
+        mFitPaddingTop = insets.top;
+        mFitPaddingBottom = insets.bottom;
+        insets.top = 0;
+        insets.bottom = 0;
+
+        for (int i = 0, n = getChildCount(); i < n; i++) {
+            View view = getChildAt(i);
+            if (view instanceof DrawerLayoutChild) {
+                ((DrawerLayoutChild) view).setFitPadding(mFitPaddingTop, mFitPaddingBottom);
+            }
+        }
+
+        return super.fitSystemWindows(insets);
     }
 
     @NonNull
@@ -1243,22 +1171,26 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         @Override
         protected void onDraw(Canvas c) {
-            c.drawARGB(MathUtils.lerp(mForm, mTo, mPercent), 0, 0, 0);
+            boolean drawLeft = mLeftDrawer.getRight() > 0;
+            boolean drawRight = !drawLeft && mRightDrawer.getLeft() < SlidingDrawerLayout.this.getWidth();
 
-            if (mShadowLeft != null) {
-                int right = mLeftDrawer.getRight();
-                if (right > 0) {
+            if (drawLeft || drawRight) {
+                // Draw drak background
+                c.drawARGB(MathUtils.lerp(mForm, mTo, mPercent), 0, 0, 0);
+
+                // Draw shadow left
+                if (mShadowLeft != null && drawLeft) {
+                    int right = mLeftDrawer.getRight();
                     final int shadowWidth = mShadowLeft.getIntrinsicWidth();
                     mShadowLeft.setBounds(right, mLeftDrawer.getTop(),
                             right + shadowWidth, mLeftDrawer.getBottom());
                     mShadowLeft.setAlpha((int) (0xff * mLeftPercent));
                     mShadowLeft.draw(c);
                 }
-            }
 
-            if (mShadowRight != null) {
-                int left = mRightDrawer.getLeft();
-                if (left < SlidingDrawerLayout.this.getWidth()) {
+                // Draw shadow right
+                if (mShadowRight != null && drawRight) {
+                    int left = mRightDrawer.getLeft();
                     final int shadowWidth = mShadowRight.getIntrinsicWidth();
                     mShadowRight.setBounds(left - shadowWidth, mRightDrawer.getTop(),
                             left, mRightDrawer.getBottom());

@@ -31,12 +31,15 @@ import com.hippo.nimingban.client.data.Forum;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.slidingdrawerlayout.DrawerLayoutChild;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerView.OnItemClickListener {
+public final class RightDrawer extends EasyRecyclerView
+        implements EasyRecyclerView.OnItemClickListener,
+        DrawerLayoutChild {
 
     private static final Object COMMOM_POSTS = new Object();
 
@@ -45,6 +48,9 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
     private List<Object> mForums;
 
     private RightDrawerHelper mRightDrawerHelper;
+
+    private int mFitPaddingTop = 0;
+    private int mActionBarHeight = 0;
 
     public RightDrawer(Context context) {
         super(context);
@@ -69,6 +75,8 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
         setOnItemClickListener(this);
         setSelector(RippleSalon.generateRippleDrawable(
                 ResourcesUtils.getAttrBoolean(context, R.attr.dark)));
+
+        mActionBarHeight = ResourcesUtils.getDimensionPixelOffset(context, R.attr.actionBarSize);
     }
 
     public void setForums(List<? extends Forum> forums) {
@@ -94,6 +102,21 @@ public final class RightDrawer extends EasyRecyclerView implements EasyRecyclerV
         }
 
         return true;
+    }
+
+    @Override
+    public void setFitPadding(int top, int bottom) {
+        mFitPaddingTop = top;
+    }
+
+    @Override
+    public int getLayoutPaddingTop() {
+        return mFitPaddingTop + mActionBarHeight;
+    }
+
+    @Override
+    public int getLayoutPaddingBottom() {
+        return 0;
     }
 
     private class ForumHolder extends RecyclerView.ViewHolder {
