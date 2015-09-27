@@ -22,13 +22,13 @@
     <item
         android:id="@+id/action_rule"
         android:title="@string/rule"
-        android:icon="@drawable/ic_notice_dark_x24"
+        android:icon="@drawable/ic_notice_outline_dark_x24"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_create_post"
         android:title="@string/create_post"
-        android:icon="@drawable/ic_message_plus_dark_x24"
+        android:icon="@drawable/ic_message_plus_outline_dark_x24"
         app:showAsAction="ifRoom"/>
 
     <item
