@@ -44,10 +44,12 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -90,6 +92,8 @@ import com.hippo.text.URLImageGetter;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.vector.VectorDrawable;
+import com.hippo.view.SimpleDoubleTapListener;
+import com.hippo.view.SimpleGestureListener;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
@@ -127,7 +131,6 @@ public final class ListActivity extends AbsActivity
 
     private MenuItem mRule;
     private MenuItem mCreatePost;
-    private MenuItem mRefreshMenu;
     private MenuItem mSortForumsMenu;
 
     private @Nullable Forum mCurrentForum;
@@ -166,6 +169,21 @@ public final class ListActivity extends AbsActivity
         mLeftDrawer = (LeftDrawer) mSlidingDrawerLayout.findViewById(R.id.left_drawer);
         mRightDrawer = (RightDrawer) mSlidingDrawerLayout.findViewById(R.id.right_drawer);
 
+        final GestureDetector gestureDetector = new GestureDetector(this, new SimpleGestureListener());
+        gestureDetector.setOnDoubleTapListener(new SimpleDoubleTapListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                mPostHelper.refresh();
+                return true;
+            }
+        });
+        toolbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
         setSupportActionBar(toolbar);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mSlidingDrawerLayout,
@@ -192,7 +210,6 @@ public final class ListActivity extends AbsActivity
                 if (mRightDrawer == view) {
                     setMenuItemVisible(mRule, true);
                     setMenuItemVisible(mCreatePost, true);
-                    setMenuItemVisible(mRefreshMenu, true);
                     setMenuItemVisible(mSortForumsMenu, false);
                 }
             }
@@ -211,7 +228,6 @@ public final class ListActivity extends AbsActivity
 
                     setMenuItemVisible(mRule, false);
                     setMenuItemVisible(mCreatePost, false);
-                    setMenuItemVisible(mRefreshMenu, false);
                     setMenuItemVisible(mSortForumsMenu, true);
                 }
             }
@@ -567,18 +583,15 @@ public final class ListActivity extends AbsActivity
         getMenuInflater().inflate(R.menu.activity_list, menu);
         mRule = menu.findItem(R.id.action_rule);
         mCreatePost = menu.findItem(R.id.action_create_post);
-        mRefreshMenu = menu.findItem(R.id.action_refresh);
         mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
 
         if (mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
             mRule.setVisible(false);
             mCreatePost.setVisible(false);
-            mRefreshMenu.setVisible(false);
             mSortForumsMenu.setVisible(true);
         } else {
             mRule.setVisible(true);
             mCreatePost.setVisible(true);
-            mRefreshMenu.setVisible(true);
             mSortForumsMenu.setVisible(false);
         }
 
@@ -656,9 +669,6 @@ public final class ListActivity extends AbsActivity
                     intent.putExtra(TypeSendActivity.KEY_ID, mCurrentForum.getNMBId());
                     startActivity(intent);
                 }
-                return true;
-            case R.id.action_refresh:
-                mPostHelper.refresh();
                 return true;
             case R.id.action_sort_forums:
                 intent = new Intent(this, SortForumsActivity.class);
