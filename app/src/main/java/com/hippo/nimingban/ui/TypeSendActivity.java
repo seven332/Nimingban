@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.IntDef;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -57,6 +58,8 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
+import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.BitmapUtils;
@@ -79,11 +82,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 // TODO add edit text for name, title and so on
 public final class TypeSendActivity extends AbsActivity implements View.OnClickListener {
+
+    @IntDef({METHOD_NONE, METHOD_REPLY, METHOD_CREATE_POST})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface Method {}
 
     private static final String TAG = TypeSendActivity.class.getSimpleName();
 
@@ -100,7 +110,14 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     public static final int REQUEST_CODE_DOODLE = 2;
     public static final int REQUEST_CODE_CAMERA = 3;
 
-    private Method mMethod;
+    public static final int METHOD_NONE = 0;
+    public static final int METHOD_REPLY = 1;
+    public static final int METHOD_CREATE_POST = 2;
+
+    @Method
+    private int mMethod = METHOD_NONE;
+
+    private boolean mShare = false;
 
     private NMBClient mNMBClient;
 
@@ -118,6 +135,12 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     private EditText mName;
     private EditText mEmail;
     private EditText mTitle;
+    private TextView mMoreWritableItemsText;
+    private View mSelectForum;
+    private TextView mForumText;
+
+    private List<DisplayForum> mForums;
+    private CharSequence[] mForumNames;
 
     private Site mSite;
     private String mId;
@@ -132,11 +155,6 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
 
-    private enum Method {
-        Reply,
-        CreatePost
-    }
-
     // false for error
     private boolean handlerIntent(Intent intent) {
         if (intent == null) {
@@ -146,19 +164,34 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         boolean report = false;
 
         String action = intent.getAction();
+        String type = intent.getType();
         if (ACTION_REPLY.equals(action)) {
-            mMethod = Method.Reply;
+            mMethod = METHOD_REPLY;
             setTitle(R.string.reply);
         } else if (ACTION_CREATE_POST.equals(action)) {
-            mMethod = Method.CreatePost;
+            mMethod = METHOD_CREATE_POST;
             setTitle(R.string.create_post);
         } else if (ACTION_REPORT.equals(action)) {
-            mMethod = Method.CreatePost;
+            mMethod = METHOD_CREATE_POST;
             setTitle(R.string.report);
             report = true;
+        } else if (Intent.ACTION_SEND.equals(action) && type != null) {
+            mMethod = METHOD_CREATE_POST;
+            setTitle(R.string.create_post);
+            mShare = true;
         }
 
-        if (mMethod != null) {
+        if (mShare && type != null) {
+            // TODO for other site
+            mSite = ACSite.getInstance();
+            if ("text/plain".equals(type)) {
+                mPresetText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                return true;
+            } else if (type.startsWith("image/")) {
+                mSeletedImageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                return true;
+            }
+        } else if (mMethod != METHOD_NONE) {
             int site = intent.getIntExtra(KEY_SITE, -1);
             String id = intent.getStringExtra(KEY_ID);
             mPresetText = intent.getStringExtra(KEY_TEXT);
@@ -215,6 +248,9 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         mName = (EditText) findViewById(R.id.name);
         mEmail = (EditText) findViewById(R.id.email);
         mTitle = (EditText) findViewById(R.id.title);
+        mMoreWritableItemsText = (TextView) findViewById(R.id.more_writable_items_text);
+        mSelectForum = findViewById(R.id.select_forum);
+        mForumText = (TextView) mSelectForum.findViewById(R.id.forum_text);
 
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
@@ -230,10 +266,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         mSend.setOnClickListener(this);
         mDelete.setOnClickListener(this);
         mIndicator.setOnClickListener(this);
-
-        if (!TextUtils.isEmpty(mPresetText)) {
-            mEditText.append(mPresetText);
-        }
+        mForumText.setOnClickListener(this);
 
         StateListDrawable drawable = new StateListDrawable();
         drawable.addState(new int[]{android.R.attr.state_activated}, VectorDrawable.create(this, R.drawable.ic_chevron_up));
@@ -241,6 +274,33 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         mIndicator.setDrawable(drawable);
 
         mWritableItem.setVisibility(View.GONE);
+
+        if (mShare) {
+            mMoreWritableItemsText.setVisibility(View.GONE);
+            mSelectForum.setVisibility(View.VISIBLE);
+
+            mForums = DB.getACForums(false);
+            if (mForums.size() == 0) {
+                Toast.makeText(this, R.string.cant_find_forum, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                int n = mForums.size();
+                mForumNames = new CharSequence[n];
+                for (int i = 0; i < n; i++) {
+                    mForumNames[i] = mForums.get(i).getNMBDisplayname();
+                }
+                setForum(0);
+            }
+        } else {
+            mMoreWritableItemsText.setVisibility(View.VISIBLE);
+            mSelectForum.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(mPresetText)) {
+            mEditText.append(mPresetText);
+        }
+
+        handleSelectedImageUri(mSeletedImageUri);
     }
 
     @Override
@@ -294,6 +354,12 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         }
     }
 
+    private void setForum(int position) {
+        DisplayForum forum = mForums.get(position);
+        mId = forum.getNMBId();
+        mForumText.setText(forum.getNMBDisplayname());
+    }
+
     private boolean hasACCookies() {
         SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(this);
         URL url;
@@ -307,9 +373,9 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     }
 
     private void doAction() {
-        if (mMethod == Method.Reply) {
+        if (mMethod == METHOD_REPLY) {
             doReply();
-        } else if (mMethod == Method.CreatePost) {
+        } else if (mMethod == METHOD_CREATE_POST) {
             doCreatePost();
         } else {
             Log.d(TAG, "WTF?, an unknown method in TypeSendActivity " + mMethod);
@@ -529,6 +595,17 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         new AlertDialog.Builder(this).setItems(R.array.image_dialog, listener).show();
     }
 
+    private void showForumDialog() {
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setForum(which);
+            }
+        };
+
+        new AlertDialog.Builder(this).setItems(mForumNames, listener).show();
+    }
+
     @Override
     public void onClick(View v) {
         if (mSend == v) {
@@ -562,6 +639,8 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
                 view.setVisibility(View.GONE);
                 v.setActivated(false);
             }
+        } else if (v == mForumText) {
+            showForumDialog();
         }
     }
 
@@ -676,19 +755,20 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
     private static class ActionListener implements NMBClient.Callback<Void> {
 
         private Context mContext;
-        private Method mMethod;
+        @Method
+        private int mMethod;
         private String mId;
         private String mContent;
         private Bitmap mImage;
 
-        public ActionListener(Context context, Method method, String id, String content, Bitmap image) {
+        public ActionListener(Context context, @Method int method, String id, String content, Bitmap image) {
             mContext = context.getApplicationContext();
             mMethod = method;
             mId = id;
             mContent = content;
             mImage = image;
 
-            Toast.makeText(context, method == Method.Reply ? R.string.start_reply : R.string.start_creating_post, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, method == METHOD_REPLY ? R.string.start_reply : R.string.start_creating_post, Toast.LENGTH_SHORT).show();
         }
 
         private void addToRecord(String image) {
@@ -696,7 +776,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             String recordid = null;
             String postid;
             String content = mContent;
-            if (mMethod == Method.Reply) {
+            if (mMethod == METHOD_REPLY) {
                 type = DB.AC_RECORD_REPLY;
                 postid = mId;
             } else {
@@ -712,7 +792,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         @Override
         public void onSuccess(Void result) {
             // Analysis
-            if (mMethod == Method.Reply) {
+            if (mMethod == METHOD_REPLY) {
                 Analysis.replyPost(mContext, mId, true);
             } else {
                 Analysis.createPost(mContext, mId, true);
@@ -753,9 +833,9 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
             SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mContext, mMethod == Method.Reply ? R.string.reply_successfully :
+                    Toast.makeText(mContext, mMethod == METHOD_REPLY ? R.string.reply_successfully :
                             R.string.create_post_successfully, Toast.LENGTH_SHORT).show();
-                    Messenger.getInstance().notify(Method.Reply == mMethod ? Constants.MESSENGER_ID_REPLY : Constants.MESSENGER_ID_CREATE_POST, mId);
+                    Messenger.getInstance().notify(METHOD_REPLY == mMethod ? Constants.MESSENGER_ID_REPLY : Constants.MESSENGER_ID_CREATE_POST, mId);
                 }
             }, 1000); // Wait a seconds to make sure the server has done with the post
         }
@@ -763,7 +843,7 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
         @Override
         public void onFailure(final Exception e) {
             // Analysis
-            if (mMethod == Method.Reply) {
+            if (mMethod == METHOD_REPLY) {
                 Analysis.replyPost(mContext, mId, false);
             } else {
                 Analysis.createPost(mContext, mId, false);
@@ -779,10 +859,10 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
                 @Override
                 public void run() {
                     Context context = mContext;
-                    Toast.makeText(context, context.getString(mMethod == Method.Reply ? R.string.reply_failed :
+                    Toast.makeText(context, context.getString(mMethod == METHOD_REPLY ? R.string.reply_failed :
                             R.string.create_post_failed) + "\n" +
                             ExceptionUtils.getReadableString(context, e), Toast.LENGTH_SHORT).show();
-                    Messenger.getInstance().notify(Method.Reply == mMethod ? Constants.MESSENGER_ID_REPLY : Constants.MESSENGER_ID_CREATE_POST, mId);
+                    Messenger.getInstance().notify(METHOD_REPLY == mMethod ? Constants.MESSENGER_ID_REPLY : Constants.MESSENGER_ID_CREATE_POST, mId);
                 }
             }, 1000); // Wait a seconds to make sure the server has done with the post
         }

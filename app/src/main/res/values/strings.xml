@@ -171,6 +171,7 @@
         <item quantity="other">years</item>
     </plurals>
 
+    <string name="cant_find_forum">Can\'t find any forum</string>
     <string name="more_writable_items">More writable items</string>
     <string name="type_send_name">Name</string>
     <string name="type_send_email">E-mail</string>
@@ -258,6 +259,7 @@
 
     <string name="cant_open_notice">Can\'t open NOTICE</string>
 
+    <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Can\'t find any forum</string>
     <string name="refreshing_forum_list">Refreshing forum list…</string>

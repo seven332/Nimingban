@@ -163,6 +163,7 @@
         <item quantity="other">年</item>
     </plurals>
 
+    <string name="cant_find_forum">找不到任何板块</string>
     <string name="more_writable_items">更多可填写项</string>
     <string name="type_send_name">名称</string>
     <string name="type_send_email">E-mail</string>
@@ -249,6 +250,7 @@
 
     <string name="cant_open_notice">无法打开通知文档</string>
 
+    <string name="forum">板块</string>
     <string name="sort_forums">板块排序</string>
     <string name="no_forum">找不到任何板块</string>
     <string name="refreshing_forum_list">刷新板块中</string>
