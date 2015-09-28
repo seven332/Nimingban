@@ -964,6 +964,28 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        if (mLeftDrawer == child) {
+            if (mLeftPercent == 0.0f) {
+                // No need to draw
+                return true;
+            }
+        } else if (mRightDrawer == child) {
+            if (mRightPercent == 0.0f) {
+                // No need to draw
+                return true;
+            }
+        } else if (mShadow == child) {
+            if (mLeftPercent == 0.0f && mRightPercent == 0.0f) {
+                // No need to draw
+                return true;
+            }
+        }
+
+        return super.drawChild(canvas, child, drawingTime);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
