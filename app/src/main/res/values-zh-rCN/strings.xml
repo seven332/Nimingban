@@ -79,7 +79,7 @@
 
     <string name="reply_to_comment">回复评论</string>
     <string name="copy_comment_text">复制评论文字</string>
-    <string name="send_comment_text">发送评论文字</string>
+    <string name="send_comment_text">分享评论文字</string>
     <string name="report_comment">举报评论</string>
 
     <string name="select_image">选择图片</string>
