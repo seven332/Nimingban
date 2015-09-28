@@ -22,6 +22,7 @@
         <attr name="colorDrawablePrimary" format="color"/>
         <attr name="colorPure" format="color"/>
         <attr name="colorPureInverse" format="color"/>
+        <attr name="preferenceHeaderTitleColor" format="color"/>
 
         <attr name="dark" format="boolean"/>
     </declare-styleable>

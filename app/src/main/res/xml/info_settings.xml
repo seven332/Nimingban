@@ -14,9 +14,21 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
 
-    <drawable name="green_ntr">@color/green_ntr</drawable>
-    <drawable name="transparent">@android:color/transparent</drawable>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-</resources>
+    <Preference
+        android:key="author"
+        android:title="@string/main_author"/>
+
+    <Preference
+        android:key="source"
+        android:title="@string/main_source"
+        android:summary="@string/main_source_summary"/>
+
+    <Preference
+        android:key="notice"
+        android:title="@string/main_notice"/>
+
+</PreferenceScreen>

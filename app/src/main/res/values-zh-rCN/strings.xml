@@ -181,6 +181,9 @@
     <string name="cant_save_image">无法保存图片</string>
 
     <string name="settings">设置</string>
+    <string name="display_settings_title">显示</string>
+    <string name="config_settings_title">配置</string>
+    <string name="info_settings_title">关于</string>
     <string name="main_dark_theme">夜间模式</string>
     <string name="main_pretty_time">显示易读时间</string>
     <string name="main_image_loading_strategy">图片加载策略</string>

@@ -18,8 +18,8 @@ package com.hippo.nimingban.ui;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,11 +35,13 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,13 +65,22 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-public class SettingsActivity extends AbsActivity {
+public class SettingsActivity extends AbsPreferenceActivity {
+
+    private static final int REQUEST_CODE_FRAGMENT = 0;
+
+    private static final String[] ENTRY_FRAGMENTS = {
+            DisplayFragment.class.getName(),
+            ConfigFragment.class.getName(),
+            InfoFragment.class.getName()
+    };
 
     @Override
     protected int getLightThemeResId() {
@@ -81,11 +92,32 @@ public class SettingsActivity extends AbsActivity {
         return R.style.AppTheme_Dark;
     }
 
+    private void replaceHeaderLayoutResId() {
+        try {
+            ListAdapter adapter = getListAdapter();
+            Class headerAdapterClazz = Class.forName("android.preference.PreferenceActivity$HeaderAdapter");
+            if (!headerAdapterClazz.isInstance(adapter)) {
+                return;
+            }
+
+            Field field = headerAdapterClazz.getDeclaredField("mLayoutResId");
+            field.setAccessible(true);
+            field.setInt(adapter, R.layout.item_preference_header);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MainFragement()).commit();
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+
+        replaceHeaderLayoutResId();
     }
 
     @Override
@@ -99,43 +131,187 @@ public class SettingsActivity extends AbsActivity {
         }
     }
 
-    public static final class MainFragement extends PreferenceFragment
+    @Override
+    public void onBuildHeaders(List<Header> target) {
+        loadHeadersFromResource(R.xml.settings_headers, target);
+    }
+
+    @Override
+    public void startWithFragment(String fragmentName, Bundle args,
+            Fragment resultTo, int resultRequestCode, @StringRes int titleRes,
+            @StringRes int shortTitleRes) {
+        Intent intent = onBuildStartFragmentIntent(fragmentName, args, titleRes, shortTitleRes);
+        if (resultTo == null) {
+            startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
+        } else {
+            resultTo.startActivityForResult(intent, resultRequestCode);
+        }
+    }
+
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        for (String fragment : ENTRY_FRAGMENTS) {
+            if (fragment.equals(fragmentName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_FRAGMENT) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    // A bug for SwitchPreference in pre-L
+    // http://stackoverflow.com/questions/15632215/preference-items-being-automatically-re-set
+    public static class DisplayFragment extends PreferenceFragment
             implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
-        public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
-        public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
-
         private static final String KEY_TEXT_FORMAT = "text_format";
-        private static final String KEY_AC_COOKIES = "ac_cookies";
-        private static final String KEY_SAVE_COOKIES = "save_cookies";
-        private static final String KEY_RESTORE_COOKIES = "restore_cookies";
-        private static final String KEY_AUTHOR = "author";
-        private static final String KEY_SOURCE = "source";
-        private static final String KEY_NOTICE = "notice";
-
-        private Context mContext;
 
         private SwitchPreference mPrettyTime;
         private Preference mTextFormat;
         private Preference mDynamicComments;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.display_settings);
+
+            Resources resources = getResources();
+
+            mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
+            mTextFormat = findPreference(KEY_TEXT_FORMAT);
+            mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
+
+            mPrettyTime.setOnPreferenceChangeListener(this);
+            mDynamicComments.setOnPreferenceChangeListener(this);
+
+            mTextFormat.setOnPreferenceClickListener(this);
+
+            long time = System.currentTimeMillis() - 3 * ReadableTime.HOUR_MILLIS;
+            String plain = ReadableTime.getPlainTime(time);
+            String timeAgo = ReadableTime.getTimeAgo(time);
+            mPrettyTime.setSummaryOn(resources.getString(R.string.main_pretty_time_summary, timeAgo, plain));
+            mPrettyTime.setSummaryOff(resources.getString(R.string.main_pretty_time_summary, plain, timeAgo));
+
+            updateTextFormatSummary();
+        }
+
+        private void updateTextFormatSummary() {
+            mTextFormat.setSummary(getResources().getString(
+                    R.string.main_text_format_summary, Settings.getFontSize(),
+                    Settings.getLineSpacing()));
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String key = preference.getKey();
+            if (Settings.KEY_PRETTY_TIME.equals(key)) {
+                getActivity().setResult(RESULT_OK);
+                return true;
+            } else if (Settings.KEY_DYNAMIC_COMMENTS.equals(key)) {
+                getActivity().setResult(RESULT_OK);
+                return true;
+            }
+            return true;
+        }
+
+        private class TextFormatDialogHelper implements Slider.OnSetProgressListener,
+                DialogInterface.OnClickListener {
+
+            public View mView;
+            public TextView mPreview;
+            public Slider mFontSize;
+            public Slider mLineSpacing;
+
+            @SuppressLint("InflateParams")
+            public TextFormatDialogHelper() {
+                mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_text_format, null);
+                mPreview = (TextView) mView.findViewById(R.id.preview);
+                mFontSize = (Slider) mView.findViewById(R.id.font_size);
+                mLineSpacing = (Slider) mView.findViewById(R.id.line_spacing);
+
+                int fontSize = Settings.getFontSize();
+                int lineSpacing = Settings.getLineSpacing();
+
+                mPreview.setTextSize(fontSize);
+                mPreview.setLineSpacing(LayoutUtils.dp2pix(getActivity(), lineSpacing), 1.0f);
+
+                mFontSize.setProgress(fontSize);
+                mLineSpacing.setProgress(lineSpacing);
+                mFontSize.setOnSetProgressListener(this);
+                mLineSpacing.setOnSetProgressListener(this);
+            }
+
+            public View getView() {
+                return mView;
+            }
+
+            @Override
+            public void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm) {
+                if (slider == mFontSize && byUser) {
+                    mPreview.setTextSize(newProgress);
+                } else if (slider == mLineSpacing && byUser) {
+                    mPreview.setLineSpacing(LayoutUtils.dp2pix(getActivity(), newProgress), 1.0f);
+                }
+            }
+
+            @Override
+            public void onClick(@NonNull DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    Settings.putFontSize(mFontSize.getProgress());
+                    Settings.putLineSpacing(mLineSpacing.getProgress());
+
+                    getActivity().setResult(RESULT_OK);
+
+                    updateTextFormatSummary();
+                }
+            }
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            String key = preference.getKey();
+            if (KEY_TEXT_FORMAT.equals(key)) {
+                TextFormatDialogHelper helper = new TextFormatDialogHelper();
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.text_format)
+                        .setView(helper.getView())
+                        .setPositiveButton(android.R.string.ok, helper)
+                        .show();
+            }
+
+            return true;
+        }
+    }
+
+    public static class ConfigFragment extends PreferenceFragment
+            implements Preference.OnPreferenceClickListener {
+
+        public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
+        public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
+
+        private static final String KEY_AC_COOKIES = "ac_cookies";
+        private static final String KEY_SAVE_COOKIES = "save_cookies";
+        private static final String KEY_RESTORE_COOKIES = "restore_cookies";
+
         private Preference mACCookies;
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
         private Preference mFeedId;
         private Preference mImageSaveLocation;
-        private Preference mAuthor;
-        private Preference mSource;
-        private Preference mNotice;
 
         private TimingLife mTimingLife;
 
         private final long[] mHits = new long[8];
-
-        @Override
-        public void onAttach(Activity context) {
-            super.onAttach(context);
-            mContext = context;
-        }
 
         @Override
         public void onDestroy() {
@@ -144,75 +320,26 @@ public class SettingsActivity extends AbsActivity {
         }
 
         @Override
-        public Context getContext() {
-            return mContext;
-        }
-
-        @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.main_settings);
+            addPreferencesFromResource(R.xml.config_settings);
 
-            Context context = getContext();
-            Resources resources = context.getResources();
-
-            mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
-            mTextFormat = findPreference(KEY_TEXT_FORMAT);
-            mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
             mACCookies = findPreference(KEY_AC_COOKIES);
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mFeedId = findPreference(Settings.KEY_FEED_ID);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
-            mAuthor = findPreference(KEY_AUTHOR);
-            mSource = findPreference(KEY_SOURCE);
-            mNotice = findPreference(KEY_NOTICE);
 
-            mPrettyTime.setOnPreferenceChangeListener(this);
-            mDynamicComments.setOnPreferenceChangeListener(this);
-
-            mTextFormat.setOnPreferenceClickListener(this);
             mACCookies.setOnPreferenceClickListener(this);
             mSaveCookies.setOnPreferenceClickListener(this);
             mRestoreCookies.setOnPreferenceClickListener(this);
             mFeedId.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
-            mAuthor.setOnPreferenceClickListener(this);
-            mSource.setOnPreferenceClickListener(this);
-            mNotice.setOnPreferenceClickListener(this);
 
-            updateTextFormatSummary();
-
-            long time = System.currentTimeMillis() - 3 * ReadableTime.HOUR_MILLIS;
-            String plain = ReadableTime.getPlainTime(time);
-            String timeAgo = ReadableTime.getTimeAgo(time);
-            mPrettyTime.setSummaryOn(resources.getString(R.string.main_pretty_time_summary, timeAgo, plain));
-            mPrettyTime.setSummaryOff(resources.getString(R.string.main_pretty_time_summary, plain, timeAgo));
-
-            long maxAge = ACSite.getInstance().getCookieMaxAge(context);
+            long maxAge = ACSite.getInstance().getCookieMaxAge(getActivity());
             setACCookiesSummary(maxAge);
-
             updateFeedIdSummary();
-
             updateImageSaveLocation();
-
-            mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
-        }
-
-        private void setACCookiesSummary(long maxAge) {
-            Resources resources = getContext().getResources();
-            if (maxAge == -1) {
-                mACCookies.setSummary(resources.getString(R.string.main_ac_cookies_summary_forever));
-                stopTimingLife();
-            } else if (maxAge == -2) {
-                mACCookies.setSummary(resources.getString(R.string.main_ac_cookies_summary_no));
-                stopTimingLife();
-            } else {
-                long time = maxAge * 1000;
-                mACCookies.setSummary(resources.getString(R.string.main_ac_cookies_summary_valid,
-                        ReadableTime.getTimeInterval(time)));
-                startTimingLife(time);
-            }
         }
 
         private void startTimingLife(long millisInFuture) {
@@ -229,9 +356,25 @@ public class SettingsActivity extends AbsActivity {
             }
         }
 
+        private void setACCookiesSummary(long maxAge) {
+            Resources resources = getActivity().getResources();
+            if (maxAge == -1) {
+                mACCookies.setSummary(resources.getString(R.string.main_ac_cookies_summary_forever));
+                stopTimingLife();
+            } else if (maxAge == -2) {
+                mACCookies.setSummary(resources.getString(R.string.main_ac_cookies_summary_no));
+                stopTimingLife();
+            } else {
+                long time = maxAge * 1000;
+                mACCookies.setSummary(resources.getString(R.string.main_ac_cookies_summary_valid,
+                        ReadableTime.getTimeInterval(time)));
+                startTimingLife(time);
+            }
+        }
+
         private void openDirPicker() {
             UniFile uniFile = Settings.getImageSaveLocation();
-            Intent intent = new Intent(getContext(), DirPickerActivity.class);
+            Intent intent = new Intent(getActivity(), DirPickerActivity.class);
             if (uniFile != null) {
                 intent.putExtra(DirPickerActivity.KEY_FILE_URI, uniFile.getUri());
             }
@@ -244,12 +387,12 @@ public class SettingsActivity extends AbsActivity {
             try {
                 startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR_L);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(getContext(), R.string.em_cant_find_activity, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.em_cant_find_activity, Toast.LENGTH_SHORT).show();
             }
         }
 
         private void showDirPickerDialogKK() {
-            new AlertDialog.Builder(getContext()).setMessage(R.string.pick_dir_kk)
+            new AlertDialog.Builder(getActivity()).setMessage(R.string.pick_dir_kk)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -273,7 +416,7 @@ public class SettingsActivity extends AbsActivity {
                 }
             };
 
-            new AlertDialog.Builder(getContext()).setMessage(R.string.pick_dir_l)
+            new AlertDialog.Builder(getActivity()).setMessage(R.string.pick_dir_l)
                     .setPositiveButton(android.R.string.ok, listener)
                     .setNeutralButton(R.string.document, listener)
                     .show();
@@ -288,7 +431,7 @@ public class SettingsActivity extends AbsActivity {
                     return null;
                 }
 
-                SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getContext());
+                SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getActivity());
                 List<TransportableHttpCookie> list = cookieStore.getTransportableCookies();
 
                 boolean ok;
@@ -326,8 +469,8 @@ public class SettingsActivity extends AbsActivity {
             @Override
             protected void onPostExecute(String path) {
                 mSaveCookies.setEnabled(true);
-                Context context = getContext();
-                Toast.makeText(getContext(), path == null ? context.getString(R.string.save_cookies_failed) :
+                Context context = getActivity();
+                Toast.makeText(getActivity(), path == null ? context.getString(R.string.save_cookies_failed) :
                         context.getString(R.string.save_cookies_to, path), Toast.LENGTH_SHORT).show();
             }
         }
@@ -363,7 +506,7 @@ public class SettingsActivity extends AbsActivity {
                     is = new FileInputStream(file);
                     String str = IOUtils.readString(is, "UTF-8");
                     List<TransportableHttpCookie> list = JSON.parseArray(str, TransportableHttpCookie.class);
-                    SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getContext());
+                    SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getActivity());
                     cookieStore.removeAll();
                     for (TransportableHttpCookie thc : list) {
                         URL url;
@@ -378,80 +521,21 @@ public class SettingsActivity extends AbsActivity {
                         }
                         cookieStore.add(url, cookie);
                     }
-                    NMBApplication.updateCookies(getContext());
-                    Toast.makeText(getContext(), R.string.restore_cookies_successfully, Toast.LENGTH_SHORT).show();
+                    NMBApplication.updateCookies(getActivity());
+                    Toast.makeText(getActivity(), R.string.restore_cookies_successfully, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), R.string.not_valid_cookie_file, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.not_valid_cookie_file, Toast.LENGTH_SHORT).show();
                 } finally {
                     IOUtils.closeQuietly(is);
                     // Restore timing
                     setACCookiesSummary(-2);
-                    setACCookiesSummary(ACSite.getInstance().getCookieMaxAge(getContext()));
-                }
-            }
-        }
-
-        private void updateTextFormatSummary() {
-            mTextFormat.setSummary(getContext().getResources().getString(
-                    R.string.main_text_format_summary, Settings.getFontSize(),
-                    Settings.getLineSpacing()));
-        }
-
-        private class TextFormatDialogHelper implements Slider.OnSetProgressListener,
-                DialogInterface.OnClickListener {
-
-            public View mView;
-            public TextView mPreview;
-            public Slider mFontSize;
-            public Slider mLineSpacing;
-
-            @SuppressLint("InflateParams")
-            public TextFormatDialogHelper() {
-                mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_text_format, null);
-                mPreview = (TextView) mView.findViewById(R.id.preview);
-                mFontSize = (Slider) mView.findViewById(R.id.font_size);
-                mLineSpacing = (Slider) mView.findViewById(R.id.line_spacing);
-
-                int fontSize = Settings.getFontSize();
-                int lineSpacing = Settings.getLineSpacing();
-
-                mPreview.setTextSize(fontSize);
-                mPreview.setLineSpacing(LayoutUtils.dp2pix(getContext(), lineSpacing), 1.0f);
-
-                mFontSize.setProgress(fontSize);
-                mLineSpacing.setProgress(lineSpacing);
-                mFontSize.setOnSetProgressListener(this);
-                mLineSpacing.setOnSetProgressListener(this);
-            }
-
-            public View getView() {
-                return mView;
-            }
-
-            @Override
-            public void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm) {
-                if (slider == mFontSize && byUser) {
-                    mPreview.setTextSize(newProgress);
-                } else if (slider == mLineSpacing && byUser) {
-                    mPreview.setLineSpacing(LayoutUtils.dp2pix(getContext(), newProgress), 1.0f);
-                }
-            }
-
-            @Override
-            public void onClick(@NonNull DialogInterface dialog, int which) {
-                if (which == DialogInterface.BUTTON_POSITIVE) {
-                    Settings.putFontSize(mFontSize.getProgress());
-                    Settings.putLineSpacing(mLineSpacing.getProgress());
-
-                    ((SettingsActivity) getContext()).setResult(RESULT_OK);
-
-                    updateTextFormatSummary();
+                    setACCookiesSummary(ACSite.getInstance().getCookieMaxAge(getActivity()));
                 }
             }
         }
 
         private void updateFeedIdSummary() {
-            mFeedId.setSummary(getContext().getResources().getString(
+            mFeedId.setSummary(getActivity().getResources().getString(
                     R.string.main_feed_id_summary, Settings.getFeedId()));
         }
 
@@ -496,7 +580,7 @@ public class SettingsActivity extends AbsActivity {
                         mDialog.dismiss();
                         updateFeedIdSummary();
                     } else {
-                        Toast.makeText(getContext(), R.string.invalid_feed_id, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.invalid_feed_id, Toast.LENGTH_SHORT).show();
                     }
                 } else if (mNegative == v) {
                     mEditText.setText(Settings.getRandomFeedId());
@@ -506,17 +590,19 @@ public class SettingsActivity extends AbsActivity {
             }
         }
 
+        public void updateImageSaveLocation() {
+            UniFile uniFile = Settings.getImageSaveLocation();
+            if (uniFile == null) {
+                mImageSaveLocation.setSummary(R.string.main_image_save_locatio_summary_invalid);
+            } else {
+                mImageSaveLocation.setSummary(uniFile.getUri().toString());
+            }
+        }
+
         @Override
         public boolean onPreferenceClick(Preference preference) {
             String key = preference.getKey();
-            if (KEY_TEXT_FORMAT.equals(key)) {
-                TextFormatDialogHelper helper = new TextFormatDialogHelper();
-                new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.text_format)
-                        .setView(helper.getView())
-                        .setPositiveButton(android.R.string.ok, helper)
-                        .show();
-            } else if (KEY_AC_COOKIES.equals(key)) {
+            if (KEY_AC_COOKIES.equals(key)) {
                 System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
                 mHits[mHits.length - 1] = SystemClock.uptimeMillis();
                 if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
@@ -532,16 +618,16 @@ public class SettingsActivity extends AbsActivity {
                 RestoreCookieDialogHelper helper = new RestoreCookieDialogHelper();
                 String[] list = helper.getList();
                 if (list.length == 0) {
-                    Toast.makeText(getContext(), R.string.cant_find_cookie_file, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.cant_find_cookie_file, Toast.LENGTH_SHORT).show();
                 } else {
-                    new AlertDialog.Builder(getContext())
+                    new AlertDialog.Builder(getActivity())
                             .setTitle(R.string.select_cookie_file)
                             .setItems(list, helper)
                             .show();
                 }
             } else if (Settings.KEY_FEED_ID.equals(key)) {
                 FeedIdDialogHelper helper = new FeedIdDialogHelper();
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.main_feed_id)
                         .setView(helper.getView())
                         .setPositiveButton(android.R.string.ok, null)
@@ -558,37 +644,8 @@ public class SettingsActivity extends AbsActivity {
                 } else {
                     showDirPickerDialogL();
                 }
-            } else if (KEY_AUTHOR.equals(key)) {
-                ActivityHelper.sendEmail(getActivity(),
-                        "hipposeven332$gmail.com".replaceAll("\\$", "@"),
-                        "About Nimingban",
-                        null);
-            } else if (KEY_SOURCE.equals(key)) {
-                ActivityHelper.openUri(getActivity(), Uri.parse("https://github.com/seven332/Nimingban"));
-            } else if (KEY_NOTICE.equals(key)) {
-                try {
-                    String str = IOUtils.readString(getContext().getResources().getAssets().open("NOTICE"), "UTF-8");
-                    View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_notice, null);
-                    TextView tv = (TextView) view.findViewById(R.id.text);
-                    tv.setText(str);
-                    new AlertDialog.Builder(getContext()).setView(view).show();
-                } catch (IOException e) {
-                    Toast.makeText(getContext(), R.string.cant_open_notice, Toast.LENGTH_SHORT).show();
-                }
             }
-            return false;
-        }
 
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            String key = preference.getKey();
-            if (Settings.KEY_PRETTY_TIME.equals(key)) {
-                getActivity().setResult(RESULT_OK);
-                return true;
-            } else if (Settings.KEY_DYNAMIC_COMMENTS.equals(key)) {
-                getActivity().setResult(RESULT_OK);
-                return true;
-            }
             return true;
         }
 
@@ -598,40 +655,31 @@ public class SettingsActivity extends AbsActivity {
             switch (requestCode) {
                 case REQUEST_CODE_PICK_IMAGE_DIR:
                     if (resultCode == RESULT_OK) {
-                        UniFile uniFile = UniFile.fromUri(getContext(), data.getData());
+                        UniFile uniFile = UniFile.fromUri(getActivity(), data.getData());
                         if (uniFile != null) {
                             Settings.putImageSaveLocation(uniFile);
                             updateImageSaveLocation();
                         } else {
-                            Toast.makeText(getContext(), R.string.cant_get_image_save_location, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.cant_get_image_save_location, Toast.LENGTH_SHORT).show();
                         }
                     }
                     break;
                 case REQUEST_CODE_PICK_IMAGE_DIR_L:
                     if (resultCode == RESULT_OK) {
                         Uri treeUri = data.getData();
-                        getContext().getContentResolver().takePersistableUriPermission(
+                        getActivity().getContentResolver().takePersistableUriPermission(
                                 treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        UniFile uniFile = UniFile.fromTreeUri(getContext(), treeUri);
+                        UniFile uniFile = UniFile.fromTreeUri(getActivity(), treeUri);
                         if (uniFile != null) {
                             Settings.putImageSaveLocation(uniFile);
                             updateImageSaveLocation();
                         } else {
-                            Toast.makeText(getContext(), R.string.cant_get_image_save_location, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.cant_get_image_save_location, Toast.LENGTH_SHORT).show();
                         }
                     }
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-
-        public void updateImageSaveLocation() {
-            UniFile uniFile = Settings.getImageSaveLocation();
-            if (uniFile == null) {
-                mImageSaveLocation.setSummary(R.string.main_image_save_locatio_summary_invalid);
-            } else {
-                mImageSaveLocation.setSummary(uniFile.getUri().toString());
             }
         }
 
@@ -649,6 +697,58 @@ public class SettingsActivity extends AbsActivity {
             @Override
             public void onFinish() {
             }
+        }
+    }
+
+    public static class InfoFragment extends PreferenceFragment
+            implements Preference.OnPreferenceClickListener {
+
+        private static final String KEY_AUTHOR = "author";
+        private static final String KEY_SOURCE = "source";
+        private static final String KEY_NOTICE = "notice";
+
+        private Preference mAuthor;
+        private Preference mSource;
+        private Preference mNotice;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.info_settings);
+
+            mAuthor = findPreference(KEY_AUTHOR);
+            mSource = findPreference(KEY_SOURCE);
+            mNotice = findPreference(KEY_NOTICE);
+
+            mAuthor.setOnPreferenceClickListener(this);
+            mSource.setOnPreferenceClickListener(this);
+            mNotice.setOnPreferenceClickListener(this);
+
+            mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            String key = preference.getKey();
+            if (KEY_AUTHOR.equals(key)) {
+                ActivityHelper.sendEmail(getActivity(),
+                        "hipposeven332$gmail.com".replaceAll("\\$", "@"),
+                        "About Nimingban",
+                        null);
+            } else if (KEY_SOURCE.equals(key)) {
+                ActivityHelper.openUri(getActivity(), Uri.parse("https://github.com/seven332/Nimingban"));
+            } else if (KEY_NOTICE.equals(key)) {
+                try {
+                    String str = IOUtils.readString(getActivity().getResources().getAssets().open("NOTICE"), "UTF-8");
+                    View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_notice, null);
+                    TextView tv = (TextView) view.findViewById(R.id.text);
+                    tv.setText(str);
+                    new AlertDialog.Builder(getActivity()).setView(view).show();
+                } catch (IOException e) {
+                    Toast.makeText(getActivity(), R.string.cant_open_notice, Toast.LENGTH_SHORT).show();
+                }
+            }
+            return false;
         }
     }
 }

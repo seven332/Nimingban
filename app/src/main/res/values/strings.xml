@@ -189,6 +189,9 @@
     <string name="cant_save_image">Can\'t save the image</string>
 
     <string name="settings">Settings</string>
+    <string name="display_settings_title">Display</string>
+    <string name="config_settings_title">Config</string>
+    <string name="info_settings_title">About</string>
     <string name="main_dark_theme">Dark theme</string>
     <string name="main_pretty_time">Display pretty time</string>
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>

@@ -22,11 +22,14 @@
     <!-- secondary_drawable_light   26% -->
     <!-- primary_drawable_dark     100% -->
     <!-- secondary_drawable_dark    30% -->
+    <!-- 54% -->
     <color name="primary_drawable_light">#8a000000</color>
+    <!-- 70% -->
     <color name="primary_drawable_dark">#b3ffffff</color>
 
     <!-- Text -->
     <color name="primary_text_default_light">#de000000</color>
+    <color name="primary_text_default_light_inverse">#ffffffff</color>
     <color name="primary_text_disabled_light">#39000000</color>
     <color name="secondary_text_default_light">#8a000000</color>
     <color name="secondary_text_disabled_light">#24000000</color>
