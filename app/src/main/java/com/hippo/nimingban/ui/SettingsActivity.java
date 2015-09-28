@@ -38,8 +38,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -92,6 +94,26 @@ public class SettingsActivity extends AbsPreferenceActivity {
         return R.style.AppTheme_Dark;
     }
 
+    private class FakeLayoutInflater extends LayoutInflater {
+
+        private LayoutInflater mInflater;
+
+        protected FakeLayoutInflater(LayoutInflater inflater) {
+            super(null);
+            mInflater = inflater;
+        }
+
+        @Override
+        public LayoutInflater cloneInContext(Context newContext) {
+            return null;
+        }
+
+        @Override
+        public View inflate(int resource, ViewGroup root, boolean attachToRoot) {
+            return mInflater.inflate(R.layout.item_preference_header, root, attachToRoot);
+        }
+    }
+
     private void replaceHeaderLayoutResId() {
         try {
             ListAdapter adapter = getListAdapter();
@@ -100,14 +122,42 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 return;
             }
 
-            Field field = headerAdapterClazz.getDeclaredField("mLayoutResId");
-            field.setAccessible(true);
-            field.setInt(adapter, R.layout.item_preference_header);
+            boolean ok = false;
+
+            try {
+                Field field = headerAdapterClazz.getDeclaredField("mLayoutResId");
+                field.setAccessible(true);
+                field.setInt(adapter, R.layout.item_preference_header);
+
+                ok = true;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+
+            if (!ok) {
+                try {
+                    Field field = headerAdapterClazz.getDeclaredField("mInflater");
+                    field.setAccessible(true);
+                    field.set(adapter, new FakeLayoutInflater((LayoutInflater) field.get(adapter)));
+
+                    ok = true;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (ClassCastException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (ok) {
+                getListView().setDivider(getResources().getDrawable(R.drawable.transparent));
+                getListView().setDividerHeight(0);
+            }
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
