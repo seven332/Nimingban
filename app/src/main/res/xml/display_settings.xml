@@ -21,7 +21,8 @@
     <com.hippo.preference.FixedSwitchPreference
         android:key="pretty_time"
         android:title="@string/main_pretty_time"
-        android:defaultValue="true"/>
+        android:defaultValue="true"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
     <Preference
         android:key="text_format"
@@ -32,7 +33,8 @@
         android:title="@string/main_dynamic_comments"
         android:summaryOn="@string/main_dynamic_comments_summary_on"
         android:summaryOff="@string/main_dynamic_comments_summary_off"
-        android:defaultValue="true"/>
+        android:defaultValue="true"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
     <ListPreference
         android:key="image_loading_strategy"
@@ -47,6 +49,7 @@
         android:title="@string/main_image_loading_strategy_2"
         android:summaryOff="@string/main_image_loading_strategy_2_summary_off"
         android:summaryOn="@string/main_image_loading_strategy_2_summary_on"
-        android:defaultValue="false"/>
+        android:defaultValue="false"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
 </PreferenceScreen>
