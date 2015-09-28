@@ -83,7 +83,6 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
-import com.hippo.nimingban.widget.GestureView;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
@@ -293,12 +292,12 @@ public final class ListActivity extends AbsActivity
 
     private void showLeftDrawerGuide() {
         new GuideHelper.Builder(this)
-                .setGesture(GestureView.GESTURE_SWIPE_RIGHT)
                 .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
-                .setGesturePosition(Gravity.LEFT | Gravity.CENTER_VERTICAL)
                 .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setMessagePosition(Gravity.LEFT)
                 .setMessage(getString(R.string.swipe_right_open_menu))
                 .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
                 .setOnDissmisListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -309,19 +308,34 @@ public final class ListActivity extends AbsActivity
 
     private void showRightDrawerGuide() {
         new GuideHelper.Builder(this)
-                .setGesture(GestureView.GESTURE_SWIPE_LEFT)
                 .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
-                .setGesturePosition(Gravity.RIGHT | Gravity.CENTER_VERTICAL)
                 .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setMessagePosition(Gravity.RIGHT)
                 .setMessage(getString(R.string.swipe_left_open_forum_list))
                 .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showToolbarGuide();
+                    }
+                }).show();
+    }
+
+    private void showToolbarGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setMessagePosition(Gravity.TOP)
+                .setMessage(getString(R.string.double_click_toolbar_refresh))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
                 .setOnDissmisListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Settings.putGuideListActivity(false);
                     }
-                })
-                .show();
+                }).show();
     }
 
     @Override

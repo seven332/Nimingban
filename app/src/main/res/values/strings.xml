@@ -31,6 +31,7 @@
 
     <string name="swipe_right_open_menu">Swipe right to open menu</string>
     <string name="swipe_left_open_forum_list">Swipe left to open forum list</string>
+    <string name="double_click_toolbar_refresh">Double click toolbar to refresh</string>
     <string name="get_it">Get it</string>
 
     <string name="common_posts">Common threads</string>

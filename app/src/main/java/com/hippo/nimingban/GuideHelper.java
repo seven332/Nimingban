@@ -40,11 +40,9 @@ public class GuideHelper {
 
         private Activity mActivity;
         private int mPadding;
-        private int mGesture;
         private int mColor;
-        private int mGravity = Gravity.NO_GRAVITY;
-        private int mX;
-        private int mY;
+        @GuideView.MessagePosition
+        private int mMessagePosition = Gravity.TOP;
         private int mBackgroundColor;
         private CharSequence mMessage;
         private CharSequence mButton;
@@ -59,29 +57,18 @@ public class GuideHelper {
             return this;
         }
 
-        public Builder setGesture(int gesture) {
-            mGesture = gesture;
-            return this;
-        }
-
         public Builder setColor(int color) {
             mColor = color;
             return this;
         }
 
-        public Builder setGesturePosition(int gravity) {
-            mGravity = gravity;
-            return this;
-        }
-
-        public Builder setGesturePosition(int x, int y) {
-            mX = x;
-            mY = y;
-            return this;
-        }
-
         public Builder setBackgroundColor(int backgroundColor) {
             mBackgroundColor = backgroundColor;
+            return this;
+        }
+
+        public Builder setMessagePosition(@GuideView.MessagePosition int position) {
+            mMessagePosition = position;
             return this;
         }
 
@@ -103,12 +90,10 @@ public class GuideHelper {
         public void show() {
             ViewGroup parent = getParent(mActivity);
             GuideView guideView = new GuideView(mActivity);
-            guideView.setGesture(mGesture);
             guideView.setColor(mColor);
             guideView.setPadding(mPadding, mPadding, mPadding, mPadding);
-            guideView.setGesturePosition(mGravity);
-            guideView.setGesturePosition(mX, mY);
             guideView.setBackgroundColor(mBackgroundColor);
+            guideView.setMessagePosition(mMessagePosition);
             guideView.setMessage(mMessage);
             guideView.setButton(mButton);
             guideView.setOnDissmisListener(mOnDissmisListener);

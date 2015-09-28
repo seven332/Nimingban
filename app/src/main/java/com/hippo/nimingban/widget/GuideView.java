@@ -17,31 +17,35 @@
 package com.hippo.nimingban.widget;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.hippo.drawable.RoundRectDrawable;
 import com.hippo.nimingban.R;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
 
-public class GuideView extends ViewGroup {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    private GestureView mGestureView;
+public class GuideView extends FrameLayout {
+
+    @IntDef({Gravity.LEFT, Gravity.RIGHT, Gravity.TOP})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface MessagePosition {}
+
     private TextView mMessage;
     private TextView mButton;
 
-    private int mGestureViewLeft;
-    private int mGestureViewTop;
-    private int mMessageLeft;
-    private int mMessageTop;
-
-    private int mGravity = Gravity.NO_GRAVITY;
-    private int mX;
-    private int mY;
+    private RoundRectDrawable mMessageBg;
+    private ColorDrawable mButtonBg;
 
     public GuideView(Context context) {
         super(context);
@@ -62,33 +66,33 @@ public class GuideView extends ViewGroup {
         setClickable(true);
         setSoundEffectsEnabled(false);
 
-        LayoutInflater inflater = LayoutInflater.from(context);
-        mGestureView = new GestureView(context);
-        mMessage = (TextView) inflater.inflate(R.layout.guide_message, null);
-        mButton = (TextView) inflater.inflate(R.layout.guide_button, null);
+        LayoutInflater.from(context).inflate(R.layout.widget_guide, this);
+        mMessage = (TextView) findViewById(R.id.guide_message);
+        mButton = (TextView) findViewById(R.id.guide_button);
 
-        addView(mGestureView);
-        addView(mMessage);
-        addView(mButton);
+        mMessageBg = new RoundRectDrawable(Color.BLACK, LayoutUtils.dp2pix(context, 4));
+        mButtonBg = new ColorDrawable(Color.BLACK);
+        mMessage.setBackgroundDrawable(mMessageBg);
+        mButton.setBackgroundDrawable(mButtonBg);
     }
 
-    public void setGesturePosition(int gravity) {
-        mGravity = gravity;
-    }
+    public void setMessagePosition(@MessagePosition int gravity) {
+        LayoutParams lp = (LayoutParams) mMessage.getLayoutParams();
 
-    public void setGesturePosition(int x, int y) {
-        mX = x;
-        mY = y;
-    }
+        if (gravity == Gravity.LEFT) {
+            lp.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+        } else if (gravity == Gravity.RIGHT) {
+            lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+        } else if (gravity == Gravity.TOP) {
+            lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        }
 
-    public void setGesture(int gesture) {
-        mGestureView.setGesture(gesture);
+        mMessage.setLayoutParams(lp);
     }
 
     public void setColor(int color) {
-        mGestureView.setColor(color);
-        mMessage.setBackgroundColor(color);
-        mButton.setBackgroundColor(color);
+        mMessageBg.setColor(color);
+        mButtonBg.setColor(color);
     }
 
     public void setMessage(CharSequence text) {
@@ -109,94 +113,5 @@ public class GuideView extends ViewGroup {
                 }
             }
         });
-    }
-
-    private void calcGesturePosition(int widthMeasureSpec, int heightMeasureSpec) {
-        int gestureWidth = mGestureView.getMeasuredWidth();
-        int gestureHeight = mGestureView.getMeasuredHeight();
-
-        if (mGravity == Gravity.NO_GRAVITY) {
-            mGestureViewLeft = mX - (gestureWidth / 2);
-            mGestureViewTop = mY - (gestureHeight / 2);
-        } else {
-            int width = MeasureSpec.getSize(widthMeasureSpec);
-            int paddingLeft = getPaddingLeft();
-            int paddingRight = getPaddingRight();
-            if ((mGravity & Gravity.LEFT) == Gravity.LEFT) {
-                mGestureViewLeft = paddingLeft;
-            } else if ((mGravity & Gravity.RIGHT) == Gravity.RIGHT) {
-                mGestureViewLeft = width - paddingRight - gestureWidth;
-            } else {
-                mGestureViewLeft = ((width - paddingLeft - paddingRight) / 2) + paddingLeft - (gestureWidth / 2);
-            }
-
-            int height = MeasureSpec.getSize(heightMeasureSpec);
-            int paddingTop = getPaddingTop();
-            int paddingBottom = getPaddingBottom();
-            if ((mGravity & Gravity.TOP) == Gravity.TOP) {
-                mGestureViewTop = paddingTop;
-            } else if ((mGravity & Gravity.BOTTOM) == Gravity.BOTTOM) {
-                mGestureViewTop = height - paddingBottom - gestureHeight;
-            } else {
-                mGestureViewTop = ((height - paddingTop - paddingBottom) / 2) + paddingTop - (gestureHeight / 2);
-            }
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        mGestureView.measure(widthMeasureSpec, heightMeasureSpec);
-        calcGesturePosition(widthMeasureSpec, heightMeasureSpec);
-
-        // TODO message position
-        int paddingLeft = getPaddingLeft();
-        int paddingRight = getPaddingRight();
-        int paddingTop = getPaddingTop();
-        int paddingBottom = getPaddingBottom();
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        int messageWidthSpec = 0;
-        if (mGestureView.getGesture() == GestureView.GESTURE_SWIPE_RIGHT) {
-            mMessageLeft = mGestureViewLeft + mGestureView.getMeasuredWidth() +
-                    LayoutUtils.dp2pix(getContext(), 24);
-            messageWidthSpec = MeasureSpec.makeMeasureSpec(
-                    width - mMessageLeft - paddingRight, MeasureSpec.EXACTLY);
-        } else if (mGestureView.getGesture() == GestureView.GESTURE_SWIPE_LEFT) {
-            mMessageLeft = paddingLeft;
-            messageWidthSpec = MeasureSpec.makeMeasureSpec(
-                    width - paddingLeft - paddingRight - mGestureView.getMeasuredWidth() -
-                            LayoutUtils.dp2pix(getContext(), 24), MeasureSpec.EXACTLY);
-        }
-        int messageHeightSpec = MeasureSpec.makeMeasureSpec(
-                height - paddingTop - paddingBottom, MeasureSpec.AT_MOST);
-        mMessage.measure(messageWidthSpec, messageHeightSpec);
-        mMessageTop = ((height - paddingTop - paddingBottom) / 2) + paddingTop - (mMessage.getMeasuredHeight() / 2);
-
-        mButton.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
-
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        mGestureView.layout(
-                mGestureViewLeft, mGestureViewTop,
-                mGestureViewLeft + mGestureView.getMeasuredWidth(),
-                mGestureViewTop + mGestureView.getMeasuredHeight());
-
-        mMessage.layout(mMessageLeft, mMessageTop,
-                mMessageLeft + mMessage.getMeasuredWidth(),
-                mMessageTop + mMessage.getMeasuredHeight());
-
-        int width = getWidth();
-        int height = getHeight();
-        int buttonWidth = mButton.getMeasuredWidth();
-        int buttonHeight = mButton.getMeasuredHeight();
-        int padding = LayoutUtils.dp2pix(getContext(), 24);
-        int buttonRight = width - padding;
-        int buttonBottom = height - padding;
-        mButton.layout(buttonRight - buttonWidth, buttonBottom - buttonHeight,
-                buttonRight, buttonBottom);
     }
 }
