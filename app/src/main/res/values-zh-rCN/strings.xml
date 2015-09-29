@@ -215,6 +215,7 @@
     <string name="main_author">作者</string>
     <string name="main_source">源码</string>
     <string name="main_notice">通知文档</string>
+    <string name="main_version">版本</string>
 
     <string name="text_format">文本格式</string>
     <string name="font_size">字体大小</string>
@@ -253,6 +254,8 @@
     <string name="text_format_preview">我能吞下大雕而不伤身体\n我能吞下黑妹而不伤身体\n我能吞下芦苇而不伤身体</string>
 
     <string name="cant_open_notice">无法打开通知文档</string>
+
+    <string name="da_diao_tip">请勿再次点击</string>
 
     <string name="forum">板块</string>
     <string name="sort_forums">板块排序</string>

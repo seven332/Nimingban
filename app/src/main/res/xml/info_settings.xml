@@ -31,4 +31,8 @@
         android:key="notice"
         android:title="@string/main_notice"/>
 
+    <Preference
+        android:key="version"
+        android:title="@string/main_version"/>
+
 </PreferenceScreen>

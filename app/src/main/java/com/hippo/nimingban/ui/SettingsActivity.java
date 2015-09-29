@@ -24,7 +24,11 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -61,6 +65,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -756,10 +761,35 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_SOURCE = "source";
         private static final String KEY_NOTICE = "notice";
+        private static final String KEY_VERSION = "version";
 
         private Preference mAuthor;
         private Preference mSource;
         private Preference mNotice;
+        private Preference mVersion;
+
+        private int mOriginalVolume;
+        private int mMaxVolume = -1;
+        private int mPlaying = 0;
+        private boolean mShowTip = true;
+        private final long[] mHits = new long[8];
+
+        // Keep volume when play sound
+        private boolean mHasPostSetVolumeRunnable = false;
+        private Runnable mSetVolumeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mMaxVolume == -1) {
+                    mHasPostSetVolumeRunnable = false;
+                    return;
+                }
+
+                final AudioManager mAudioManager = (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume, 0);
+
+                SimpleHandler.getInstance().postDelayed(this, 500);
+            }
+        };
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -769,12 +799,21 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mAuthor = findPreference(KEY_AUTHOR);
             mSource = findPreference(KEY_SOURCE);
             mNotice = findPreference(KEY_NOTICE);
+            mVersion = findPreference(KEY_VERSION);
 
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
             mNotice.setOnPreferenceClickListener(this);
+            mVersion.setOnPreferenceClickListener(this);
 
             mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
+
+            try {
+                PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+                mVersion.setSummary(packageInfo.versionName);
+            } catch (PackageManager.NameNotFoundException e) {
+                // Ignore
+            }
         }
 
         @Override
@@ -797,6 +836,64 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 } catch (IOException e) {
                     Toast.makeText(getActivity(), R.string.cant_open_notice, Toast.LENGTH_SHORT).show();
                 }
+            } else if (KEY_VERSION.equals(key)) {
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+                mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+                if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
+                    Arrays.fill(mHits, 0);
+
+                    if (mShowTip) {
+                        mShowTip = false;
+                        Toast.makeText(getActivity(), R.string.da_diao_tip, Toast.LENGTH_SHORT).show();
+                    } else {
+                        // TODO play sound in service to avoid user force close it in recent app list
+                        try {
+                            final AudioManager mAudioManager = (AudioManager) getActivity().getSystemService(AUDIO_SERVICE);
+                            MediaPlayer mp = new MediaPlayer();
+                            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            mp.setDataSource(getActivity(), Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.tnnaii_h_island_c));
+                            mp.prepare();
+                            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mp) {
+                                    mPlaying--;
+
+                                    if (mPlaying == 0) {
+                                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mOriginalVolume, 0);
+                                        mMaxVolume = -1;
+                                    }
+                                }
+                            });
+
+                            if (mPlaying == 0) {
+                                mOriginalVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                            }
+
+                            final int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                            // For headset on, can't set max volume directly because of ear protection
+                            // Just try getting max volume for head set
+                            for (int i = maxVolume; i > 0; i--) {
+                                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, i, 0);
+                                if (i == mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)) {
+                                    mMaxVolume = i;
+                                    break;
+                                }
+                                mMaxVolume = -1;
+                            }
+
+                            mPlaying++;
+
+                            mp.start();
+
+                            if (!mHasPostSetVolumeRunnable) {
+                                mHasPostSetVolumeRunnable = SimpleHandler.getInstance().postDelayed(mSetVolumeRunnable, 500);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return true;
             }
             return false;
         }
