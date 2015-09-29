@@ -36,7 +36,8 @@ public class FixedSwitchPreference extends SwitchPreference {
 
     static {
         try {
-            sSyncSummaryViewMethod = TwoStatePreference.class.getMethod("syncSummaryView", View.class);
+            sSyncSummaryViewMethod = TwoStatePreference.class.getDeclaredMethod("syncSummaryView", View.class);
+            sSyncSummaryViewMethod.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             sSyncSummaryViewMethod = null;
