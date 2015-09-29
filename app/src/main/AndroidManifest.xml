@@ -156,6 +156,11 @@
 
         </receiver>
 
+        <service
+            android:name="com.hippo.nimingban.service.DaDiaoService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/da_diao_service"/>
+
         <meta-data android:name="TD_APP_ID" android:value="B8168DD03CD9EF62B476CEDFBC3FB52D"/>
         <meta-data android:name="TD_CHANNEL_ID" android:value="nimingban"/>
 
