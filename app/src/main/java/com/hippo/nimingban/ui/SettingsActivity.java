@@ -33,7 +33,6 @@ import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
@@ -56,6 +55,7 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.network.TransportableHttpCookie;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.preference.FixedSwitchPreference;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.widget.Slider;
@@ -226,7 +226,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_TEXT_FORMAT = "text_format";
 
-        private SwitchPreference mPrettyTime;
+        private FixedSwitchPreference mPrettyTime;
         private Preference mTextFormat;
         private Preference mDynamicComments;
 
@@ -237,7 +237,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             Resources resources = getResources();
 
-            mPrettyTime = (SwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
+            mPrettyTime = (FixedSwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mTextFormat = findPreference(KEY_TEXT_FORMAT);
             mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
 

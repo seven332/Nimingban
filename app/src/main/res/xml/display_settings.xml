@@ -16,9 +16,11 @@
   -->
 
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
         android:key="pretty_time"
         android:title="@string/main_pretty_time"
         android:defaultValue="true"
@@ -29,10 +31,11 @@
         android:title="@string/main_text_format"/>
 
     <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
         android:key="dynamic_comments"
         android:title="@string/main_dynamic_comments"
-        android:summaryOn="@string/main_dynamic_comments_summary_on"
-        android:summaryOff="@string/main_dynamic_comments_summary_off"
+        app:summaryOn="@string/main_dynamic_comments_summary_on"
+        app:summaryOff="@string/main_dynamic_comments_summary_off"
         android:defaultValue="true"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
@@ -45,10 +48,11 @@
         android:defaultValue="0"/>
 
     <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
         android:key="image_loading_strategy_2"
         android:title="@string/main_image_loading_strategy_2"
-        android:summaryOff="@string/main_image_loading_strategy_2_summary_off"
-        android:summaryOn="@string/main_image_loading_strategy_2_summary_on"
+        app:summaryOff="@string/main_image_loading_strategy_2_summary_off"
+        app:summaryOn="@string/main_image_loading_strategy_2_summary_on"
         android:defaultValue="false"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 

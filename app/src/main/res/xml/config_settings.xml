@@ -16,7 +16,8 @@
   -->
 
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:key="ac_cookies"
@@ -37,10 +38,11 @@
         android:title="@string/main_feed_id"/>
 
     <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
         android:key="save_image_auto"
         android:title="@string/main_save_image_auto"
-        android:summaryOn="@string/main_save_image_auto_summary_on"
-        android:summaryOff="@string/main_save_image_auto_summary_off"
+        app:summaryOn="@string/main_save_image_auto_summary_on"
+        app:summaryOff="@string/main_save_image_auto_summary_off"
         android:defaultValue="false"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
@@ -49,6 +51,7 @@
         android:title="@string/main_image_save_location"/>
 
     <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
         android:key="analysis"
         android:title="@string/main_analysis"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>

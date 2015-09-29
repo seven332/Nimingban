@@ -16,9 +16,12 @@
 
 package com.hippo.preference;
 
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.preference.SwitchPreference;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.preference.TwoStatePreference;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -30,7 +33,7 @@ import com.hippo.nimingban.R;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class FixedSwitchPreference extends SwitchPreference {
+public class FixedSwitchPreference extends TwoStatePreference {
 
     private static Method sSyncSummaryViewMethod;
 
@@ -43,6 +46,10 @@ public class FixedSwitchPreference extends SwitchPreference {
             sSyncSummaryViewMethod = null;
         }
     }
+
+    // Switch text for on and off states
+    private CharSequence mSwitchOn;
+    private CharSequence mSwitchOff;
 
     private final Listener mListener = new Listener();
 
@@ -62,14 +69,33 @@ public class FixedSwitchPreference extends SwitchPreference {
 
     public FixedSwitchPreference(Context context) {
         super(context);
+        init(context, null, 0, 0);
     }
 
     public FixedSwitchPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context, attrs, 0, 0);
     }
 
     public FixedSwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, 0);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FixedSwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    public void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FixedSwitchPreference, defStyleAttr, defStyleRes);
+        setSummaryOn(a.getString(R.styleable.FixedSwitchPreference_summaryOn));
+        setSummaryOff(a.getString(R.styleable.FixedSwitchPreference_summaryOff));
+        setSwitchTextOn(a.getString(R.styleable.FixedSwitchPreference_switchTextOn));
+        setSwitchTextOff(a.getString(R.styleable.FixedSwitchPreference_switchTextOff));
+        setDisableDependentsState(a.getBoolean(R.styleable.FixedSwitchPreference_disableDependentsState, false));
+        a.recycle();
     }
 
     @Override
@@ -87,8 +113,8 @@ public class FixedSwitchPreference extends SwitchPreference {
 
             if (checkableView instanceof SwitchCompat) {
                 final SwitchCompat switchView = (SwitchCompat) checkableView;
-                switchView.setTextOn(getSummaryOn());
-                switchView.setTextOff(getSummaryOff());
+                switchView.setTextOn(mSwitchOn);
+                switchView.setTextOff(mSwitchOff);
                 switchView.setOnCheckedChangeListener(mListener);
             }
         }
@@ -102,5 +128,62 @@ public class FixedSwitchPreference extends SwitchPreference {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    /**
+     * Set the text displayed on the switch widget in the on state.
+     * This should be a very short string; one word if possible.
+     *
+     * @param onText Text to display in the on state
+     */
+    public void setSwitchTextOn(CharSequence onText) {
+        mSwitchOn = onText;
+        notifyChanged();
+    }
+
+    /**
+     * Set the text displayed on the switch widget in the off state.
+     * This should be a very short string; one word if possible.
+     *
+     * @param offText Text to display in the off state
+     */
+    public void setSwitchTextOff(CharSequence offText) {
+        mSwitchOff = offText;
+        notifyChanged();
+    }
+
+    /**
+     * Set the text displayed on the switch widget in the on state.
+     * This should be a very short string; one word if possible.
+     *
+     * @param resId The text as a string resource ID
+     */
+    public void setSwitchTextOn(@StringRes int resId) {
+        setSwitchTextOn(getContext().getString(resId));
+    }
+
+    /**
+     * Set the text displayed on the switch widget in the off state.
+     * This should be a very short string; one word if possible.
+     *
+     * @param resId The text as a string resource ID
+     */
+    public void setSwitchTextOff(@StringRes int resId) {
+        setSwitchTextOff(getContext().getString(resId));
+    }
+
+    /**
+     * @return The text that will be displayed on the switch widget in the on state
+     */
+    public CharSequence getSwitchTextOn() {
+        return mSwitchOn;
+    }
+
+    /**
+     * @return The text that will be displayed on the switch widget in the off state
+     */
+    public CharSequence getSwitchTextOff() {
+        return mSwitchOff;
     }
 }
