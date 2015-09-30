@@ -130,6 +130,7 @@ public final class ListActivity extends AbsActivity
 
     private MenuItem mRule;
     private MenuItem mCreatePost;
+    private MenuItem mRefresh;
     private MenuItem mSortForumsMenu;
 
     private @Nullable Forum mCurrentForum;
@@ -209,6 +210,7 @@ public final class ListActivity extends AbsActivity
                 if (mRightDrawer == view) {
                     setMenuItemVisible(mRule, true);
                     setMenuItemVisible(mCreatePost, true);
+                    setMenuItemVisible(mRefresh, true);
                     setMenuItemVisible(mSortForumsMenu, false);
                 }
             }
@@ -227,6 +229,7 @@ public final class ListActivity extends AbsActivity
 
                     setMenuItemVisible(mRule, false);
                     setMenuItemVisible(mCreatePost, false);
+                    setMenuItemVisible(mRefresh, false);
                     setMenuItemVisible(mSortForumsMenu, true);
                 }
             }
@@ -597,15 +600,18 @@ public final class ListActivity extends AbsActivity
         getMenuInflater().inflate(R.menu.activity_list, menu);
         mRule = menu.findItem(R.id.action_rule);
         mCreatePost = menu.findItem(R.id.action_create_post);
+        mRefresh = menu.findItem(R.id.action_refresh);
         mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
 
         if (mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
             mRule.setVisible(false);
             mCreatePost.setVisible(false);
+            mRefresh.setVisible(false);
             mSortForumsMenu.setVisible(true);
         } else {
             mRule.setVisible(true);
             mCreatePost.setVisible(true);
+            mRefresh.setVisible(true);
             mSortForumsMenu.setVisible(false);
         }
 
@@ -683,6 +689,9 @@ public final class ListActivity extends AbsActivity
                     intent.putExtra(TypeSendActivity.KEY_ID, mCurrentForum.getNMBId());
                     startActivity(intent);
                 }
+                return true;
+            case R.id.action_refresh:
+                mPostHelper.refresh();
                 return true;
             case R.id.action_sort_forums:
                 intent = new Intent(this, SortForumsActivity.class);

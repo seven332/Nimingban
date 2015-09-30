@@ -32,6 +32,12 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh"
+        android:icon="@drawable/ic_refresh_dark_x24"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/action_sort_forums"
         android:title="@string/sort_forums"
         android:icon="@drawable/ic_sort_dark_x24"
