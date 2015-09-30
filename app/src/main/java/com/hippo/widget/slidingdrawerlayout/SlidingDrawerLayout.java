@@ -1204,8 +1204,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 if (mShadowLeft != null && drawLeft) {
                     int right = mLeftDrawer.getRight();
                     final int shadowWidth = mShadowLeft.getIntrinsicWidth();
-                    mShadowLeft.setBounds(right, mLeftDrawer.getTop(),
-                            right + shadowWidth, mLeftDrawer.getBottom());
+                    mShadowLeft.setBounds(right, 0,
+                            right + shadowWidth, getHeight());
                     mShadowLeft.setAlpha((int) (0xff * mLeftPercent));
                     mShadowLeft.draw(c);
                 }
@@ -1214,8 +1214,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 if (mShadowRight != null && drawRight) {
                     int left = mRightDrawer.getLeft();
                     final int shadowWidth = mShadowRight.getIntrinsicWidth();
-                    mShadowRight.setBounds(left - shadowWidth, mRightDrawer.getTop(),
-                            left, mRightDrawer.getBottom());
+                    mShadowRight.setBounds(left - shadowWidth, 0,
+                            left, getHeight());
                     mShadowRight.setAlpha((int) (0xff * mRightPercent));
                     mShadowRight.draw(c);
                 }
