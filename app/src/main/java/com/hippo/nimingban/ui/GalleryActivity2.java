@@ -619,6 +619,10 @@ public class GalleryActivity2 extends SwipeActivity {
             }
 
             file = mDir.createFile(mName);
+            if (file == null) {
+                return null;
+            }
+
             boolean ok = true;
 
             OutputStream os = null;
