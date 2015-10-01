@@ -16,7 +16,10 @@
   -->
 
 <vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:width="24dp"
+    android:height="24dp"
     app:width="24dp"
     app:height="24dp"
     app:viewportWidth="24"
