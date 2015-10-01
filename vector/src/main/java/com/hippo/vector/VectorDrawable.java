@@ -382,6 +382,11 @@ public class VectorDrawable extends Drawable {
                 throw new XmlPullParserException("No start tag found");
             }
 
+            final String name = parser.getName();
+            if (!"vector".equals(name)) {
+                throw new IllegalStateException("It is not vector");
+            }
+
             final VectorDrawable drawable = new VectorDrawable();
             drawable.inflate(context, parser, attrs);
 
