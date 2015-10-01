@@ -73,7 +73,7 @@ public class ACReference extends Reply {
             mUser = Html.fromHtml(userId);
         }
 
-        mContent = ACPost.generateContent(content, "", title, "");
+        mContent = ACPost.generateContent(content, "", title, "", email);
 
         // Make it could hit cache
         if (!TextUtils.isEmpty(thumb)) {

@@ -36,7 +36,6 @@ import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.yorozuya.NumberUtils;
-import com.hippo.yorozuya.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -240,17 +239,17 @@ public class ACPost extends Post {
         return builder == null ? content : builder;
     }
 
-    public static CharSequence handleTitle(CharSequence content, String title) {
+    public static CharSequence insertHeadBold(CharSequence content, String str) {
         SpannableStringBuilder builder = null;
-        if (!TextUtils.isEmpty(title) && !NO_TITLE.equals(title)) {
+        if (!TextUtils.isEmpty(str)) {
             if (content instanceof SpannableStringBuilder) {
                 builder = (SpannableStringBuilder) content;
             } else {
                 builder = new SpannableStringBuilder(content);
             }
 
-            int length = title.length();
-            builder.insert(0, title);
+            int length = str.length();
+            builder.insert(0, str);
             builder.insert(length, "\r\n");
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
             builder.setSpan(styleSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -259,25 +258,15 @@ public class ACPost extends Post {
         return builder == null ? content : builder;
     }
 
+    public static CharSequence handleTitle(CharSequence content, String title) {
+        return insertHeadBold(content, NO_TITLE.equals(title) ? null : title);
+    }
+
     public static CharSequence handleName(CharSequence content, String name) {
-        SpannableStringBuilder builder = null;
-        if (!TextUtils.isEmpty(name) && !NO_NAME.equals(name)) {
-            if (content instanceof SpannableStringBuilder) {
-                builder = (SpannableStringBuilder) content;
-            } else {
-                builder = new SpannableStringBuilder(content);
-            }
-
-            name = StringUtils.unescapeXml(name);
-
-            int length = name.length();
-            builder.insert(0, name);
-            builder.insert(length, "\r\n");
-            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
-            builder.setSpan(styleSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return builder == null ? content : builder;
+        return insertHeadBold(content, NO_NAME.equals(name) ? null : name);
+    }
+    public static CharSequence handleEmail(CharSequence content, String email) {
+        return insertHeadBold(content, email);
     }
 
     public static CharSequence generateContent(String content) {
@@ -291,8 +280,9 @@ public class ACPost extends Post {
         return charSequence;
     }
 
-    public static CharSequence generateContent(String content, String sage, String title, String name) {
+    public static CharSequence generateContent(String content, String sage, String title, String name, String email) {
         CharSequence charSequence = generateContent(content);
+        charSequence = handleEmail(charSequence, email);
         charSequence = handleName(charSequence, name);
         charSequence = handleTitle(charSequence, title);
         charSequence = handleSage(charSequence, sage);
@@ -349,7 +339,7 @@ public class ACPost extends Post {
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
-        mContent = generateContent(content, sage, title, name);
+        mContent = generateContent(content, sage, title, name, email);
 
         if (!TextUtils.isEmpty(img)) {
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
