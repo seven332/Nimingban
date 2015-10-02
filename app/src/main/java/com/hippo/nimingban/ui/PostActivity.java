@@ -187,6 +187,7 @@ public final class PostActivity extends SwipeActivity
         mRecyclerView = mContentLayout.getRecyclerView();
 
         mReplyHelper = new ReplyHelper();
+        mReplyHelper.setEmptyString(getString(R.string.not_found));
         mContentLayout.setHelper(mReplyHelper);
 
         mReplyAdapter = new ReplyAdapter();

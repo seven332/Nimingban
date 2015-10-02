@@ -24,18 +24,6 @@
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/center_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
-
-    <TextView
-        android:id="@+id/right_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
-
-    <TextView
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,14 +34,5 @@
         android:maxLines="8"
         android:ellipsize="end"
         android:textColorLink="?attr/colorAccent"/>
-
-    <com.hippo.nimingban.widget.LoadImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/thumb"
-        android:layout_width="@dimen/list_thumb_width"
-        android:layout_height="@dimen/list_thumb_height"
-        android:layout_below="@id/content"
-        android:layout_marginTop="8dp"
-        app:retryType="longClick"/>
 
 </merge>

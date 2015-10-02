@@ -47,7 +47,6 @@ public class ACReply extends Reply {
 
     String mPostId;
     private long mTime;
-    private String mTimeStr;
     private CharSequence mUser;
     private CharSequence mContent;
     private String mThumb;

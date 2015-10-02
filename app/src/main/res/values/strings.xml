@@ -60,7 +60,8 @@
     <string name="go_to_post">Go to thread</string>
     <string name="keyword_empty">Keyword is empty</string>
     <string name="not_found">Nobody here but us chickens</string>
-    <string name="search_title">Search - %s   from Bing</string>
+    <string name="search_title">Search - %s</string>
+    <string name="bing_search_title">Search - %s   from Bing</string>
 
     <string name="add_feed">Add feed</string>
     <string name="remove_feed">Remove feed</string>

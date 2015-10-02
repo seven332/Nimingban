@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +31,10 @@ import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
-import com.hippo.nimingban.client.ac.data.ACSearchItem;
+import com.hippo.nimingban.client.ac.data.ACBingSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
-import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
-import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
@@ -46,9 +43,9 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
+public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
 
-    public static final String ACTION_SEARCH = "com.hippo.nimingban.ui.SearchActivity.action.SEARCH";
+    public static final String ACTION_SEARCH = "com.hippo.nimingban.ui.BingSearchActivity.action.SEARCH";
 
     public static final String KEY_KEYWORD = "keyword";
 
@@ -82,7 +79,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
             String keyword = intent.getStringExtra(KEY_KEYWORD);
             if (keyword != null) {
                 mKeyword = keyword;
-                setTitle(getString(R.string.search_title, keyword));
+                setTitle(getString(R.string.bing_search_title, keyword));
                 return true;
             }
         }
@@ -101,7 +98,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_bing_search);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         ContentLayout contentLayout = (ContentLayout) findViewById(R.id.content_layout);
@@ -159,46 +156,21 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
         Intent intent = new Intent(this, PostActivity.class);
         intent.setAction(PostActivity.ACTION_SITE_ID);
         intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
-        intent.putExtra(PostActivity.KEY_ID, mSearchHelper.getDataAt(position).getNMBPostId());
+        intent.putExtra(PostActivity.KEY_ID, mSearchHelper.getDataAt(position).id);
         startActivity(intent);
         return true;
     }
 
-    private class SearchHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class SearchHolder extends RecyclerView.ViewHolder {
 
         public TextView leftText;
-        public TextView centerText;
-        public TextView rightText;
-        public TextView content;
-        public LoadImageView thumb;
+        private TextView content;
 
         public SearchHolder(View itemView) {
             super(itemView);
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
-            centerText = (TextView) itemView.findViewById(R.id.center_text);
-            rightText = (TextView) itemView.findViewById(R.id.right_text);
             content = (TextView) itemView.findViewById(R.id.content);
-            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
-
-            thumb.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position >= 0 && position < mSearchHelper.size()) {
-                ACSearchItem item = mSearchHelper.getDataAt(position);
-                String image = item.getNMBImageUrl();
-                if (!TextUtils.isEmpty(image)) {
-                    Intent intent = new Intent(SearchActivity.this, GalleryActivity2.class);
-                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity2.KEY_SITE, item.getNMBSite().getId());
-                    intent.putExtra(GalleryActivity2.KEY_ID, item.getNMBId());
-                    intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
-                    SearchActivity.this.startActivity(intent);
-                }
-            }
         }
     }
 
@@ -206,42 +178,17 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
 
         @Override
         public SearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new SearchHolder(getLayoutInflater().inflate(R.layout.item_search, parent, false));
+            return new SearchHolder(getLayoutInflater().inflate(R.layout.item_bing_search, parent, false));
         }
 
         @Override
         public void onBindViewHolder(SearchHolder holder, int position) {
-            ACSearchItem item = mSearchHelper.getDataAt(position);
-            holder.leftText.setText(item.getNMBDisplayUsername());
-            holder.centerText.setText("No." + item.getNMBId());
-            holder.rightText.setText(ReadableTime.getDisplayTime(item.getNMBTime()));
-            holder.content.setText(item.getNMBDisplayContent());
-
-            String thumbUrl = item.getNMBThumbUrl();
-
-            boolean showImage;
-            boolean loadFromNetwork;
-            int ils = Settings.getImageLoadingStrategy();
-            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
-                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(SearchActivity.this))) {
-                showImage = true;
-                loadFromNetwork = true;
-            } else {
-                showImage = Settings.getImageLoadingStrategy2();
-                loadFromNetwork = false;
-            }
-
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
-                holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.unload();
-                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
-            } else {
-                holder.thumb.setVisibility(View.GONE);
-                holder.thumb.unload();
-            }
+            ACBingSearchItem item = mSearchHelper.getDataAt(position);
+            holder.leftText.setText("No." + item.id);
+            holder.content.setText(item.context);
 
             holder.content.setTextSize(Settings.getFontSize());
-            holder.content.setLineSpacing(LayoutUtils.dp2pix(SearchActivity.this, Settings.getLineSpacing()), 1.0f);
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(BingSearchActivity.this, Settings.getLineSpacing()), 1.0f);
         }
 
         @Override
@@ -250,7 +197,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
         }
     }
 
-    private class SearchHelper extends ContentLayout.ContentHelper<ACSearchItem> {
+    private class SearchHelper extends ContentLayout.ContentHelper<ACBingSearchItem> {
 
         @Override
         protected void getPageData(int taskId, int type, int page) {
@@ -262,7 +209,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
             NMBRequest request = new NMBRequest();
             mNMBRequest = request;
             request.setSite(ACSite.getInstance());
-            request.setMethod(NMBClient.METHOD_SEARCH);
+            request.setMethod(NMBClient.METHOD_BING_SEARCH);
             request.setArgs(mKeyword, page);
             request.setCallback(new SearchListener(taskId, type, page));
             mNMBClient.execute(request);
@@ -270,7 +217,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
 
         @Override
         protected Context getContext() {
-            return SearchActivity.this;
+            return BingSearchActivity.this;
         }
 
         @Override
@@ -289,7 +236,7 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
         }
     }
 
-    private class SearchListener implements NMBClient.Callback<List<ACSearchItem>> {
+    private class SearchListener implements NMBClient.Callback<List<ACBingSearchItem>> {
 
         private int mTaskId;
         private int mTaskType;
@@ -302,13 +249,18 @@ public class SearchActivity extends AbsActivity implements EasyRecyclerView.OnIt
         }
 
         @Override
-        public void onSuccess(List<ACSearchItem> result) {
+        public void onSuccess(List<ACBingSearchItem> result) {
             // Clear
             mNMBRequest = null;
 
             if (result.isEmpty()) {
                 mSearchHelper.onGetEmptyData(mTaskId);
-                mSearchHelper.setPages(mPage);
+                if (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
+                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS) {
+                    mSearchHelper.setPages(mPage);
+                } else {
+                    mSearchHelper.setPages(0);
+                }
             } else {
                 mSearchHelper.onGetPageData(mTaskId, result);
                 mSearchHelper.setPages(Integer.MAX_VALUE);

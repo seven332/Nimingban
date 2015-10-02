@@ -45,6 +45,8 @@ public class ACUrl {
 
     public static final String API_COMMON_POSTS = "http://nimingban.herokuapp.com/common_posts";
 
+    public static final String API_SEARCH = HOST + "/Api/search";
+
     public static String getPostListUrl(String forum, int page) {
         return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
     }
@@ -80,5 +82,9 @@ public class ACUrl {
 
     public static String getBingSearchUrl(String keyword, int page) throws UnsupportedEncodingException {
         return "http://www.bing.com/search?q=" + URLEncoder.encode(keyword, "UTF-8") + "+site%3ah.nimingban.com&first=" + (page * 10 + 1);
+    }
+
+    public static String getSearchUrl(String keyword, int page) throws UnsupportedEncodingException {
+        return API_SEARCH + "?q=" + URLEncoder.encode(keyword, "UTF-8") + "&pageNo=" + (page + 1);
     }
 }

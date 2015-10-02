@@ -24,11 +24,13 @@ import android.util.Pair;
 import android.webkit.MimeTypeMap;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hippo.io.FileInputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
+import com.hippo.nimingban.client.ac.data.ACBingSearchItem;
 import com.hippo.nimingban.client.ac.data.ACFeed;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
@@ -647,21 +649,21 @@ public class ACEngine {
 
     private static Pattern URL_PATTERN = Pattern.compile("http://h.nimingban.com/t/(\\d+)");
 
-    public static Call prepareSearch(OkHttpClient okHttpClient, String keyword, int page) throws UnsupportedEncodingException {
+    public static Call prepareBingSearch(OkHttpClient okHttpClient, String keyword, int page) throws UnsupportedEncodingException {
         String url = ACUrl.getBingSearchUrl(keyword, page);
         Log.d(TAG, url);
         Request request = new GoodRequestBuilder(url).build();
         return okHttpClient.newCall(request);
     }
 
-    public static List<ACSearchItem> doSearch(Call call) throws Exception {
+    public static List<ACBingSearchItem> doBingSearch(Call call) throws Exception {
         try {
             Response response = call.execute();
 
             Document doc = Jsoup.parse(response.body().byteStream(), "UTF-8", "http://www.bing.com/");
             Elements elements = doc.getElementsByClass("b_algo");
 
-            List<ACSearchItem> result = new ArrayList<>();
+            List<ACBingSearchItem> result = new ArrayList<>();
             for (int i = 0, n = elements.size(); i < n; i++) {
                 Element element = elements.get(i);
 
@@ -687,7 +689,7 @@ public class ACEngine {
                 }
                 String content = contents.get(0).text();
 
-                ACSearchItem item = new ACSearchItem();
+                ACBingSearchItem item = new ACBingSearchItem();
                 item.id = id;
                 item.context = content;
                 result.add(item);
@@ -702,4 +704,37 @@ public class ACEngine {
             }
         }
     }
+
+    public static Call prepareSearch(OkHttpClient okHttpClient, String keyword, int page) throws UnsupportedEncodingException {
+        String url = ACUrl.getSearchUrl(keyword, page);
+        Log.d(TAG, url);
+        Request request = new GoodRequestBuilder(url).build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static List<ACSearchItem> doSearch(Call call) throws Exception {
+        try {
+            Response response = call.execute();
+            String body = response.body().string();
+
+            JSONArray ja = JSON.parseObject(body).getJSONObject("hits").getJSONArray("hits");
+            List<ACSearchItem> result = new ArrayList<>();
+            for (int i = 0, n = ja.size(); i < n; i++) {
+                JSONObject jo = ja.getJSONObject(i);
+                ACSearchItem item = jo.getObject("_source", ACSearchItem.class);
+                item.id = jo.getString("_id");
+                item.generate(ACSite.getInstance());
+                result.add(item);
+            }
+
+            return result;
+        } catch (IOException e) {
+            if (call.isCanceled()) {
+                throw new CancelledException();
+            } else {
+                throw e;
+            }
+        }
+    }
+
 }
