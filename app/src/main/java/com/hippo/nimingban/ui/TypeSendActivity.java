@@ -40,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -333,11 +334,13 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
                 }
             };
 
-            new AlertDialog.Builder(this).setMessage(R.string.save_text_draft)
+            AlertDialog dialog = new AlertDialog.Builder(this).setMessage(R.string.save_text_draft)
                     .setPositiveButton(R.string.save, listener)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(R.string.dont_save, listener)
                     .show();
+            Button button = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+            button.setTextColor(getResources().getColor(R.color.red_500));
         } else {
             super.onBackPressed();
         }

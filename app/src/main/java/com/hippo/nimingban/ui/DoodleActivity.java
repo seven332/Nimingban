@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.hippo.app.ProgressDialogBuilder;
@@ -178,11 +179,13 @@ public final class DoodleActivity extends AbsActivity implements View.OnClickLis
             }
         };
 
-        new AlertDialog.Builder(this).setMessage(R.string.save_doodle)
+        AlertDialog dialog = new AlertDialog.Builder(this).setMessage(R.string.save_doodle)
                 .setPositiveButton(R.string.save, listener)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setNeutralButton(R.string.dont_save, listener)
                 .show();
+        Button button = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+        button.setTextColor(getResources().getColor(R.color.red_500));
     }
 
     @Override
