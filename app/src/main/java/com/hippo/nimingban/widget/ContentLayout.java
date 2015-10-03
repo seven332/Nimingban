@@ -17,6 +17,7 @@
 package com.hippo.nimingban.widget;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -35,6 +36,7 @@ import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.recyclerview.FastScroller;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.IntList;
@@ -51,8 +53,11 @@ public class ContentLayout extends FrameLayout {
 
     private ProgressView mProgressView;
     private ViewGroup mTipView;
+    private ViewGroup mContentView;
+
     private RefreshLayout mRefreshLayout;
     private EasyRecyclerView mRecyclerView;
+    private FastScroller mFastScroller;
     private View mImageView;
     private TextView mTextView;
 
@@ -79,13 +84,19 @@ public class ContentLayout extends FrameLayout {
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this);
 
-        mProgressView = (ProgressView) getChildAt(0);
-        mTipView = (ViewGroup) getChildAt(1);
-        mRefreshLayout = (RefreshLayout) getChildAt(2);
-        mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
+        mProgressView = (ProgressView) findViewById(R.id.progress);
+        mTipView = (ViewGroup) findViewById(R.id.tip);
+        mContentView = (ViewGroup) findViewById(R.id.content_view);
+
+        mRefreshLayout = (RefreshLayout) mContentView.findViewById(R.id.refresh_layout);
+        mFastScroller = (FastScroller) mContentView.findViewById(R.id.fast_scroller);
+        mRecyclerView = (EasyRecyclerView) mRefreshLayout.findViewById(R.id.recycler_view);
         mImageView = mTipView.getChildAt(0);
         mTextView = (TextView) mTipView.getChildAt(1);
         SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
+
+        mFastScroller.attachToRecyclerView(mRecyclerView);
+        mFastScroller.setHandlerDrawable(new ColorDrawable(ResourcesUtils.getAttrColor(context, R.attr.colorAccent)));
 
         imageView.setDrawable(VectorDrawable.create(context, R.drawable.ic_empty));
 
@@ -148,6 +159,8 @@ public class ContentLayout extends FrameLayout {
 
         private ProgressView mProgressView;
         private ViewGroup mTipView;
+        private ViewGroup mContentView;
+
         private RefreshLayout mRefreshLayout;
         private EasyRecyclerView mRecyclerView;
         private View mImageView;
@@ -254,12 +267,14 @@ public class ContentLayout extends FrameLayout {
 
             mProgressView = contentLayout.mProgressView;
             mTipView = contentLayout.mTipView;
+            mContentView = contentLayout.mContentView;
+
             mRefreshLayout = contentLayout.mRefreshLayout;
             mRecyclerView = contentLayout.mRecyclerView;
             mImageView = contentLayout.mImageView;
             mTextView = contentLayout.mTextView;
 
-            mViewTransition = new ViewTransition(mRefreshLayout, mProgressView, mTipView);
+            mViewTransition = new ViewTransition(mContentView, mProgressView, mTipView);
             mViewTransition.showView(2, false);
 
             mRecyclerView.addOnScrollListener(mOnScrollListener);
