@@ -65,8 +65,6 @@ public class NMBClient {
 
     public static final int METHOD_CREATE_POST = 8;
 
-    public static final int METHOD_BING_SEARCH = 9;
-
     public static final int METHOD_SEARCH = 10;
 
     private final ThreadPoolExecutor mRequestThreadPool;
@@ -302,21 +300,6 @@ public class NMBClient {
             }
         }
 
-        private Object bingSearch(Object... params) throws Exception {
-            switch (mSite.getId()) {
-                case Site.AC:
-                    Call call = ACEngine.prepareBingSearch(mOkHttpClient, (String) params[0], (Integer) params[1]);
-                    if (!mStop) {
-                        mCall = call;
-                        return ACEngine.doBingSearch(call);
-                    } else {
-                        throw new CancelledException();
-                    }
-                default:
-                    return new IllegalStateException("Can't detect site " + mSite);
-            }
-        }
-
         private Object search(Object... params) throws Exception {
             switch (mSite.getId()) {
                 case Site.AC:
@@ -368,8 +351,6 @@ public class NMBClient {
                         return delFeed(params);
                     case METHOD_CREATE_POST:
                         return createPost(params);
-                    case METHOD_BING_SEARCH:
-                        return bingSearch(params);
                     case METHOD_SEARCH:
                         return search(params);
                     default:

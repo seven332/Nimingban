@@ -30,7 +30,6 @@ import com.hippo.io.FileInputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
-import com.hippo.nimingban.client.ac.data.ACBingSearchItem;
 import com.hippo.nimingban.client.ac.data.ACFeed;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
@@ -61,7 +60,6 @@ import com.squareup.okhttp.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -72,8 +70,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ACEngine {
 
@@ -644,64 +640,6 @@ public class ACEngine {
             isp.close();
             isp.release();
             IOUtils.closeQuietly(os);
-        }
-    }
-
-    private static Pattern URL_PATTERN = Pattern.compile("http://h.nimingban.com/t/(\\d+)");
-
-    public static Call prepareBingSearch(OkHttpClient okHttpClient, String keyword, int page) throws UnsupportedEncodingException {
-        String url = ACUrl.getBingSearchUrl(keyword, page);
-        Log.d(TAG, url);
-        Request request = new GoodRequestBuilder(url).build();
-        return okHttpClient.newCall(request);
-    }
-
-    public static List<ACBingSearchItem> doBingSearch(Call call) throws Exception {
-        try {
-            Response response = call.execute();
-
-            Document doc = Jsoup.parse(response.body().byteStream(), "UTF-8", "http://www.bing.com/");
-            Elements elements = doc.getElementsByClass("b_algo");
-
-            List<ACBingSearchItem> result = new ArrayList<>();
-            for (int i = 0, n = elements.size(); i < n; i++) {
-                Element element = elements.get(i);
-
-                Elements urls = element.getElementsByTag("a");
-                if (urls.size() <= 0) {
-                    continue;
-                }
-                Matcher matcher = URL_PATTERN.matcher(urls.attr("href"));
-                String id;
-                if (matcher.find()) {
-                    id = matcher.group(1);
-                } else {
-                    continue;
-                }
-
-                Elements captions = elements.get(i).getElementsByClass("b_caption");
-                if (captions.size() <= 0) {
-                    continue;
-                }
-                Elements contents = captions.get(0).getElementsByTag("p");
-                if (contents.size() <= 0) {
-                    continue;
-                }
-                String content = contents.get(0).text();
-
-                ACBingSearchItem item = new ACBingSearchItem();
-                item.id = id;
-                item.context = content;
-                result.add(item);
-            }
-
-            return result;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
         }
     }
 

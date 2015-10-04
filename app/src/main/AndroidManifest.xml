@@ -133,13 +133,6 @@
             android:screenOrientation="unspecified"/>
 
         <activity
-            android:name="com.hippo.nimingban.ui.BingSearchActivity"
-            android:label="@string/search"
-            android:theme="@style/AppTheme.NoActionBar.Translucent"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
             android:name="com.hippo.nimingban.ui.SearchActivity"
             android:label="@string/search"
             android:theme="@style/AppTheme.NoActionBar.Translucent"
