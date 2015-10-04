@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -39,6 +40,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
@@ -50,6 +52,8 @@ public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.
     public static final String KEY_KEYWORD = "keyword";
 
     private NMBClient mNMBClient;
+
+    private ContentLayout mContentLayout;
 
     private SearchAdapter mSearchAdapter;
     private SearchHelper mSearchHelper;
@@ -101,12 +105,17 @@ public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.
         setContentView(R.layout.activity_bing_search);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
-        ContentLayout contentLayout = (ContentLayout) findViewById(R.id.content_layout);
-        EasyRecyclerView recyclerView = contentLayout.getRecyclerView();
+        mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
+        EasyRecyclerView recyclerView = mContentLayout.getRecyclerView();
 
         mSearchHelper = new SearchHelper();
         mSearchHelper.setEmptyString(getString(R.string.not_found));
-        contentLayout.setHelper(mSearchHelper);
+        mContentLayout.setHelper(mSearchHelper);
+        if (Settings.getFastScroller()) {
+            mContentLayout.showFastScroll();
+        } else {
+            mContentLayout.hideFastScroll();
+        }
 
         mSearchAdapter = new SearchAdapter();
         recyclerView.setAdapter(mSearchAdapter);
@@ -128,15 +137,34 @@ public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.
         }
 
         mSearchHelper.firstRefresh();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_FAST_SCROLLER, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_FAST_SCROLLER, this);
+
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
             mNMBRequest = null;
+        }
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (Constants.MESSENGER_ID_FAST_SCROLLER == id) {
+            if (obj instanceof Boolean) {
+                if ((Boolean) obj) {
+                    mContentLayout.showFastScroll();
+                } else {
+                    mContentLayout.hideFastScroll();
+                }
+            }
+        } else {
+            super.onReceive(id, obj);
         }
     }
 

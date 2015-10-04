@@ -127,6 +127,16 @@ public class ContentLayout extends FrameLayout {
         helper.init(this);
     }
 
+    public void showFastScroll() {
+        if (!mFastScroller.isAttached()) {
+            mFastScroller.attachToRecyclerView(mRecyclerView);
+        }
+    }
+
+    public void hideFastScroll() {
+        mFastScroller.detachedFromRecyclerView();
+    }
+
     public void setFitPaddingTop(int fitPaddingTop) {
         // RecyclerView
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerViewOriginTop + fitPaddingTop, mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());

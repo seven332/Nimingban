@@ -24,6 +24,7 @@ public final class Constants {
     public static final int MESSENGER_ID_UPDATE_RECORD;
     public static final int MESSENGER_ID_REPLY;
     public static final int MESSENGER_ID_CREATE_POST;
+    public static final int MESSENGER_ID_FAST_SCROLLER;
 
     static {
         Messenger messenger = Messenger.getInstance();
@@ -31,5 +32,6 @@ public final class Constants {
         MESSENGER_ID_UPDATE_RECORD = messenger.newId();
         MESSENGER_ID_REPLY = messenger.newId();
         MESSENGER_ID_CREATE_POST = messenger.newId();
+        MESSENGER_ID_FAST_SCROLLER = messenger.newId();
     }
 }

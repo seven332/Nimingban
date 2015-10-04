@@ -36,7 +36,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
-import com.hippo.conaco.Conaco;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -53,6 +53,7 @@ import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -63,11 +64,11 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
 
     private static final String TAG = FeedActivity.class.getSimpleName();
 
-    private Conaco mConaco;
     private NMBClient mNMBClient;
 
     private FeedHelper mFeedHelper;
 
+    private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
@@ -90,18 +91,22 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mConaco = NMBApplication.getConaco(this);
         mNMBClient = NMBApplication.getNMBClient(this);
 
         setContentView(R.layout.activity_feed);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
-        ContentLayout contentLayout = (ContentLayout) findViewById(R.id.content_layout);
-        mRecyclerView = contentLayout.getRecyclerView();
+        mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
+        mRecyclerView = mContentLayout.getRecyclerView();
 
         mFeedHelper = new FeedHelper();
         mFeedHelper.setEmptyString(getString(R.string.no_feed));
-        contentLayout.setHelper(mFeedHelper);
+        mContentLayout.setHelper(mFeedHelper);
+        if (Settings.getFastScroller()) {
+            mContentLayout.showFastScroll();
+        } else {
+            mContentLayout.hideFastScroll();
+        }
 
         // Layout Manager
         int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
@@ -150,11 +155,15 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
 
         mFeedHelper.firstRefresh();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_FAST_SCROLLER, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_FAST_SCROLLER, this);
 
         if (mRecyclerViewSwipeManager != null) {
             mRecyclerViewSwipeManager.release();
@@ -181,6 +190,21 @@ public final class FeedActivity extends AbsActivity implements EasyRecyclerView.
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
             mNMBRequest = null;
+        }
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (Constants.MESSENGER_ID_FAST_SCROLLER == id) {
+            if (obj instanceof Boolean) {
+                if ((Boolean) obj) {
+                    mContentLayout.showFastScroll();
+                } else {
+                    mContentLayout.hideFastScroll();
+                }
+            }
+        } else {
+            super.onReceive(id, obj);
         }
     }
 

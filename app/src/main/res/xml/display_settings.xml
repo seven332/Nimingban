@@ -39,6 +39,15 @@
         android:defaultValue="true"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:key="fast_scroller"
+        android:title="@string/main_fast_scroller"
+        app:summaryOn="@string/main_fast_scroller_summary_on"
+        app:summaryOff="@string/main_fast_scroller_summary_off"
+        android:defaultValue="true"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
+
     <ListPreference
         android:key="image_loading_strategy"
         android:title="@string/main_image_loading_strategy"

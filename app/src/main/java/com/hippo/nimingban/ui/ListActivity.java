@@ -249,6 +249,11 @@ public final class ListActivity extends AbsActivity
         mPostHelper = new PostHelper();
         mPostHelper.setEmptyString(getString(R.string.no_post));
         mContentLayout.setHelper(mPostHelper);
+        if (Settings.getFastScroller()) {
+            mContentLayout.showFastScroll();
+        } else {
+            mContentLayout.hideFastScroll();
+        }
 
         mPostAdapter = new PostAdapter();
         mRecyclerView.setAdapter(mPostAdapter);
@@ -283,6 +288,7 @@ public final class ListActivity extends AbsActivity
         checkForAppStart();
 
         Messenger.getInstance().register(Constants.MESSENGER_ID_CREATE_POST, this);
+        Messenger.getInstance().register(Constants.MESSENGER_ID_FAST_SCROLLER, this);
 
         // Check permission
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -382,6 +388,7 @@ public final class ListActivity extends AbsActivity
         super.onDestroy();
 
         Messenger.getInstance().unregister(Constants.MESSENGER_ID_CREATE_POST, this);
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_FAST_SCROLLER, this);
 
         if (mUpdateRequest != null) {
             mUpdateRequest.cancel();
@@ -544,6 +551,14 @@ public final class ListActivity extends AbsActivity
                 int currentPage = mPostHelper.getPageForBottom();
                 if (currentPage == 0) {
                     mPostHelper.refresh();
+                }
+            }
+        } else if (Constants.MESSENGER_ID_FAST_SCROLLER == id) {
+            if (obj instanceof Boolean) {
+                if ((Boolean) obj) {
+                    mContentLayout.showFastScroll();
+                } else {
+                    mContentLayout.hideFastScroll();
                 }
             }
         } else {

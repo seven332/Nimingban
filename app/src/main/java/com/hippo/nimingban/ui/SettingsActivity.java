@@ -49,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -64,6 +65,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -232,6 +234,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private FixedSwitchPreference mPrettyTime;
         private Preference mTextFormat;
         private Preference mDynamicComments;
+        private FixedSwitchPreference mFastScroller;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -243,9 +246,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mPrettyTime = (FixedSwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mTextFormat = findPreference(KEY_TEXT_FORMAT);
             mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
+            mFastScroller = (FixedSwitchPreference) findPreference(Settings.KEY_FAST_SCROLLER);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
             mDynamicComments.setOnPreferenceChangeListener(this);
+            mFastScroller.setOnPreferenceChangeListener(this);
 
             mTextFormat.setOnPreferenceClickListener(this);
 
@@ -272,6 +277,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 return true;
             } else if (Settings.KEY_DYNAMIC_COMMENTS.equals(key)) {
                 getActivity().setResult(RESULT_OK);
+                return true;
+            } else if (Settings.KEY_FAST_SCROLLER.equals(key)) {
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_FAST_SCROLLER, newValue);
                 return true;
             }
             return true;

@@ -178,6 +178,10 @@ public class FastScroller extends View {
         mDraggable = draggable;
     }
 
+    public boolean isAttached() {
+        return mRecyclerView != null;
+    }
+
     public void attachToRecyclerView(RecyclerView recyclerView) {
         if (recyclerView == null) {
             return;
@@ -257,6 +261,9 @@ public class FastScroller extends View {
         }
         mAdapter = null;
         mAdapterDataObserver = null;
+
+        setAlpha(0.0f);
+        setVisibility(INVISIBLE);
     }
 
     @Override

@@ -152,6 +152,9 @@ public final class Settings {
     public static final String KEY_DYNAMIC_COMMENTS = "dynamic_comments";
     public static final boolean DEFAULT_DYNAMIC_COMMENTS = true;
 
+    public static final String KEY_FAST_SCROLLER = "fast_scroller";
+    public static final boolean DEFAULT_FAST_SCROLLER = true;
+
     public static final String KEY_FEED_ID = "feed_id";
     public static final String DEFAULT_FEED_ID = null;
 
@@ -206,6 +209,10 @@ public final class Settings {
 
     public static boolean getDynamicComments() {
         return getBoolean(KEY_DYNAMIC_COMMENTS, DEFAULT_DYNAMIC_COMMENTS);
+    }
+
+    public static boolean getFastScroller() {
+        return getBoolean(KEY_FAST_SCROLLER, DEFAULT_FAST_SCROLLER);
     }
 
     public static String getFeedId() {

@@ -189,6 +189,11 @@ public final class PostActivity extends SwipeActivity
         mReplyHelper = new ReplyHelper();
         mReplyHelper.setEmptyString(getString(R.string.not_found));
         mContentLayout.setHelper(mReplyHelper);
+        if (Settings.getFastScroller()) {
+            mContentLayout.showFastScroll();
+        } else {
+            mContentLayout.hideFastScroll();
+        }
 
         mReplyAdapter = new ReplyAdapter();
         mRecyclerView.setAdapter(mReplyAdapter);
@@ -204,6 +209,7 @@ public final class PostActivity extends SwipeActivity
         mReplyHelper.firstRefresh();
 
         Messenger.getInstance().register(Constants.MESSENGER_ID_REPLY, this);
+        Messenger.getInstance().register(Constants.MESSENGER_ID_FAST_SCROLLER, this);
     }
 
     @Override
@@ -211,6 +217,7 @@ public final class PostActivity extends SwipeActivity
         super.onDestroy();
 
         Messenger.getInstance().unregister(Constants.MESSENGER_ID_REPLY, this);
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_FAST_SCROLLER, this);
 
         if (mNMBRequest != null) {
             mNMBRequest.cancel();
@@ -234,6 +241,14 @@ public final class PostActivity extends SwipeActivity
                     // It is the last page, refresh it
                     mReplyHelper.doGetData(ContentLayout.ContentHelper.TYPE_REFRESH_PAGE,
                             currentPage, ContentLayout.ContentHelper.REFRESH_TYPE_FOOTER);
+                }
+            }
+        } else if (Constants.MESSENGER_ID_FAST_SCROLLER == id) {
+            if (obj instanceof Boolean) {
+                if ((Boolean) obj) {
+                    mContentLayout.showFastScroll();
+                } else {
+                    mContentLayout.hideFastScroll();
                 }
             }
         } else {
