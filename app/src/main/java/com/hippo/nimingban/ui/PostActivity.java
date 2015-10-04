@@ -154,12 +154,12 @@ public final class PostActivity extends SwipeActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_Transparent;
+        return R.style.AppTheme_NoActionBar_Translucent_Transparent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_Transparent;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent_Transparent;
     }
 
     @Override
@@ -174,7 +174,8 @@ public final class PostActivity extends SwipeActivity
         // Analysis
         Analysis.readPost(PostActivity.this, mId);
 
-        setContentView(R.layout.activity_post);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_post);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         if (mId != null) {

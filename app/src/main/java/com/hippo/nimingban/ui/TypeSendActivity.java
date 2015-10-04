@@ -90,7 +90,7 @@ import java.net.URL;
 import java.util.List;
 
 // TODO add edit text for name, title and so on
-public final class TypeSendActivity extends AbsActivity implements View.OnClickListener {
+public final class TypeSendActivity extends TranslucentActivity implements View.OnClickListener {
 
     @IntDef({METHOD_NONE, METHOD_REPLY, METHOD_CREATE_POST})
     @Retention(RetentionPolicy.SOURCE)
@@ -212,12 +212,12 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @SuppressWarnings("deprecation")
@@ -232,7 +232,8 @@ public final class TypeSendActivity extends AbsActivity implements View.OnClickL
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
-        setContentView(R.layout.activity_type_send);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_type_send);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mEditText = (EditText) findViewById(R.id.edit_text);

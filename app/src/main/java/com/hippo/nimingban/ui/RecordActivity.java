@@ -62,7 +62,7 @@ import java.io.InputStream;
 
 import de.greenrobot.dao.query.LazyList;
 
-public final class RecordActivity extends AbsActivity
+public final class RecordActivity extends TranslucentActivity
         implements EasyRecyclerView.OnItemClickListener {
 
     private LazyList<ACRecordRaw> mLazyList;
@@ -77,12 +77,12 @@ public final class RecordActivity extends AbsActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @SuppressWarnings("deprecation")
@@ -90,7 +90,8 @@ public final class RecordActivity extends AbsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_record);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_record);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         View tip = findViewById(R.id.tip);

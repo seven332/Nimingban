@@ -37,7 +37,7 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
 
-public class DirPickerActivity extends AbsActivity implements View.OnClickListener, DirExplorer.OnChangeDirListener {
+public class DirPickerActivity extends TranslucentActivity implements View.OnClickListener, DirExplorer.OnChangeDirListener {
 
     private static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
 
@@ -49,12 +49,12 @@ public class DirPickerActivity extends AbsActivity implements View.OnClickListen
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -62,7 +62,8 @@ public class DirPickerActivity extends AbsActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_dir_picker);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_dir_picker);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mPath = (TextView) findViewById(R.id.path);

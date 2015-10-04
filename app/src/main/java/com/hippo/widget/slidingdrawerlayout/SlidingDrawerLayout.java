@@ -22,6 +22,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -127,7 +128,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private int mFitPaddingTop = 0;
     private int mFitPaddingBottom = 0;
 
-    private int mStatusBarColor;
+    private int mStatusBarColor = Color.BLACK;
+    private int mNavigationBarColor = Color.BLACK;
 
     private int[] mTemp = new int[2];
 
@@ -500,11 +502,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             int paddingTop = 0;
-            int paddingBottom = 0;
+            int paddingBottom = mFitPaddingBottom;
             if (child instanceof DrawerLayoutChild) {
                 DrawerLayoutChild dlc = (DrawerLayoutChild) child;
                 paddingTop = dlc.getLayoutPaddingTop();
-                paddingBottom = dlc.getLayoutPaddingBottom();
+                paddingBottom = dlc.getLayoutPaddingBottom() + mFitPaddingBottom;
             }
             if (child == mContentView) {
                 // Content views get measured at exactly the layout's size.
@@ -545,11 +547,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             int paddingTop = 0;
-            int paddingBottom = 0;
+            int paddingBottom = mFitPaddingBottom;
             if (child instanceof DrawerLayoutChild) {
                 DrawerLayoutChild dlc = (DrawerLayoutChild) child;
                 paddingTop = dlc.getLayoutPaddingTop();
-                paddingBottom = dlc.getLayoutPaddingBottom();
+                paddingBottom = dlc.getLayoutPaddingBottom() + mFitPaddingBottom;
             }
             if (child == mContentView) {
                 child.layout(lp.leftMargin, lp.topMargin + paddingTop,
@@ -593,14 +595,13 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
                     case Gravity.CENTER_VERTICAL: {
                         final int height = b - t;
-                        int childTop = (height - childHeight) / 2;
-
+                        int childTop = (height - childHeight - paddingTop - paddingBottom - lp.topMargin - lp.bottomMargin) / 2 + paddingTop;
                         // Offset for margins. If things don't fit right because of
                         // bad measurement before, oh well.
                         if (childTop < lp.topMargin + paddingTop) {
                             childTop = lp.topMargin + paddingTop;
-                        } else if (childTop + childHeight > height - lp.bottomMargin) {
-                            childTop = height - lp.bottomMargin - childHeight;
+                        } else if (childTop + childHeight > height - paddingBottom -lp.bottomMargin) {
+                            childTop = height - paddingBottom - lp.bottomMargin - childHeight;
                         }
                         child.layout(childLeft, childTop, childLeft + childWidth,
                                 childTop + childHeight);
@@ -963,6 +964,10 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mStatusBarColor = statusBarColor;
     }
 
+    public void setNavigationBarColor(int navigationBarColor) {
+        mNavigationBarColor = navigationBarColor;
+    }
+
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         if (mLeftDrawer == child) {
@@ -993,6 +998,14 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             int saved = canvas.save();
             canvas.clipRect(0, 0, getWidth(), mFitPaddingTop);
             canvas.drawColor(mStatusBarColor);
+            canvas.restoreToCount(saved);
+        }
+
+        if (mFitPaddingBottom != 0) {
+            int saved = canvas.save();
+            int height = getHeight();
+            canvas.clipRect(0, height - mFitPaddingBottom, getWidth(), height);
+            canvas.drawColor(mNavigationBarColor);
             canvas.restoreToCount(saved);
         }
     }

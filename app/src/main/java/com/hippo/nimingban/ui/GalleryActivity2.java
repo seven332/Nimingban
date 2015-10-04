@@ -51,6 +51,7 @@ import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.File;
@@ -109,12 +110,12 @@ public class GalleryActivity2 extends SwipeActivity {
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_Transparent;
+        return R.style.AppTheme_NoActionBar_Translucent_Transparent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_Transparent;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent_Transparent;
     }
 
     @SuppressWarnings("deprecation")
@@ -127,7 +128,8 @@ public class GalleryActivity2 extends SwipeActivity {
             return;
         }
 
-        setContentView(R.layout.activity_gallery_2);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_gallery_2);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);

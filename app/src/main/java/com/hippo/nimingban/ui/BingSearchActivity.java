@@ -45,7 +45,7 @@ import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.List;
 
-public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
+public class BingSearchActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
 
     public static final String ACTION_SEARCH = "com.hippo.nimingban.ui.BingSearchActivity.action.SEARCH";
 
@@ -64,12 +64,12 @@ public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     // false for error
@@ -102,7 +102,8 @@ public class BingSearchActivity extends AbsActivity implements EasyRecyclerView.
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
-        setContentView(R.layout.activity_bing_search);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_bing_search);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);

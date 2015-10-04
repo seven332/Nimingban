@@ -45,10 +45,11 @@ import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import de.greenrobot.dao.query.LazyList;
 
-public final class DraftActivity extends AbsActivity implements EasyRecyclerView.OnItemClickListener {
+public final class DraftActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
 
     private LazyList<DraftRaw> mLazyList;
 
@@ -64,19 +65,20 @@ public final class DraftActivity extends AbsActivity implements EasyRecyclerView
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_draft);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_draft);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);

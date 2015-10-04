@@ -90,7 +90,6 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.text.URLImageGetter;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.util.ColorUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.SimpleDoubleTapListener;
 import com.hippo.view.SimpleGestureListener;
@@ -148,12 +147,12 @@ public final class ListActivity extends AbsActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent;
+        return R.style.AppTheme_NoActionBar_Translucent_Status;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent_Status;
     }
 
     @Override
@@ -246,7 +245,8 @@ public final class ListActivity extends AbsActivity
         mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_left), Gravity.LEFT);
         mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_right), Gravity.RIGHT);
         mSlidingDrawerLayout.setStatusBarColor(
-                ColorUtils.getColorForStatusBar(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark)));
+                TranslucentHelper.getColorForTranslucent(
+                        ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark)));
 
         mPostHelper = new PostHelper();
         mPostHelper.setEmptyString(getString(R.string.no_post));

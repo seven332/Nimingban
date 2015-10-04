@@ -55,6 +55,7 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ import java.util.List;
 
 import de.greenrobot.dao.query.LazyList;
 
-public class SortForumsActivity extends AbsActivity {
+public class SortForumsActivity extends TranslucentActivity {
 
     public static final String KEY_SITE = "site";
 
@@ -104,12 +105,12 @@ public class SortForumsActivity extends AbsActivity {
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @Override
@@ -121,7 +122,8 @@ public class SortForumsActivity extends AbsActivity {
             return;
         }
 
-        setContentView(R.layout.activity_forum_sort);
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        ToolbarActivityHelper.setContentView(this, R.layout.activity_forum_sort);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);

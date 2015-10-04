@@ -50,7 +50,7 @@ import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 
-public final class DoodleActivity extends AbsActivity implements View.OnClickListener, DoodleView.Helper {
+public final class DoodleActivity extends TranslucentActivity implements View.OnClickListener, DoodleView.Helper {
 
     public static final int REQUEST_CODE_SELECT_IMAGE = 0;
 
@@ -77,12 +77,12 @@ public final class DoodleActivity extends AbsActivity implements View.OnClickLis
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar;
+        return R.style.AppTheme_NoActionBar_Translucent;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar;
+        return R.style.AppTheme_Dark_NoActionBar_Translucent;
     }
 
     @Override
@@ -95,6 +95,7 @@ public final class DoodleActivity extends AbsActivity implements View.OnClickLis
             mOutputFile = new File(dir, filename);
         }
 
+        setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         setContentView(R.layout.activity_doodle);
 
         mDoodleView = (DoodleView) findViewById(R.id.doodle_view);

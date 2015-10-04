@@ -18,10 +18,20 @@
 
     <style name="AppTheme.NoActionBar.Translucent">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Translucent.Status">
+        <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionBar.Translucent">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="AppTheme.Dark.NoActionBar.Translucent.Status">
+        <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
 </resources>

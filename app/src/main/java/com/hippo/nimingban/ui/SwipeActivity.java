@@ -24,7 +24,7 @@ import me.imid.swipebacklayout.lib.Utils;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper;
 
-public abstract class SwipeActivity extends AbsActivity implements SwipeBackActivityBase {
+public abstract class SwipeActivity extends TranslucentActivity implements SwipeBackActivityBase {
 
     private SwipeBackActivityHelper mHelper;
 

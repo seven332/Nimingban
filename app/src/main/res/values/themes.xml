@@ -66,6 +66,15 @@
     <style name="AppTheme.NoActionBar.Translucent">
     </style>
 
+    <style name="AppTheme.NoActionBar.Translucent.Status">
+    </style>
+
+    <style name="AppTheme.NoActionBar.Translucent.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 
     <style name="AppAlertDialogTheme.Dark" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorPrimary">@color/purple_500</item>
@@ -115,6 +124,15 @@
     </style>
 
     <style name="AppTheme.Dark.NoActionBar.Translucent">
+    </style>
+
+    <style name="AppTheme.Dark.NoActionBar.Translucent.Status">
+    </style>
+
+    <style name="AppTheme.Dark.NoActionBar.Translucent.Transparent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 </resources>

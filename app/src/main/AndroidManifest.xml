@@ -32,7 +32,7 @@
 
         <activity
             android:name="com.hippo.nimingban.ui.ListActivity"
-            android:theme="@style/AppTheme.NoActionBar.Translucent"
+            android:theme="@style/AppTheme.NoActionBar.Translucent.Status"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified">
 
@@ -45,7 +45,7 @@
 
         <activity
             android:name="com.hippo.nimingban.ui.PostActivity"
-            android:theme="@style/AppTheme.Transparent"
+            android:theme="@style/AppTheme.NoActionBar.Translucent.Transparent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified">
 
@@ -65,13 +65,13 @@
         <activity
             android:name="com.hippo.nimingban.ui.GalleryActivity2"
             android:label="@string/gallery"
-            android:theme="@style/AppTheme.Transparent"
+            android:theme="@style/AppTheme.NoActionBar.Translucent.Transparent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.TypeSendActivity"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="stateVisible|adjustResize">
@@ -93,21 +93,21 @@
         <activity
             android:name="com.hippo.nimingban.ui.DoodleActivity"
             android:label="@string/doodle"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.DraftActivity"
             android:label="@string/draft"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.FeedActivity"
             android:label="@string/feed"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
@@ -121,35 +121,35 @@
         <activity
             android:name="com.hippo.nimingban.ui.DirPickerActivity"
             android:label="@string/dir_picker"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.SortForumsActivity"
             android:label="@string/sort_forums"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.BingSearchActivity"
             android:label="@string/search"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.SearchActivity"
             android:label="@string/search"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
         <activity
             android:name="com.hippo.nimingban.ui.RecordActivity"
             android:label="@string/record"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
