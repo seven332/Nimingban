@@ -40,6 +40,9 @@ public class FastScroller extends View {
 
     private static final int SCROLL_BAR_FADE_DURATION = 500;
     private static final int SCROLL_BAR_DELAY = 1000;
+    private static final int SCROLL_BAR_DRAG_TIMEOUT = 200;
+
+    private Handler mSimpleHandler;
 
     private boolean mDraggable;
 
@@ -54,9 +57,35 @@ public class FastScroller extends View {
     private int mHandlerOffset = INVALID;
     private int mHandlerHeight = INVALID;
 
+    private int mDownX = INVALID;
+    private int mDownY = INVALID;
+
     private int mLastMotionY = INVALID;
 
     private boolean mDragged = false;
+
+    private boolean mCantDrag = false;
+
+    private Runnable mCheckForDragRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!mDragged) {
+                mDragged = true;
+
+                SimpleHandler.getInstance().removeCallbacks(mHideRunnable);
+                int y = mDownY;
+                if (y < mHandlerOffset || y >= mHandlerOffset + mHandlerHeight) {
+                    // the point out of handler, make the point in handler center
+                    int range = mRecyclerView.computeVerticalScrollRange();
+                    if (range > 0) {
+                        int scroll = range * (y - (mHandlerOffset + mHandlerHeight / 2)) / (getHeight() - getPaddingTop() - getPaddingBottom());
+                        mRecyclerView.scrollBy(0, scroll);
+                    }
+                }
+                mLastMotionY = y;
+            }
+        }
+    };
 
     private ObjectAnimator mShowAnimator;
     private ObjectAnimator mHideAnimator;
@@ -84,6 +113,8 @@ public class FastScroller extends View {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+        mSimpleHandler = SimpleHandler.getInstance();
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FastScroller, defStyleAttr, 0);
         mHandler = a.getDrawable(R.styleable.FastScroller_handler);
         mDraggable = a.getBoolean(R.styleable.FastScroller_draggable, true);
@@ -161,7 +192,7 @@ public class FastScroller extends View {
                 mShowAnimator.start();
             }
 
-            Handler handler = SimpleHandler.getInstance();
+            Handler handler = mSimpleHandler;
             handler.removeCallbacks(mHideRunnable);
 
             if (!mDragged) {
@@ -298,24 +329,44 @@ public class FastScroller extends View {
         }
 
         int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            mCantDrag = false;
+        }
+
+        if (mCantDrag) {
+            return false;
+        }
+
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                mDragged = true;
-                SimpleHandler.getInstance().removeCallbacks(mHideRunnable);
-                int y = (int) event.getY();
-                if (y < mHandlerOffset || y >= mHandlerOffset + mHandlerHeight) {
-                    // the point out of handler, make the point in handler center
-                    int range = mRecyclerView.computeVerticalScrollRange();
-                    if (range > 0) {
-                        int scroll = range * (y - (mHandlerOffset + mHandlerHeight / 2)) / (getHeight() - getPaddingTop() - getPaddingBottom());
-                        mRecyclerView.scrollBy(0, scroll);
-                    }
-                }
-                mLastMotionY = y;
+                mDragged = false;
+                mDownX = (int) event.getX();
+                mDownY = (int) event.getY();
+                mSimpleHandler.postDelayed(mCheckForDragRunnable, SCROLL_BAR_DRAG_TIMEOUT);
+                break;
             }
             case MotionEvent.ACTION_MOVE: {
-                mDragged = true;
-                SimpleHandler.getInstance().removeCallbacks(mHideRunnable);
+                if (!mDragged) {
+                    // mCheckForDragRunnable has not been called
+                    mSimpleHandler.removeCallbacks(mCheckForDragRunnable);
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+                    if ((float) Math.abs(x - mDownX) > (float) Math.abs(y - mDownY)) {
+                        mCantDrag = true;
+                        return false;
+                    } else {
+                        mDragged = true;
+                        mSimpleHandler.removeCallbacks(mHideRunnable);
+                        // Update mLastMotionY
+                        if (mDownY < mHandlerOffset || mDownY >= mHandlerOffset + mHandlerHeight) {
+                            // the point out of handler, make the point in handler center
+                            mLastMotionY = mHandlerOffset + mHandlerHeight / 2;
+                        } else {
+                            mLastMotionY = mDownY;
+                        }
+                    }
+                }
+
                 int range = mRecyclerView.computeVerticalScrollRange();
                 if (range <= 0) {
                     break;
@@ -328,8 +379,16 @@ public class FastScroller extends View {
             }
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mDragged = false;
-                SimpleHandler.getInstance().postDelayed(mHideRunnable, SCROLL_BAR_DELAY);
+                if (!mDragged) {
+                    // mCheckForDragRunnable has not been called
+                    mSimpleHandler.removeCallbacks(mCheckForDragRunnable);
+                    mCheckForDragRunnable.run();
+                } else {
+                    mDragged = false;
+                }
+
+                mSimpleHandler.postDelayed(mHideRunnable, SCROLL_BAR_DELAY);
+                break;
         }
 
         return true;
