@@ -56,6 +56,8 @@ public class FastScroller extends View {
 
     private int mLastMotionY = INVALID;
 
+    private boolean mDragged = false;
+
     private ObjectAnimator mShowAnimator;
     private ObjectAnimator mHideAnimator;
 
@@ -161,7 +163,10 @@ public class FastScroller extends View {
 
             Handler handler = SimpleHandler.getInstance();
             handler.removeCallbacks(mHideRunnable);
-            handler.postDelayed(mHideRunnable, SCROLL_BAR_DELAY);
+
+            if (!mDragged) {
+                handler.postDelayed(mHideRunnable, SCROLL_BAR_DELAY);
+            }
         }
     }
 
@@ -295,6 +300,8 @@ public class FastScroller extends View {
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
+                mDragged = true;
+                SimpleHandler.getInstance().removeCallbacks(mHideRunnable);
                 int y = (int) event.getY();
                 if (y < mHandlerOffset || y >= mHandlerOffset + mHandlerHeight) {
                     // the point out of handler, make the point in handler center
@@ -307,6 +314,8 @@ public class FastScroller extends View {
                 mLastMotionY = y;
             }
             case MotionEvent.ACTION_MOVE: {
+                mDragged = true;
+                SimpleHandler.getInstance().removeCallbacks(mHideRunnable);
                 int range = mRecyclerView.computeVerticalScrollRange();
                 if (range <= 0) {
                     break;
@@ -317,6 +326,10 @@ public class FastScroller extends View {
                 mLastMotionY = y;
                 break;
             }
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mDragged = false;
+                SimpleHandler.getInstance().postDelayed(mHideRunnable, SCROLL_BAR_DELAY);
         }
 
         return true;
