@@ -49,11 +49,6 @@
 
     <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
-    <plurals name="go_to_hint">
-        <item quantity="one">Page %1$d, %2$d pages in total</item>
-        <item quantity="other">Page %1$d, %2$d page in total</item>
-    </plurals>
-    <string name="go_to_error_invalid">Please enter a valid number</string>
     <string name="go_to_error_out_of_range">Target page is out of range</string>
 
     <string name="lucky">Haha</string>

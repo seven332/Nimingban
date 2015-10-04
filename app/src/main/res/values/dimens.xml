@@ -35,7 +35,6 @@
 
     <!-- SnackBar -->
     <dimen name="design_snackbar_action_inline_max_width">128dp</dimen>
-    <dimen name="design_snackbar_background_corner_radius">0dp</dimen>
     <dimen name="design_snackbar_elevation">6dp</dimen>
     <dimen name="design_snackbar_extra_spacing_horizontal">0dp</dimen>
     <dimen name="design_snackbar_max_width">-1px</dimen>
@@ -52,8 +51,5 @@
     <dimen name="list_thumb_width">80dp</dimen>
 
     <dimen name="divider_height">1dp</dimen>
-
-    <dimen name="gesture_circle_radius">24dp</dimen>
-    <dimen name="gesture_circle_arrow_interval">16dp</dimen>
 
 </resources>

@@ -49,10 +49,6 @@
 
     <string name="reply">回复</string>
     <string name="go_to">跳页</string>
-    <plurals name="go_to_hint">
-        <item quantity="other">第 %1$d 页，共 %2$d 页</item>
-    </plurals>
-    <string name="go_to_error_invalid">请输入有效页数</string>
     <string name="go_to_error_out_of_range">目标页数在范围外</string>
 
     <string name="lucky">哈哈</string>
