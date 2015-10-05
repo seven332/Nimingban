@@ -65,12 +65,12 @@ public final class DraftActivity extends TranslucentActivity implements EasyRecy
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent;
+        return R.style.NormalActivity;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent;
+        return R.style.NormalActivity_Dark;
     }
 
     @Override

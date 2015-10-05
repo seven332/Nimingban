@@ -147,12 +147,12 @@ public final class ListActivity extends AbsActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent_Status;
+        return R.style.ListActivity;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent_Status;
+        return R.style.ListActivity_Dark;
     }
 
     @Override
@@ -244,9 +244,7 @@ public final class ListActivity extends AbsActivity
 
         mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_left), Gravity.LEFT);
         mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_right), Gravity.RIGHT);
-        mSlidingDrawerLayout.setStatusBarColor(
-                TranslucentHelper.getColorForTranslucent(
-                        ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark)));
+        mSlidingDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
 
         mPostHelper = new PostHelper();
         mPostHelper.setEmptyString(getString(R.string.no_post));

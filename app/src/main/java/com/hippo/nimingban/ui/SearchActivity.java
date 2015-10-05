@@ -67,12 +67,12 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent;
+        return R.style.NormalActivity;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent;
+        return R.style.NormalActivity_Dark;
     }
 
     // false for error

@@ -25,6 +25,16 @@
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
+    <style name="ListActivity" parent="AppTheme.NoActionBar.Translucent.Status">
+    </style>
+
+    <style name="NormalActivity" parent="AppTheme.NoActionBar.Translucent">
+    </style>
+
+    <style name="SwipeActivity" parent="AppTheme.NoActionBar.Translucent.Transparent">
+    </style>
+
+
     <style name="AppTheme.Dark.NoActionBar.Translucent">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
@@ -32,6 +42,15 @@
 
     <style name="AppTheme.Dark.NoActionBar.Translucent.Status">
         <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+
+    <style name="ListActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status">
+    </style>
+
+    <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent">
+    </style>
+
+    <style name="SwipeActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Transparent">
     </style>
 
 </resources>

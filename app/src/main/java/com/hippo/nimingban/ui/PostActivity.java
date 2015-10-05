@@ -154,12 +154,12 @@ public final class PostActivity extends SwipeActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent_Transparent;
+        return R.style.SwipeActivity;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent_Transparent;
+        return R.style.SwipeActivity_Dark;
     }
 
     @Override

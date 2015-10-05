@@ -29,6 +29,8 @@ import android.view.ViewGroup;
 
 public class TranslucentHelper {
 
+    private static final boolean VALID = Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT;
+
     private int mStatusBarColor = Color.BLACK;
     private int mNavigationBarColor = Color.BLACK;
 
@@ -37,64 +39,56 @@ public class TranslucentHelper {
 
     private TranslucentLayout mTranslucentLayout;
 
-    /**
-     * windowTranslucentStatus make status bar translucent, so the status bar background looks draker.
-     * Lighter color is needed for status bar.
-     * It work fine in AOSP.
-     */
-    public static int getColorForTranslucent(int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return Color.argb(
-                    Color.alpha(color),
-                    Math.min(Color.red(color) * 5 / 3, 0xff),
-                    Math.min(Color.green(color) * 5 / 3, 0xff),
-                    Math.min(Color.blue(color) * 5 / 3, 0xff));
-        } else {
-            return color;
+    public void handleContentView(Activity activity) {
+        if (VALID) {
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
+            decor.removeView(decorChild);
+            mTranslucentLayout = new TranslucentLayout(activity);
+            mTranslucentLayout.setShowStatusBar(mShowStatusBar);
+            mTranslucentLayout.setShowNavigationBar(mShowNavigationBar);
+            mTranslucentLayout.setStatusBarColor(mStatusBarColor);
+            mTranslucentLayout.setNavigationBarColor(mNavigationBarColor);
+            mTranslucentLayout.addView(decorChild);
+            decor.addView(mTranslucentLayout);
         }
     }
 
-    public void handleContentView(Activity activity) {
-        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
-        decor.removeView(decorChild);
-        mTranslucentLayout = new TranslucentLayout(activity);
-        mTranslucentLayout.setShowStatusBar(mShowStatusBar);
-        mTranslucentLayout.setShowNavigationBar(mShowNavigationBar);
-        mTranslucentLayout.setStatusBarColor(mStatusBarColor);
-        mTranslucentLayout.setNavigationBarColor(mNavigationBarColor);
-        mTranslucentLayout.addView(decorChild);
-        decor.addView(mTranslucentLayout);
-    }
-
     public void setStatusBarColor(int color) {
-        mStatusBarColor = getColorForTranslucent(color);
-        if (mTranslucentLayout != null) {
-            mTranslucentLayout.setStatusBarColor(color);
+        if (VALID) {
+            mStatusBarColor = color;
+            if (mTranslucentLayout != null) {
+                mTranslucentLayout.setStatusBarColor(color);
+            }
         }
     }
 
     public void setNavigationBarColor(int color) {
-        mNavigationBarColor = getColorForTranslucent(color);
-        if (mTranslucentLayout != null) {
-            mTranslucentLayout.setNavigationBarColor(color);
+        if (VALID) {
+            mNavigationBarColor = color;
+            if (mTranslucentLayout != null) {
+                mTranslucentLayout.setNavigationBarColor(color);
+            }
         }
     }
 
     public void setShowStatusBar(boolean showStatusBar) {
-        mShowStatusBar = showStatusBar;
-        if (mTranslucentLayout != null) {
-            mTranslucentLayout.setShowStatusBar(showStatusBar);
+        if (VALID) {
+            mShowStatusBar = showStatusBar;
+            if (mTranslucentLayout != null) {
+                mTranslucentLayout.setShowStatusBar(showStatusBar);
+            }
         }
     }
 
     public void setShowNavigationBar(boolean showNavigationBar) {
-        mShowNavigationBar = showNavigationBar;
-        if (mTranslucentLayout != null) {
-            mTranslucentLayout.setShowNavigationBar(showNavigationBar);
+        if (VALID) {
+            mShowNavigationBar = showNavigationBar;
+            if (mTranslucentLayout != null) {
+                mTranslucentLayout.setShowNavigationBar(showNavigationBar);
+            }
         }
     }
-
 
     private static class TranslucentLayout extends ViewGroup {
 

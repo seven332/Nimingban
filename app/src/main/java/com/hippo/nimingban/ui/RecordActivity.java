@@ -77,12 +77,12 @@ public final class RecordActivity extends TranslucentActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent;
+        return R.style.NormalActivity;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent;
+        return R.style.NormalActivity_Dark;
     }
 
     @SuppressWarnings("deprecation")

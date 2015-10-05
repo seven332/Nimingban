@@ -49,12 +49,12 @@ public class DirPickerActivity extends TranslucentActivity implements View.OnCli
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.AppTheme_NoActionBar_Translucent;
+        return R.style.NormalActivity;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.AppTheme_Dark_NoActionBar_Translucent;
+        return R.style.NormalActivity_Dark;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
