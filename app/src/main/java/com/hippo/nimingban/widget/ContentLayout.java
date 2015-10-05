@@ -17,7 +17,6 @@
 package com.hippo.nimingban.widget;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,12 +30,13 @@ import android.widget.Toast;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.widget.recyclerview.LayoutManagerUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.FastScroller;
+import com.hippo.widget.recyclerview.HandlerDrawable;
+import com.hippo.widget.recyclerview.LayoutManagerUtils;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.IntList;
@@ -96,7 +96,9 @@ public class ContentLayout extends FrameLayout {
         SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
 
         mFastScroller.attachToRecyclerView(mRecyclerView);
-        mFastScroller.setHandlerDrawable(new ColorDrawable(ResourcesUtils.getAttrColor(context, R.attr.colorAccent)));
+        HandlerDrawable drawable = new HandlerDrawable();
+        drawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
+        mFastScroller.setHandlerDrawable(drawable);
 
         imageView.setDrawable(VectorDrawable.create(context, R.drawable.ic_empty));
 
