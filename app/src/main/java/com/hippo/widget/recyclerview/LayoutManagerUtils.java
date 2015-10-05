@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.util;
+package com.hippo.widget.recyclerview;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -22,7 +22,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
-import com.hippo.widget.recyclerview.SimpleSmoothScroller;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleHandler;
 

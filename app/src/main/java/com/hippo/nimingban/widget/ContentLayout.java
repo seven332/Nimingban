@@ -31,7 +31,7 @@ import android.widget.Toast;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.util.LayoutManagerUtils;
+import com.hippo.widget.recyclerview.LayoutManagerUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleImageView;
