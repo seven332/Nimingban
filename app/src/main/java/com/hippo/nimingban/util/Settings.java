@@ -384,6 +384,17 @@ public final class Settings {
         sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
     }
 
+    public static final String KEY_CONVERT = "convert";
+    public static final boolean DEFAULT_CONVERT = false;
+
+    public static boolean getConvert() {
+        return getBoolean(KEY_CONVERT, DEFAULT_CONVERT);
+    }
+
+    public static void putConvert(boolean value) {
+        putBoolean(KEY_CONVERT, value);
+    }
+
     /**
      * http://stackoverflow.com/questions/332079
      *

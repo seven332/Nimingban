@@ -78,6 +78,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class SettingsActivity extends AbsPreferenceActivity {
 
@@ -819,6 +820,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     TextView tv = (TextView) view.findViewById(R.id.text);
                     tv.setText(str);
                     new AlertDialog.Builder(getActivity()).setView(view).show();
+
+                    if (!Settings.getConvert()) {
+                        String country = Locale.getDefault().getCountry();
+                        if ("CN".equals(country) || "TW".equals(country)) {
+                            Settings.putConvert(true);
+                            Toast.makeText(getActivity(), R.string.new_feature_available, Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 } catch (IOException e) {
                     Toast.makeText(getActivity(), R.string.cant_open_notice, Toast.LENGTH_SHORT).show();
                 }

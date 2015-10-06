@@ -47,6 +47,12 @@
 
     <string name="refresh">刷新</string>
 
+    <string name="convert">转化</string>
+    <string name="converting">转化中…</string>
+    <string name="convert_successfully">转化成功</string>
+    <string name="convert_failed">转化失败</string>
+    <string name="new_feature_available">新功能已开启</string>
+
     <string name="reply">回复</string>
     <string name="go_to">跳页</string>
     <string name="go_to_error_out_of_range">目标页数在范围外</string>

@@ -36,6 +36,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,7 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
@@ -88,6 +90,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 
 // TODO add edit text for name, title and so on
 public final class TypeSendActivity extends TranslucentActivity implements View.OnClickListener {
@@ -155,6 +158,8 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
 
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
+
+    private String mConvertConfig;
 
     // false for error
     private boolean handlerIntent(Intent intent) {
@@ -348,10 +353,50 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_type_send, menu);
+
+        String country = Locale.getDefault().getCountry();
+        if ("CN".equals(country)) {
+            mConvertConfig = "s2twp.json";
+        } else if ("TW".equals(country)) {
+            mConvertConfig = "tw2sp.json";
+        }
+
+        if (TextUtils.isEmpty(mConvertConfig) || !Settings.getConvert()) {
+            MenuItem item = menu.findItem(R.id.action_convert);
+            if (item != null) {
+                item.setVisible(false);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_convert:
+                if (TextUtils.isEmpty(mConvertConfig) || mProgressDialog != null) {
+                    return true;
+                }
+                String text = mEditText.getText().toString();
+                if (TextUtils.isEmpty(text)) {
+                    return true;
+                }
+                showProgressDialog(R.string.converting);
+
+                NMBRequest request = new NMBRequest();
+                mNMBRequest = request;
+                request.setSite(mSite);
+                request.setMethod(NMBClient.METHOD_CONVERT);
+                request.setArgs(mConvertConfig, text);
+                request.setCallback(new ConvertListener());
+                mNMBClient.execute(request);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -912,6 +957,45 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
             mNMBRequest = null;
 
             Log.d(TAG, "GetCookieListener onCancel");
+        }
+    }
+
+    private class ConvertListener implements NMBClient.Callback<String> {
+
+        @Override
+        public void onSuccess(String result) {
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
+
+            mEditText.setText(result);
+
+            Toast.makeText(TypeSendActivity.this, R.string.convert_successfully, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
+
+            Toast.makeText(TypeSendActivity.this, getString(R.string.convert_failed) + "\n" +
+                    ExceptionUtils.getReadableString(TypeSendActivity.this, e), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel() {
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            mNMBRequest = null;
+
+            Log.d(TAG, "ConvertListener onCancel");
         }
     }
 }

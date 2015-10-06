@@ -39,6 +39,8 @@ public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
 
+    public static final int METHOD_CONVERT = -5;
+
     public static final int METHOD_COMMON_POSTS = -4;
 
     public static final int METHOD_DISC = -3;
@@ -319,11 +321,20 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_CONVERT: {
+                        Call call = ConvertEngine.prepareConvert(mOkHttpClient, (String) params[0], (String) params[1]);
+                        if (!mStop) {
+                            mCall = call;
+                            return ConvertEngine.doConvert(call);
+                        } else {
+                            throw new CancelledException();
+                        }
+                    }
                     case METHOD_COMMON_POSTS:
                         return getCommonPosts();
                     case METHOD_DISC:
                         return DiscEngine.spider(mOkHttpClient, (String) params[0], (String) params[1]);
-                    case METHOD_UPDATE:
+                    case METHOD_UPDATE: {
                         Call call = UpdateEngine.prepareUpdate(mOkHttpClient);
                         if (!mStop) {
                             mCall = call;
@@ -331,6 +342,7 @@ public class NMBClient {
                         } else {
                             throw new CancelledException();
                         }
+                    }
                     case METHOD_GET_FORUM_LIST:
                         return getForumList();
                     case METHOD_GET_COOKIE:

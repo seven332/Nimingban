@@ -47,6 +47,12 @@
 
     <string name="refresh">Refresh</string>
 
+    <string name="convert">Convert</string>
+    <string name="converting">Converting…</string>
+    <string name="convert_successfully">Convert successfully</string>
+    <string name="convert_failed">Convert failed</string>
+    <string name="new_feature_available">New feature is available</string>
+
     <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
     <string name="go_to_error_out_of_range">Target page is out of range</string>
