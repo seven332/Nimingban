@@ -47,6 +47,8 @@
 
     <string name="refresh">刷新</string>
 
+    <string name="text_image">文字至图片</string>
+
     <string name="convert">转化</string>
     <string name="converting">转化中…</string>
     <string name="convert_successfully">转化成功</string>

@@ -47,6 +47,8 @@
 
     <string name="refresh">Refresh</string>
 
+    <string name="text_image">Text to image</string>
+
     <string name="convert">Convert</string>
     <string name="converting">Converting…</string>
     <string name="convert_successfully">Convert successfully</string>

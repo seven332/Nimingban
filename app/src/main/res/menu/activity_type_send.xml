@@ -20,9 +20,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_text_image"
+        android:title="@string/text_image"
+        android:icon="@drawable/ic_text_image_dark_x24"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/action_convert"
         android:title="@string/convert"
         android:icon="@drawable/ic_convert_dark_x24"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>

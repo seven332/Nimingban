@@ -398,6 +398,35 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
                 mNMBClient.execute(request);
 
                 return true;
+            case R.id.action_text_image:
+                if (mProgressDialog != null) {
+                    return true;
+                }
+
+                showProgressDialog(R.string.converting);
+
+                new AsyncTask<Void, Void, Uri>() {
+                    @Override
+                    protected Uri doInBackground(Void... params) {
+                        return saveEditTextToImage();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Uri uri) {
+                        if (mProgressDialog != null) {
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+
+                        if (uri != null) {
+                            handleSelectedImageUri(uri);
+                        } else {
+                            Toast.makeText(TypeSendActivity.this, R.string.cant_create_image_file, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }.execute();
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
