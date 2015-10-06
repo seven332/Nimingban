@@ -22,15 +22,15 @@
     <string name="drawer_close">Close navigation drawer</string>
 
     <string name="data_analysis">Data analysis</string>
-    <string name="data_analysis_plain">Would you mind if the developer collecting your device information and your usage? It will help the developing a lot.</string>
+    <string name="data_analysis_plain">Would you mind if the developer collecting your device information and your usage? It will help developer a lot.</string>
 
     <string name="it_is_important">It is important</string>
     <string name="crash_tip">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
 
-    <string name="cant_make_sure_image_save_location">It seems the image save location is not available, you should go to Settings to set it</string>
+    <string name="cant_make_sure_image_save_location">It seems the image save location is not available. Go to Settings to set it</string>
 
-    <string name="swipe_right_open_menu">Swipe right to open menu</string>
-    <string name="swipe_left_open_forum_list">Swipe left to open forum list</string>
+    <string name="swipe_right_open_menu">Swipe right for menu</string>
+    <string name="swipe_left_open_forum_list">Swipe left for forum list</string>
     <string name="double_click_toolbar_refresh">Double click toolbar to refresh</string>
     <string name="get_it">Get it</string>
 
@@ -43,7 +43,7 @@
 
     <string name="please_wait">Please wait</string>
 
-    <string name="no_post">There is no thread</string>
+    <string name="no_post">Thread not found</string>
 
     <string name="refresh">Refresh</string>
 
@@ -89,7 +89,7 @@
     <string name="select_image">Select a picture</string>
     <string name="take_photo">Take a photo</string>
 
-    <string name="comment_copied_clipboard">Comment text copied to clipboard</string>
+    <string name="comment_copied_clipboard">Copied to clipboard</string>
 
     <string name="cant_get_the_reference">Can\'t get the reference</string>
     <string name="show_thread">Show thread</string>
@@ -97,29 +97,29 @@
     <string name="rule">Rule</string>
 
     <string name="report">Report</string>
-    <string name="report_tip">You will report it to duty room</string>
+    <string name="report_tip">You will report it to the duty room</string>
     <string name="create_post">Post</string>
-    <string name="save_text_draft">Save the text you typed as draft ?</string>
+    <string name="save_text_draft">Save as draft? </string>
     <string name="save">Save</string>
     <string name="dont_save">Don\'t save</string>
-    <string name="create_text_image">Text you typed contains offensive words. Create an image of the text?</string>
-    <string name="start_creating_post">Start posting</string>
-    <string name="create_post_successfully">Post successfully</string>
-    <string name="reply_failed">Maybe reply failed, the text you is saved as draft</string>
-    <string name="start_reply">Start replying</string>
-    <string name="reply_successfully">Reply successfully</string>
-    <string name="create_post_failed">Maybe post failed, the text is saved as draft</string>
+    <string name="create_text_image">Text you typed contains offensive words. Convert the text to a image instead? </string>
+    <string name="start_creating_post">Posting... </string>
+    <string name="create_post_successfully">Posted successfully</string>
+    <string name="reply_failed">Seems failed to reply. Your reply has been saved as draft. </string>
+    <string name="start_reply">Replying... </string>
+    <string name="reply_successfully">Replied successfully</string>
+    <string name="create_post_failed">Seems failed to post. Your post has been saved as draft. </string>
 
     <string name="select_picture">Select picture</string>
 
     <string name="gallery">Gallery</string>
 
     <string name="no_cookies">No cookies</string>
-    <string name="no_cookies_ac">It seems that you have no cookies of AC nimingban. Try getting cookies ?</string>
+    <string name="no_cookies_ac">Seems that you don't have cookie of AC Nimingban. Get cookie now?</string>
     <string name="i_dont_care">I don\'t care</string>
-    <string name="getting_cookies">Getting Cookies…</string>
-    <string name="got_cookies">Got cookies !</string>
-    <string name="cant_get_cookies">Can\'t get cookies</string>
+    <string name="getting_cookies">Trying to get Cookies…</string>
+    <string name="got_cookies">Got it! </string>
+    <string name="cant_get_cookies">Failed to get cookie. </string>
 
     <string name="em_timeout">Timeout</string>
     <string name="em_unknown_host">Unknown host</string>
@@ -133,12 +133,12 @@
     <string name="undo">Undo</string>
 
     <string name="draft">Draft</string>
-    <string name="draft_copied_clipboard">Draft text copied to clipboard</string>
-    <string name="no_draft">There is no draft</string>
-    <string name="draft_deleted">Draft deleted</string>
+    <string name="draft_copied_clipboard">Copied to clipboard. </string>
+    <string name="no_draft">Your unsent posts will save here. </string>
+    <string name="draft_deleted">Draft deleted. </string>
 
     <string name="record">Record</string>
-    <string name="no_record">There is no record</string>
+    <string name="no_record">Your sent posts will save here. </string>
     <string name="record_deleted">Record deleted</string>
 
     <string name="from_the_future">From the future</string>
@@ -176,42 +176,42 @@
     </plurals>
 
     <string name="cant_find_forum">Can\'t find any forum</string>
-    <string name="more_writable_items">More writable items</string>
+    <string name="more_writable_items">More... </string>
     <string name="type_send_name">Name</string>
     <string name="type_send_email">E-mail</string>
     <string name="type_send_title">Title</string>
 
     <string name="doodle">Doodle</string>
-    <string name="save_doodle">Save doodle ?</string>
+    <string name="save_doodle">Save doodle?</string>
     <string name="cant_create_image_file">Can\'t create image file</string>
-    <string name="saving">Saving…</string>
-    <string name="save_successfully">Save successfully</string>
-    <string name="save_failed">Save failed</string>
+    <string name="saving">Saving... </string>
+    <string name="save_successfully">Save successfully. </string>
+    <string name="save_failed">Save failed. </string>
 
     <string name="share_image">Share image</string>
-    <string name="cant_save_image">Can\'t save the image</string>
+    <string name="cant_save_image">Failed to save the image. </string>
 
     <string name="settings">Settings</string>
     <string name="display_settings_title">Display</string>
     <string name="config_settings_title">Config</string>
     <string name="info_settings_title">About</string>
     <string name="main_dark_theme">Dark theme</string>
-    <string name="main_pretty_time">Display pretty time</string>
+    <string name="main_pretty_time">Show relative time</string>
     <string name="main_pretty_time_summary">Show %1$s instead of %2$s</string>
     <string name="main_text_format">Font size and line spacing</string>
     <string name="main_text_format_summary">Font size: %1$d\nLine spacing: %2$d</string>
     <string name="main_dynamic_comments">Dynamic comments</string>
     <string name="main_dynamic_comments_summary_on">Show recent comments dynamically below thread content in list</string>
-    <string name="main_dynamic_comments_summary_off">No dynamic comments</string>
+    <string name="main_dynamic_comments_summary_off">Don't show dynamic comments</string>
     <string name="main_fast_scroller">Show fast scroller</string>
     <string name="main_fast_scroller_summary_on">Show fast scroller in the right of a list</string>
-    <string name="main_fast_scroller_summary_off">No fast scroller</string>
-    <string name="main_image_loading_strategy">Picture loading strategy</string>
-    <string name="main_image_loading_strategy_2">What is no pictures</string>
-    <string name="main_image_loading_strategy_2_summary_off">No pictures is No pictures</string>
-    <string name="main_image_loading_strategy_2_summary_on">No pictures is trying to load pictures from cache, long clicking to load from network</string>
+    <string name="main_fast_scroller_summary_off">Don't show fast scroller</string>
+    <string name="main_image_loading_strategy">Picture preload</string>
+    <string name="main_image_loading_strategy_2">When Picture preload is not available... </string>
+    <string name="main_image_loading_strategy_2_summary_off">Don't show the picture anyway</string>
+    <string name="main_image_loading_strategy_2_summary_on">Show the picture button, and load the preview when long-clicking it</string>
     <string name="main_ac_cookies">Cookies</string>
-    <string name="main_ac_cookies_summary_no">Theoretically speaking, you have no cookies</string>
+    <string name="main_ac_cookies_summary_no">Theoretically speaking, you don't have any cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
     <string name="main_ac_cookies_summary_forever">Theoretically speaking, you have everlasting cookies</string>
     <string name="main_save_cookies">Save cookies</string>
@@ -220,9 +220,9 @@
     <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
     <string name="main_feed_id">Feed id</string>
     <string name="main_feed_id_summary">You feed id is %s</string>
-    <string name="main_save_image_auto">Save image automatically</string>
-    <string name="main_save_image_auto_summary_on">Save image to your storage automatically, but you need to save the cover by yourself</string>
-    <string name="main_save_image_auto_summary_off">Image will be saved when you click the save button</string>
+    <string name="main_save_image_auto">Save image when loaded</string>
+    <string name="main_save_image_auto_summary_on">Save image to your storage as it loaded. but you need to save the cover by yourself</string>
+    <string name="main_save_image_auto_summary_off">Image will be saved only when you click the save button</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
     <string name="main_analysis">Enable data analysis</string>
@@ -240,29 +240,29 @@
     <string name="mac_addr">Mac addr</string>
     <string name="random">Random</string>
 
-    <string name="image_loading_strategy_all">Just load them</string>
-    <string name="image_loading_strategy_wifi">Only Wi-Fi</string>
-    <string name="image_loading_strategy_no">No pictures</string>
+    <string name="image_loading_strategy_all">Always</string>
+    <string name="image_loading_strategy_wifi">Only over Wi-Fi</string>
+    <string name="image_loading_strategy_no">Nevers</string>
 
-    <string name="save_cookies_failed">Save cookies failed</string>
-    <string name="save_cookies_to">Save cookies to %s</string>
+    <string name="save_cookies_failed">Saving cookie failed. </string>
+    <string name="save_cookies_to">Cookie saved to %s. </string>
 
     <string name="restore_cookies_successfully">Restore cookies successfully</string>
-    <string name="not_valid_cookie_file">It is not valid cookie file</string>
+    <string name="not_valid_cookie_file">Ivalid cookie file</string>
     <string name="cant_find_cookie_file">Can\'t find any cookie file</string>
     <string name="select_cookie_file">Select cookie file</string>
 
-    <string name="write_storage_permission_tip">Something will go wrong if you deny the permission request</string>
+    <string name="write_storage_permission_tip">Something may go wrong if you deny the permission request</string>
 
     <string name="you_rejected_me">It hurt when you rejected me</string>
 
     <string name="dir_picker">Dir picker</string>
     <string name="directory_not_writable">The directory is not writable</string>
     <string name="cant_get_image_save_location">Can\'t get image save location</string>
-    <string name="dir_picker_permission_tip">You can only browse list of files when you grant the permission</string>
+    <string name="dir_picker_permission_tip">You can browse file list only when you grant the permission</string>
 
-    <string name="pick_dir_kk">You can\'t write any kind of data on your external SD card in KitKat unless you have hacked it</string>
-    <string name="pick_dir_l">Lollipop provides an API to write on external SD card. If you want to set image save location to SD card, click the \"DOCUMENT\" button</string>
+    <string name="pick_dir_kk">You can\'t write any kind of data on your external SD card in Android 4.4+ unless you have hacked it</string>
+    <string name="pick_dir_l">Android 5.0+ provides an API to write on external SD card. If you want to set image save location to SD card, click the \"DOCUMENT\" button</string>
 
     <string name="document">Document</string>
 
@@ -275,16 +275,16 @@
 
     <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>
-    <string name="no_forum">Can\'t find any forum</string>
+    <string name="no_forum">Failed to get the forum list</string>
     <string name="refreshing_forum_list">Refreshing forum list…</string>
-    <string name="refresh_forum_list_failed">Refresh forum list failed</string>
+    <string name="refresh_forum_list_failed">Failed to refresh the forum list</string>
 
     <string name="version">Version</string>
     <string name="size">Size</string>
     <string name="download_update">Download update</string>
     <string name="download">Download</string>
-    <string name="downloading_update">Downloading update</string>
-    <string name="download_update_failde">Download update failed</string>
+    <string name="downloading_update">Downloading update... </string>
+    <string name="download_update_failde">Failed to get the update. </string>
 
     <string name="network_receiver">Network receiver</string>
 
