@@ -50,7 +50,7 @@
     <string name="text_image">Text to image</string>
 
     <string name="convert">Convert</string>
-    <string name="converting">Converting... </string>
+    <string name="converting">Converting…</string>
     <string name="convert_successfully">Convert successfully</string>
     <string name="convert_failed">Convert failed</string>
     <string name="new_feature_available">New feature is available</string>
@@ -103,10 +103,10 @@
     <string name="save">Save</string>
     <string name="dont_save">Don\'t save</string>
     <string name="create_text_image">Seems that your post contains offensive words. Convert the text to a image instead? </string>
-    <string name="start_creating_post">Posting... </string>
+    <string name="start_creating_post">Posting…</string>
     <string name="create_post_successfully">Posted successfully</string>
     <string name="reply_failed">Seems failed to reply. Your reply has been saved as draft. </string>
-    <string name="start_reply">Replying... </string>
+    <string name="start_reply">Replying…</string>
     <string name="reply_successfully">Replied successfully</string>
     <string name="create_post_failed">Seems failed to post. Your post has been saved as draft. </string>
 
@@ -115,9 +115,9 @@
     <string name="gallery">Gallery</string>
 
     <string name="no_cookies">No cookies</string>
-    <string name="no_cookies_ac">Seems that you don't have cookie of AC Nimingban. Get cookie now?</string>
+    <string name="no_cookies_ac">Seems that you don\'t have cookie of AC Nimingban. Get cookie now?</string>
     <string name="i_dont_care">I don\'t care</string>
-    <string name="getting_cookies">Trying to get Cookie... </string>
+    <string name="getting_cookies">Trying to get Cookie…</string>
     <string name="got_cookies">Got it! </string>
     <string name="cant_get_cookies">Failed to get cookie. </string>
 
@@ -176,7 +176,7 @@
     </plurals>
 
     <string name="cant_find_forum">Can\'t find any forum</string>
-    <string name="more_writable_items">More... </string>
+    <string name="more_writable_items">More…</string>
     <string name="type_send_name">Name</string>
     <string name="type_send_email">E-mail</string>
     <string name="type_send_title">Title</string>
@@ -184,7 +184,7 @@
     <string name="doodle">Doodle</string>
     <string name="save_doodle">Save doodle?</string>
     <string name="cant_create_image_file">Can\'t create image file</string>
-    <string name="saving">Saving... </string>
+    <string name="saving">Saving…</string>
     <string name="save_successfully">Save successfully. </string>
     <string name="save_failed">Save failed. </string>
 
@@ -202,16 +202,16 @@
     <string name="main_text_format_summary">Font size: %1$d\nLine spacing: %2$d</string>
     <string name="main_dynamic_comments">Dynamic comments</string>
     <string name="main_dynamic_comments_summary_on">Show recent comments dynamically below thread content in list</string>
-    <string name="main_dynamic_comments_summary_off">Don't show dynamic comments</string>
+    <string name="main_dynamic_comments_summary_off">Don\'t show dynamic comments</string>
     <string name="main_fast_scroller">Show fast scroller</string>
     <string name="main_fast_scroller_summary_on">Show fast scroller in the right of a list</string>
-    <string name="main_fast_scroller_summary_off">Don't show fast scroller</string>
+    <string name="main_fast_scroller_summary_off">Don\'t show fast scroller</string>
     <string name="main_image_loading_strategy">Picture preload</string>
-    <string name="main_image_loading_strategy_2">When Picture preload is not available... </string>
-    <string name="main_image_loading_strategy_2_summary_off">Don't show the picture anyway</string>
+    <string name="main_image_loading_strategy_2">When Picture preload is not available…</string>
+    <string name="main_image_loading_strategy_2_summary_off">Don\'t show the picture anyway</string>
     <string name="main_image_loading_strategy_2_summary_on">Show the picture button, and load the preview when long-clicking it</string>
     <string name="main_ac_cookies">Cookies</string>
-    <string name="main_ac_cookies_summary_no">Theoretically speaking, you don't have any cookies</string>
+    <string name="main_ac_cookies_summary_no">Theoretically speaking, you don\'t have any cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
     <string name="main_ac_cookies_summary_forever">Theoretically speaking, you have everlasting cookies</string>
     <string name="main_save_cookies">Save cookies</string>
@@ -276,14 +276,14 @@
     <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Failed to get the forum list</string>
-    <string name="refreshing_forum_list">Refreshing forum list... </string>
+    <string name="refreshing_forum_list">Refreshing forum list…</string>
     <string name="refresh_forum_list_failed">Failed to refresh the forum list</string>
 
     <string name="version">Version</string>
     <string name="size">Size</string>
     <string name="download_update">Download update</string>
     <string name="download">Download</string>
-    <string name="downloading_update">Downloading update... </string>
+    <string name="downloading_update">Downloading update…</string>
     <string name="download_update_failde">Failed to get the update. </string>
 
     <string name="network_receiver">Network receiver</string>
