@@ -131,8 +131,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private int mStatusBarColor = Color.BLACK;
     private int mNavigationBarColor = Color.BLACK;
 
-    private int[] mTemp = new int[2];
-
     private static int sDefaultMinDrawerMargin = 56;
 
     /**
@@ -459,25 +457,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         addView(mShadow, 1);
     }
 
-    private void getShadowPadding(int[] paddings) {
-        View view = null;
-        if (mLeftPercent > 0.0f) {
-            view = mLeftDrawer;
-        }
-        if (mRightPercent > 0.0f) {
-            view = mRightDrawer;
-        }
-
-        if (view instanceof DrawerLayoutChild) {
-            DrawerLayoutChild dlc = (DrawerLayoutChild) view;
-            paddings[0] = dlc.getLayoutPaddingTop();
-            paddings[1] = dlc.getLayoutPaddingBottom();
-        } else {
-            paddings[0] = 0;
-            paddings[1] = 0;
-        }
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -524,9 +503,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                         lp.height);
                 child.measure(drawerWidthSpec, drawerHeightSpec);
             } else if (child == mShadow) {
-                getShadowPadding(mTemp);
                 child.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(heightSize - mTemp[0] - mTemp[1], MeasureSpec.EXACTLY));
+                        MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
             } else {
                 throw new IllegalStateException("Don't call addView");
             }
@@ -558,8 +536,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                         lp.leftMargin + child.getMeasuredWidth(),
                         lp.topMargin + paddingTop + child.getMeasuredHeight());
             } else if (child == mShadow) {
-                getShadowPadding(mTemp);
-                child.layout(0, mTemp[0], child.getMeasuredWidth(), mTemp[0] + child.getMeasuredHeight());
+                child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
             } else { // Drawer, if it wasn't onMeasure would have thrown an exception.
                 final int childWidth = child.getMeasuredWidth();
                 final int childHeight = child.getMeasuredHeight();
@@ -758,6 +735,32 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mAnimator.start();
     }
 
+    private boolean shouldCloseDrawers(float x, float y) {
+        View activitedDrawer = null;
+        if (mLeftPercent > 0.0f) {
+            activitedDrawer = mLeftDrawer;
+        } else if (mRightPercent > 0.0f) {
+            activitedDrawer = mRightDrawer;
+        }
+        if (activitedDrawer == null) {
+            return false;
+        }
+
+        int xInt = (int) x;
+        int yInt = (int) y;
+
+        if (activitedDrawer instanceof DrawerLayoutChild) {
+            DrawerLayoutChild dlc = (DrawerLayoutChild) activitedDrawer;
+            int paddingTop = dlc.getLayoutPaddingTop();
+            int paddingBottom = dlc.getLayoutPaddingBottom();
+            if (yInt < paddingTop || yInt >= getHeight() - paddingBottom) {
+                return false;
+            }
+        }
+
+        return !ViewUtils.isViewUnder(activitedDrawer, xInt, yInt, 0);
+    }
+
     @Override
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
@@ -770,7 +773,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         switch (action) {
         case MotionEvent.ACTION_DOWN:
-            mIntercepted = false;
+            mIntercepted = shouldCloseDrawers(x, y);
             mCanIntercept = true;
             mInitialMotionX = x;
             mInitialMotionY = y;
@@ -785,10 +788,16 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             if (mCanIntercept && adx > slop && adx > ady) {
                 mIntercepted = true;
             }
+            if (shouldCloseDrawers(x, y)) {
+                mIntercepted = true;
+            }
             break;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
             mDragHelper.cancel();
+            if (shouldCloseDrawers(x, y)) {
+                closeDrawers();
+            }
             break;
         }
 
@@ -861,6 +870,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     startAnimation(false, true, true);
                 else if (!mRightOpened && mRightPercent >= OPEN_SENSITIVITY)
                     startAnimation(false, true, false);
+            } else if (shouldCloseDrawers(x, y)) {
+                closeDrawers();
             }
             break;
         }
@@ -885,17 +896,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         }
 
         if (update) {
-            // Update shadow size
-            int paddingTop = 0;
-            int paddingBottom = 0;
-            if (drawerView instanceof DrawerLayoutChild) {
-                DrawerLayoutChild dlc = (DrawerLayoutChild) drawerView;
-                paddingTop = dlc.getLayoutPaddingTop();
-                paddingBottom = dlc.getLayoutPaddingBottom();
-            }
-            mShadow.setTop(paddingTop);
-            mShadow.setBottom(getHeight() - paddingBottom);
-
             mShadow.setPercent(percent);
         }
 
@@ -933,8 +933,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             mRightOpened = false;
         }
 
-        mShadow.removeTapAction();
-
         // Callback
         if (update && mListener != null) {
             mListener.onDrawerClosed(drawerView);
@@ -951,8 +949,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             update = !mRightOpened;
             mRightOpened = true;
         }
-
-        mShadow.addTapAction();
 
         // Callback
         if (update && mListener != null) {
@@ -1167,10 +1163,10 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         }
     }
 
-    private final class ShadowView extends View implements View.OnClickListener {
+    private final class ShadowView extends View {
 
-        private final int mForm = 0x0;
-        private final int mTo = 0x99;
+        private static final int FORM = 0x0;
+        private static final int TO = 0x99;
         private float mPercent = 0;
 
         private Drawable mShadowLeft = null;
@@ -1178,7 +1174,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         public ShadowView(Context context) {
             super(context);
-            setSoundEffectsEnabled(false);
         }
 
         public void setShadowLeft(Drawable shadowLeft) {
@@ -1195,26 +1190,40 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             invalidate();
         }
 
-        public void addTapAction() {
-            setOnClickListener(this);
-        }
-
-        public void removeTapAction() {
-            setOnClickListener(null);
-            setClickable(false);
-        }
-
         @Override
         protected void onDraw(Canvas c) {
-            boolean drawLeft = mLeftDrawer.getRight() > 0;
-            boolean drawRight = !drawLeft && mRightDrawer.getLeft() < SlidingDrawerLayout.this.getWidth();
+            View activitedDrawer = null;
+            if (mLeftDrawer != null && mLeftDrawer.getRight() > 0) {
+                activitedDrawer = mLeftDrawer;
+            } else if (mRightDrawer != null && mRightDrawer.getLeft() < SlidingDrawerLayout.this.getWidth()) {
+                activitedDrawer = mRightDrawer;
+            }
+            if (activitedDrawer == null) {
+                return;
+            }
 
-            if (drawLeft || drawRight) {
-                // Draw drak background
-                c.drawARGB(MathUtils.lerp(mForm, mTo, mPercent), 0, 0, 0);
+            int paddingTop = 0;
+            int paddingBottom = 0;
+            if (activitedDrawer instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) activitedDrawer;
+                paddingTop = dlc.getLayoutPaddingTop();
+                paddingBottom = dlc.getLayoutPaddingBottom();
+            }
 
-                // Draw shadow left
-                if (mShadowLeft != null && drawLeft) {
+            int width = getWidth();
+            int height = getHeight();
+
+            int saved = -1;
+            if (paddingTop != 0 || paddingBottom != 0) {
+                saved = c.save();
+                c.clipRect(0, paddingTop, width, height - paddingBottom);
+            }
+
+            // Draw drak background
+            c.drawARGB(MathUtils.lerp(FORM, TO, mPercent), 0, 0, 0);
+
+            if (activitedDrawer == mLeftDrawer) {
+                if (mShadowLeft != null) {
                     int right = mLeftDrawer.getRight();
                     final int shadowWidth = mShadowLeft.getIntrinsicWidth();
                     mShadowLeft.setBounds(right, 0,
@@ -1222,9 +1231,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     mShadowLeft.setAlpha((int) (0xff * mLeftPercent));
                     mShadowLeft.draw(c);
                 }
-
-                // Draw shadow right
-                if (mShadowRight != null && drawRight) {
+            } else if (activitedDrawer == mRightDrawer) {
+                if (mShadowRight != null) {
                     int left = mRightDrawer.getLeft();
                     final int shadowWidth = mShadowRight.getIntrinsicWidth();
                     mShadowRight.setBounds(left - shadowWidth, 0,
@@ -1233,11 +1241,10 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     mShadowRight.draw(c);
                 }
             }
-        }
 
-        @Override
-        public void onClick(View v) {
-            SlidingDrawerLayout.this.closeDrawers();
+            if (saved != -1) {
+                c.restoreToCount(saved);
+            }
         }
     }
 }
