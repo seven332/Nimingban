@@ -274,6 +274,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mDelete.setOnClickListener(this);
         mIndicator.setOnClickListener(this);
         mForumText.setOnClickListener(this);
+        mPreview.setOnClickListener(this);
 
         StateListDrawable drawable = new StateListDrawable();
         drawable.addState(new int[]{android.R.attr.state_activated}, VectorDrawable.create(this, R.drawable.ic_chevron_up));
@@ -719,6 +720,13 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
             }
         } else if (v == mForumText) {
             showForumDialog();
+        } else if (v == mPreview) {
+            if (mSeletedImageUri != null) {
+                Intent intent = new Intent(this, GalleryActivity2.class);
+                intent.setAction(GalleryActivity2.ACTION_IMAGE_FILE);
+                intent.putExtra(GalleryActivity2.KEY_FILE_URI, mSeletedImageUri);
+                startActivity(intent);
+            }
         }
     }
 
