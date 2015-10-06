@@ -57,10 +57,10 @@ public class FastScroller extends View {
     private int mHandlerOffset = INVALID;
     private int mHandlerHeight = INVALID;
 
-    private int mDownX = INVALID;
-    private int mDownY = INVALID;
+    private float mDownX = INVALID;
+    private float mDownY = INVALID;
 
-    private int mLastMotionY = INVALID;
+    private float mLastMotionY = INVALID;
 
     private boolean mDragged = false;
 
@@ -73,12 +73,12 @@ public class FastScroller extends View {
                 mDragged = true;
 
                 SimpleHandler.getInstance().removeCallbacks(mHideRunnable);
-                int y = mDownY;
+                float y = mDownY;
                 if (y < mHandlerOffset || y >= mHandlerOffset + mHandlerHeight) {
                     // the point out of handler, make the point in handler center
                     int range = mRecyclerView.computeVerticalScrollRange();
                     if (range > 0) {
-                        int scroll = range * (y - (mHandlerOffset + mHandlerHeight / 2)) / (getHeight() - getPaddingTop() - getPaddingBottom());
+                        int scroll = (int) (range * (y - (mHandlerOffset + mHandlerHeight / 2)) / (getHeight() - getPaddingTop() - getPaddingBottom()));
                         mRecyclerView.scrollBy(0, scroll);
                     }
                 }
@@ -340,8 +340,8 @@ public class FastScroller extends View {
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 mDragged = false;
-                mDownX = (int) event.getX();
-                mDownY = (int) event.getY();
+                mDownX = event.getX();
+                mDownY = event.getY();
                 mSimpleHandler.postDelayed(mCheckForDragRunnable, SCROLL_BAR_DRAG_TIMEOUT);
                 break;
             }
@@ -349,9 +349,9 @@ public class FastScroller extends View {
                 if (!mDragged) {
                     // mCheckForDragRunnable has not been called
                     mSimpleHandler.removeCallbacks(mCheckForDragRunnable);
-                    int x = (int) event.getX();
-                    int y = (int) event.getY();
-                    if (Math.abs(x - mDownX) >= Math.abs(y - mDownY)) {
+                    float x = event.getX();
+                    float y = event.getY();
+                    if (Math.abs(x - mDownX) > Math.abs(y - mDownY)) {
                         mCantDrag = true;
                         return false;
                     } else {
@@ -371,8 +371,8 @@ public class FastScroller extends View {
                 if (range <= 0) {
                     break;
                 }
-                int y = (int) event.getY();
-                int scroll = range * (y - mLastMotionY) / (getHeight() - getPaddingTop() - getPaddingBottom());
+                float y = event.getY();
+                int scroll = (int) (range * (y - mLastMotionY) / (getHeight() - getPaddingTop() - getPaddingBottom()));
                 mRecyclerView.scrollBy(0, scroll);
                 mLastMotionY = y;
                 break;
