@@ -24,15 +24,15 @@
     <string name="data_analysis">Data analysis</string>
     <string name="data_analysis_plain">Would you mind if the developer collecting your device information and your usage? It will help developer a lot.</string>
 
-    <string name="it_is_important">It is important</string>
-    <string name="crash_tip">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+    <string name="it_is_important">Important!! </string>
+    <string name="crash_tip">The application crashed last time. Would you mind to send logcat to the developer via e-mail to fix the bug?</string>
 
-    <string name="cant_make_sure_image_save_location">It seems the image save location is not available. Go to Settings to set it</string>
+    <string name="cant_make_sure_image_save_location">It seems your picture saving location is not available. Set it in Settings to save pictures. </string>
 
     <string name="swipe_right_open_menu">Swipe right for menu</string>
     <string name="swipe_left_open_forum_list">Swipe left for forum list</string>
     <string name="double_click_toolbar_refresh">Double click toolbar to refresh</string>
-    <string name="get_it">Get it</string>
+    <string name="get_it">Got it</string>
 
     <string name="common_posts">Common threads</string>
 
@@ -50,7 +50,7 @@
     <string name="text_image">Text to image</string>
 
     <string name="convert">Convert</string>
-    <string name="converting">Converting…</string>
+    <string name="converting">Converting... </string>
     <string name="convert_successfully">Convert successfully</string>
     <string name="convert_failed">Convert failed</string>
     <string name="new_feature_available">New feature is available</string>
@@ -102,7 +102,7 @@
     <string name="save_text_draft">Save as draft? </string>
     <string name="save">Save</string>
     <string name="dont_save">Don\'t save</string>
-    <string name="create_text_image">Text you typed contains offensive words. Convert the text to a image instead? </string>
+    <string name="create_text_image">Seems that your post contains offensive words. Convert the text to a image instead? </string>
     <string name="start_creating_post">Posting... </string>
     <string name="create_post_successfully">Posted successfully</string>
     <string name="reply_failed">Seems failed to reply. Your reply has been saved as draft. </string>
@@ -117,7 +117,7 @@
     <string name="no_cookies">No cookies</string>
     <string name="no_cookies_ac">Seems that you don't have cookie of AC Nimingban. Get cookie now?</string>
     <string name="i_dont_care">I don\'t care</string>
-    <string name="getting_cookies">Trying to get Cookies…</string>
+    <string name="getting_cookies">Trying to get Cookie... </string>
     <string name="got_cookies">Got it! </string>
     <string name="cant_get_cookies">Failed to get cookie. </string>
 
@@ -242,19 +242,19 @@
 
     <string name="image_loading_strategy_all">Always</string>
     <string name="image_loading_strategy_wifi">Only over Wi-Fi</string>
-    <string name="image_loading_strategy_no">Nevers</string>
+    <string name="image_loading_strategy_no">Never</string>
 
     <string name="save_cookies_failed">Saving cookie failed. </string>
     <string name="save_cookies_to">Cookie saved to %s. </string>
 
     <string name="restore_cookies_successfully">Restore cookies successfully</string>
-    <string name="not_valid_cookie_file">Ivalid cookie file</string>
+    <string name="not_valid_cookie_file">Invalid cookie file</string>
     <string name="cant_find_cookie_file">Can\'t find any cookie file</string>
     <string name="select_cookie_file">Select cookie file</string>
 
     <string name="write_storage_permission_tip">Something may go wrong if you deny the permission request</string>
 
-    <string name="you_rejected_me">It hurt when you rejected me</string>
+    <string name="you_rejected_me">It hurts when you rejected me</string>
 
     <string name="dir_picker">Dir picker</string>
     <string name="directory_not_writable">The directory is not writable</string>
@@ -276,7 +276,7 @@
     <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>
     <string name="no_forum">Failed to get the forum list</string>
-    <string name="refreshing_forum_list">Refreshing forum list…</string>
+    <string name="refreshing_forum_list">Refreshing forum list... </string>
     <string name="refresh_forum_list_failed">Failed to refresh the forum list</string>
 
     <string name="version">Version</string>
