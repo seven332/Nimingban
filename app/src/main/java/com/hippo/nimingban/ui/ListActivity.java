@@ -280,7 +280,11 @@ public final class ListActivity extends AbsActivity
         mRightDrawer.setRightDrawerHelper(this);
 
         if (savedInstanceState == null) {
-            mLeftDrawer.loadHeaderImageView();
+            int ils = Settings.getImageLoadingStrategy();
+            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
+                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(ListActivity.this))) {
+                mLeftDrawer.loadHeaderImageView();
+            }
         }
 
         updateForums(true);
