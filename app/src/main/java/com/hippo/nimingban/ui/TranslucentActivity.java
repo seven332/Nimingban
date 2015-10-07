@@ -17,9 +17,8 @@
 package com.hippo.nimingban.ui;
 
 import android.os.Bundle;
-import android.view.View;
 
-public abstract class TranslucentActivity extends AbsActivity {
+public abstract class TranslucentActivity extends AbsActivity implements TranslucentHelper.SuperActivity {
 
     private TranslucentHelper mHelper;
 
@@ -30,15 +29,13 @@ public abstract class TranslucentActivity extends AbsActivity {
     }
 
     @Override
-    public void setContentView(int layoutResID) {
+    public void superSetContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        mHelper.handleContentView(this);
     }
 
     @Override
-    public void setContentView(View view) {
-        super.setContentView(view);
-        mHelper.handleContentView(this);
+    public void setContentView(int layoutResID) {
+        mHelper.setContentView(this, layoutResID);
     }
 
     public void setStatusBarColor(int color) {

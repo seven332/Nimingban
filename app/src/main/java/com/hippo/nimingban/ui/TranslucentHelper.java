@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -39,18 +40,21 @@ public class TranslucentHelper {
 
     private TranslucentLayout mTranslucentLayout;
 
-    public void handleContentView(Activity activity) {
+    public void setContentView(Activity activity, int layoutResID) {
         if (VALID) {
-            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-            ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
-            decor.removeView(decorChild);
             mTranslucentLayout = new TranslucentLayout(activity);
             mTranslucentLayout.setShowStatusBar(mShowStatusBar);
             mTranslucentLayout.setShowNavigationBar(mShowNavigationBar);
             mTranslucentLayout.setStatusBarColor(mStatusBarColor);
             mTranslucentLayout.setNavigationBarColor(mNavigationBarColor);
-            mTranslucentLayout.addView(decorChild);
-            decor.addView(mTranslucentLayout);
+            activity.getLayoutInflater().inflate(layoutResID, mTranslucentLayout);
+            activity.setContentView(mTranslucentLayout);
+        } else {
+            if (activity instanceof SuperActivity) {
+                ((SuperActivity) activity).superSetContentView(layoutResID);
+            } else {
+                throw new IllegalStateException("The Activity must implements SuperActivity");
+            }
         }
     }
 
@@ -214,9 +218,17 @@ public class TranslucentHelper {
         protected boolean fitSystemWindows(Rect insets) {
             mFitPaddingTop = insets.top;
             mFitPaddingBottom = insets.bottom;
+
+            Log.d("TAG", "mFitPaddingBottom = " + mFitPaddingBottom);
+
             insets.top = 0;
             insets.bottom = 0;
             return super.fitSystemWindows(insets);
         }
+    }
+
+    public interface SuperActivity {
+
+        void superSetContentView(int layoutResID);
     }
 }

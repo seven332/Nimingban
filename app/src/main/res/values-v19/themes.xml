@@ -28,10 +28,10 @@
     <style name="ListActivity" parent="AppTheme.NoActionBar.Translucent.Status">
     </style>
 
-    <style name="NormalActivity" parent="AppTheme.NoActionBar.Translucent">
+    <style name="NormalActivity" parent="AppTheme.NoActionBar.Translucent.Status">
     </style>
 
-    <style name="SwipeActivity" parent="AppTheme.NoActionBar.Translucent.Transparent">
+    <style name="SwipeActivity" parent="AppTheme.NoActionBar.Translucent.Status.Transparent">
     </style>
 
 
@@ -47,10 +47,10 @@
     <style name="ListActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status">
     </style>
 
-    <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent">
+    <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status">
     </style>
 
-    <style name="SwipeActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Transparent">
+    <style name="SwipeActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status.Transparent">
     </style>
 
 </resources>
