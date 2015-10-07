@@ -98,18 +98,18 @@ public final class NMBApplication extends Application
 
         Messenger.getInstance().register(Constants.MESSENGER_ID_CHANGE_THEME, this);
 
+        try {
+            update();
+        } catch (PackageManager.NameNotFoundException e) {
+            // Ignore
+        }
+
         // TCAgent
         if (Settings.getAnalysis()) {
             mHasInitTCAgent = true;
             TCAgent.init(this);
         } else {
             mHasInitTCAgent = false;
-        }
-
-        try {
-            update();
-        } catch (PackageManager.NameNotFoundException e) {
-            // Ignore
         }
     }
 
@@ -128,6 +128,7 @@ public final class NMBApplication extends Application
 
         if (oldVersionCode < 20) {
             Settings.putSetAnalysis(false);
+            Settings.putAnalysis(false);
         }
     }
 
