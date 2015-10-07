@@ -971,6 +971,8 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
             mNMBRequest = null;
 
             Toast.makeText(TypeSendActivity.this, R.string.got_cookies, Toast.LENGTH_SHORT).show();
+
+            doAction();
         }
 
         @Override
