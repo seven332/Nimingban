@@ -400,6 +400,10 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
 
                 return true;
             case R.id.action_text_image:
+                if (TextUtils.isEmpty(mEditText.getText().toString())) {
+                    return true;
+                }
+
                 if (mProgressDialog != null) {
                     return true;
                 }
