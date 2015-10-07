@@ -35,6 +35,7 @@ import com.hippo.nimingban.dao.DraftDao;
 import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.util.Arrays2;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -495,13 +496,29 @@ public final class DB {
         return result;
     }
 
-    public static void setACForums(List<ACForum> list) {
+    public static void addACForums(List<ACForum> list) {
         ACForumDao dao = sDaoSession.getACForumDao();
-        dao.deleteAll();
 
-        int i = 0;
+        List<ACForumRaw> currentList = sDaoSession.getACForumDao().queryBuilder()
+                .orderAsc(ACForumDao.Properties.Priority).list();
+        List<ACForum> addList = new ArrayList<>();
+        addList.addAll(list);
+        for (int i = 0, n = addList.size(); i < n; i++) {
+            ACForum forum = addList.get(i);
+            for (int j = 0, m = currentList.size(); j < m; j++) {
+                ACForumRaw raw = currentList.get(j);
+                if (ObjectUtils.equal(forum.id, raw.getForumid())) {
+                    addList.remove(i);
+                    i--;
+                    n--;
+                    break;
+                }
+            }
+        }
+
+        int i = getACForumMaxPriority() + 1;
         List<ACForumRaw> insertList = new ArrayList<>();
-        for (ACForum forum : list) {
+        for (ACForum forum : addList) {
             ACForumRaw raw = new ACForumRaw();
             raw.setDisplayname(forum.name);
             raw.setForumid(forum.id);
@@ -513,6 +530,44 @@ public final class DB {
         }
 
         dao.insertInTx(insertList);
+    }
+
+    private static int getACForumMaxPriority() {
+        List<ACForumRaw> list = sDaoSession.getACForumDao().queryBuilder()
+                .orderDesc(ACForumDao.Properties.Priority).limit(1).list();
+        if (list.isEmpty()) {
+            return -1;
+        } else {
+            return list.get(0).getPriority();
+        }
+    }
+
+    public static void addACForums(String name, String id) {
+        ACForumRaw raw = new ACForumRaw();
+        raw.setDisplayname(name);
+        raw.setForumid(id);
+        raw.setPriority(getACForumMaxPriority() + 1);
+        raw.setVisibility(true);
+        raw.setMsg("None");
+        sDaoSession.getACForumDao().insert(raw);
+    }
+
+    public static ACForumRaw getACForumForForumid(String id) {
+        List<ACForumRaw> list = sDaoSession.getACForumDao().queryBuilder()
+                .where(ACForumDao.Properties.Forumid.eq(id)).limit(1).list();
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
+    public static void removeACForum(ACForumRaw raw) {
+        sDaoSession.getACForumDao().delete(raw);
+    }
+
+    public static void updateACForum(ACForumRaw raw) {
+        sDaoSession.getACForumDao().update(raw);
     }
 
     public static LazyList<ACForumRaw> getACForumLazyList() {

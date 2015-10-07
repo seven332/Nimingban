@@ -47,6 +47,8 @@
 
     <string name="refresh">刷新</string>
 
+    <string name="add">添加</string>
+
     <string name="text_image">文字至图片</string>
 
     <string name="convert">转化</string>
@@ -270,6 +272,12 @@
     <string name="no_forum">找不到任何板块</string>
     <string name="refreshing_forum_list">刷新板块中</string>
     <string name="refresh_forum_list_failed">刷新板块失败</string>
+    <string name="forum_name">名称</string>
+    <string name="forum_id">Id</string>
+    <string name="name_id_cant_empty">名称和 id 不能为空</string>
+    <string name="forum_id_exists">该 id 已存在，其板块名称为 %s</string>
+    <string name="add_forum">添加板块</string>
+    <string name="modify_forum">修改板块</string>
 
     <string name="version">版本</string>
     <string name="size">大小</string>

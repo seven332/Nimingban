@@ -23,13 +23,17 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +42,10 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.effect.ViewTransition;
@@ -78,6 +84,7 @@ public class SortForumsActivity extends TranslucentActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
+    private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
     private boolean mNeedUpdate;
@@ -146,9 +153,13 @@ public class SortForumsActivity extends TranslucentActivity {
         mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
                 (NinePatchDrawable) getResources().getDrawable(R.drawable.shadow_8dp));
 
+        // swipe manager
+        mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
+
         mAdapter = new ForumAdapter();
         mAdapter.setHasStableIds(true);
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(mAdapter);      // wrap for dragging
+        mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mWrappedAdapter);      // wrap for swiping
 
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
 
@@ -166,6 +177,7 @@ public class SortForumsActivity extends TranslucentActivity {
         //
         // priority: TouchActionGuard > Swipe > DragAndDrop
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(mRecyclerView);
+        mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
         updateLazyList(false);
@@ -177,13 +189,87 @@ public class SortForumsActivity extends TranslucentActivity {
         return true;
     }
 
+    private class ForumDialogHelper implements View.OnClickListener {
+
+        private ACForumRaw mRaw;
+
+        private View mView;
+
+        private EditText mName;
+        private EditText mId;
+
+        private Dialog mDialog;
+        private Button mButton;
+
+        public ForumDialogHelper() {
+            mView = getLayoutInflater().inflate(R.layout.dialog_forum, null);
+            mName = (EditText) mView.findViewById(R.id.name);
+            mId = (EditText) mView.findViewById(R.id.id);
+        }
+
+        public ForumDialogHelper(ACForumRaw raw) {
+            mRaw = raw;
+
+            mView = getLayoutInflater().inflate(R.layout.dialog_forum, null);
+            mName = (EditText) mView.findViewById(R.id.name);
+            mId = (EditText) mView.findViewById(R.id.id);
+
+            mName.setText(mRaw.getDisplayname());
+            mId.setText(mRaw.getForumid());
+            mId.setEnabled(false);
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        public void setDialog(AlertDialog dialog) {
+            mDialog = dialog;
+            mButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            mButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mButton == v) {
+                String name = mName.getText().toString();
+                String id = mId.getText().toString();
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(id)) {
+                    Toast.makeText(SortForumsActivity.this, R.string.name_id_cant_empty, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (mRaw == null) {
+                    ACForumRaw raw = DB.getACForumForForumid(id);
+                    if (raw != null) {
+                        Toast.makeText(SortForumsActivity.this,
+                                getString(R.string.forum_id_exists, raw.getDisplayname()), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    DB.addACForums(name, id);
+                } else {
+                    mRaw.setDisplayname(name);
+                    mRaw.setForumid(id);
+                    DB.updateACForum(mRaw);
+                }
+
+                updateLazyList(false);
+                mAdapter.notifyDataSetChanged();
+                mNeedUpdate = true;
+                mDialog.dismiss();
+            }
+        }
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_refresh:
+            case R.id.action_refresh: {
                 if (mNMBRequest != null) {
                     return true;
                 }
@@ -214,6 +300,17 @@ public class SortForumsActivity extends TranslucentActivity {
                 client.execute(request);
 
                 return true;
+            }
+            case R.id.action_add: {
+                ForumDialogHelper helper = new ForumDialogHelper();
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle(R.string.add_forum)
+                        .setView(helper.getView())
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+                helper.setDialog(dialog);
+                return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -275,8 +372,9 @@ public class SortForumsActivity extends TranslucentActivity {
         mViewTransition.showView(mLazyList.isEmpty() ? 0 : 1, animation);
     }
 
-    private class ForumHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
+    private class ForumHolder extends AbstractDraggableSwipeableItemViewHolder implements View.OnClickListener {
 
+        public View swipeHandler;
         public SimpleImageView visibility;
         public TextView forum;
         public View dragHandler;
@@ -284,11 +382,13 @@ public class SortForumsActivity extends TranslucentActivity {
         public ForumHolder(View itemView) {
             super(itemView);
 
+            swipeHandler = itemView.findViewById(R.id.swipe_handler);
             visibility = (SimpleImageView) itemView.findViewById(R.id.visibility);
             forum = (TextView) itemView.findViewById(R.id.forum);
             dragHandler = itemView.findViewById(R.id.drag_handler);
 
             visibility.setOnClickListener(this);
+            forum.setOnClickListener(this);
 
             StateListDrawable drawable = new StateListDrawable();
             drawable.addState(new int[]{android.R.attr.state_activated},
@@ -302,19 +402,36 @@ public class SortForumsActivity extends TranslucentActivity {
         public void onClick(@NonNull View v) {
             int position = getAdapterPosition();
             if (position >= 0 && position < mLazyList.size()) {
-                ACForumRaw raw = mLazyList.get(position);
-                DB.setACForumVisibility(raw, !raw.getVisibility());
+                if (visibility == v) {
+                    ACForumRaw raw = mLazyList.get(position);
+                    DB.setACForumVisibility(raw, !raw.getVisibility());
 
-                // Update UI
-                visibility.setActivated(raw.getVisibility());
+                    // Update UI
+                    visibility.setActivated(raw.getVisibility());
 
-                mNeedUpdate = true;
+                    mNeedUpdate = true;
+                } else if (forum == v) {
+                    ACForumRaw raw = mLazyList.get(position);
+                    ForumDialogHelper helper = new ForumDialogHelper(raw);
+                    AlertDialog dialog = new AlertDialog.Builder(SortForumsActivity.this)
+                            .setTitle(R.string.modify_forum)
+                            .setView(helper.getView())
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show();
+                    helper.setDialog(dialog);
+                }
             }
+        }
+
+        @Override
+        public View getSwipeableContainerView() {
+            return swipeHandler;
         }
     }
 
     private class ForumAdapter extends RecyclerView.Adapter<ForumHolder>
-            implements DraggableItemAdapter<ForumHolder> {
+            implements DraggableItemAdapter<ForumHolder>,
+            SwipeableItemAdapter<ForumHolder> {
 
         @Override
         public ForumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -378,6 +495,48 @@ public class SortForumsActivity extends TranslucentActivity {
 
             mNeedUpdate = true;
         }
+
+        @Override
+        public int onGetSwipeReactionType(ForumHolder holder, int i, int i1, int i2) {
+            return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        }
+
+        @Override
+        public void onSetSwipeBackground(ForumHolder holder, int i, int i1) {
+            // Empty
+        }
+
+        @Override
+        public void onSwipeItemStarted(ForumHolder holder, int position) {
+            // Empty
+        }
+
+        @Override
+        public int onSwipeItem(ForumHolder holder, int position, int result) {
+            switch (result) {
+                // remove
+                case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
+                case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
+                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
+                // other --- do nothing
+                case RecyclerViewSwipeManager.RESULT_CANCELED:
+                default:
+                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+            }
+        }
+
+        @Override
+        public void onPerformAfterSwipeReaction(ForumHolder holder, int position, int result, int reaction) {
+            if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
+                final ACForumRaw raw = mLazyList.get(position);
+                if (raw != null) {
+                    DB.removeACForum(mLazyList.get(position));
+                    updateLazyList(true);
+                    notifyItemRemoved(position);
+                    mNeedUpdate = true;
+                }
+            }
+        }
     }
 
     private class ForumsListener implements NMBClient.Callback<List<ACForumGroup>> {
@@ -397,7 +556,7 @@ public class SortForumsActivity extends TranslucentActivity {
                 }
             }
 
-            DB.setACForums(list);
+            DB.addACForums(list);
             updateLazyList(false);
             mAdapter.notifyDataSetChanged();
 

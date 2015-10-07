@@ -25,4 +25,10 @@
         android:icon="@drawable/ic_refresh_dark_x24"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_add"
+        android:title="@string/add"
+        android:icon="@drawable/ic_plus_dark_x24"
+        app:showAsAction="ifRoom"/>
+
 </menu>
