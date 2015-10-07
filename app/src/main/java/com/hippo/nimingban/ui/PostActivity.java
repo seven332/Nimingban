@@ -23,7 +23,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -75,6 +78,8 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class PostActivity extends SwipeActivity
@@ -598,9 +603,11 @@ public final class PostActivity extends SwipeActivity
     private class ReplyDailogHelper implements DialogInterface.OnClickListener {
 
         private Reply mReply;
+        private List<ResolveInfo> mResolveInfoList;
 
-        public ReplyDailogHelper(Reply reply) {
+        public ReplyDailogHelper(Reply reply, List<ResolveInfo> resolveInfoList) {
             mReply = reply;
+            mResolveInfoList = resolveInfoList;
         }
 
         @Override
@@ -627,7 +634,7 @@ public final class PostActivity extends SwipeActivity
                     // Send
                     ActivityHelper.share(PostActivity.this, mReply.getNMBDisplayContent().toString());
                     break;
-                case 3:
+                case 3: {
                     // Report
                     Intent intent = new Intent(PostActivity.this, TypeSendActivity.class);
                     intent.setAction(TypeSendActivity.ACTION_REPORT);
@@ -636,13 +643,49 @@ public final class PostActivity extends SwipeActivity
                     intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
                     startActivity(intent);
                     break;
+                }
+                default: {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (mResolveInfoList == null) {
+                            break;
+                        }
+                        int index = which - 4;
+                        if (index < mResolveInfoList.size() && index >= 0) {
+                            ResolveInfo info = mResolveInfoList.get(index);
+                            Intent intent = new Intent()
+                                    .setClassName(info.activityInfo.packageName, info.activityInfo.name)
+                                    .setAction(Intent.ACTION_PROCESS_TEXT)
+                                    .setType("text/plain")
+                                    .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
+                                    .putExtra(Intent.EXTRA_PROCESS_TEXT, mReply.getNMBDisplayContent().toString());
+
+                            startActivity(intent);
+                        }
+                    }
+                    break;
+                }
             }
         }
     }
 
     private void showReplyDialog(int position) {
-        ReplyDailogHelper helper = new ReplyDailogHelper(mReplyHelper.getDataAt(position));
-        new AlertDialog.Builder(this).setItems(R.array.reply_dialog, helper).show();
+        List<CharSequence> itemList = new ArrayList<>();
+        String[] items = getResources().getStringArray(R.array.reply_dialog);
+        Collections.addAll(itemList, items);
+
+        List<ResolveInfo> resolveInfos = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PackageManager pm = getPackageManager();
+            resolveInfos = pm.queryIntentActivities(new Intent()
+                    .setAction(Intent.ACTION_PROCESS_TEXT)
+                    .setType("text/plain"), 0);
+            for (ResolveInfo info : resolveInfos) {
+                itemList.add(info.loadLabel(pm));
+            }
+        }
+
+        ReplyDailogHelper helper = new ReplyDailogHelper(mReplyHelper.getDataAt(position), resolveInfos);
+        new AlertDialog.Builder(this).setItems(itemList.toArray(new CharSequence[itemList.size()]), helper).show();
     }
 
     @Override
