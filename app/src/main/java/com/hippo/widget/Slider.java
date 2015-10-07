@@ -109,6 +109,7 @@ public class Slider extends View {
         init(context, attrs);
     }
 
+    @SuppressWarnings("deprecation")
     private void init(Context context, AttributeSet attrs) {
         mContext = context;
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -121,14 +122,11 @@ public class Slider extends View {
         mBubble = new BubbleView(context, textPaint);
         mBubble.setScaleX(0.0f);
         mBubble.setScaleY(0.0f);
-        //noinspection deprecation
         AbsoluteLayout absoluteLayout = new AbsoluteLayout(context);
         absoluteLayout.addView(mBubble);
-        //noinspection deprecation
         absoluteLayout.setBackgroundDrawable(null);
         mPopup = new PopupWindow(absoluteLayout);
-        mPopup.setBackgroundDrawable(null);
-        mPopup.setOutsideTouchable(true);
+        mPopup.setOutsideTouchable(false);
         mPopup.setTouchable(false);
         mPopup.setFocusable(false);
 
