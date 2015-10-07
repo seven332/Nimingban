@@ -125,6 +125,10 @@ public final class NMBApplication extends Application
         if (oldVersionCode < 14) {
             Settings.putGuideListActivity(true);
         }
+
+        if (oldVersionCode < 20) {
+            Settings.putSetAnalysis(false);
+        }
     }
 
     public static void updateCookies(Context context) {

@@ -38,7 +38,9 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -364,12 +366,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_AC_COOKIES = "ac_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
+        private static final String KEY_ABOUT_ANALYSIS = "about_analysis";
 
         private Preference mACCookies;
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
         private Preference mFeedId;
         private Preference mImageSaveLocation;
+        private Preference mAboutAnalysis;
 
         private TimingLife mTimingLife;
 
@@ -391,12 +395,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mFeedId = findPreference(Settings.KEY_FEED_ID);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
+            mAboutAnalysis = findPreference(KEY_ABOUT_ANALYSIS);
 
             mACCookies.setOnPreferenceClickListener(this);
             mSaveCookies.setOnPreferenceClickListener(this);
             mRestoreCookies.setOnPreferenceClickListener(this);
             mFeedId.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
+            mAboutAnalysis.setOnPreferenceClickListener(this);
 
             long maxAge = ACSite.getInstance().getCookieMaxAge(getActivity());
             setACCookiesSummary(maxAge);
@@ -705,6 +711,21 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     showDirPickerDialogKK();
                 } else {
                     showDirPickerDialogL();
+                }
+            } else if (KEY_ABOUT_ANALYSIS.equals(key)) {
+                try {
+                    CharSequence message = Html.fromHtml(IOUtils.readString(
+                            getResources().openRawResource(R.raw.about_analysis), "UTF-8"));
+                    Dialog dialog = new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.data_analysis)
+                            .setMessage(message)
+                            .show();
+                    TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
+                    if (messageView != null) {
+                        messageView.setMovementMethod(LinkMovementMethod.getInstance());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 

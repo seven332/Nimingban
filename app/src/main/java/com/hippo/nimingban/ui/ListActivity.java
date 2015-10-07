@@ -98,6 +98,7 @@ import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
 import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
@@ -105,6 +106,7 @@ import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -480,13 +482,24 @@ public final class ListActivity extends AbsActivity
                     Settings.putAnalysis(which == DialogInterface.BUTTON_POSITIVE);
                 }
             };
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.data_analysis)
-                    .setMessage(R.string.data_analysis_plain)
-                    .setCancelable(false)
-                    .setPositiveButton(android.R.string.ok, listener)
-                    .setNegativeButton(android.R.string.cancel, listener)
-                    .show();
+
+            try {
+                CharSequence message = Html.fromHtml(IOUtils.readString(
+                        getResources().openRawResource(R.raw.analysis_plain), "UTF-8"));
+                Dialog dialog = new AlertDialog.Builder(this)
+                        .setTitle(R.string.data_analysis)
+                        .setMessage(message)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.agree, listener)
+                        .setNegativeButton(R.string.disagree, listener)
+                        .show();
+                TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
+                if (messageView != null) {
+                    messageView.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         // Get common post

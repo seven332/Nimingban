@@ -56,4 +56,8 @@
         android:title="@string/main_analysis"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
+    <Preference
+        android:key="about_analysis"
+        android:title="@string/main_about_analysis"/>
+
 </PreferenceScreen>
