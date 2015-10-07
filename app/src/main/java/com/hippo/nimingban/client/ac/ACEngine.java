@@ -64,7 +64,6 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -78,6 +77,39 @@ public class ACEngine {
     private static final MediaType MEDIA_TYPE_IMAGE_ALL = MediaType.parse("image/*");
     private static final MediaType MEDIA_TYPE_IMAGE_JPEG = MediaType.parse("image/jpeg");
 
+    private static final String UNKNOWN = "Unknown";
+
+    private static void throwException(Call call, String body, Exception e) throws Exception {
+        if (call.isCanceled()) {
+            throw new CancelledException();
+        }
+
+        if (e instanceof NMBException) {
+            if (!UNKNOWN.equals(e.getMessage())) {
+                throw e;
+            }
+        }
+
+        if (TextUtils.isEmpty(body)) {
+            return;
+        }
+
+        try {
+            JSONObject jo = JSON.parseObject(body);
+            if (!jo.getBoolean("success")) {
+                throw new NMBException(ACSite.getInstance(), jo.getString("msg"));
+            }
+        } catch (Exception ee) {
+            // Ignore
+        }
+
+        Document doc = Jsoup.parse(body);
+        List<Element> elements = doc.getElementsByClass("error");
+        if (!elements.isEmpty()) {
+            throw new NMBException(ACSite.getInstance(), elements.get(0).text());
+        }
+    }
+
     public static Call prepareGetCookie(OkHttpClient okHttpClient) {
         String url = ACUrl.API_GET_COOKIE;
         Log.d(TAG, url);
@@ -86,18 +118,20 @@ public class ACEngine {
     }
 
     public static Boolean doGetCookie(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
             ResponseUtils.storeCookies(response);
-            String body = response.body().string();
+            body = response.body().string();
 
-            return body.equals("\"ok\"");
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
+            if (!"\"ok\"".equals(body)) {
+                throw new NMBException(ACSite.getInstance(), UNKNOWN);
             }
+
+            return true;
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -109,21 +143,19 @@ public class ACEngine {
     }
 
     public static List<CommonPost> doGetCommonPosts(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
 
             List<CommonPost> result = JSON.parseArray(body, CommonPost.class);
             if (result == null) {
                 throw new NMBException(ACSite.getInstance(), "Can't parse json when getForumList");
             }
             return result;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -135,21 +167,19 @@ public class ACEngine {
     }
 
     public static List<ACForumGroup> doGetForumList(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
 
             List<ACForumGroup> result = JSON.parseArray(body, ACForumGroup.class);
             if (result == null) {
                 throw new NMBException(ACSite.getInstance(), "Can't parse json when getForumList");
             }
             return result;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -161,9 +191,10 @@ public class ACEngine {
     }
 
     public static List<Post> doGetPostList(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
             List<ACPost> acPosts = JSON.parseArray(body, ACPost.class);
             if (acPosts == null) {
                 throw new NMBException(ACSite.getInstance(), "Can't parse json when getPostList");
@@ -178,12 +209,9 @@ public class ACEngine {
             }
 
             return result;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -195,21 +223,19 @@ public class ACEngine {
     }
 
     public static Pair<Post, List<Reply>> doGetPost(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
             ACPost acPost = JSON.parseObject(body, ACPost.class);
             if (acPost == null) {
                 throw new NMBException(ACSite.getInstance(), "Can't parse json when getPost");
             }
             acPost.generateSelfAndReplies(ACSite.getInstance());
             return new Pair<Post, List<Reply>>(acPost, new ArrayList<Reply>(acPost.replys));
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -221,11 +247,13 @@ public class ACEngine {
     }
 
     public static Reply doGetReference(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
+            body = response.body().string();
 
             ACReference reference = new ACReference();
-            Document doc = Jsoup.parse(response.body().byteStream(), "UTF-8", ACUrl.HOST + "/");
+            Document doc = Jsoup.parse(body, ACUrl.HOST + "/");
             List<Element> elements = doc.getAllElements();
             for (Element element : elements) {
                 String className = element.className();
@@ -268,12 +296,9 @@ public class ACEngine {
             reference.generate(ACSite.getInstance());
 
             return reference;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -348,41 +373,28 @@ public class ACEngine {
     }
 
     public static Void doReply(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
+
             try {
                 JSONObject jo = JSON.parseObject(body);
                 if (jo.getBoolean("success")) {
                     return null;
                 } else {
-                    String msg = jo.getString("msg");
-                    throw new NMBException(ACSite.getInstance(), msg);
+                    throw new NMBException(ACSite.getInstance(), jo.getString("msg"));
                 }
             } catch (Exception e) {
-                if  (e instanceof NMBException) {
-                    throw e;
-                }
-
-                Document doc = Jsoup.parse(body);
-                List<Element> elements = doc.getElementsByClass("success");
-                if (!elements.isEmpty()) {
+                if (body.contains("class=\"success\"")) {
                     return null;
                 } else {
-                    elements = doc.getElementsByTag("h1");
-                    if (!elements.isEmpty()) {
-                        throw new NMBException(ACSite.getInstance(), elements.get(0).text());
-                    } else {
-                        throw new NMBException(ACSite.getInstance(), "Unknown");
-                    }
+                    throw e;
                 }
             }
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -394,9 +406,10 @@ public class ACEngine {
     }
 
     public static List<Post> doGetFeed(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
 
             List<ACFeed> acFeeds = JSON.parseArray(body, ACFeed.class);
 
@@ -413,12 +426,9 @@ public class ACEngine {
             }
 
             return result;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -430,21 +440,19 @@ public class ACEngine {
     }
 
     public static Void doAddFeed(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
 
             if (body.equals("\"\\u8ba2\\u9605\\u5927\\u6210\\u529f\\u2192_\\u2192\"")) {
                 return null;
             } else {
-                throw new NMBException(ACSite.getInstance(), "Unknown error");
+                throw new NMBException(ACSite.getInstance(), UNKNOWN);
             }
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -456,21 +464,19 @@ public class ACEngine {
     }
 
     public static Void doDelFeed(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
 
             if (body.equals("\"\\u53d6\\u6d88\\u8ba2\\u9605\\u6210\\u529f!\"")) {
                 return null;
             } else {
-                throw new NMBException(ACSite.getInstance(), "Unknown error");
+                throw new NMBException(ACSite.getInstance(), UNKNOWN);
             }
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -545,41 +551,28 @@ public class ACEngine {
     }
 
     public static Void doCreatePost(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
+
             try {
                 JSONObject jo = JSON.parseObject(body);
                 if (jo.getBoolean("success")) {
                     return null;
                 } else {
-                    String msg = jo.getString("msg");
-                    throw new NMBException(ACSite.getInstance(), msg);
+                    throw new NMBException(ACSite.getInstance(), jo.getString("msg"));
                 }
             } catch (Exception e) {
-                if  (e instanceof NMBException) {
-                    throw e;
-                }
-
-                Document doc = Jsoup.parse(body);
-                List<Element> elements = doc.getElementsByClass("success");
-                if (!elements.isEmpty()) {
+                if (body.contains("class=\"success\"")) {
                     return null;
                 } else {
-                    elements = doc.getElementsByTag("h1");
-                    if (!elements.isEmpty()) {
-                        throw new NMBException(ACSite.getInstance(), elements.get(0).text());
-                    } else {
-                        throw new NMBException(ACSite.getInstance(), "Unknown");
-                    }
+                    throw e;
                 }
             }
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
 
@@ -651,9 +644,10 @@ public class ACEngine {
     }
 
     public static List<ACSearchItem> doSearch(Call call) throws Exception {
+        String body = null;
         try {
             Response response = call.execute();
-            String body = response.body().string();
+            body = response.body().string();
 
             JSONArray ja = JSON.parseObject(body).getJSONObject("hits").getJSONArray("hits");
             List<ACSearchItem> result = new ArrayList<>();
@@ -666,13 +660,9 @@ public class ACEngine {
             }
 
             return result;
-        } catch (IOException e) {
-            if (call.isCanceled()) {
-                throw new CancelledException();
-            } else {
-                throw e;
-            }
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
         }
     }
-
 }
