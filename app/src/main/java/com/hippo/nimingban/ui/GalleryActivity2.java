@@ -38,7 +38,6 @@ import android.widget.Toast;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotify;
-import com.hippo.io.FileInputStreamPipe;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -46,6 +45,7 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
+import com.hippo.unifile.MediaFile;
 import com.hippo.unifile.UniFile;
 import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
@@ -54,8 +54,6 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -76,7 +74,7 @@ public class GalleryActivity2 extends SwipeActivity {
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
     public static final String KEY_IMAGE = "image";
-    public static final String KEY_FILE_URI = "file_uri";
+    public static final String KEY_UNI_FILE_URI = "uni_file_uri";
 
     private ViewPager mViewPager;
     private GalleryAdapter mGalleryAdapter;
@@ -98,9 +96,9 @@ public class GalleryActivity2 extends SwipeActivity {
                 return true;
             }
         } else if (ACTION_IMAGE_FILE.equals(action)) {
-            Uri fileUri = intent.getParcelableExtra(KEY_FILE_URI);
-            File file = new File(fileUri.getPath());
-            if (file.exists()) {
+            Uri fileUri = intent.getParcelableExtra(KEY_UNI_FILE_URI);
+            UniFile file = UniFile.fromUri(this, fileUri);
+            if (file != null && file.exists()) {
                 mGalleryAdapter = new ImageFileAdapter(file);
                 return true;
             }
@@ -196,28 +194,28 @@ public class GalleryActivity2 extends SwipeActivity {
     public void onSaveTaskOver(Uri uri, boolean share) {
         if (mSaveTask != null) {
             mSaveTask = null;
+        }
 
-            if (share) {
-                if (uri == null) {
-                    Toast.makeText(this, R.string.cant_save_image, Toast.LENGTH_SHORT).show();
-                } else {
-                    String mimeType = getContentResolver().getType(uri);
-                    if (TextUtils.isEmpty(mimeType)) {
-                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                MimeTypeMap.getFileExtensionFromUrl(uri.toString()));
-                        if (TextUtils.isEmpty(mimeType)) {
-                            mimeType = "image/*";
-                        }
-                    }
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setType(mimeType);
-                    startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
-                }
+        if (share) {
+            if (uri == null) {
+                Toast.makeText(this, R.string.cant_save_image, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, uri != null ? R.string.save_successfully : R.string.save_failed, Toast.LENGTH_SHORT).show();
+                String mimeType = getContentResolver().getType(uri);
+                if (TextUtils.isEmpty(mimeType)) {
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                            MimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+                    if (TextUtils.isEmpty(mimeType)) {
+                        mimeType = "image/*";
+                    }
+                }
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.setType(mimeType);
+                startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
             }
+        } else {
+            Toast.makeText(this, uri != null ? R.string.save_successfully : R.string.save_failed, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -248,9 +246,9 @@ public class GalleryActivity2 extends SwipeActivity {
 
     private class ImageFileAdapter extends GalleryAdapter {
 
-        private File mImageFile;
+        private UniFile mImageFile;
 
-        public ImageFileAdapter(File imageFile) {
+        public ImageFileAdapter(UniFile imageFile) {
             mImageFile = imageFile;
         }
 
@@ -289,7 +287,7 @@ public class GalleryActivity2 extends SwipeActivity {
         @Override
         public void bindPagerHolder(GalleryHolder holder, int position) {
             Drawable drawable = NMBApplication.getSimpleDrawableHelper(GalleryActivity2.this)
-                    .decode(new FileInputStreamPipe(mImageFile));
+                    .decode(new UniFileInputStreamPipe(mImageFile));
             if (drawable != null) {
                 holder.galleryPage.showDrawable(drawable);
             } else {
@@ -424,6 +422,10 @@ public class GalleryActivity2 extends SwipeActivity {
         }
 
         @Override
+        public void onUrlMoved(String requestUrl, String responseUrl) {
+        }
+
+        @Override
         public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
             OutputStream os = null;
             try {
@@ -533,25 +535,45 @@ public class GalleryActivity2 extends SwipeActivity {
     private static class ImageFileSaveTask extends SaveTask {
 
         private Context mContext;
-        private File mFrom;
+        private UniFile mFrom;
         private UniFile mTo;
         private boolean mShare;
 
-        public ImageFileSaveTask(Context context, File from, UniFile to, boolean share) {
+        public ImageFileSaveTask(Context context, UniFile from, UniFile to, boolean share) {
             mContext = context;
             mFrom = from;
             mTo = to;
             mShare = share;
         }
 
+        private static String getFilePathForUri(Context context, Uri uri) {
+            if (UniFile.isFileUri(uri)) {
+                return uri.getPath();
+            } else {
+                return MediaFile.getPath(context, uri);
+            }
+        }
+
         @Override
         protected Uri doInBackground(Void... params) {
+            Uri fromUri = mFrom.getUri();
+            Uri toUri = mTo.getUri();
+            if (fromUri.equals(toUri)) {
+                return fromUri;
+            }
+
+            String fromPath = getFilePathForUri(mContext, fromUri);
+            String toPath = getFilePathForUri(mContext, toUri);
+            if (fromPath != null && fromPath.equals(toPath)) {
+                return fromUri;
+            }
+
             boolean ok;
 
             InputStream is = null;
             OutputStream os = null;
             try {
-                is = new FileInputStream(mFrom);
+                is = mFrom.openInputStream();
                 os = mTo.openOutputStream();
                 IOUtils.copy(is, os);
                 ok = true;

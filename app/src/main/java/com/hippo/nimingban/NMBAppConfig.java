@@ -135,6 +135,20 @@ public class NMBAppConfig {
         return FileUtils.createTempFile(getTempDir(), extension);
     }
 
+    public static @Nullable File createTempFileWithFilename(String filename) {
+        File dir = getTempDir();
+        if (dir == null) {
+            return null;
+        }
+
+        File file = new File(dir, filename);
+        if (FileUtils.ensureFile(file)) {
+            return file;
+        } else {
+            return null;
+        }
+    }
+
     public static @Nullable File createTempDir() {
         return FileUtils.createTempDir(getTempDir());
     }

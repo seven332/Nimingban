@@ -32,12 +32,11 @@ import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.unifile.UniFile;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.DrawerListView;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
-
-import java.io.File;
 
 public final class LeftDrawer extends ScrollView implements AdapterView.OnItemClickListener,
         HeaderImageView.OnLongClickImageListener, View.OnClickListener {
@@ -156,7 +155,7 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
     }
 
     @Override
-    public boolean onLongClickImage(File imageFile) {
+    public boolean onLongClickImage(UniFile imageFile) {
         if (mHelper != null) {
             mHelper.OnLongClickImage(imageFile);
             return true;
@@ -182,7 +181,7 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
     public interface Helper {
 
-        void OnLongClickImage(File imageFile);
+        void OnLongClickImage(UniFile imageFile);
 
         void onClickSearch();
 

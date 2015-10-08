@@ -24,8 +24,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.hippo.conaco.Conaco;
@@ -35,19 +37,21 @@ import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.TiledBitmapDrawable;
-import com.hippo.io.FileInputStreamPipe;
+import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
+import com.hippo.nimingban.util.Settings;
+import com.hippo.unifile.UniFile;
 import com.hippo.widget.FixedAspectImageView;
-import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -56,7 +60,7 @@ public final class HeaderImageView extends FixedAspectImageView
         implements Unikery, View.OnClickListener, View.OnLongClickListener {
 
     private static final String KEY_SUPER = "super";
-    private static final String KEY_IMAGE_FILE_URI = "image_file_uri";
+    private static final String KEY_IMAGE_UNI_FILE_URI = "image_uni_file_uri";
 
     private int mTaskId = Unikery.INVAILD_ID;
 
@@ -64,7 +68,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     private final long[] mHits = new long[8];
 
-    private File mImageFile;
+    private UniFile mImageFile;
     private TempDataContainer mContainer;
     private DrawableHolder mHolder;
 
@@ -190,7 +194,10 @@ public final class HeaderImageView extends FixedAspectImageView
     @Override
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
         // Update image file
-        FileUtils.delete(mImageFile);
+        if (mImageFile != null) {
+            mImageFile.delete();
+            mImageFile = null;
+        }
         if (mContainer != null) {
             mImageFile = mContainer.mTempFile;
             mContainer = null;
@@ -241,20 +248,23 @@ public final class HeaderImageView extends FixedAspectImageView
         Bundle saved = new Bundle();
         saved.putParcelable(KEY_SUPER, super.onSaveInstanceState());
         if (mImageFile != null) {
-            saved.putParcelable(KEY_IMAGE_FILE_URI, Uri.fromFile(mImageFile));
+            saved.putParcelable(KEY_IMAGE_UNI_FILE_URI, mImageFile.getUri());
         }
         return saved;
     }
 
-    private void setImageFile(File file) {
+    private void setImageFile(UniFile file) {
         Drawable drawable = NMBApplication.getSimpleDrawableHelper(getContext())
-                .decode(new FileInputStreamPipe(file));
+                .decode(new UniFileInputStreamPipe(file));
         if (drawable == null) {
             return;
         }
 
         // Update image file
-        FileUtils.delete(mImageFile);
+        if (mImageFile != null) {
+            mImageFile.delete();
+            mImageFile = null;
+        }
         mImageFile = file;
         mContainer = null;
 
@@ -272,10 +282,10 @@ public final class HeaderImageView extends FixedAspectImageView
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         Bundle saved = (Bundle) state;
-        Uri uri = saved.getParcelable(KEY_IMAGE_FILE_URI);
+        Uri uri = saved.getParcelable(KEY_IMAGE_UNI_FILE_URI);
         if (uri != null) {
-            File file = new File(uri.getPath());
-            if (file.exists()) {
+            UniFile file = UniFile.fromUri(getContext(), uri);
+            if (file != null && file.exists()) {
                 setImageFile(file);
             }
         }
@@ -285,22 +295,74 @@ public final class HeaderImageView extends FixedAspectImageView
 
     public interface OnLongClickImageListener {
 
-        boolean onLongClickImage(File imageFile);
+        boolean onLongClickImage(UniFile imageFile);
     }
 
     private static class TempDataContainer implements DataContainer {
 
-        private File mTempFile;
+        private String mName;
+        private UniFile mTempFile;
+
+        /**
+         * http://stackoverflow.com/questions/332079
+         *
+         * @param bytes The bytes to convert.
+         * @return A {@link String} converted from the bytes of a hashable key used
+         *         to store a filename on the disk, to hex digits.
+         */
+        private static String bytesToHexString(final byte[] bytes) {
+            final StringBuilder builder = new StringBuilder();
+            for (final byte b : bytes) {
+                final String hex = Integer.toHexString(0xFF & b);
+                if (hex.length() == 1) {
+                    builder.append('0');
+                }
+                builder.append(hex);
+            }
+            return builder.toString();
+        }
+
+        private static String getKeyForUrl(String url) {
+            String key;
+            try {
+                final MessageDigest digest = MessageDigest.getInstance("MD5");
+                digest.update(url.getBytes());
+                key = bytesToHexString(digest.digest());
+            } catch (final NoSuchAlgorithmException e) {
+                key = String.valueOf(url.hashCode());
+            }
+            return key;
+        }
+
+        @Override
+        public void onUrlMoved(String requestUrl, String responseUrl) {
+            mName = "ac-cover-" + getKeyForUrl(responseUrl);
+        }
 
         @Override
         public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
-            FileOutputStream os = null;
+            OutputStream os = null;
             try {
-                mTempFile = NMBAppConfig.createTempFile();
+                if (!Settings.getSaveImageAuto() || mName == null) {
+                    mTempFile = UniFile.fromFile(NMBAppConfig.createTempFile());
+                } else {
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mediaType);
+                    if (TextUtils.isEmpty(extension)) {
+                        extension = "jpg";
+                    }
+                    String filename = mName + '.' + extension;
+                    UniFile dir = Settings.getImageSaveLocation();
+                    if (dir != null) {
+                        mTempFile = dir.createFile(filename);
+                    } else {
+                        mTempFile = UniFile.fromFile(NMBAppConfig.createTempFileWithFilename(filename));
+                    }
+                }
+
                 if (mTempFile == null) {
                     return false;
                 }
-                os = new FileOutputStream(mTempFile);
+                os = mTempFile.openOutputStream();
                 IOUtils.copy(is, os);
                 return true;
             } catch (IOException e) {
@@ -315,13 +377,13 @@ public final class HeaderImageView extends FixedAspectImageView
             if (mTempFile == null) {
                 return null;
             } else {
-                return new FileInputStreamPipe(mTempFile);
+                return new UniFileInputStreamPipe(mTempFile);
             }
         }
 
         @Override
         public void remove() {
-            FileUtils.delete(mTempFile);
+            mTempFile.delete();
         }
     }
 }

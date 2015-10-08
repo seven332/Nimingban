@@ -728,7 +728,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
             if (mSeletedImageUri != null) {
                 Intent intent = new Intent(this, GalleryActivity2.class);
                 intent.setAction(GalleryActivity2.ACTION_IMAGE_FILE);
-                intent.putExtra(GalleryActivity2.KEY_FILE_URI, mSeletedImageUri);
+                intent.putExtra(GalleryActivity2.KEY_UNI_FILE_URI, mSeletedImageUri);
                 startActivity(intent);
             }
         }

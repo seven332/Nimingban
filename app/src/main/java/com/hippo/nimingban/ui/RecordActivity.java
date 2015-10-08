@@ -391,6 +391,10 @@ public final class RecordActivity extends TranslucentActivity
         }
 
         @Override
+        public void onUrlMoved(String requestUrl, String responseUrl) {
+        }
+
+        @Override
         public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
             return false;
         }

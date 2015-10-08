@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -105,7 +104,6 @@ import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -784,10 +782,10 @@ public final class ListActivity extends AbsActivity
     }
 
     @Override
-    public void OnLongClickImage(File imageFile) {
+    public void OnLongClickImage(UniFile imageFile) {
         Intent intent = new Intent(this, GalleryActivity2.class);
         intent.setAction(GalleryActivity2.ACTION_IMAGE_FILE);
-        intent.putExtra(GalleryActivity2.KEY_FILE_URI, Uri.fromFile(imageFile));
+        intent.putExtra(GalleryActivity2.KEY_UNI_FILE_URI, imageFile.getUri());
         startActivity(intent);
     }
 
