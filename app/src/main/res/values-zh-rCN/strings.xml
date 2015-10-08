@@ -217,7 +217,7 @@
     <string name="main_feed_id">订阅 ID</string>
     <string name="main_feed_id_summary">你的订阅 ID 是 %s</string>
     <string name="main_save_image_auto">自动存图</string>
-    <string name="main_save_image_auto_summary_on">自动存储图片，不过封面不会被自动存储</string>
+    <string name="main_save_image_auto_summary_on">自动存储图片</string>
     <string name="main_save_image_auto_summary_off">点击保存按钮才会存图</string>
     <string name="main_image_save_location">图片存储路径</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
