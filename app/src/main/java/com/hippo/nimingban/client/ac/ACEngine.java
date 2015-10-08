@@ -376,6 +376,7 @@ public class ACEngine {
         String body = null;
         try {
             Response response = call.execute();
+            ResponseUtils.storeCookies(response);
             body = response.body().string();
 
             try {
@@ -554,6 +555,7 @@ public class ACEngine {
         String body = null;
         try {
             Response response = call.execute();
+            ResponseUtils.storeCookies(response);
             body = response.body().string();
 
             try {
