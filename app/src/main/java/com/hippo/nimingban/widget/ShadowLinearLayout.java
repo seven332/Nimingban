@@ -19,7 +19,6 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.graphics.Region;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -34,7 +33,6 @@ public class ShadowLinearLayout extends LinearLayout {
 
     private NinePatchDrawable mShadow;
     private Rect mShadowPaddings = new Rect();
-    private Rect mClipRect = new Rect();
 
     public ShadowLinearLayout(Context context) {
         super(context);
@@ -96,39 +94,7 @@ public class ShadowLinearLayout extends LinearLayout {
     @Override
     public void draw(@NonNull Canvas canvas) {
         if (mShadow != null) {
-            boolean needClip = false;
-            Rect shadowPaddings = mShadowPaddings;
-            Rect clipRect = mClipRect;
-            canvas.getClipBounds(clipRect);
-
-            if (-shadowPaddings.left < clipRect.left) {
-                needClip = true;
-                clipRect.left = -shadowPaddings.left;
-            }
-            if (-shadowPaddings.top < clipRect.top) {
-                needClip = true;
-                clipRect.top = -shadowPaddings.top;
-            }
-            if (getWidth() + shadowPaddings.right > clipRect.right) {
-                needClip = true;
-                clipRect.right = getWidth() + shadowPaddings.right;
-            }
-            if (getHeight() + shadowPaddings.bottom > clipRect.bottom) {
-                needClip = true;
-                clipRect.bottom = getHeight() + shadowPaddings.bottom;
-            }
-
-            int saved = 0;
-            if (needClip) {
-                saved = canvas.save();
-                canvas.clipRect(clipRect, Region.Op.REPLACE);
-            }
-
             mShadow.draw(canvas);
-
-            if (needClip && saved != 0) {
-                canvas.restoreToCount(saved);
-            }
         }
         super.draw(canvas);
     }
