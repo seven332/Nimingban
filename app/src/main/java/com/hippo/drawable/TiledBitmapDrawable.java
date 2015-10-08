@@ -152,7 +152,7 @@ public class TiledBitmapDrawable extends Drawable {
 
                     while (true) {
                         rect.set(x, y, x + w, y + h);
-                        options.inBitmap = pool.getInBitmap(options);
+                        //options.inBitmap = pool.getInBitmap(options);
 
                         try {
                             bitmap = decoder.decodeRegion(rect, options);
