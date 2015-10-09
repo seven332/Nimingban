@@ -615,7 +615,16 @@ public class ACEngine {
             int i = (int) (Math.log(sampleScale) / Math.log(2));
             while (true) {
                 options.inSampleSize = (int) Math.pow(2, i);
-                Bitmap bitmap = BitmapFactory.decodeStream(isp.open(), null, options);
+                Bitmap bitmap = null;
+                try {
+                    bitmap = BitmapFactory.decodeStream(isp.open(), null, options);
+                } catch (OutOfMemoryError e) {
+                    // Ignore
+                }
+                if (bitmap == null) {
+                    throw new NMBException(ACSite.getInstance(), "Can't decode bitmap");
+                }
+
                 isp.close();
 
                 os = new FileOutputStream(temp);
