@@ -1210,8 +1210,7 @@ public class EasyRecyclerView extends RecyclerView {
         public void run() {
             View view = v;
             int position = p;
-            if (view != null && position >= 0) {
-
+            if (view != null && position >= 0 && view == findViewHolderForAdapterPosition(position).itemView) {
                 mPrePressed = false;
                 final float[] point = mTmpPoint;
                 point[0] = x;
@@ -1267,7 +1266,8 @@ public class EasyRecyclerView extends RecyclerView {
         public void run() {
             View view = v;
             int position = p;
-            if (view != null && position >= 0 && view.isPressed() && view.getParent() != null) {
+            if (view != null && position >= 0 && view == findViewHolderForAdapterPosition(position).itemView &&
+                    view.isPressed() && view.getParent() != null) {
                 boolean handled = false;
 
                 if (sameWindow()) {
