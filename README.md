@@ -4,6 +4,8 @@
 
 这是一个匿名版客户端，现在你可以用它上 [A 岛](http://h.nimingban.com/Forum)
 
+An imageboard or textboard client. [AC Nimingban](http://h.nimingban.com/Forum) is supported now.
+
 
 # Screenshot
 
@@ -23,10 +25,14 @@
 
 生成的 apk 文件在 app\build\outputs\apk 目录下
 
+The apk is in app\build\outputs\apk
+
 
 # Thanks
 
 本项目受到了诸多开源项目的帮助
+
+Here is the libraries
 
 - [AOSP](http://source.android.com/)
 - [android-advancedrecyclerview](https://github.com/h6ah4i/android-advancedrecyclerview)
