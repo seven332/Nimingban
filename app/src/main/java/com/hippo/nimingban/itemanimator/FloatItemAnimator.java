@@ -28,7 +28,7 @@ import java.util.List;
 
 public class FloatItemAnimator extends RecyclerView.ItemAnimator {
 
-    private static final float SPEED = 2f;
+    private static final float SPEED = 3f;
 
     private ArrayList<RecyclerView.ViewHolder> mPendingAdditions = new ArrayList<>();
     private ArrayList<ArrayList<RecyclerView.ViewHolder>> mAdditionsList =
