@@ -44,6 +44,7 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -115,6 +116,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
             mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+            mRecyclerView.setItemAnimator(new FloatItemAnimator(mRecyclerView));
         } else {
             mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -42,6 +42,7 @@ import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.dao.ACRecordRaw;
+import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
@@ -107,6 +108,7 @@ public final class RecordActivity extends TranslucentActivity
             mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
             mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+            mRecyclerView.setItemAnimator(new FloatItemAnimator(mRecyclerView));
         } else {
             mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
