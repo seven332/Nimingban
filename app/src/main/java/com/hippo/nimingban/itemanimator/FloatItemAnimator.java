@@ -23,12 +23,14 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.hippo.util.AnimationUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FloatItemAnimator extends RecyclerView.ItemAnimator {
 
-    private static final float SPEED = 3f;
+    private static final float SPEED = 5f;
 
     private ArrayList<RecyclerView.ViewHolder> mPendingAdditions = new ArrayList<>();
     private ArrayList<ArrayList<RecyclerView.ViewHolder>> mAdditionsList =
@@ -88,8 +90,9 @@ public class FloatItemAnimator extends RecyclerView.ItemAnimator {
         view.setVisibility(View.VISIBLE);
         mAddAnimations.add(holder);
         view.setTranslationY(translationY);
-        animation.translationY(0.0f).setDuration((long) (translationY / SPEED)).
-                setListener(new VpaListenerAdapter() {
+        animation.translationY(0.0f).setDuration((long) (translationY / SPEED))
+                .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR)
+                .setListener(new VpaListenerAdapter() {
                     @Override
                     public void onAnimationStart(View view) {
                         dispatchAddStarting(holder);
