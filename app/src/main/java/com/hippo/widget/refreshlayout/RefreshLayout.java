@@ -988,7 +988,12 @@ public class RefreshLayout extends ViewGroup {
                     return false;
                 }
 
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
+                float y;
+                try {
+                    y = MotionEventCompat.getY(ev, pointerIndex);
+                } catch (IllegalArgumentException e) {
+                    y = mInitialMotionY;
+                }
                 final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                 if (mIsHeaderBeingDragged) {
                     mProgress.showArrow(true);
