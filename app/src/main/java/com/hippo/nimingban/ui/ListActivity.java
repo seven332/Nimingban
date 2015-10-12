@@ -970,9 +970,9 @@ public final class ListActivity extends AbsActivity
                 return false;
             } else {
                 mReplies = replies;
-                mShowIndex = 0;
+                mShowIndex = MathUtils.random(replies.length);
                 reply.setVisibility(View.VISIBLE);
-                reply.setText(replies[0].getNMBDisplayContent());
+                reply.setText(replies[mShowIndex].getNMBDisplayContent());
 
                 if (replies.length > 1 && !mRunning) {
                     mRunning = true;
