@@ -146,6 +146,12 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
+        <activity
+            android:name="com.hippo.nimingban.ui.WebViewActivity"
+            android:theme="@style/NormalActivity"
+            android:configChanges="screenSize|uiMode|orientation"
+            android:screenOrientation="unspecified"/>
+
         <receiver
             android:name="com.hippo.nimingban.receiver.NetworkReceiver"
             android:label="@string/network_receiver">

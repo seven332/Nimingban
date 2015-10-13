@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -62,6 +61,7 @@ import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -360,21 +360,14 @@ public final class PostActivity extends SwipeActivity
                 ActivityHelper.share(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0));
                 return true;
             case R.id.action_open_in_other_app:
-                ActivityHelper.openUri(this, Uri.parse(NMBUrl.getBrowsablePostUrl(mSite, mId, 0)));
+                OpenUrlHelper.openUrl(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0));
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     private void handleURLSpan(URLSpan urlSpan) {
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        try {
-            i.setData(Uri.parse(urlSpan.getURL()));
-            startActivity(i);
-        } catch (Exception e) {
-            // Avoid something wrong
-            e.printStackTrace();
-        }
+        OpenUrlHelper.openUrl(PostActivity.this, urlSpan.getURL());
     }
 
     private final class ReferenceDialogHelper implements AlertDialog.OnDismissListener,

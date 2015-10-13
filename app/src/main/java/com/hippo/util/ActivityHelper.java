@@ -62,15 +62,4 @@ public class ActivityHelper {
             return false;
         }
     }
-
-    public static boolean openUri(@NonNull Activity from, Uri uri) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        try {
-            from.startActivity(intent);
-            return true;
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(from, R.string.em_cant_find_activity, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    }
 }

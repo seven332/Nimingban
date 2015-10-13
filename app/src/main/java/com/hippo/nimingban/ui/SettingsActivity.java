@@ -40,7 +40,6 @@ import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +58,8 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.network.TransportableHttpCookie;
 import com.hippo.nimingban.service.DaDiaoService;
+import com.hippo.nimingban.util.LinkMovementMethod2;
+import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.preference.FixedSwitchPreference;
@@ -722,7 +723,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             .show();
                     TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
                     if (messageView != null) {
-                        messageView.setMovementMethod(LinkMovementMethod.getInstance());
+                        messageView.setMovementMethod(new LinkMovementMethod2(getActivity()));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -833,7 +834,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         "About Nimingban",
                         null);
             } else if (KEY_SOURCE.equals(key)) {
-                ActivityHelper.openUri(getActivity(), Uri.parse("https://github.com/seven332/Nimingban"));
+                OpenUrlHelper.openUrl(getActivity(), "https://github.com/seven332/Nimingban");
             } else if (KEY_NOTICE.equals(key)) {
                 try {
                     String str = IOUtils.readString(getActivity().getResources().getAssets().open("NOTICE"), "UTF-8");

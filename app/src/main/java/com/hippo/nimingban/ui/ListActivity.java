@@ -41,7 +41,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -80,6 +79,7 @@ import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -495,7 +495,7 @@ public final class ListActivity extends AbsActivity
                         .show();
                 TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
                 if (messageView != null) {
-                    messageView.setMovementMethod(LinkMovementMethod.getInstance());
+                    messageView.setMovementMethod(new LinkMovementMethod2(ListActivity.this));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -709,7 +709,7 @@ public final class ListActivity extends AbsActivity
                     TextView tv = (TextView) view.findViewById(R.id.text);
                     tv.setText(fixURLSpan(Html.fromHtml(mCurrentForum.getNMBMsg(),
                             new URLImageGetter(tv, NMBApplication.getConaco(this)), null)));
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setMovementMethod(new LinkMovementMethod2(ListActivity.this));
                     new AlertDialog.Builder(this).setTitle(R.string.rule).setView(view).show();
                 }
                 return true;
