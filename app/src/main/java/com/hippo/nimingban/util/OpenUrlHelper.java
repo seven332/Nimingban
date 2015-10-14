@@ -35,7 +35,7 @@ public final class OpenUrlHelper {
     private OpenUrlHelper() {
     }
 
-    public static void openUrl(Activity activity, String url) {
+    public static void openUrl(Activity activity, String url, boolean checkNMB) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
@@ -44,14 +44,16 @@ public final class OpenUrlHelper {
         Uri uri = Uri.parse(url);
 
         // Is nmb url
-        NMBUriParser.PostResult result = NMBUriParser.parsePostUri(uri);
-        if (result.site != null && result.id != null) {
-            intent = new Intent(activity, PostActivity.class);
-            intent.setAction(PostActivity.ACTION_SITE_ID);
-            intent.putExtra(PostActivity.KEY_SITE, result.site.getId());
-            intent.putExtra(PostActivity.KEY_ID, result.id);
-            activity.startActivity(intent);
-            return;
+        if (checkNMB) {
+            NMBUriParser.PostResult result = NMBUriParser.parsePostUri(uri);
+            if (result.site != null && result.id != null) {
+                intent = new Intent(activity, PostActivity.class);
+                intent.setAction(PostActivity.ACTION_SITE_ID);
+                intent.putExtra(PostActivity.KEY_SITE, result.site.getId());
+                intent.putExtra(PostActivity.KEY_ID, result.id);
+                activity.startActivity(intent);
+                return;
+            }
         }
 
         // CustomTabs

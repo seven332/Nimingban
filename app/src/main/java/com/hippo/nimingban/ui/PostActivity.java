@@ -360,14 +360,14 @@ public final class PostActivity extends SwipeActivity
                 ActivityHelper.share(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0));
                 return true;
             case R.id.action_open_in_other_app:
-                OpenUrlHelper.openUrl(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0));
+                OpenUrlHelper.openUrl(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0), false);
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     private void handleURLSpan(URLSpan urlSpan) {
-        OpenUrlHelper.openUrl(PostActivity.this, urlSpan.getURL());
+        OpenUrlHelper.openUrl(PostActivity.this, urlSpan.getURL(), true);
     }
 
     private final class ReferenceDialogHelper implements AlertDialog.OnDismissListener,

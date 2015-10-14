@@ -223,7 +223,7 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
                 if (action == MotionEvent.ACTION_UP) {
                     ClickableSpan span = link[0];
                     if (span instanceof URLSpan) {
-                        OpenUrlHelper.openUrl(mActivity, ((URLSpan) span).getURL());
+                        OpenUrlHelper.openUrl(mActivity, ((URLSpan) span).getURL(), true);
                     } else {
                         span.onClick(widget);
                     }

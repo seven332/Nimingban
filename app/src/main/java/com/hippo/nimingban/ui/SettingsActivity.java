@@ -834,7 +834,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         "About Nimingban",
                         null);
             } else if (KEY_SOURCE.equals(key)) {
-                OpenUrlHelper.openUrl(getActivity(), "https://github.com/seven332/Nimingban");
+                OpenUrlHelper.openUrl(getActivity(), "https://github.com/seven332/Nimingban", false);
             } else if (KEY_NOTICE.equals(key)) {
                 try {
                     String str = IOUtils.readString(getActivity().getResources().getAssets().open("NOTICE"), "UTF-8");
