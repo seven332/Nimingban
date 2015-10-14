@@ -58,6 +58,7 @@ import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -112,12 +113,12 @@ public class SortForumsActivity extends TranslucentActivity {
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.NormalActivity;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity : R.style.NormalActivity_NoStatus;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.NormalActivity_Dark;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity_Dark : R.style.NormalActivity_Dark_NoStatus;
     }
 
     @Override

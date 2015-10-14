@@ -65,4 +65,13 @@
         android:defaultValue="false"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:key="color_status_bar"
+        android:title="@string/main_color_status_bar"
+        app:summaryOff="@string/main_color_status_bar_summary_off"
+        app:summaryOn="@string/main_color_status_bar_summary_on"
+        android:defaultValue="true"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
+
 </PreferenceScreen>

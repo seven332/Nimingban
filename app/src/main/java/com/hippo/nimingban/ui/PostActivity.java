@@ -159,12 +159,12 @@ public final class PostActivity extends SwipeActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.SwipeActivity;
+        return Settings.getColorStatusBar() ? R.style.SwipeActivity : R.style.SwipeActivity_NoStatus;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.SwipeActivity_Dark;
+        return Settings.getColorStatusBar() ? R.style.SwipeActivity_Dark : R.style.SwipeActivity_Dark_NoStatus;
     }
 
     @Override

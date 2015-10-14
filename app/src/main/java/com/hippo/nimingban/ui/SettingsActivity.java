@@ -235,10 +235,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_TEXT_FORMAT = "text_format";
 
+
         private FixedSwitchPreference mPrettyTime;
         private Preference mTextFormat;
         private Preference mDynamicComments;
         private FixedSwitchPreference mFastScroller;
+        private FixedSwitchPreference mColorStatusBar;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -251,10 +253,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mTextFormat = findPreference(KEY_TEXT_FORMAT);
             mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
             mFastScroller = (FixedSwitchPreference) findPreference(Settings.KEY_FAST_SCROLLER);
+            mColorStatusBar = (FixedSwitchPreference) findPreference(Settings.KEY_COLOR_STATUS_BAR);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
             mDynamicComments.setOnPreferenceChangeListener(this);
             mFastScroller.setOnPreferenceChangeListener(this);
+            mColorStatusBar.setOnPreferenceChangeListener(this);
 
             mTextFormat.setOnPreferenceClickListener(this);
 
@@ -265,6 +269,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mPrettyTime.setSummaryOff(resources.getString(R.string.main_pretty_time_summary, plain, timeAgo));
 
             updateTextFormatSummary();
+
+            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
+                mColorStatusBar.setEnabled(false);
+                mColorStatusBar.setSummaryOn(R.string.main_color_status_bar_summary_disable);
+                mColorStatusBar.setSummaryOff(R.string.main_color_status_bar_summary_disable);
+            }
         }
 
         private void updateTextFormatSummary() {
@@ -285,6 +295,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             } else if (Settings.KEY_FAST_SCROLLER.equals(key)) {
                 Messenger.getInstance().notify(Constants.MESSENGER_ID_FAST_SCROLLER, newValue);
                 return true;
+            } else if (Settings.KEY_COLOR_STATUS_BAR.equals(key)) {
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_CHANGE_THEME, Settings.getDarkTheme());
             }
             return true;
         }

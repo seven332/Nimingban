@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.hippo.nimingban.PermissionRequester;
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.DirExplorer;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -49,12 +50,12 @@ public class DirPickerActivity extends TranslucentActivity implements View.OnCli
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.NormalActivity;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity : R.style.NormalActivity_NoStatus;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.NormalActivity_Dark;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity_Dark : R.style.NormalActivity_Dark_NoStatus;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

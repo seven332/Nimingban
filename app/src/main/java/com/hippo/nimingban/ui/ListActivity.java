@@ -148,12 +148,12 @@ public final class ListActivity extends AbsActivity
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.ListActivity;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity : R.style.NormalActivity_NoStatus;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.ListActivity_Dark;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity_Dark : R.style.NormalActivity_Dark_NoStatus;
     }
 
     @Override

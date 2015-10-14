@@ -217,12 +217,12 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.NormalActivity;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity : R.style.NormalActivity_NoStatus;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.NormalActivity_Dark;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity_Dark : R.style.NormalActivity_Dark_NoStatus;
     }
 
     @SuppressWarnings("deprecation")

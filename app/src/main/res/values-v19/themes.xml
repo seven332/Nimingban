@@ -25,9 +25,6 @@
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
-    <style name="ListActivity" parent="AppTheme.NoActionBar.Translucent.Status">
-    </style>
-
     <style name="NormalActivity" parent="AppTheme.NoActionBar.Translucent.Status">
     </style>
 
@@ -42,9 +39,6 @@
 
     <style name="AppTheme.Dark.NoActionBar.Translucent.Status">
         <item name="android:windowTranslucentNavigation">false</item>
-    </style>
-
-    <style name="ListActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status">
     </style>
 
     <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status">

@@ -16,18 +16,12 @@
 
 <resources>
 
-    <style name="ListActivity" parent="AppTheme.NoActionBar">
-    </style>
-
     <style name="NormalActivity" parent="AppTheme.NoActionBar">
     </style>
 
     <style name="SwipeActivity" parent="AppTheme.NoActionBar.Transparent">
     </style>
 
-
-    <style name="ListActivity.Dark" parent="AppTheme.Dark.NoActionBar">
-    </style>
 
     <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar">
     </style>

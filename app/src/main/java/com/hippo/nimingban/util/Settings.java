@@ -155,6 +155,9 @@ public final class Settings {
     public static final String KEY_FAST_SCROLLER = "fast_scroller";
     public static final boolean DEFAULT_FAST_SCROLLER = true;
 
+    public static final String KEY_COLOR_STATUS_BAR = "color_status_bar";
+    public static final boolean DEFAULT_COLOR_STATUS_BAR = true;
+
     public static final String KEY_FEED_ID = "feed_id";
     public static final String DEFAULT_FEED_ID = null;
 
@@ -213,6 +216,10 @@ public final class Settings {
 
     public static boolean getFastScroller() {
         return getBoolean(KEY_FAST_SCROLLER, DEFAULT_FAST_SCROLLER);
+    }
+
+    public static boolean getColorStatusBar() {
+        return getBoolean(KEY_COLOR_STATUS_BAR, DEFAULT_COLOR_STATUS_BAR);
     }
 
     public static String getFeedId() {

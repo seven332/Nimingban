@@ -26,6 +26,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.yorozuya.ResourcesUtils;
 
 public class WebViewActivity extends TranslucentActivity {
@@ -34,12 +35,12 @@ public class WebViewActivity extends TranslucentActivity {
 
     @Override
     protected int getLightThemeResId() {
-        return R.style.NormalActivity;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity : R.style.NormalActivity_NoStatus;
     }
 
     @Override
     protected int getDarkThemeResId() {
-        return R.style.NormalActivity_Dark;
+        return Settings.getColorStatusBar() ? R.style.NormalActivity_Dark : R.style.NormalActivity_Dark_NoStatus;
     }
 
     @Override

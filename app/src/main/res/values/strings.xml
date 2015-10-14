@@ -213,6 +213,10 @@
     <string name="main_image_loading_strategy_2">When Picture preload is not available…</string>
     <string name="main_image_loading_strategy_2_summary_off">Don\'t show the picture anyway</string>
     <string name="main_image_loading_strategy_2_summary_on">Show the picture button, and load the preview when long-clicking it</string>
+    <string name="main_color_status_bar">Color status bar</string>
+    <string name="main_color_status_bar_summary_off">Default status bar. It may solve compatibility problem</string>
+    <string name="main_color_status_bar_summary_on">Colored status bar. It may cause compatibility problem</string>
+    <string name="main_color_status_bar_summary_disable">Only work in Android 4.4</string>
     <string name="main_ac_cookies">Cookies</string>
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you don\'t have any cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>

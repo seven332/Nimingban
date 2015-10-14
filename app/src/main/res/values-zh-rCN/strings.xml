@@ -197,6 +197,10 @@
     <string name="main_image_loading_strategy_2">无图是啥</string>
     <string name="main_image_loading_strategy_2_summary_off">无图就是无图</string>
     <string name="main_image_loading_strategy_2_summary_on">无图是指尝试从缓存中加载，长按从网络中加载</string>
+    <string name="main_color_status_bar">彩色状态栏</string>
+    <string name="main_color_status_bar_summary_off">状态栏的背景色为默认颜色。这可能解决兼容性问题</string>
+    <string name="main_color_status_bar_summary_on">状态栏的背景色为主题色。这可能导致兼容性问题</string>
+    <string name="main_color_status_bar_summary_disable">仅在 Android 4.4 下有效</string>
     <string name="main_pretty_time_summary">显示 %1$s 而不是 %2$s</string>
     <string name="main_text_format">字体大小与行间距</string>
     <string name="main_text_format_summary">字体大小：%1$d\n行间距：%2$d</string>
