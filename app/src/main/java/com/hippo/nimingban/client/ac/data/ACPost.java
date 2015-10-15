@@ -28,14 +28,17 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 
+import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.text.Html;
 import com.hippo.yorozuya.NumberUtils;
+import com.hippo.yorozuya.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -271,7 +274,8 @@ public class ACPost extends Post {
 
     public static CharSequence generateContent(String content) {
         CharSequence charSequence;
-        charSequence = Html.fromHtml(content);
+        charSequence = Html.fromHtml(StringUtils.replace(content, "#滑稽", "<img src=\"" + R.drawable.emoji_huaji + "\">"),
+                new ResImageGetter(), null);
         charSequence = fixURLSpan(charSequence);
         charSequence = handleReference(charSequence);
         charSequence = handleTextUrl(charSequence);

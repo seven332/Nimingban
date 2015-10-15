@@ -16,6 +16,7 @@
 
 package com.hippo.text;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -67,6 +68,13 @@ import java.util.Locale;
  * Not all HTML tags are supported.
  */
 public class Html {
+
+    static Resources sResources;
+
+    public static void initialize(Context context) {
+        sResources = context.getResources();
+    }
+
     /**
      * Retrieves images for HTML &lt;img&gt; tags.
      */
@@ -654,8 +662,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
 
         if (d == null) {
-            d = Resources.getSystem().
-                    getDrawable(R.drawable.unknown_image);
+            d = Html.sResources.getDrawable(R.drawable.unknown_image);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
         }
 
@@ -876,9 +883,13 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     /**
-     * Converts an HTML color (named or numeric) to an integer RGB value.
-     *
-     * @param colorString Non-null color string.
+     * Parse the color string, and return the corresponding color-int.
+     * If the string cannot be parsed, throws an IllegalArgumentException
+     * exception. Supported formats are:
+     * #RRGGBB
+     * #AARRGGBB
+     * rgb(255, 255, 255)
+     * or color name
      */
     @ColorInt
     public static int getHtmlColor(@NonNull String colorString) {

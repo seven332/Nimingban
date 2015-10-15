@@ -33,11 +33,13 @@ import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.SimpleDrawableHelper;
 import com.hippo.okhttp.GoodHttpClient;
 import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.okhttp.ResponseUtils;
+import com.hippo.text.Html;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
@@ -85,6 +87,8 @@ public final class NMBApplication extends Application
         GoodRequestBuilder.initialize(this);
         ResponseUtils.initialize(this);
         BitmapUtils.initialize(this);
+        Html.initialize(this);
+        ResImageGetter.initialize(this);
 
         LeakCanary.install(this);
 
