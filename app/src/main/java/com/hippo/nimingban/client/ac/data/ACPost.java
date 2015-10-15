@@ -19,7 +19,6 @@ package com.hippo.nimingban.client.ac.data;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Parcel;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -35,6 +34,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.text.Html;
 import com.hippo.yorozuya.NumberUtils;
 
 import java.text.ParseException;

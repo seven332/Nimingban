@@ -17,7 +17,6 @@
 package com.hippo.text;
 
 import android.graphics.drawable.Drawable;
-import android.text.Html;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;

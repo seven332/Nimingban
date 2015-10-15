@@ -26,7 +26,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
-import android.text.Html;
 import android.widget.Toast;
 
 import com.hippo.network.DownloadClient;
@@ -37,6 +36,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.DiscUrl;
 import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.TextUtils2;
 import com.hippo.util.Timer;

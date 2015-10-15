@@ -17,12 +17,12 @@
 package com.hippo.nimingban.client.ac.data;
 
 import android.os.Parcel;
-import android.text.Html;
 import android.text.TextUtils;
 
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.text.Html;
 
 public class ACSearchItem extends Reply {
 

@@ -18,7 +18,6 @@ package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
 import android.os.Parcel;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -29,6 +28,7 @@ import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.text.Html;
 
 public class ACFeed extends Post {
 
