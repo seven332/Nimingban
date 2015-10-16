@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -93,6 +92,19 @@ public final class PostActivity extends SwipeActivity
     public static final String KEY_POST = "post";
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
+
+    /**
+     * Intent.ACTION_PROCESS_TEXT
+     */
+    public static final String ACTION_PROCESS_TEXT = "android.intent.action.PROCESS_TEXT";
+    /**
+     * Intent.EXTRA_PROCESS_TEXT
+     */
+    public static final String EXTRA_PROCESS_TEXT = "android.intent.extra.PROCESS_TEXT";
+    /**
+     * Intent.EXTRA_PROCESS_TEXT_READONLY
+     */
+    public static final String EXTRA_PROCESS_TEXT_READONLY = "android.intent.extra.PROCESS_TEXT_READONLY";
 
     private NMBClient mNMBClient;
 
@@ -638,22 +650,20 @@ public final class PostActivity extends SwipeActivity
                     break;
                 }
                 default: {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (mResolveInfoList == null) {
-                            break;
-                        }
-                        int index = which - 4;
-                        if (index < mResolveInfoList.size() && index >= 0) {
-                            ResolveInfo info = mResolveInfoList.get(index);
-                            Intent intent = new Intent()
-                                    .setClassName(info.activityInfo.packageName, info.activityInfo.name)
-                                    .setAction(Intent.ACTION_PROCESS_TEXT)
-                                    .setType("text/plain")
-                                    .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
-                                    .putExtra(Intent.EXTRA_PROCESS_TEXT, mReply.getNMBDisplayContent().toString());
+                    if (mResolveInfoList == null) {
+                        break;
+                    }
+                    int index = which - 4;
+                    if (index < mResolveInfoList.size() && index >= 0) {
+                        ResolveInfo info = mResolveInfoList.get(index);
+                        Intent intent = new Intent()
+                                .setClassName(info.activityInfo.packageName, info.activityInfo.name)
+                                .setAction(ACTION_PROCESS_TEXT)
+                                .setType("text/plain")
+                                .putExtra(EXTRA_PROCESS_TEXT_READONLY, true)
+                                .putExtra(EXTRA_PROCESS_TEXT, mReply.getNMBDisplayContent().toString());
 
-                            startActivity(intent);
-                        }
+                        startActivity(intent);
                     }
                     break;
                 }
@@ -666,15 +676,12 @@ public final class PostActivity extends SwipeActivity
         String[] items = getResources().getStringArray(R.array.reply_dialog);
         Collections.addAll(itemList, items);
 
-        List<ResolveInfo> resolveInfos = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PackageManager pm = getPackageManager();
-            resolveInfos = pm.queryIntentActivities(new Intent()
-                    .setAction(Intent.ACTION_PROCESS_TEXT)
-                    .setType("text/plain"), 0);
-            for (ResolveInfo info : resolveInfos) {
-                itemList.add(info.loadLabel(pm));
-            }
+        PackageManager pm = getPackageManager();
+        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(new Intent()
+                .setAction(ACTION_PROCESS_TEXT)
+                .setType("text/plain"), 0);
+        for (ResolveInfo info : resolveInfos) {
+            itemList.add(info.loadLabel(pm));
         }
 
         ReplyDailogHelper helper = new ReplyDailogHelper(mReplyHelper.getDataAt(position), resolveInfos);
