@@ -17,15 +17,12 @@
 package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Parcel;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 
 import com.hippo.nimingban.R;
@@ -225,53 +222,6 @@ public class ACPost extends Post {
         return spannable == null ? content : spannable;
     }
 
-    public static CharSequence handleSage(CharSequence content, String sage) {
-        SpannableStringBuilder builder = null;
-        if ("1".equals(sage)) {
-            if (content instanceof SpannableStringBuilder) {
-                builder = (SpannableStringBuilder) content;
-            } else {
-                builder = new SpannableStringBuilder(content);
-            }
-
-            builder.insert(0, "SAGE\r\n\r\n");
-            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
-            builder.setSpan(colorSpan, 0, "SAGE".length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return builder == null ? content : builder;
-    }
-
-    public static CharSequence insertHeadBold(CharSequence content, String str) {
-        SpannableStringBuilder builder = null;
-        if (!TextUtils.isEmpty(str)) {
-            if (content instanceof SpannableStringBuilder) {
-                builder = (SpannableStringBuilder) content;
-            } else {
-                builder = new SpannableStringBuilder(content);
-            }
-
-            int length = str.length();
-            builder.insert(0, str);
-            builder.insert(length, "\r\n");
-            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
-            builder.setSpan(styleSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return builder == null ? content : builder;
-    }
-
-    public static CharSequence handleTitle(CharSequence content, String title) {
-        return insertHeadBold(content, NO_TITLE.equals(title) ? null : title);
-    }
-
-    public static CharSequence handleName(CharSequence content, String name) {
-        return insertHeadBold(content, NO_NAME.equals(name) ? null : name);
-    }
-    public static CharSequence handleEmail(CharSequence content, String email) {
-        return insertHeadBold(content, email);
-    }
-
     public static CharSequence generateContent(String content) {
         CharSequence charSequence;
         charSequence = Html.fromHtml(StringUtils.replace(content, "#滑稽", "<img src=\"" + R.drawable.emoji_huaji + "\">"),
@@ -285,13 +235,24 @@ public class ACPost extends Post {
     }
 
     public static CharSequence generateContent(String content, String sage, String title, String name, String email) {
-        CharSequence charSequence = generateContent(content);
-        charSequence = handleEmail(charSequence, email);
-        charSequence = handleName(charSequence, name);
-        charSequence = handleTitle(charSequence, title);
-        charSequence = handleSage(charSequence, sage);
+        StringBuilder sb = new StringBuilder(44 + 11 + StringUtils.length(title) +
+                11 + StringUtils.length(name) + 11 + StringUtils.length(email) +
+                StringUtils.length(content));
+        if ("1".equals(sage)) {
+            sb.append("<font color=\"red\"><b>SAGE</b></font><br><br>");
+        }
+        if (!TextUtils.isEmpty(title) && !NO_TITLE.equals(title)) {
+            sb.append("<b>").append(title).append("</b><br>");
+        }
+        if (!TextUtils.isEmpty(name) && !NO_NAME.equals(name)) {
+            sb.append("<b>").append(name).append("</b><br>");
+        }
+        if (!TextUtils.isEmpty(email)) {
+            sb.append("<b>").append(email).append("</b><br>");
+        }
+        sb.append(content);
 
-        return charSequence;
+        return generateContent(sb.toString());
     }
 
     private static String removeDayOfWeek(String time) {
