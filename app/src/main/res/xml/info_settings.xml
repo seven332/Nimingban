@@ -35,4 +35,9 @@
         android:key="version"
         android:title="@string/main_version"/>
 
+    <Preference
+        android:key="dump_logcat"
+        android:title="@string/main_dump_logcat"
+        android:summary="@string/main_dump_logcat_summary"/>
+
 </PreferenceScreen>

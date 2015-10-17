@@ -34,6 +34,7 @@ public class NMBAppConfig {
     private static final String IMAGE_DIRNAME = "image";
     private static final String COOKIES_DIRNAME = "cookies";
     private static final String PHOTO_DIRNAME = "photo";
+    private static final String LOGCAT_DIRNAME = "logcat";
 
     private static Context sContext;
 
@@ -42,8 +43,7 @@ public class NMBAppConfig {
     }
 
     public static @Nullable File getExternalAppDir() {
-        if (Environment.getExternalStorageState()
-                .equals(Environment.MEDIA_MOUNTED)) {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             File file = new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
             if (FileUtils.ensureDirectory(file)) {
                 return file;
@@ -103,6 +103,10 @@ public class NMBAppConfig {
 
     public static @Nullable File getPhotoDir() {
         return getDirInAppDir(PHOTO_DIRNAME);
+    }
+
+    public static @Nullable File getLogcatDir() {
+        return getDirInAppDir(LOGCAT_DIRNAME);
     }
 
     public static @Nullable File getTempDir() {

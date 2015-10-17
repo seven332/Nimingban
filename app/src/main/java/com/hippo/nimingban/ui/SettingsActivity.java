@@ -65,6 +65,7 @@ import com.hippo.preference.FixedSwitchPreference;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
+import com.hippo.util.LogCat;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
@@ -803,11 +804,13 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_SOURCE = "source";
         private static final String KEY_NOTICE = "notice";
         private static final String KEY_VERSION = "version";
+        private static final String KEY_DUMP_LOGCAT = "dump_logcat";
 
         private Preference mAuthor;
         private Preference mSource;
         private Preference mNotice;
         private Preference mVersion;
+        private Preference mDumpLogcat;
 
         private boolean mShowTip = true;
         private final long[] mHits = new long[8];
@@ -821,11 +824,13 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mSource = findPreference(KEY_SOURCE);
             mNotice = findPreference(KEY_NOTICE);
             mVersion = findPreference(KEY_VERSION);
+            mDumpLogcat = findPreference(KEY_DUMP_LOGCAT);
 
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
             mNotice.setOnPreferenceClickListener(this);
             mVersion.setOnPreferenceClickListener(this);
+            mDumpLogcat.setOnPreferenceClickListener(this);
 
             mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
 
@@ -880,9 +885,22 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         getActivity().startService(intent);
                     }
                 }
-                return true;
+            } else if (KEY_DUMP_LOGCAT.equals(key)) {
+                boolean ok;
+                File file = null;
+                File dir = NMBAppConfig.getLogcatDir();
+                if (dir != null) {
+                    file = new File(dir, "logcat-" + ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".txt");
+                    ok = LogCat.save(file);
+                } else {
+                    ok = false;
+                }
+                Resources resources = getResources();
+                Toast.makeText(getActivity(),
+                        ok ? resources.getString(R.string.dump_logcat_to, file.getPath()) :
+                                resources.getString(R.string.dump_logcat_failed), Toast.LENGTH_SHORT).show();
             }
-            return false;
+            return true;
         }
     }
 }

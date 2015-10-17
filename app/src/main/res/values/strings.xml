@@ -239,6 +239,8 @@
     <string name="main_source_summary" translatable="false">https://github.com/seven332/Nimingban</string>
     <string name="main_notice">NOTICE</string>
     <string name="main_version">Version</string>
+    <string name="main_dump_logcat">Dump logcat</string>
+    <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;nya nya~~</string>
 
     <string name="text_format">Text format</string>
     <string name="font_size">Font size</string>
@@ -252,7 +254,7 @@
     <string name="image_loading_strategy_wifi">Only over Wi-Fi</string>
     <string name="image_loading_strategy_no">Never</string>
 
-    <string name="save_cookies_failed">Saving cookie failed. </string>
+    <string name="save_cookies_failed">Saving cookie failed.</string>
     <string name="save_cookies_to">Cookie saved to %s. </string>
 
     <string name="restore_cookies_successfully">Restore cookies successfully</string>
@@ -280,6 +282,9 @@
 
     <string name="da_diao_service">Da Diao</string>
     <string name="da_diao_tip">Try again if you are Sky F**ker Zhao</string>
+
+    <string name="dump_logcat_failed">Dump logcat failed</string>
+    <string name="dump_logcat_to">Dump logcat to %s</string>
 
     <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>
