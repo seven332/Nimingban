@@ -1200,6 +1200,15 @@ public class EasyRecyclerView extends RecyclerView {
         updateOnScreenCheckedViews();
     }
 
+    private View findViewForAdapterPosition(int position) {
+        ViewHolder holder = findViewHolderForAdapterPosition(position);
+        if (holder != null) {
+            return holder.itemView;
+        } else {
+            return null;
+        }
+    }
+
     private final class CheckForTap implements Runnable {
         float x;
         float y;
@@ -1210,7 +1219,7 @@ public class EasyRecyclerView extends RecyclerView {
         public void run() {
             View view = v;
             int position = p;
-            if (view != null && position >= 0 && view == findViewHolderForAdapterPosition(position).itemView) {
+            if (view != null && position >= 0 && view == findViewForAdapterPosition(position)) {
                 mPrePressed = false;
                 final float[] point = mTmpPoint;
                 point[0] = x;
@@ -1266,7 +1275,7 @@ public class EasyRecyclerView extends RecyclerView {
         public void run() {
             View view = v;
             int position = p;
-            if (view != null && position >= 0 && view == findViewHolderForAdapterPosition(position).itemView &&
+            if (view != null && position >= 0 && view == findViewForAdapterPosition(position) &&
                     view.isPressed() && view.getParent() != null) {
                 boolean handled = false;
 
