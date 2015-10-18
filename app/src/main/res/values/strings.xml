@@ -26,7 +26,7 @@
     <string name="disagree">Disagree</string>
 
     <string name="it_is_important">Important!!</string>
-    <string name="crash_tip">The application crashed last time. Would you mind to send logcat to the developer via e-mail to fix the bug?</string>
+    <string name="crash_tip">The application crashed last time. Would you mind to send error message to the developer via e-mail to fix the bug?</string>
 
     <string name="cant_make_sure_image_save_location">It seems your picture saving location is not available. Set it in Settings to save pictures. </string>
 
@@ -241,6 +241,8 @@
     <string name="main_version">Version</string>
     <string name="main_dump_logcat">Dump logcat</string>
     <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;nya nya~~</string>
+    <string name="main_help_nimingban">Help nimingban</string>
+    <string name="main_help_nimingban_summary">Learn how to make Nimingban better</string>
 
     <string name="text_format">Text format</string>
     <string name="font_size">Font size</string>
@@ -285,6 +287,9 @@
 
     <string name="dump_logcat_failed">Dump logcat failed</string>
     <string name="dump_logcat_to">Dump logcat to %s</string>
+
+    <string name="help_nimingban_title">How to make Nimingban better</string>
+    <string name="help_nimingban_message">You can make Nimingban better!\n(＾o＾)ﾉ\n\nA request for sending error message via e-mail will be asked when the app launched next time if Nimingban crashes. Error message helps developer a lot. If you can\'t send e-mail at once, you can send error message which in &lt;internal storage&gt;/nmb/crash to the developer at any time.\n\nIf no request asked or you think the app goes wrong, click the item above \"Dump logcat\", and send the logcat to the developer. Logcat also helps developer a lot.</string>
 
     <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>

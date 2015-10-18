@@ -805,12 +805,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_NOTICE = "notice";
         private static final String KEY_VERSION = "version";
         private static final String KEY_DUMP_LOGCAT = "dump_logcat";
+        private static final String KEY_HELP_NIMINGBAN = "help_nimingban";
 
         private Preference mAuthor;
         private Preference mSource;
         private Preference mNotice;
         private Preference mVersion;
         private Preference mDumpLogcat;
+        private Preference mHelpNimingban;
 
         private boolean mShowTip = true;
         private final long[] mHits = new long[8];
@@ -825,12 +827,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mNotice = findPreference(KEY_NOTICE);
             mVersion = findPreference(KEY_VERSION);
             mDumpLogcat = findPreference(KEY_DUMP_LOGCAT);
+            mHelpNimingban = findPreference(KEY_HELP_NIMINGBAN);
 
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
             mNotice.setOnPreferenceClickListener(this);
             mVersion.setOnPreferenceClickListener(this);
             mDumpLogcat.setOnPreferenceClickListener(this);
+            mHelpNimingban.setOnPreferenceClickListener(this);
 
             mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
 
@@ -899,6 +903,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 Toast.makeText(getActivity(),
                         ok ? resources.getString(R.string.dump_logcat_to, file.getPath()) :
                                 resources.getString(R.string.dump_logcat_failed), Toast.LENGTH_SHORT).show();
+            } else if (KEY_HELP_NIMINGBAN.equals(key)) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.help_nimingban_title)
+                        .setMessage(R.string.help_nimingban_message)
+                        .show();
             }
             return true;
         }

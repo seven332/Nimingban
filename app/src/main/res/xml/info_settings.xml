@@ -40,4 +40,9 @@
         android:title="@string/main_dump_logcat"
         android:summary="@string/main_dump_logcat_summary"/>
 
+    <Preference
+        android:key="help_nimingban"
+        android:title="@string/main_help_nimingban"
+        android:summary="@string/main_help_nimingban_summary"/>
+
 </PreferenceScreen>
