@@ -42,6 +42,8 @@ import pl.droidsonroids.gif.GifDrawable;
 
 public class SimpleDrawableHelper implements DrawableHelper {
 
+    private static final int MAX_TEXTURE_SIZE = 4096;
+
     private Context mContext;
     private BitmapPool mBitmapPool;
 
@@ -81,7 +83,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 isPipe.close();
                 isPipe.release();
                 return new TempGifDrawable(temp);
-            } else if (options.outWidth >= 1024 || options.outHeight >= 1024) { // TODO get the threshold runtime
+            } else if (options.outWidth > MAX_TEXTURE_SIZE || options.outHeight > MAX_TEXTURE_SIZE) {
                 return TiledBitmapDrawable.from(
                         isPipe.open(), options.outWidth, options.outHeight, mBitmapPool);
             } else {
