@@ -112,7 +112,11 @@ public class DaDiaoService extends Service {
                 startForeground(NOTIFICATION_ID, notification);
             }
 
-            final int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            // Sometimes ear protection is off or disabled, make maxVolume to 1/3
+            if (mAudioManager.isWiredHeadsetOn()) {
+                maxVolume = Math.max(maxVolume / 3, mOriginalVolume);
+            }
             // For headset on, can't set max volume directly because of ear protection
             // Just try getting max volume for head set
             for (int i = maxVolume; i > 0; i--) {
