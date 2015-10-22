@@ -243,6 +243,8 @@
     <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;nya nya~~</string>
     <string name="main_help_nimingban">Help nimingban</string>
     <string name="main_help_nimingban_summary">Learn how to make Nimingban better</string>
+    <string name="main_help">Help</string>
+    <string name="main_help_summary">Ask the developer if you can\'t find the answer</string>
 
     <string name="text_format">Text format</string>
     <string name="font_size">Font size</string>

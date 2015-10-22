@@ -45,4 +45,9 @@
         android:title="@string/main_help_nimingban"
         android:summary="@string/main_help_nimingban_summary"/>
 
+    <Preference
+        android:key="help"
+        android:title="@string/main_help"
+        android:summary="@string/main_help_summary"/>
+
 </PreferenceScreen>

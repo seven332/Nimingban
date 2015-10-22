@@ -235,6 +235,8 @@
     <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;喵喵~~</string>
     <string name="main_help_nimingban">帮助匿名版</string>
     <string name="main_help_nimingban_summary">了解如何帮助匿名版做得更好</string>
+    <string name="main_help">帮助</string>
+    <string name="main_help_summary">如果你还不知道，直接问开发者吧</string>
 
     <string name="text_format">文本格式</string>
     <string name="font_size">字体大小</string>

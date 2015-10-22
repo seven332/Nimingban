@@ -806,6 +806,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_VERSION = "version";
         private static final String KEY_DUMP_LOGCAT = "dump_logcat";
         private static final String KEY_HELP_NIMINGBAN = "help_nimingban";
+        private static final String KEY_HELP = "help";
 
         private Preference mAuthor;
         private Preference mSource;
@@ -813,6 +814,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mVersion;
         private Preference mDumpLogcat;
         private Preference mHelpNimingban;
+        private Preference mHelp;
 
         private boolean mShowTip = true;
         private final long[] mHits = new long[8];
@@ -828,6 +830,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mVersion = findPreference(KEY_VERSION);
             mDumpLogcat = findPreference(KEY_DUMP_LOGCAT);
             mHelpNimingban = findPreference(KEY_HELP_NIMINGBAN);
+            mHelp = findPreference(KEY_HELP);
 
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
@@ -835,6 +838,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mVersion.setOnPreferenceClickListener(this);
             mDumpLogcat.setOnPreferenceClickListener(this);
             mHelpNimingban.setOnPreferenceClickListener(this);
+            mHelp.setOnPreferenceClickListener(this);
 
             mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
 
@@ -908,6 +912,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         .setTitle(R.string.help_nimingban_title)
                         .setMessage(R.string.help_nimingban_message)
                         .show();
+            } else if (KEY_HELP.equals(key)) {
+                OpenUrlHelper.openUrl(getActivity(), "http://nimingban.herokuapp.com/help.html", false);
             }
             return true;
         }
