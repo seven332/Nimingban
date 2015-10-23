@@ -534,6 +534,14 @@ class HtmlToSpannedConverter implements ContentHandler {
             startA(mSpannableStringBuilder, attributes);
         } else if (tag.equalsIgnoreCase("u")) {
             start(mSpannableStringBuilder, new Underline());
+        } else if (tag.equalsIgnoreCase("ins")) {
+            start(mSpannableStringBuilder, new Underline());
+        } else if (tag.equalsIgnoreCase("strike")) {
+            start(mSpannableStringBuilder, new Strike());
+        } else if (tag.equalsIgnoreCase("s")) {
+            start(mSpannableStringBuilder, new Strike());
+        } else if (tag.equalsIgnoreCase("del")) {
+            start(mSpannableStringBuilder, new Strike());
         } else if (tag.equalsIgnoreCase("sup")) {
             start(mSpannableStringBuilder, new Super());
         } else if (tag.equalsIgnoreCase("sub")) {
@@ -585,6 +593,14 @@ class HtmlToSpannedConverter implements ContentHandler {
             endA(mSpannableStringBuilder);
         } else if (tag.equalsIgnoreCase("u")) {
             end(mSpannableStringBuilder, Underline.class, new UnderlineSpan());
+        } else if (tag.equalsIgnoreCase("ins")) {
+            end(mSpannableStringBuilder, Underline.class, new UnderlineSpan());
+        } else if (tag.equalsIgnoreCase("strike")) {
+            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
+        } else if (tag.equalsIgnoreCase("s")) {
+            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
+        } else if (tag.equalsIgnoreCase("del")) {
+            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
         } else if (tag.equalsIgnoreCase("sup")) {
             end(mSpannableStringBuilder, Super.class, new SuperscriptSpan());
         } else if (tag.equalsIgnoreCase("sub")) {
@@ -849,6 +865,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static class Bold { }
     private static class Italic { }
     private static class Underline { }
+    private static class Strike { }
     private static class Big { }
     private static class Small { }
     private static class Monospace { }
