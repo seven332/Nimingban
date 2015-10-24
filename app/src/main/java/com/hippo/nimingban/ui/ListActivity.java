@@ -41,6 +41,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -102,6 +103,7 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
@@ -456,6 +458,8 @@ public final class ListActivity extends AbsActivity
         request.setCallback(new NMBClient.Callback<UpdateStatus>() {
             @Override
             public void onSuccess(UpdateStatus result) {
+                Log.d("UpdateStatus", ObjectUtils.toString(result));
+
                 mUpdateRequest = null;
                 UpdateHelper.showUpdateDialog(ListActivity.this, result);
             }
