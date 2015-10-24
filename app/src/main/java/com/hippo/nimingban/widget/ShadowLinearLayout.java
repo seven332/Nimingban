@@ -59,11 +59,6 @@ public class ShadowLinearLayout extends LinearLayout {
         }
     }
 
-    @Override
-    public void setOutlineProvider(ViewOutlineProvider provider) {
-        super.setOutlineProvider(provider);
-    }
-
     private void setShadow(NinePatchDrawable shadow) {
         mShadow = shadow;
         mShadow.getPadding(mShadowPaddings);
