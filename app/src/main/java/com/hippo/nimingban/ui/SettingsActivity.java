@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
@@ -236,10 +237,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_TEXT_FORMAT = "text_format";
 
-
         private FixedSwitchPreference mPrettyTime;
         private Preference mTextFormat;
         private Preference mDynamicComments;
+        private ListPreference mImageLoadingStrategy;
+        private FixedSwitchPreference mImageLoadingStrategy2;
         private FixedSwitchPreference mFastScroller;
         private FixedSwitchPreference mColorStatusBar;
 
@@ -253,11 +255,15 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mPrettyTime = (FixedSwitchPreference) findPreference(Settings.KEY_PRETTY_TIME);
             mTextFormat = findPreference(KEY_TEXT_FORMAT);
             mDynamicComments = findPreference(Settings.KEY_DYNAMIC_COMMENTS);
+            mImageLoadingStrategy = (ListPreference) findPreference(Settings.KEY_IMAGE_LOADING_STRATEGY);
+            mImageLoadingStrategy2 = (FixedSwitchPreference) findPreference(Settings.KEY_IMAGE_LOADING_STRATEGY_2);
             mFastScroller = (FixedSwitchPreference) findPreference(Settings.KEY_FAST_SCROLLER);
             mColorStatusBar = (FixedSwitchPreference) findPreference(Settings.KEY_COLOR_STATUS_BAR);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
             mDynamicComments.setOnPreferenceChangeListener(this);
+            mImageLoadingStrategy.setOnPreferenceChangeListener(this);
+            mImageLoadingStrategy2.setOnPreferenceChangeListener(this);
             mFastScroller.setOnPreferenceChangeListener(this);
             mColorStatusBar.setOnPreferenceChangeListener(this);
 
@@ -291,6 +297,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 getActivity().setResult(RESULT_OK);
                 return true;
             } else if (Settings.KEY_DYNAMIC_COMMENTS.equals(key)) {
+                getActivity().setResult(RESULT_OK);
+                return true;
+            } else if (Settings.KEY_IMAGE_LOADING_STRATEGY.equals(key)) {
+                getActivity().setResult(RESULT_OK);
+                return true;
+            } else if (Settings.KEY_IMAGE_LOADING_STRATEGY_2.equals(key)) {
                 getActivity().setResult(RESULT_OK);
                 return true;
             } else if (Settings.KEY_FAST_SCROLLER.equals(key)) {
