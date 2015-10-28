@@ -34,7 +34,7 @@ public final class NMBUriParser {
             "hacfun.tv"
     };
 
-    private static final Pattern ID_PATTERN = Pattern.compile("^/t/(\\d+)");
+    private static final Pattern ID_PATTERN = Pattern.compile("^(?:/m)?/t/(\\d+)");
 
     @NonNull
     public static PostResult parsePostUri(Uri uri) {

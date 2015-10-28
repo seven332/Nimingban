@@ -58,6 +58,7 @@
                 <data android:host="h.acfun.tv"/>
                 <data android:host="hacfun.tv"/>
                 <data android:pathPrefix="/t/"/>
+                <data android:pathPrefix="/m/t/"/>
             </intent-filter>
 
         </activity>
