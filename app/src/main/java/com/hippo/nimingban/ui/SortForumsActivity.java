@@ -186,7 +186,9 @@ public class SortForumsActivity extends TranslucentActivity {
 
         updateLazyList(false);
 
-        showEyeGuide();
+        if (Settings.getGuideSortForumsActivity()) {
+            showEyeGuide();
+        }
     }
 
     private void showEyeGuide() {
@@ -292,7 +294,7 @@ public class SortForumsActivity extends TranslucentActivity {
                 .setOnDissmisListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //showRightDrawerGuide();
+                        Settings.putGuideSortForumsActivity(false);
                     }
                 }).show();
     }

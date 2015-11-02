@@ -379,6 +379,17 @@ public final class Settings {
         putBoolean(KEY_GUIDE_LIST_ACTIVITY, value);
     }
 
+    public static final String KEY_GUIDE_SORT_FORUMS_ACTIVITY = "guide_sort_forums_activity";
+    public static final boolean VALUE_GUIDE_SORT_FORUMS_ACTIVITY = true;
+
+    public static boolean getGuideSortForumsActivity() {
+        return getBoolean(KEY_GUIDE_SORT_FORUMS_ACTIVITY, VALUE_GUIDE_SORT_FORUMS_ACTIVITY);
+    }
+
+    public static void putGuideSortForumsActivity(boolean value) {
+        putBoolean(KEY_GUIDE_SORT_FORUMS_ACTIVITY, value);
+    }
+
     public static final String KEY_CRASH_FILENAME = "crash_filename";
     public static final String VALUE_CRASH_FILENAME = null;
 
