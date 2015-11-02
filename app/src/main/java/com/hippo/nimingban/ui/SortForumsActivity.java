@@ -28,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +50,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeabl
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.effect.ViewTransition;
+import com.hippo.nimingban.GuideHelper;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
@@ -62,6 +64,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -182,6 +185,116 @@ public class SortForumsActivity extends TranslucentActivity {
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
         updateLazyList(false);
+
+        showEyeGuide();
+    }
+
+    private void showEyeGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.LEFT)
+                .setMessage(getString(R.string.click_eye_icon))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showModifyGuide();
+                    }
+                }).show();
+    }
+
+    private void showModifyGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.CENTER)
+                .setMessage(getString(R.string.modify_forum_title))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showSwipeGuide();
+                    }
+                }).show();
+    }
+
+    private void showSwipeGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.CENTER)
+                .setMessage(getString(R.string.swipe_forum_remove))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showGreenBlockGuide();
+                    }
+                }).show();
+    }
+
+    private void showGreenBlockGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.RIGHT)
+                .setMessage(getString(R.string.drag_green_block_exchange))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showRefreshGuide();
+                    }
+                }).show();
+    }
+
+    private void showRefreshGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.RIGHT | Gravity.TOP)
+                .setMessage(getString(R.string.click_refresh_icon_update_list))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showAddGuide();
+                    }
+                }).show();
+    }
+
+    private void showAddGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.RIGHT | Gravity.TOP)
+                .setMessage(getString(R.string.click_add_icon_add_forum))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //showRightDrawerGuide();
+                    }
+                }).show();
     }
 
     @Override

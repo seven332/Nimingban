@@ -40,6 +40,8 @@ public class GuideHelper {
 
         private Activity mActivity;
         private int mPadding;
+        private int mPaddingTop;
+        private int mPaddingBottom;
         private int mColor;
         @GuideView.MessagePosition
         private int mMessagePosition = Gravity.TOP;
@@ -54,6 +56,18 @@ public class GuideHelper {
 
         public Builder setPadding(int padding) {
             mPadding = padding;
+            mPaddingTop = padding;
+            mPaddingBottom = padding;
+            return this;
+        }
+
+        public Builder setPaddingTop(int paddingTop) {
+            mPaddingTop = paddingTop;
+            return this;
+        }
+
+        public Builder setPaddingBottom(int paddingTop) {
+            mPaddingBottom = paddingTop;
             return this;
         }
 
@@ -91,7 +105,7 @@ public class GuideHelper {
             ViewGroup parent = getParent(mActivity);
             GuideView guideView = new GuideView(mActivity);
             guideView.setColor(mColor);
-            guideView.setPadding(mPadding, mPadding, mPadding, mPadding);
+            guideView.setPadding(mPadding, mPaddingTop, mPadding, mPaddingBottom);
             guideView.setBackgroundColor(mBackgroundColor);
             guideView.setMessagePosition(mMessagePosition);
             guideView.setMessage(mMessage);

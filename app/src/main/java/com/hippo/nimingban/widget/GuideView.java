@@ -37,7 +37,8 @@ import java.lang.annotation.RetentionPolicy;
 
 public class GuideView extends FrameLayout {
 
-    @IntDef({Gravity.LEFT, Gravity.RIGHT, Gravity.TOP})
+    @IntDef({Gravity.LEFT, Gravity.RIGHT, Gravity.TOP, Gravity.CENTER,
+            Gravity.LEFT | Gravity.TOP, Gravity.RIGHT | Gravity.TOP})
     @Retention(RetentionPolicy.SOURCE)
     public @interface MessagePosition {}
 
@@ -76,6 +77,19 @@ public class GuideView extends FrameLayout {
         mButton.setBackgroundDrawable(mButtonBg);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        if (widthMode == MeasureSpec.EXACTLY) {
+            mMessage.setMaxWidth((widthSize - getPaddingLeft() - getPaddingRight()) * 3 / 4);
+        } else {
+            mMessage.setMaxWidth(Integer.MAX_VALUE);
+        }
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
     public void setMessagePosition(@MessagePosition int gravity) {
         LayoutParams lp = (LayoutParams) mMessage.getLayoutParams();
 
@@ -85,6 +99,8 @@ public class GuideView extends FrameLayout {
             lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
         } else if (gravity == Gravity.TOP) {
             lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        } else {
+            lp.gravity = gravity;
         }
 
         mMessage.setLayoutParams(lp);

@@ -35,6 +35,13 @@
     <string name="double_click_toolbar_refresh">双击 toolbar 刷新</string>
     <string name="get_it">知道了</string>
 
+    <string name="click_eye_icon">点击眼睛图标隐藏/显示板块</string>
+    <string name="modify_forum_title">点击板块名称以修改</string>
+    <string name="swipe_forum_remove">滑动板块以删除</string>
+    <string name="drag_green_block_exchange">拖动绿色方块交换板块</string>
+    <string name="click_refresh_icon_update_list">点击刷新图标更新板块列表</string>
+    <string name="click_add_icon_add_forum">点击添加图标添加自定义版块</string>
+
     <string name="common_posts">常用串</string>
 
     <string name="let_there_light">要有光</string>
