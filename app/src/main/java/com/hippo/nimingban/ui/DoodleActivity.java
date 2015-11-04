@@ -41,7 +41,7 @@ import com.hippo.nimingban.widget.ColorPickerView;
 import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.nimingban.widget.ThicknessPreviewView;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.AnimationUtils;
+import com.hippo.util.AnimationUtils2;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Slider;
@@ -220,7 +220,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
             mShowSide = true;
             mSideAnimator.cancel();
 
-            mSideAnimator.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+            mSideAnimator.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
             mSideAnimator.setFloatValues(mSide.getTranslationX(), 0);
             mSideAnimator.start();
         }
@@ -236,7 +236,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
             mShowSide = false;
             mSideAnimator.cancel();
 
-            mSideAnimator.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+            mSideAnimator.setInterpolator(AnimationUtils2.SLOW_FAST_INTERPOLATOR);
             mSideAnimator.setFloatValues(mSide.getTranslationX(), -mSide.getWidth());
             mSideAnimator.start();
         }

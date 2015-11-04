@@ -39,7 +39,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hippo.util.AnimationUtils;
+import com.hippo.util.AnimationUtils2;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -200,7 +200,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
         mAnimator.addUpdateListener(this);
         mAnimator.addListener(this);
-        mAnimator.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        mAnimator.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
         mCancelAnimation = false;
 
         setWillNotDraw(false);

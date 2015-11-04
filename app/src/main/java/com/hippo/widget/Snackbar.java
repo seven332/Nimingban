@@ -42,7 +42,7 @@ import android.widget.TextView;
 
 import com.hippo.animation.SimpleAnimationListener;
 import com.hippo.nimingban.R;
-import com.hippo.util.AnimationUtils;
+import com.hippo.util.AnimationUtils2;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -237,7 +237,7 @@ public class Snackbar {
     private void animateViewIn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             ViewCompat.setTranslationY(mView, mView.getHeight());
-            ViewCompat.animate(mView).translationY(0.0F).setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR).setDuration(ANIMATION_DURATION).setListener(new ViewPropertyAnimatorListenerAdapter() {
+            ViewCompat.animate(mView).translationY(0.0F).setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR).setDuration(ANIMATION_DURATION).setListener(new ViewPropertyAnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(View view) {
                     mView.animateChildrenIn(70, ANIMATION_FADE_DURATION);
@@ -253,7 +253,7 @@ public class Snackbar {
             }).start();
         } else {
             Animation anim = android.view.animation.AnimationUtils.loadAnimation(mView.getContext(), R.anim.design_snackbar_in);
-            anim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+            anim.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
             anim.setDuration(ANIMATION_DURATION);
             anim.setAnimationListener(new SimpleAnimationListener() {
                 @Override
@@ -270,7 +270,7 @@ public class Snackbar {
 
     private void animateViewOut(final int event) {
         if (Build.VERSION.SDK_INT >= 14) {
-            ViewCompat.animate(mView).translationY(mView.getHeight()).setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR).setDuration(ANIMATION_DURATION).setListener(new ViewPropertyAnimatorListenerAdapter() {
+            ViewCompat.animate(mView).translationY(mView.getHeight()).setInterpolator(AnimationUtils2.SLOW_FAST_INTERPOLATOR).setDuration(ANIMATION_DURATION).setListener(new ViewPropertyAnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(View view) {
                     mView.animateChildrenOut(0, ANIMATION_FADE_DURATION);
@@ -283,7 +283,7 @@ public class Snackbar {
             }).start();
         } else {
             Animation anim = android.view.animation.AnimationUtils.loadAnimation(mView.getContext(), R.anim.design_snackbar_out);
-            anim.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+            anim.setInterpolator(AnimationUtils2.SLOW_FAST_INTERPOLATOR);
             anim.setDuration(ANIMATION_DURATION);
             anim.setAnimationListener(new SimpleAnimationListener() {
                 @Override

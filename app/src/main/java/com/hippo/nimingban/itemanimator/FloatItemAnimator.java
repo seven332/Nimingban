@@ -23,7 +23,7 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.hippo.util.AnimationUtils;
+import com.hippo.util.AnimationUtils2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +91,7 @@ public class FloatItemAnimator extends RecyclerView.ItemAnimator {
         mAddAnimations.add(holder);
         view.setTranslationY(translationY);
         animation.translationY(0.0f).setDuration((long) (translationY / SPEED))
-                .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR)
+                .setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR)
                 .setListener(new VpaListenerAdapter() {
                     @Override
                     public void onAnimationStart(View view) {

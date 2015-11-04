@@ -35,7 +35,7 @@ import android.widget.AbsoluteLayout;
 import android.widget.PopupWindow;
 
 import com.hippo.nimingban.R;
-import com.hippo.util.AnimationUtils;
+import com.hippo.util.AnimationUtils2;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
@@ -148,7 +148,7 @@ public class Slider extends View {
         a.recycle();
 
         mProgressAnimation = new ValueAnimator();
-        mProgressAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        mProgressAnimation.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
         mProgressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(@NonNull ValueAnimator animation) {
@@ -270,7 +270,7 @@ public class Slider extends View {
     private void startShowBubbleAnimation() {
         mBubbleScaleAnimation.cancel();
         mBubbleScaleAnimation.setFloatValues(mDrawBubbleScale, 1.0f);
-        mBubbleScaleAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        mBubbleScaleAnimation.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
         mBubbleScaleAnimation.setDuration((long) (300 * Math.abs(mDrawBubbleScale - 1.0f)));
         mBubbleScaleAnimation.start();
     }
@@ -278,7 +278,7 @@ public class Slider extends View {
     private void startHideBubbleAnimation() {
         mBubbleScaleAnimation.cancel();
         mBubbleScaleAnimation.setFloatValues(mDrawBubbleScale, 0.0f);
-        mBubbleScaleAnimation.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+        mBubbleScaleAnimation.setInterpolator(AnimationUtils2.SLOW_FAST_INTERPOLATOR);
         mBubbleScaleAnimation.setDuration((long) (300 * Math.abs(mDrawBubbleScale - 0.0f)));
         mBubbleScaleAnimation.start();
     }

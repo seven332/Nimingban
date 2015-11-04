@@ -31,7 +31,7 @@ import android.view.ViewConfiguration;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.nimingban.R;
-import com.hippo.util.AnimationUtils;
+import com.hippo.util.AnimationUtils2;
 import com.hippo.yorozuya.SimpleHandler;
 
 public class FastScroller extends View {
@@ -127,11 +127,11 @@ public class FastScroller extends View {
         mMinHandlerHeight = vc.getScaledScrollBarSize();
 
         mShowAnimator = ObjectAnimator.ofFloat(this, "alpha", 1.0f);
-        mShowAnimator.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        mShowAnimator.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
         mShowAnimator.setDuration(SCROLL_BAR_FADE_DURATION);
 
         mHideAnimator = ObjectAnimator.ofFloat(this, "alpha", 0.0f);
-        mHideAnimator.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+        mHideAnimator.setInterpolator(AnimationUtils2.SLOW_FAST_INTERPOLATOR);
         mHideAnimator.setDuration(SCROLL_BAR_FADE_DURATION);
         mHideAnimator.addListener(new SimpleAnimatorListener() {
 
