@@ -578,7 +578,7 @@ public class ACEngine {
         }
     }
 
-    private static final long MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+    private static final long MAX_IMAGE_SIZE = 2000 * 1024;
 
     /**
      * @return null for not changed
