@@ -42,8 +42,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,6 +141,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
     private EditText mName;
     private EditText mEmail;
     private EditText mTitle;
+    private CheckBox mWatermark;
     private TextView mMoreWritableItemsText;
     private View mSelectForum;
     private TextView mForumText;
@@ -255,6 +258,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mName = (EditText) findViewById(R.id.name);
         mEmail = (EditText) findViewById(R.id.email);
         mTitle = (EditText) findViewById(R.id.title);
+        mWatermark = (CheckBox) findViewById(R.id.watermark);
         mMoreWritableItemsText = (TextView) findViewById(R.id.more_writable_items_text);
         mSelectForum = findViewById(R.id.select_forum);
         mForumText = (TextView) mSelectForum.findViewById(R.id.forum_text);
@@ -280,6 +284,13 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         drawable.addState(new int[]{android.R.attr.state_activated}, VectorDrawable.create(this, R.drawable.ic_chevron_up));
         drawable.addState(new int[]{}, VectorDrawable.create(this, R.drawable.ic_chevron_down));
         mIndicator.setDrawable(drawable);
+
+        mWatermark.setChecked(Settings.getWatermark());
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mWatermark.getLayoutParams();
+        lp.leftMargin = mTitle.getPaddingLeft() - LayoutUtils.dp2pix(this, 5);
+        mWatermark.setLayoutParams(lp);
+        mWatermark.setPadding(mWatermark.getPaddingLeft() + LayoutUtils.dp2pix(this, 4),
+                mWatermark.getPaddingTop(), mWatermark.getPaddingRight(), mWatermark.getPaddingBottom());
 
         mWritableItem.setVisibility(View.GONE);
 
@@ -505,6 +516,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         struct.resto = mId;
         struct.image = mSeletedImageUri != null ? new UriInputStreamPipe(getApplicationContext(), mSeletedImageUri) : null;
         struct.imageType = mSeletedImageType;
+        struct.water = mWatermark.isChecked();
 
         NMBRequest request = new NMBRequest();
         request.setSite(mSite);
@@ -525,6 +537,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         struct.fid = mId;
         struct.image = mSeletedImageUri != null ? new UriInputStreamPipe(getApplicationContext(), mSeletedImageUri) : null;
         struct.imageType = mSeletedImageType;
+        struct.water = mWatermark.isChecked();
 
         NMBRequest request = new NMBRequest();
         request.setSite(mSite);

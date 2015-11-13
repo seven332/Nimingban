@@ -183,6 +183,7 @@
     <string name="type_send_name">名称</string>
     <string name="type_send_email">E-mail</string>
     <string name="type_send_title">标题</string>
+    <string name="type_send_watermark">水印</string>
 
     <string name="doodle">涂鸦</string>
     <string name="save_doodle">保存涂鸦？</string>
@@ -225,6 +226,9 @@
     <string name="main_save_cookies_summary">保存饼干至外置存储器</string>
     <string name="main_restore_cookies">恢复饼干</string>
     <string name="main_restore_cookies_summary">从外置存储器的饼干文件中恢复饼干</string>
+    <string name="main_watermark">水印</string>
+    <string name="main_watermark_summary_on">在你上传的图片中显示水印</string>
+    <string name="main_watermark_summary_off">不在你上传的图片中显示水印</string>
     <string name="main_feed_id">订阅 ID</string>
     <string name="main_feed_id_summary">你的订阅 ID 是 %s</string>
     <string name="main_save_image_auto">自动存图</string>

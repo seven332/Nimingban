@@ -27,4 +27,5 @@ public class ACPostStruct {
     public String fid;
     public InputStreamPipe image;
     public String imageType;
+    public boolean water;
 }

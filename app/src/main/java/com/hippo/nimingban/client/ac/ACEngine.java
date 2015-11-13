@@ -320,6 +320,11 @@ public class ACEngine {
         builder.addPart(
                 Headers.of("Content-Disposition", "form-data; name=\"resto\""),
                 RequestBody.create(null, StringUtils.avoidNull(struct.resto)));
+        if (struct.water) {
+            builder.addPart(
+                    Headers.of("Content-Disposition", "form-data; name=\"water\""),
+                    RequestBody.create(null, "true"));
+        }
         InputStreamPipe isPipe = struct.image;
 
         if (isPipe != null) {
@@ -499,6 +504,11 @@ public class ACEngine {
         builder.addPart(
                 Headers.of("Content-Disposition", "form-data; name=\"fid\""),
                 RequestBody.create(null, StringUtils.avoidNull(struct.fid)));
+        if (struct.water) {
+            builder.addPart(
+                    Headers.of("Content-Disposition", "form-data; name=\"water\""),
+                    RequestBody.create(null, "true"));
+        }
         InputStreamPipe isPipe = struct.image;
 
         if (isPipe != null) {

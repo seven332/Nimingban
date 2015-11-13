@@ -33,6 +33,15 @@
         android:title="@string/main_restore_cookies"
         android:summary="@string/main_restore_cookies_summary"/>
 
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:key="watermark"
+        android:title="@string/main_watermark"
+        app:summaryOn="@string/main_watermark_summary_on"
+        app:summaryOff="@string/main_watermark_summary_off"
+        android:defaultValue="true"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
+
     <Preference
         android:key="feed_id"
         android:title="@string/main_feed_id"/>

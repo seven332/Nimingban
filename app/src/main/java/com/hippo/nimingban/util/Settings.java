@@ -158,6 +158,9 @@ public final class Settings {
     public static final String KEY_COLOR_STATUS_BAR = "color_status_bar";
     public static final boolean DEFAULT_COLOR_STATUS_BAR = true;
 
+    public static final String KEY_WATERMARK = "watermark";
+    public static final boolean DEFAULT_WATERMARKD = true;
+
     public static final String KEY_FEED_ID = "feed_id";
     public static final String DEFAULT_FEED_ID = null;
 
@@ -220,6 +223,10 @@ public final class Settings {
 
     public static boolean getColorStatusBar() {
         return getBoolean(KEY_COLOR_STATUS_BAR, DEFAULT_COLOR_STATUS_BAR);
+    }
+
+    public static boolean getWatermark() {
+        return getBoolean(KEY_WATERMARK, DEFAULT_WATERMARKD);
     }
 
     public static String getFeedId() {

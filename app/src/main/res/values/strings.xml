@@ -190,6 +190,7 @@
     <string name="type_send_name">Name</string>
     <string name="type_send_email">E-mail</string>
     <string name="type_send_title">Title</string>
+    <string name="type_send_watermark">Watermark</string>
 
     <string name="doodle">Doodle</string>
     <string name="save_doodle">Save doodle?</string>
@@ -232,6 +233,9 @@
     <string name="main_save_cookies_summary">Save cookies to external storage</string>
     <string name="main_restore_cookies">Restore cookies</string>
     <string name="main_restore_cookies_summary">Restore cookies from a file in external storage</string>
+    <string name="main_watermark">Watermark</string>
+    <string name="main_watermark_summary_on">Show watermark in the image you upload</string>
+    <string name="main_watermark_summary_off">Don\'t show watermark in the image you upload</string>
     <string name="main_feed_id">Feed id</string>
     <string name="main_feed_id_summary">You feed id is %s</string>
     <string name="main_save_image_auto">Save image when loaded</string>

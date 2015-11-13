@@ -153,6 +153,19 @@
             android:layout_height="1dp"
             android:background="?attr/colorDivider"/>
 
+        <CheckBox
+            android:id="@+id/watermark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/type_send_watermark"
+            android:textSize="@dimen/text_little_small"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorDivider"/>
+
     </LinearLayout>
 
     <EditText

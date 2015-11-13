@@ -27,4 +27,5 @@ public class ACReplyStruct {
     public String resto;
     public InputStreamPipe image;
     public String imageType;
+    public boolean water;
 }
