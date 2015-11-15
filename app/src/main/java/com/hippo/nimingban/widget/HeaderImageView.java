@@ -195,7 +195,6 @@ public final class HeaderImageView extends FixedAspectImageView
     public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
         // Update image file
         if (mImageFile != null) {
-            mImageFile.delete();
             mImageFile = null;
         }
         if (mContainer != null) {
@@ -262,7 +261,6 @@ public final class HeaderImageView extends FixedAspectImageView
 
         // Update image file
         if (mImageFile != null) {
-            mImageFile.delete();
             mImageFile = null;
         }
         mImageFile = file;
