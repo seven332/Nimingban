@@ -307,8 +307,12 @@ public class ACPost extends Post {
         mContent = generateContent(content, sage, title, name, email);
 
         if (!TextUtils.isEmpty(img)) {
-            mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext;
-            mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext;
+            String ext2 = ext;
+            if (ext2 != null) {
+                ext2 = ext2.substring(0, Math.min(ext2.length(), 4));
+            }
+            mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext2;
+            mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext2;
         }
 
         List<ACReply> replyList = replys;
