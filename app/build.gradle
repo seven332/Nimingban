@@ -59,11 +59,20 @@ android {
         }
         commandLine "$ndkDir\\$ndkBuilder",
                 '-C', file('src/main/jni').absolutePath,
-                '-j4'
+                '-j', Runtime.runtime.availableProcessors()
     }
 
     tasks.withType(JavaCompile) {
         compileTask -> compileTask.dependsOn ndkBuild
+    }
+
+    productFlavors {
+        // A fake name
+        arm {
+            ndk {
+                abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+            }
+        }
     }
 }
 
