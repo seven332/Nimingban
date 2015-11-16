@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 /*
  * Copyright 2015 Hippo Seven
  *
@@ -39,13 +41,40 @@ android {
     sourceSets {
         main {
             java.srcDirs = ['src/main/java', 'src/main/java-gen']
+            // Disable default NdkCompile task
+            jni.srcDirs = []
+            // Set new jni lib dir
+            jniLibs.srcDir 'src/main/libs'
         }
+    }
+
+    // noinspection GroovyAssignabilityCheck
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
+        def ndkBuilder
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            ndkBuilder = 'ndk-build.cmd'
+        } else {
+            ndkBuilder = 'ndk-build'
+        }
+        commandLine "$ndkDir\\$ndkBuilder",
+                '-C', file('src/main/jni').absolutePath,
+                '-j4'
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
     }
 }
 
 task copyNotice(type: Copy) {
     from '../NOTICE'
     into './src/main/assets'
+}
+
+clean {
+    delete file('src/main/obj').absolutePath
+    delete file('src/main/libs').absolutePath
 }
 
 dependencies {

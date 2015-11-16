@@ -26,7 +26,9 @@ import android.webkit.MimeTypeMap;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hippo.gif.GifDownloadSize;
 import com.hippo.io.FileInputStreamPipe;
+import com.hippo.io.FileOutputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
@@ -64,6 +66,7 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -614,41 +617,60 @@ public class ACEngine {
                 return null;
             }
 
-            int[] sampleScaleArray = new int[1];
-            BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);
-            int sampleScale = sampleScaleArray[0];
-            if (sampleScale < 1) {
-                throw new NMBException(DumpSite.getInstance(), "Can't get bitmap size");
-            }
+            if ("image/gif".equals(imageType)) {
+                FileOutputStreamPipe osp = new FileOutputStreamPipe(temp);
+                int sampleSize = 2;
+                while (sampleSize < 16) {
+                    GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
+                    isp.close();
+                    osp.close();
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            int i = (int) (Math.log(sampleScale) / Math.log(2));
-            while (true) {
-                options.inSampleSize = (int) Math.pow(2, i);
-                Bitmap bitmap = null;
-                try {
-                    bitmap = BitmapFactory.decodeStream(isp.open(), null, options);
-                } catch (OutOfMemoryError e) {
-                    // Ignore
-                }
-                if (bitmap == null) {
-                    throw new NMBException(ACSite.getInstance(), "Can't decode bitmap");
+                    size = temp.length();
+                    if (size < MAX_IMAGE_SIZE) {
+                        return temp;
+                    }
+
+                    sampleSize++;
                 }
 
-                isp.close();
-
-                os = new FileOutputStream(temp);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, os);
-                os.close();
-
-                bitmap.recycle();
-
-                size = temp.length();
-                if (size < MAX_IMAGE_SIZE) {
-                    return temp;
+                throw new IOException("Can't compress gif");
+            } else {
+                int[] sampleScaleArray = new int[1];
+                BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);
+                int sampleScale = sampleScaleArray[0];
+                if (sampleScale < 1) {
+                    throw new NMBException(DumpSite.getInstance(), "Can't get bitmap size");
                 }
 
-                i++;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                int i = (int) (Math.log(sampleScale) / Math.log(2));
+                while (true) {
+                    options.inSampleSize = (int) Math.pow(2, i);
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = BitmapFactory.decodeStream(isp.open(), null, options);
+                    } catch (OutOfMemoryError e) {
+                        // Ignore
+                    }
+                    if (bitmap == null) {
+                        throw new NMBException(ACSite.getInstance(), "Can't decode bitmap");
+                    }
+
+                    isp.close();
+
+                    os = new FileOutputStream(temp);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, os);
+                    os.close();
+
+                    bitmap.recycle();
+
+                    size = temp.length();
+                    if (size < MAX_IMAGE_SIZE) {
+                        return temp;
+                    }
+
+                    i++;
+                }
             }
         } finally {
             isp.close();

@@ -39,6 +39,7 @@ Here is the libraries
 - [android-gesture-detectors](https://github.com/Almeros/android-gesture-detectors)
 - [android-gif-drawable](https://github.com/koral--/android-gif-drawable)
 - [fastjson](https://github.com/alibaba/fastjson)
+- [giflib](http://giflib.sourceforge.net)
 - [greenDAO](https://github.com/greenrobot/greenDAO)
 - [jsoup](https://github.com/jhy/jsoup)
 - [leakcanary](https://github.com/square/leakcanary)
