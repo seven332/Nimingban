@@ -48,6 +48,7 @@ import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.okhttp.ResponseUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 import com.squareup.okhttp.Call;
@@ -619,21 +620,17 @@ public class ACEngine {
 
             if ("image/gif".equals(imageType)) {
                 FileOutputStreamPipe osp = new FileOutputStreamPipe(temp);
-                int sampleSize = 2;
-                while (sampleSize < 16) {
-                    GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
-                    isp.close();
-                    osp.close();
+                final int sampleSize = Math.max(2, (int) Math.sqrt(MathUtils.ceilDivide(size, MAX_IMAGE_SIZE)) + 1);
+                GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
+                isp.close();
+                osp.close();
 
-                    size = temp.length();
-                    if (size < MAX_IMAGE_SIZE) {
-                        return temp;
-                    }
-
-                    sampleSize++;
+                size = temp.length();
+                if (size < MAX_IMAGE_SIZE) {
+                    return temp;
+                } else {
+                    throw new IOException("Can't compress gif");
                 }
-
-                throw new IOException("Can't compress gif");
             } else {
                 int[] sampleScaleArray = new int[1];
                 BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);

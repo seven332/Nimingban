@@ -65,7 +65,35 @@ static int streamOutputFunc(GifFileType* gif, const GifByteType* bytes, int size
 
 JNIEXPORT jboolean JNICALL
 Java_com_hippo_gif_GifDownloadSize_nativeCompress
-    (JNIEnv* env, jclass clazz, jobject is, jobject os, jint samlpeSize)
+    (JNIEnv* env, jclass clazz, jstring in_path, jstring out_path, jint samlpe_size)
+{
+  const char *native_in_path = (*env)->GetStringUTFChars(env, in_path, 0);
+  const char *native_out_path = (*env)->GetStringUTFChars(env, out_path, 0);
+  FILE* in = fopen(native_in_path, "rb");
+  FILE* out = fopen(native_out_path, "wb");
+  jboolean result = JNI_FALSE;
+
+  if (in != NULL && out != NULL) {
+    result = compress(in, out, samlpe_size);
+  }
+
+  if (in != NULL) {
+    fclose(in);
+    in = NULL;
+  }
+  if (out != NULL) {
+    fclose(out);
+    out = NULL;
+  }
+  (*env)->ReleaseStringUTFChars(env, in_path, native_in_path);
+  (*env)->ReleaseStringUTFChars(env, out_path, native_out_path);
+
+  return result;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_com_hippo_gif_GifDownloadSize_nativeCompressCustom
+    (JNIEnv* env, jclass clazz, jobject is, jobject os, jint samlpe_size)
 {
   InputStream* inputStream = createInputStream(env, is);
   OutputStream* outputStream = createOutputStream(env, os);
@@ -74,7 +102,7 @@ Java_com_hippo_gif_GifDownloadSize_nativeCompress
     destroyOutputStream(env, outputStream);
   }
 
-  return (jboolean) compress_custom(inputStream, &streamInputFunc, outputStream, &streamOutputFunc, samlpeSize);
+  return (jboolean) compress_custom(inputStream, &streamInputFunc, outputStream, &streamOutputFunc, samlpe_size);
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
