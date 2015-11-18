@@ -26,10 +26,11 @@ public class UpdateStatus {
     public long size;
     public String apkUrl;
     public List<DiscUrl> discUrl;
+    public String failedUrl;
 
     @Override
     public String toString() {
         return "versionCode = " + versionCode + ", versionName = " + versionName + ", info = " + info +
-                ", size = " + size + ", apkUrl = " + apkUrl + ", discUrl = " + discUrl;
+                ", size = " + size + ", apkUrl = " + apkUrl + ", discUrl = " + discUrl + ", failedUrl = " + failedUrl;
     }
 }

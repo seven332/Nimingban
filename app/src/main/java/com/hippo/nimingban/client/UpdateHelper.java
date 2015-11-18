@@ -35,6 +35,7 @@ import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.DiscUrl;
 import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
@@ -78,14 +79,14 @@ public final class UpdateHelper {
                 .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        downloadApk(activity, status.apkUrl, status.discUrl,
+                        downloadApk(activity, status.apkUrl, status.discUrl, status.failedUrl,
                                 "nimingban-" + status.versionName + ".apk");
                     }
                 })
                 .show();
     }
 
-    public static void downloadApk(Context context, String url, List<DiscUrl> discUrls, String filename) {
+    public static void downloadApk(Context context, String url, List<DiscUrl> discUrls, String failedUrl, String filename) {
         if (sUpdating) {
             return;
         }
@@ -104,7 +105,7 @@ public final class UpdateHelper {
         request.setFilename(filename);
         request.setDir(UniFile.fromFile(dir));
         request.setOkHttpClient(NMBApplication.getOkHttpClient(context));
-        new DownloadApkTask(context, request, Uri.fromFile(new File(dir, filename))).execute();
+        new DownloadApkTask(context, request, Uri.fromFile(new File(dir, filename)), failedUrl).execute();
     }
 
     private static class DownloadApkTask extends AsyncTask<Void, Void, Boolean> {
@@ -114,15 +115,17 @@ public final class UpdateHelper {
         private Context mContext;
         private DownloadRequest mRequest;
         private Uri mUri;
+        private String mFailedUrl;
         private DownloadApkListener mListener;
         private final NotificationManager mNotifyManager;
         private NotificationCompat.Builder mDownloadingBuilder;
         private DownloadTimer mDownloadTimer;
 
-        public DownloadApkTask(Context context, DownloadRequest request, Uri uri) {
+        public DownloadApkTask(Context context, DownloadRequest request, Uri uri, String failedUrl) {
             mContext = context;
             mRequest = request;
             mUri = uri;
+            mFailedUrl = failedUrl;
             mListener = new DownloadApkListener();
             mRequest.setListener(mListener);
             mNotifyManager = (NotificationManager)
@@ -155,6 +158,9 @@ public final class UpdateHelper {
                 mContext.startActivity(intent);
             } else {
                 Toast.makeText(mContext, R.string.download_update_failde, Toast.LENGTH_SHORT).show();
+                if (mFailedUrl != null) {
+                    OpenUrlHelper.openUrl(mContext, mFailedUrl, false);
+                }
             }
 
             sUpdating = false;

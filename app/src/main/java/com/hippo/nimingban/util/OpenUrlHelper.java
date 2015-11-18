@@ -17,6 +17,7 @@
 package com.hippo.nimingban.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -35,7 +36,7 @@ public final class OpenUrlHelper {
     private OpenUrlHelper() {
     }
 
-    public static void openUrl(Activity activity, String url, boolean checkNMB) {
+    public static void openUrl(Context context, String url, boolean checkNMB) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
@@ -47,39 +48,41 @@ public final class OpenUrlHelper {
         if (checkNMB) {
             NMBUriParser.PostResult result = NMBUriParser.parsePostUri(uri);
             if (result.site != null && result.id != null) {
-                intent = new Intent(activity, PostActivity.class);
+                intent = new Intent(context, PostActivity.class);
                 intent.setAction(PostActivity.ACTION_SITE_ID);
                 intent.putExtra(PostActivity.KEY_SITE, result.site.getId());
                 intent.putExtra(PostActivity.KEY_ID, result.id);
-                activity.startActivity(intent);
+                context.startActivity(intent);
                 return;
             }
         }
 
         // CustomTabs
-        String packageName = CustomTabsHelper.getPackageNameToUse(activity);
-        if (packageName != null) {
-            new CustomTabsIntent.Builder()
-                    .setToolbarColor(ResourcesUtils.getAttrColor(activity, R.attr.colorPrimary))
-                    .setShowTitle(true)
-                    .build()
-                    .launchUrl(activity, uri);
-            return;
+        if (context instanceof Activity) {
+            String packageName = CustomTabsHelper.getPackageNameToUse(context);
+            if (packageName != null) {
+                new CustomTabsIntent.Builder()
+                        .setToolbarColor(ResourcesUtils.getAttrColor(context, R.attr.colorPrimary))
+                        .setShowTitle(true)
+                        .build()
+                        .launchUrl((Activity) context, uri);
+                return;
+            }
         }
 
         // Intent.ACTION_VIEW
         intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
-        PackageManager pm = activity.getPackageManager();
+        PackageManager pm = context.getPackageManager();
         ResolveInfo ri = pm.resolveActivity(intent, 0);
         if (ri != null) {
-            activity.startActivity(intent);
+            context.startActivity(intent);
             return;
         }
 
         // Use WebViewActivity
-        intent = new Intent(activity, WebViewActivity.class);
+        intent = new Intent(context, WebViewActivity.class);
         intent.putExtra(WebViewActivity.KEY_URL, url);
-        activity.startActivity(intent);
+        context.startActivity(intent);
     }
 }
