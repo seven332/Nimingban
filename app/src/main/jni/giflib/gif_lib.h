@@ -179,7 +179,6 @@ int EGifPutCodeNext(GifFileType *GifFile,
 GifFileType *DGifOpenFileName(const char *GifFileName, int *Error);
 GifFileType *DGifOpenFileHandle(int GifFileHandle, int *Error);
 int DGifSlurp(GifFileType * GifFile);
-int DGifGlance(GifFileType * GifFile);
 GifFileType *DGifOpen(void *userPtr, InputFunc readFunc, int *Error);    /* new one (TVT) */
     int DGifCloseFile(GifFileType * GifFile, int *ErrorCode);
 
@@ -244,9 +243,6 @@ extern ColorMapObject *GifUnionColorMap(const ColorMapObject *ColorIn1,
                                      const ColorMapObject *ColorIn2,
                                      GifPixelType ColorTransIn2[]);
 extern int GifBitSize(int n);
-
-extern void *
-reallocarray(void *optr, size_t nmemb, size_t size);
 
 /******************************************************************************
  Support for the in-core structures allocation (slurp mode).              

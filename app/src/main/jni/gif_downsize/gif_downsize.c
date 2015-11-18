@@ -70,12 +70,17 @@ static bool compress_image(SavedImage* in_image, SavedImage* out_image, int samp
   out_image->ImageDesc.Interlace = in_image->ImageDesc.Interlace;
   out_image->ImageDesc.ColorMap = in_image->ImageDesc.ColorMap;
 
+  // Avoid free twice
+  in_image->ExtensionBlockCount = 0;
+  in_image->ExtensionBlocks = NULL;
+  in_image->ImageDesc.ColorMap = NULL;
+
   if (width == 0 || height == 0) {
     out_image->RasterBits = NULL;
     return true;
   }
 
-  out_image->RasterBits = (GifByteType*) calloc((size_t) (width * height), sizeof(GifByteType));
+  out_image->RasterBits = (GifByteType*) malloc(width * height * sizeof(GifByteType));
   if (out_image->RasterBits == NULL) {
     LOGW(EMSG("Out of memory!"));
     return false;
@@ -110,7 +115,13 @@ static bool do_compress(GifFileType* input_gif, GifFileType* output_gif, int sam
   output_gif->ImageCount = image_count;
   output_gif->ExtensionBlockCount = input_gif->ExtensionBlockCount;
   output_gif->ExtensionBlocks = input_gif->ExtensionBlocks;
-  output_gif->SavedImages = (SavedImage *) calloc((size_t) image_count, sizeof(SavedImage));
+  output_gif->SavedImages = (SavedImage *) malloc(image_count * sizeof(SavedImage));
+  memset(output_gif->SavedImages, '\0', image_count * sizeof(SavedImage));
+
+  // Avoid free twice
+  input_gif->SColorMap = NULL;
+  input_gif->ExtensionBlockCount = 0;
+  input_gif->ExtensionBlocks = NULL;
 
   if (output_gif->SavedImages != NULL) {
     for (i = 0; i < image_count; i++) {
@@ -168,8 +179,14 @@ bool compress_custom(void* input_data, InputFunc input_func,
     result = EGifSpew(output_gif);
   }
 
+  // Free
+  GifFreeExtensions(&output_gif->ExtensionBlockCount, &output_gif->ExtensionBlocks);
+  if (output_gif->SavedImages) {
+    GifFreeSavedImages(output_gif);
+    output_gif->SavedImages = NULL;
+  }
+
   // Close gif
-  EGifCloseFile(output_gif, &error_code);
   DGifCloseFile(input_gif, &error_code);
 
   return result == GIF_OK;

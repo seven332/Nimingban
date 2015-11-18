@@ -620,17 +620,22 @@ public class ACEngine {
 
             if ("image/gif".equals(imageType)) {
                 FileOutputStreamPipe osp = new FileOutputStreamPipe(temp);
-                final int sampleSize = Math.max(2, (int) Math.sqrt(MathUtils.ceilDivide(size, MAX_IMAGE_SIZE)) + 1);
-                GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
-                isp.close();
-                osp.close();
+                final int startSampleSize = Math.max(2, (int) Math.sqrt(MathUtils.ceilDivide(size, MAX_IMAGE_SIZE)) + 1);
+                int sampleSize = startSampleSize;
+                while (sampleSize < startSampleSize + 3) {
+                    GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
+                    isp.close();
+                    osp.close();
 
-                size = temp.length();
-                if (size < MAX_IMAGE_SIZE) {
-                    return temp;
-                } else {
-                    throw new IOException("Can't compress gif");
+                    size = temp.length();
+                    if (size < MAX_IMAGE_SIZE) {
+                        return temp;
+                    }
+
+                    sampleSize++;
                 }
+
+                throw new IOException("Can't compress gif");
             } else {
                 int[] sampleScaleArray = new int[1];
                 BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);
