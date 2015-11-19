@@ -29,6 +29,9 @@ android {
         versionCode 26
         versionName "1.2.12"
         resConfigs "zh", "zh-rCN"
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+        }
     }
 
     buildTypes {
@@ -64,15 +67,6 @@ android {
 
     tasks.withType(JavaCompile) {
         compileTask -> compileTask.dependsOn ndkBuild
-    }
-
-    productFlavors {
-        // A fake name
-        arm {
-            ndk {
-                abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
-            }
-        }
     }
 }
 
