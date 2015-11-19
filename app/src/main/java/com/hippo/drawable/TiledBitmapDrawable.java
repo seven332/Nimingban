@@ -39,7 +39,7 @@ public class TiledBitmapDrawable extends Drawable {
 
     private static final String TAG = TiledBitmapDrawable.class.getSimpleName();
 
-    private static final int TILE_SIZE = 256;
+    private static final int TILE_SIZE = 512;
 
     private List<Tile> mTiles;
     private int mWidth;

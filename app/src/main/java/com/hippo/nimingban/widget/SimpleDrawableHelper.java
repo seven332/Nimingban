@@ -42,10 +42,12 @@ import pl.droidsonroids.gif.GifDrawable;
 
 public class SimpleDrawableHelper implements DrawableHelper {
 
-    private static final int MAX_TEXTURE_SIZE = 4096;
+    private static final int DEFAULT_MAX_TEXTURE_SIZE = 1024;
 
     private Context mContext;
     private BitmapPool mBitmapPool;
+
+    public static int sMaxTextureSize = -1;
 
     public SimpleDrawableHelper(Context context) {
         mContext = context.getApplicationContext();
@@ -72,6 +74,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 return null;
             }
 
+            int maxTextureSize = sMaxTextureSize <= 0 ? DEFAULT_MAX_TEXTURE_SIZE : sMaxTextureSize;
             if ("image/gif".equals(options.outMimeType)) {
                 File temp = NMBAppConfig.createTempFile();
                 if (temp == null) {
@@ -83,7 +86,7 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 isPipe.close();
                 isPipe.release();
                 return new TempGifDrawable(temp);
-            } else if (options.outWidth > MAX_TEXTURE_SIZE || options.outHeight > MAX_TEXTURE_SIZE) {
+            } else if (options.outWidth > maxTextureSize || options.outHeight > maxTextureSize) {
                 return TiledBitmapDrawable.from(
                         isPipe.open(), options.outWidth, options.outHeight, mBitmapPool);
             } else {
