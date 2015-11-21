@@ -32,6 +32,7 @@ import com.hippo.io.FileOutputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
+import com.hippo.nimingban.client.StringEscape;
 import com.hippo.nimingban.client.ac.data.ACFeed;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
@@ -111,6 +112,12 @@ public class ACEngine {
         List<Element> elements = doc.getElementsByClass("error");
         if (!elements.isEmpty()) {
             throw new NMBException(ACSite.getInstance(), elements.get(0).text());
+        }
+
+        try {
+            throw new NMBException(ACSite.getInstance(), StringEscape.unescapeJson(body));
+        } catch (StringEscape.UnescapeException ee) {
+            // Ignore
         }
     }
 
