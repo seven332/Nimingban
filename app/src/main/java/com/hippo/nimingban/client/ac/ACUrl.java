@@ -21,61 +21,63 @@ import java.net.URLEncoder;
 
 public class ACUrl {
 
+    public static final String APP_ID = "nimingban";
+
     public static final String HOST = "http://h.nimingban.com";
 
-    public static final String API_POST_LIST = HOST + "/Api/showf";
+    public static final String API_POST_LIST = HOST + "/Api/showf?appid=" + APP_ID;
 
-    public static final String API_POST = HOST + "/Api/thread";
+    public static final String API_POST = HOST + "/Api/thread?appid=" + APP_ID;
 
-    public static final String API_REFERENCE = HOST + "/Home/Forum/ref";
+    public static final String API_REFERENCE = HOST + "/Home/Forum/ref?appid=" + APP_ID;
 
-    public static final String API_FEED = HOST + "/Api/feed";
+    public static final String API_FEED = HOST + "/Api/feed?appid=" + APP_ID;
 
-    public static final String API_ADD_FEED = HOST + "/Api/addFeed";
+    public static final String API_ADD_FEED = HOST + "/Api/addFeed?appid=" + APP_ID;
 
-    public static final String API_DEL_FEED = HOST + "/Api/delFeed";
+    public static final String API_DEL_FEED = HOST + "/Api/delFeed?appid=" + APP_ID;
 
-    public static final String API_CREATE_POST = HOST + "/Home/Forum/doPostThread.html";
+    public static final String API_CREATE_POST = HOST + "/Home/Forum/doPostThread.html?appid=" + APP_ID;
 
-    public static final String API_GET_COOKIE = HOST + "/Api/getCookie";
+    public static final String API_GET_COOKIE = HOST + "/Api/getCookie?appid=" + APP_ID;
 
-    public static final String API_GET_FORUM_LIST = HOST + "/Api/getForumList";
+    public static final String API_GET_FORUM_LIST = HOST + "/Api/getForumList?appid=" + APP_ID;
 
-    public static final String API_REPLY = HOST + "/Home/Forum/doReplyThread.html";
+    public static final String API_REPLY = HOST + "/Home/Forum/doReplyThread.html?appid=" + APP_ID;
 
     public static final String API_COMMON_POSTS = "http://nimingban.herokuapp.com/common_posts";
 
-    public static final String API_SEARCH = HOST + "/Api/search";
+    public static final String API_SEARCH = HOST + "/Api/search?appid=" + APP_ID;
 
     public static String getPostListUrl(String forum, int page) {
-        return API_POST_LIST + "?id=" + forum + "&page=" + (page + 1);
+        return API_POST_LIST + "&id=" + forum + "&page=" + (page + 1);
     }
 
     public static String getPostUrl(String id, int page) {
-        return API_POST + "?id=" + id + "&page=" + (page + 1);
+        return API_POST + "&id=" + id + "&page=" + (page + 1);
     }
 
     public static String getReferenceUrl(String id) {
-        return API_REFERENCE + "?id=" + id;
+        return API_REFERENCE + "&id=" + id;
     }
 
     public static String getFeedUrl(String uuid, int page) {
-        return API_FEED + "?uuid=" + uuid + "&page=" + (page + 1);
+        return API_FEED + "&uuid=" + uuid + "&page=" + (page + 1);
     }
 
     public static String getAddFeedUrl(String uuid, String tid) {
-        return API_ADD_FEED + "?uuid=" + uuid + "&tid=" + tid;
+        return API_ADD_FEED + "&uuid=" + uuid + "&tid=" + tid;
     }
 
     public static String getDelFeedUrl(String uuid, String tid) {
-        return API_DEL_FEED + "?uuid=" + uuid + "&tid=" + tid;
+        return API_DEL_FEED + "&uuid=" + uuid + "&tid=" + tid;
     }
 
     public static String getBrowsablePostUrl(String id, int page) {
         StringBuilder sb = new StringBuilder();
         sb.append(HOST).append("/t/").append(id);
         if (page != 0) {
-            sb.append("?page=").append(page + 1);
+            sb.append("&page=").append(page + 1);
         }
         return sb.toString();
     }
@@ -85,6 +87,6 @@ public class ACUrl {
     }
 
     public static String getSearchUrl(String keyword, int page) throws UnsupportedEncodingException {
-        return API_SEARCH + "?q=" + URLEncoder.encode(keyword, "UTF-8") + "&pageNo=" + (page + 1);
+        return API_SEARCH + "&q=" + URLEncoder.encode(keyword, "UTF-8") + "&pageNo=" + (page + 1);
     }
 }
