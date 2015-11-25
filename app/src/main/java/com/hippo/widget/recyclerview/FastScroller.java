@@ -27,11 +27,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.nimingban.R;
 import com.hippo.util.AnimationUtils2;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 public class FastScroller extends View {
@@ -41,6 +41,8 @@ public class FastScroller extends View {
     private static final int SCROLL_BAR_FADE_DURATION = 500;
     private static final int SCROLL_BAR_DELAY = 1000;
     private static final int SCROLL_BAR_DRAG_TIMEOUT = 150;
+
+    private static final int MIN_HANDLER_HEIGHT_DP = 24;
 
     private Handler mSimpleHandler;
 
@@ -123,8 +125,7 @@ public class FastScroller extends View {
         setAlpha(0.0f);
         setVisibility(INVISIBLE);
 
-        ViewConfiguration vc = ViewConfiguration.get(context);
-        mMinHandlerHeight = vc.getScaledScrollBarSize();
+        mMinHandlerHeight = LayoutUtils.dp2pix(context, MIN_HANDLER_HEIGHT_DP);
 
         mShowAnimator = ObjectAnimator.ofFloat(this, "alpha", 1.0f);
         mShowAnimator.setInterpolator(AnimationUtils2.FAST_SLOW_INTERPOLATOR);
@@ -351,7 +352,7 @@ public class FastScroller extends View {
                     mSimpleHandler.removeCallbacks(mCheckForDragRunnable);
                     float x = event.getX();
                     float y = event.getY();
-                    if (Math.abs(x - mDownX) > Math.abs(y - mDownY)) {
+                    if (Math.abs(x - mDownX) > Math.abs(y - mDownY) || y < mHandlerOffset || y > mHandlerOffset + mHandlerHeight) {
                         mCantDrag = true;
                         return false;
                     } else {
