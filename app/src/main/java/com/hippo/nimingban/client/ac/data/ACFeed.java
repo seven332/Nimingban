@@ -80,8 +80,8 @@ public class ACFeed extends Post {
 
         if (!TextUtils.isEmpty(img)) {
             String ext2 = ext;
-            if (ext2 != null) {
-                ext2 = ext2.substring(0, Math.min(ext2.length(), 4));
+            if (".jpe".equals(ext2)) {
+                ext2 = ".jpeg";
             }
             mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext2;
             mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext2;
