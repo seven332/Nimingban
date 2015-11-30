@@ -30,6 +30,7 @@ import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
+import com.hippo.drawable.APngDrawable;
 import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -134,6 +135,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         if (oldDrawable instanceof GifDrawable) {
             ((GifDrawable) oldDrawable).recycle();
+        }
+
+        if (oldDrawable instanceof APngDrawable) {
+            ((APngDrawable) oldDrawable).recycle();
         }
 
         if (oldDrawable instanceof TiledBitmapDrawable) {
@@ -245,6 +250,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
         }
+        if (drawable instanceof APngDrawable) {
+            ((APngDrawable) drawable).start();
+        }
 
         setImageDrawableSafely(drawable);
 
@@ -292,6 +300,10 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
+        }
+
+        if (drawable instanceof APngDrawable) {
+            ((APngDrawable) drawable).start();
         }
 
         setImageDrawableSafely(drawable);

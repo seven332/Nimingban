@@ -18,12 +18,12 @@
 // Created by Hippo on 10/19/2015.
 //
 
-#ifndef IMAGE_LOG_H
-#define IMAGE_LOG_H
+#ifndef LOG_H
+#define LOG_H
 
 #include <android/log.h>
 
-#define TAG "gif_downloadsize"
+#define TAG "nimingban"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG ,__VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG ,__VA_ARGS__)
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG ,__VA_ARGS__)
@@ -36,4 +36,4 @@
 #define FILE_LINE MAKESTRING(STRINGIZE, __LINE__ )
 #define EMSG(msg) __FILE__ "(" FILE_LINE ") : "msg
 
-#endif //IMAGE_LOG_H
+#endif //LOG_H

@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "input_stream_pipe.h"
-#include "log.h"
+#include "../log.h"
 
 InputStreamPipe* createInputStreamPipe(JNIEnv* env, jobject isPipe)
 {

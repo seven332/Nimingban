@@ -23,7 +23,7 @@
 #include "gif_downsize.h"
 #include "input_stream.h"
 #include "output_stream.h"
-#include "log.h"
+#include "../log.h"
 
 static JavaVM *g_jvm;
 
@@ -114,6 +114,5 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
   g_jvm = vm;
   return JNI_VERSION_1_6;
 }
-
 
 void JNI_OnUnload(JavaVM *vm, void *reserved) {}

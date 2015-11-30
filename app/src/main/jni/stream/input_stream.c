@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "input_stream.h"
-#include "log.h"
+#include "../log.h"
 #include "utils.h"
 
 InputStream* createInputStream(JNIEnv* env, jobject is)

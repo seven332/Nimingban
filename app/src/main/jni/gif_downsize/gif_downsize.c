@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "gif_downsize.h"
-#include "log.h"
+#include "../log.h"
 #include "utils.h"
 
 static int error_code = 0;

@@ -28,6 +28,7 @@ import android.util.Log;
 import com.hippo.conaco.BitmapPool;
 import com.hippo.conaco.DrawableHelper;
 import com.hippo.conaco.DrawableHolder;
+import com.hippo.drawable.APngDrawable;
 import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.yorozuya.IOUtils;
@@ -90,6 +91,19 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 return TiledBitmapDrawable.from(
                         isPipe.open(), options.outWidth, options.outHeight, mBitmapPool);
             } else {
+                if ("image/png".equals(options.outMimeType)) {
+                    is = isPipe.open();
+                    try {
+                        Drawable drawable = APngDrawable.decode(is);
+                        if (drawable != null) {
+                            return drawable;
+                        }
+                    } catch (OutOfMemoryError e) {
+                        Log.d("TAG", "Out of memory");
+                    } finally {
+                        isPipe.close();
+                    }
+                }
                 options.inJustDecodeBounds = false;
                 options.inMutable = true;
                 options.inSampleSize = 1;
@@ -143,6 +157,8 @@ public class SimpleDrawableHelper implements DrawableHelper {
                 ((TiledBitmapDrawable) drawable).recycle(mBitmapPool);
             } else if (drawable instanceof GifDrawable) {
                 ((GifDrawable) drawable).recycle();
+            } else if (drawable instanceof APngDrawable) {
+                ((APngDrawable) drawable).recycle();
             }
         }
     }
@@ -151,7 +167,8 @@ public class SimpleDrawableHelper implements DrawableHelper {
     public boolean useMemoryCache(@NonNull String key, DrawableHolder holder) {
         if (holder != null) {
             Drawable drawable = holder.getDrawable();
-            if (drawable instanceof GifDrawable || drawable instanceof TiledBitmapDrawable) {
+            if (drawable instanceof GifDrawable || drawable instanceof TiledBitmapDrawable ||
+                    drawable instanceof APngDrawable) {
                 return false;
             } else {
                 return true;

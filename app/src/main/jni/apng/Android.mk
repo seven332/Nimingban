@@ -16,13 +16,13 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := gif_downsize
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../giflib $(LOCAL_PATH)/../stream
+LOCAL_MODULE := apng
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libpng $(LOCAL_PATH)/../stream
 LOCAL_SRC_FILES := \
-gif_downsize.c \
+apng.c \
 java_wrapper.c
-LOCAL_LDLIBS := -llog
-LOCAL_STATIC_LIBRARIES := gif
+LOCAL_LDLIBS := -llog -ljnigraphics
+LOCAL_STATIC_LIBRARIES := libpng
 LOCAL_SHARED_LIBRARIES := stream
 
 include $(BUILD_SHARED_LIBRARY)

@@ -36,6 +36,7 @@ import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
+import com.hippo.drawable.APngDrawable;
 import com.hippo.drawable.TiledBitmapDrawable;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.Analysis;
@@ -184,6 +185,10 @@ public final class HeaderImageView extends FixedAspectImageView
             ((GifDrawable) oldDrawable).recycle();
         }
 
+        if (oldDrawable instanceof APngDrawable) {
+            ((APngDrawable) oldDrawable).recycle();
+        }
+
         if (oldDrawable instanceof TiledBitmapDrawable) {
             ((TiledBitmapDrawable) oldDrawable).recycle(null);
         }
@@ -209,6 +214,10 @@ public final class HeaderImageView extends FixedAspectImageView
         Drawable drawable = holder.getDrawable();
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
+        }
+
+        if (drawable instanceof APngDrawable) {
+            ((APngDrawable) drawable).start();
         }
 
         setImageDrawableSafely(drawable);
@@ -268,6 +277,10 @@ public final class HeaderImageView extends FixedAspectImageView
 
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
+        }
+
+        if (drawable instanceof APngDrawable) {
+            ((APngDrawable) drawable).start();
         }
 
         setImageDrawableSafely(drawable);

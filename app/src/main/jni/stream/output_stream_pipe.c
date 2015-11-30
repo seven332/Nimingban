@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "output_stream_pipe.h"
-#include "log.h"
+#include "../log.h"
 
 OutputStreamPipe* createOutputStreamPipe(JNIEnv* env, jobject osPipe)
 {

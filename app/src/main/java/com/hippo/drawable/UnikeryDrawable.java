@@ -19,7 +19,6 @@ package com.hippo.drawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 
 import com.hippo.conaco.Conaco;
@@ -52,6 +51,10 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
 
         if (oldDrawable instanceof GifDrawable) {
             ((GifDrawable) oldDrawable).recycle();
+        }
+
+        if (oldDrawable instanceof APngDrawable) {
+            ((APngDrawable) oldDrawable).recycle();
         }
 
         if (oldDrawable instanceof TiledBitmapDrawable) {
@@ -111,8 +114,10 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
         if (drawable instanceof GifDrawable) {
             ((GifDrawable) drawable).start();
         }
+        if (drawable instanceof APngDrawable) {
+            ((APngDrawable) drawable).start();
+        }
 
-        Log.d("TAG", "onGetDrawable");
         setDrawableSafely(drawable);
 
         if (olderHolder != null) {

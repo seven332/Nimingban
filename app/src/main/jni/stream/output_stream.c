@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "output_stream.h"
-#include "log.h"
+#include "../log.h"
 #include "utils.h"
 
 OutputStream* createOutputStream(JNIEnv* env, jobject os)
