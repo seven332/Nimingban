@@ -114,7 +114,7 @@ public class APngDrawable extends Drawable implements Runnable, Animatable {
         invalidateSelf();
 
         if (mRunning) {
-            SimpleHandler.getInstance().postDelayed(this, getCurrentDelay());
+            SimpleHandler.getInstance().postDelayed(this, Math.max(0, getCurrentDelay()));
         }
     }
 
