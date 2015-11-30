@@ -17,6 +17,7 @@
 package com.hippo.nimingban.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
@@ -129,7 +130,7 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     public void load() {
-        mContainer = new TempDataContainer();
+        mContainer = new TempDataContainer(getContext());
         ConacoTask.Builder builder = new ConacoTask.Builder()
                 .setUnikery(this)
                 .setKey(null)
@@ -311,8 +312,13 @@ public final class HeaderImageView extends FixedAspectImageView
 
     private static class TempDataContainer implements DataContainer {
 
+        private Context mContext;
         private String mName;
         private UniFile mTempFile;
+
+        public TempDataContainer(Context context) {
+            mContext = context.getApplicationContext();
+        }
 
         /**
          * http://stackoverflow.com/questions/332079
@@ -354,9 +360,8 @@ public final class HeaderImageView extends FixedAspectImageView
         public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
             OutputStream os = null;
             try {
-                if (!Settings.getSaveImageAuto() || mName == null) {
-                    mTempFile = UniFile.fromFile(NMBAppConfig.createTempFile());
-                } else {
+                boolean autoSave = Settings.getSaveImageAuto() && mName != null;
+                if (autoSave) {
                     String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mediaType);
                     if (TextUtils.isEmpty(extension)) {
                         extension = "jpg";
@@ -368,6 +373,8 @@ public final class HeaderImageView extends FixedAspectImageView
                     } else {
                         mTempFile = UniFile.fromFile(NMBAppConfig.createTempFileWithFilename(filename));
                     }
+                } else {
+                    mTempFile = UniFile.fromFile(NMBAppConfig.createTempFile());
                 }
 
                 if (mTempFile == null) {
@@ -375,6 +382,12 @@ public final class HeaderImageView extends FixedAspectImageView
                 }
                 os = mTempFile.openOutputStream();
                 IOUtils.copy(is, os);
+
+                // Notify media scanner
+                if (autoSave) {
+                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, mTempFile.getUri()));
+                }
+
                 return true;
             } catch (IOException e) {
                 return false;

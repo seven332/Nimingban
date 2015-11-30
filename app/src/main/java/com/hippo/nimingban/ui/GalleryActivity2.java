@@ -69,6 +69,7 @@ public class GalleryActivity2 extends SwipeActivity {
     };
 
     public static final String ACTION_SINGLE_IMAGE = "com.hippo.nimingban.ui.GalleryActivity2.action.SINGLE_IMAGE";
+    public static final String ACTION_MULTIMAGE = "com.hippo.nimingban.ui.GalleryActivity2.action.MULTIMAGE";
     public static final String ACTION_IMAGE_FILE = "com.hippo.nimingban.ui.GalleryActivity2.action.IMAGE_FILE";
 
     public static final String KEY_SITE = "site";
@@ -217,6 +218,11 @@ public class GalleryActivity2 extends SwipeActivity {
         } else {
             Toast.makeText(this, uri != null ? R.string.save_successfully : R.string.save_failed, Toast.LENGTH_SHORT).show();
         }
+
+        // Notify media scanner
+        if (uri != null) {
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+        }
     }
 
     private class GalleryHolder extends PagerHolder {
@@ -325,7 +331,8 @@ public class GalleryActivity2 extends SwipeActivity {
             UniFile dir = Settings.getImageSaveLocation();
             if (Settings.getSaveImageAuto() && dir != null) {
                 key = null;
-                container = new UniFileDataContain(dir, mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
+                container = new UniFileDataContain(GalleryActivity2.this, dir,
+                        mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
             } else {
                 key = mImage;
                 container = null;
@@ -393,6 +400,38 @@ public class GalleryActivity2 extends SwipeActivity {
         }
     }
 
+    /*
+    private class MultimageAdapter extends GalleryAdapter {
+
+        private Site mSite;
+
+        @Override
+        public void reloadCurrentImage() {
+
+        }
+
+        @Override
+        public void saveCurrentImage(boolean share) {
+
+        }
+
+        @Override
+        public void bindPagerHolder(GalleryHolder holder, int position) {
+
+        }
+
+        @Override
+        public void unbindPagerHolder(GalleryHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+    }
+    */
+
     private static UniFile findFileForName(UniFile dir, String name, String[] extensions, String[] resultExtension) {
         for (String extension : extensions) {
             UniFile file = dir.findFile(name + '.' + extension);
@@ -411,12 +450,14 @@ public class GalleryActivity2 extends SwipeActivity {
      */
     private static class UniFileDataContain implements DataContainer {
 
+        private Context mContext;
         private UniFile mDir;
         private String mName;
         private @Nullable UniFile mFile;
         private @Nullable String mExtension;
 
-        public UniFileDataContain(@NonNull UniFile dir, String name) {
+        public UniFileDataContain(Context context, @NonNull UniFile dir, String name) {
+            mContext = context.getApplicationContext();
             mDir = dir;
             mName = name;
         }
@@ -465,6 +506,9 @@ public class GalleryActivity2 extends SwipeActivity {
                 if (!extension.equals(mExtension)) {
                     mFile.renameTo(mFile.getName() + '.' + extension);
                 }
+
+                // Notify media scanner
+                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, mFile.getUri()));
 
                 return true;
             } catch (IOException e) {
