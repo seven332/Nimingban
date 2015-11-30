@@ -23,7 +23,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.hippo.yorozuya.SimpleHandler;
 
@@ -155,6 +154,7 @@ public class APngDrawable extends Drawable implements Runnable, Animatable {
     private static native void nativeRecycle(long nativePtr);
 
     static {
+        System.loadLibrary("stream");
         System.loadLibrary("apng");
     }
 }
