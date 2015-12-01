@@ -128,6 +128,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
 
     private NMBClient mNMBClient;
 
+    private LinearLayout mMainLayout;
     private EditText mEditText;
     private View mEmoji;
     private View mImage;
@@ -245,6 +246,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         ToolbarActivityHelper.setContentView(this, R.layout.activity_type_send);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
+        mMainLayout = (LinearLayout) findViewById(R.id.main_layout);
         mEditText = (EditText) findViewById(R.id.edit_text);
         mEmoji = findViewById(R.id.emoji);
         mImage = findViewById(R.id.image);
@@ -255,14 +257,15 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mPreview = (ImageView) mImagePreview.findViewById(R.id.preview);
         mDelete = mImagePreview.findViewById(R.id.delete);
         mIndicator = (SimpleImageView) findViewById(R.id.indicator);
-        mWritableItem = findViewById(R.id.writable_item);
-        mName = (EditText) findViewById(R.id.name);
-        mEmail = (EditText) findViewById(R.id.email);
-        mTitle = (EditText) findViewById(R.id.title);
-        mWatermark = (CheckBox) findViewById(R.id.watermark);
         mMoreWritableItemsText = (TextView) findViewById(R.id.more_writable_items_text);
         mSelectForum = findViewById(R.id.select_forum);
         mForumText = (TextView) mSelectForum.findViewById(R.id.forum_text);
+
+        mWritableItem = getLayoutInflater().inflate(R.layout.writable_items, mMainLayout, false);
+        mName = (EditText) mWritableItem.findViewById(R.id.name);
+        mEmail = (EditText) mWritableItem.findViewById(R.id.email);
+        mTitle = (EditText) mWritableItem.findViewById(R.id.title);
+        mWatermark = (CheckBox) mWritableItem.findViewById(R.id.watermark);
 
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
@@ -292,8 +295,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mWatermark.setLayoutParams(lp);
         mWatermark.setPadding(mWatermark.getPaddingLeft() + LayoutUtils.dp2pix(this, 4),
                 mWatermark.getPaddingTop(), mWatermark.getPaddingRight(), mWatermark.getPaddingBottom());
-
-        mWritableItem.setVisibility(View.GONE);
 
         if (METHOD_CREATE_POST == mMethod) {
             mMoreWritableItemsText.setVisibility(View.GONE);
@@ -752,12 +753,11 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         } else if (mDelete == v) {
             clearImagePreview();
         } else if (mIndicator == v) {
-            View view = mWritableItem;
-            if (view.getVisibility() == View.GONE) {
-                view.setVisibility(View.VISIBLE);
+            if (mWritableItem.getParent() == null) {
+                mMainLayout.addView(mWritableItem, mMainLayout.indexOfChild(mEditText));
                 v.setActivated(true);
             } else {
-                view.setVisibility(View.GONE);
+                mMainLayout.removeView(mWritableItem);
                 v.setActivated(false);
             }
         } else if (v == mForumText) {
