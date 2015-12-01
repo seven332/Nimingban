@@ -52,6 +52,9 @@ public final class OpenUrlHelper {
                 intent.setAction(PostActivity.ACTION_SITE_ID);
                 intent.putExtra(PostActivity.KEY_SITE, result.site.getId());
                 intent.putExtra(PostActivity.KEY_ID, result.id);
+                if (!(context instanceof Activity)) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
                 context.startActivity(intent);
                 return;
             }
@@ -76,6 +79,9 @@ public final class OpenUrlHelper {
         PackageManager pm = context.getPackageManager();
         ResolveInfo ri = pm.resolveActivity(intent, 0);
         if (ri != null) {
+            if (!(context instanceof Activity)) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
             context.startActivity(intent);
             return;
         }
@@ -83,6 +89,9 @@ public final class OpenUrlHelper {
         // Use WebViewActivity
         intent = new Intent(context, WebViewActivity.class);
         intent.putExtra(WebViewActivity.KEY_URL, url);
+        if (!(context instanceof Activity)) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         context.startActivity(intent);
     }
 }
