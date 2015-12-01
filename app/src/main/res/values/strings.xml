@@ -109,6 +109,7 @@
     <string name="report">Report</string>
     <string name="report_tip">You will report it to the duty room</string>
     <string name="create_post">Post</string>
+    <string name="cant_find_the_forum">Can\'t find the forum which id is %s</string>
     <string name="save_text_draft">Save as draft? </string>
     <string name="save">Save</string>
     <string name="dont_save">Don\'t save</string>

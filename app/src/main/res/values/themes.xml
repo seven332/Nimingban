@@ -25,6 +25,7 @@
         <item name="colorPure">@color/pure_light</item>
         <item name="colorPureInverse">@color/pure_inverse_light</item>
         <item name="preferenceHeaderTitleColor">@color/preference_header_title_light</item>
+        <item name="colorRoundSide">@color/round_side_light</item>
 
         <item name="dark">false</item>
 
@@ -42,6 +43,7 @@
         <item name="colorPure">@color/pure_light</item>
         <item name="colorPureInverse">@color/pure_inverse_light</item>
         <item name="preferenceHeaderTitleColor">@color/preference_header_title_light</item>
+        <item name="colorRoundSide">@color/round_side_light</item>
 
         <item name="dark">false</item>
 
@@ -109,6 +111,7 @@
         <item name="colorPure">@color/pure_dark</item>
         <item name="colorPureInverse">@color/pure_inverse_dark</item>
         <item name="preferenceHeaderTitleColor">@color/preference_header_title_dark</item>
+        <item name="colorRoundSide">@color/round_side_dark</item>
 
         <item name="dark">true</item>
 
@@ -126,6 +129,7 @@
         <item name="colorPure">@color/pure_dark</item>
         <item name="colorPureInverse">@color/pure_inverse_dark</item>
         <item name="preferenceHeaderTitleColor">@color/preference_header_title_dark</item>
+        <item name="colorRoundSide">@color/round_side_dark</item>
 
         <item name="dark">true</item>
 

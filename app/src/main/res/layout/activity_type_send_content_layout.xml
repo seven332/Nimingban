@@ -54,12 +54,16 @@
             <TextView
                 android:id="@+id/forum_text"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/keyline_margin_horizontal"
+                android:layout_gravity="center_vertical"
                 android:singleLine="true"
-                android:gravity="center_vertical"
                 android:textSize="@dimen/text_little_small"
-                android:textColor="?android:attr/textColorPrimary"/>
+                android:textColor="?android:attr/textColorPrimary"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
 
         </LinearLayout>
 

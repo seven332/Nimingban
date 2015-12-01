@@ -109,6 +109,7 @@
     <string name="report">举报</string>
     <string name="report_tip">你将把这个串发送至值班室</string>
     <string name="create_post">发串</string>
+    <string name="cant_find_the_forum">找不到 id 为 %s 的板块</string>
     <string name="save_text_draft">把你输入的文字保存为草稿？</string>
     <string name="save">保存</string>
     <string name="dont_save">不保存</string>

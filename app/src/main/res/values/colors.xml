@@ -85,4 +85,7 @@
     <color name="loading_indicator_yellow">@color/yellow_800</color>
     <color name="loading_indicator_orange">@color/deep_orange_400</color>
 
+    <color name="round_side_light">#ffececec</color>
+    <color name="round_side_dark">#ff3e3e3e</color>
+
 </resources>

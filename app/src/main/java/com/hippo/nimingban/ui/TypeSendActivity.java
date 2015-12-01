@@ -65,6 +65,7 @@ import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.drawable.RoundSideDrawable;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
@@ -294,21 +295,45 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
 
         mWritableItem.setVisibility(View.GONE);
 
-        if (mShare) {
+        if (METHOD_CREATE_POST == mMethod) {
             mMoreWritableItemsText.setVisibility(View.GONE);
             mSelectForum.setVisibility(View.VISIBLE);
 
+            mForumText.setBackgroundDrawable(new RoundSideDrawable(
+                    ResourcesUtils.getAttrColor(this, R.attr.colorRoundSide)));
+
+            // Get all forums
             mForums = DB.getACForums(false);
             if (mForums.size() == 0) {
                 Toast.makeText(this, R.string.cant_find_forum, Toast.LENGTH_SHORT).show();
                 finish();
+                return;
             } else {
                 int n = mForums.size();
                 mForumNames = new CharSequence[n];
                 for (int i = 0; i < n; i++) {
                     mForumNames[i] = mForums.get(i).getNMBDisplayname();
                 }
+            }
+
+            if (mId == null) {
                 setForum(0);
+            } else {
+                // Find forum
+                int index = -1;
+                for (int i = 0, length = mForums.size(); i < length; i++) {
+                    if (mId.equals(mForums.get(i).id)) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index == -1) {
+                    Toast.makeText(this, getString(R.string.cant_find_the_forum, mId), Toast.LENGTH_SHORT).show();
+                    setForum(0);
+                } else {
+                    setForum(index);
+                }
             }
         } else {
             mMoreWritableItemsText.setVisibility(View.VISIBLE);
