@@ -206,7 +206,7 @@ APNG* decodeAPNG(void* io_ptr, png_rw_ptr read_data_fn)
   if (frame_infos->dop == PNG_DISPOSE_OP_PREVIOUS) {
     frame_infos->dop = PNG_DISPOSE_OP_BACKGROUND;
   }
-  frame_infos->bop == PNG_BLEND_OP_SOURCE;
+  frame_infos->bop = PNG_BLEND_OP_SOURCE;
 
   // Close
   png_read_end(png_ptr, info_ptr);
