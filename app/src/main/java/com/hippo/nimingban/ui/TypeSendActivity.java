@@ -260,8 +260,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mMoreWritableItemsText = (TextView) findViewById(R.id.more_writable_items_text);
         mSelectForum = findViewById(R.id.select_forum);
         mForumText = (TextView) mSelectForum.findViewById(R.id.forum_text);
-
-        mWritableItem = getLayoutInflater().inflate(R.layout.writable_items, mMainLayout, false);
+        mWritableItem = findViewById(R.id.writable_item);
         mName = (EditText) mWritableItem.findViewById(R.id.name);
         mEmail = (EditText) mWritableItem.findViewById(R.id.email);
         mTitle = (EditText) mWritableItem.findViewById(R.id.title);
@@ -753,12 +752,12 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         } else if (mDelete == v) {
             clearImagePreview();
         } else if (mIndicator == v) {
-            if (mWritableItem.getParent() == null) {
-                mMainLayout.addView(mWritableItem, mMainLayout.indexOfChild(mEditText));
-                v.setActivated(true);
-            } else {
-                mMainLayout.removeView(mWritableItem);
+            if (mWritableItem.getVisibility() == View.VISIBLE) {
+                mWritableItem.setVisibility(View.GONE);
                 v.setActivated(false);
+            } else {
+                mWritableItem.setVisibility(View.VISIBLE);
+                v.setActivated(true);
             }
         } else if (v == mForumText) {
             showForumDialog();

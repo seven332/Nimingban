@@ -87,6 +87,94 @@
         android:layout_height="1dp"
         android:background="?attr/colorDivider"/>
 
+    <LinearLayout
+        android:id="@+id/writable_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/keyline_margin_horizontal"
+            android:paddingRight="@dimen/keyline_margin_horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:inputType="textMultiLine"
+            android:textSize="@dimen/text_little_small"
+            android:textColorHint="?android:attr/textColorSecondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:hint="@string/type_send_name"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorDivider"/>
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/keyline_margin_horizontal"
+            android:paddingRight="@dimen/keyline_margin_horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:inputType="textEmailAddress"
+            android:textSize="@dimen/text_little_small"
+            android:textColorHint="?android:attr/textColorSecondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:hint="@string/type_send_email"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorDivider"/>
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/keyline_margin_horizontal"
+            android:paddingRight="@dimen/keyline_margin_horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:background="@null"
+            android:inputType="textMultiLine"
+            android:textSize="@dimen/text_little_small"
+            android:textColorHint="?android:attr/textColorSecondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:hint="@string/type_send_title"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorDivider"/>
+
+        <CheckBox
+            android:id="@+id/watermark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/type_send_watermark"
+            android:textSize="@dimen/text_little_small"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorDivider"/>
+
+    </LinearLayout>
+
     <EditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
