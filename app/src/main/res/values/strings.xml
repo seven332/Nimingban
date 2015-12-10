@@ -273,7 +273,9 @@
     <string name="save_cookies_failed">Saving cookie failed.</string>
     <string name="save_cookies_to">Cookie saved to %s. </string>
 
+    <string name="clear_cookies">Clear 🍪 Cookies</string>
     <string name="restore_cookies_successfully">Restore cookies successfully</string>
+    <string name="clear_cookies_successfully">Clear cookies successfully</string>
     <string name="not_valid_cookie_file">Invalid cookie file</string>
     <string name="cant_find_cookie_file">Can\'t find any cookie file</string>
     <string name="select_cookie_file">Select cookie file</string>

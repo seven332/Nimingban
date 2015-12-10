@@ -265,7 +265,9 @@
     <string name="save_cookies_failed">保存饼干失败</string>
     <string name="save_cookies_to">保存饼干至 %s</string>
 
+    <string name="clear_cookies">清除 🍪 饼干</string>
     <string name="restore_cookies_successfully">恢复饼干成功</string>
+    <string name="clear_cookies_successfully">清除饼干成功</string>
     <string name="not_valid_cookie_file">这不是有效饼干文件</string>
     <string name="cant_find_cookie_file">找不到饼干文件</string>
     <string name="select_cookie_file">选择饼干文件</string>

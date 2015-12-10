@@ -585,20 +585,26 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             private String[] getList() {
                 int n = mFiles.length;
-                String[] strings = new String[n];
+                String[] strings = new String[n + 1];
+                strings[0] = getString(R.string.clear_cookies);
                 for (int i = 0; i < n; i++) {
-                    strings[i] = mFiles[i].getName();
+                    strings[i + 1] = mFiles[i].getName();
                 }
                 return strings;
             }
 
             @Override
             public void onClick(@NonNull DialogInterface dialog, int which) {
-                File file = mFiles[which];
                 InputStream is = null;
                 try {
-                    is = new FileInputStream(file);
-                    String str = IOUtils.readString(is, "UTF-8");
+                    String str;
+                    if (which == 0) {
+                        str = "[]";
+                    } else {
+                        File file = mFiles[which - 1];
+                        is = new FileInputStream(file);
+                        str = IOUtils.readString(is, "UTF-8");
+                    }
                     List<TransportableHttpCookie> list = JSON.parseArray(str, TransportableHttpCookie.class);
                     SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getActivity());
                     cookieStore.removeAll();
@@ -616,7 +622,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         cookieStore.add(url, cookie);
                     }
                     NMBApplication.updateCookies(getActivity());
-                    Toast.makeText(getActivity(), R.string.restore_cookies_successfully, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),
+                            which == 0 ? R.string.clear_cookies_successfully : R.string.restore_cookies_successfully,
+                            Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), R.string.not_valid_cookie_file, Toast.LENGTH_SHORT).show();
                 } finally {
