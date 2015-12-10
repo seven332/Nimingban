@@ -104,7 +104,8 @@ public class Crash {
         FileWriter fw = null;
         try {
             fw = new FileWriter(file);
-
+            fw.write("TIME=");fw.write(ReadableTime.getFilenamableTime(System.currentTimeMillis()));fw.write("\r\n");
+            fw.write("\r\n");
             collectInfo(context, fw);
             fw.write("======== CrashInfo ========\r\n");
             getThrowableInfo(ex, fw);
