@@ -179,7 +179,7 @@
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minHeight="128dp"
+        android:minHeight="80dp"
         android:paddingTop="@dimen/keyline_margin_vertical"
         android:paddingBottom="@dimen/keyline_margin_vertical"
         android:paddingLeft="@dimen/keyline_margin_horizontal"
