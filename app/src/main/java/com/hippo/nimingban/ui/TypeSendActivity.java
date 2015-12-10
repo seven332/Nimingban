@@ -45,7 +45,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -253,6 +252,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mImagePreview = findViewById(R.id.image_preview);
         mPreview = (ImageView) mImagePreview.findViewById(R.id.preview);
         mDelete = mImagePreview.findViewById(R.id.delete);
+        mWatermark = (CheckBox) mImagePreview.findViewById(R.id.watermark);
         mIndicator = (SimpleImageView) findViewById(R.id.indicator);
         mMoreWritableItemsText = (TextView) findViewById(R.id.more_writable_items_text);
         mSelectForum = findViewById(R.id.select_forum);
@@ -261,7 +261,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mName = (EditText) mWritableItem.findViewById(R.id.name);
         mEmail = (EditText) mWritableItem.findViewById(R.id.email);
         mTitle = (EditText) mWritableItem.findViewById(R.id.title);
-        mWatermark = (CheckBox) mWritableItem.findViewById(R.id.watermark);
 
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
@@ -286,11 +285,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mIndicator.setDrawable(drawable);
 
         mWatermark.setChecked(Settings.getWatermark());
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mWatermark.getLayoutParams();
-        lp.leftMargin = mTitle.getPaddingLeft() - LayoutUtils.dp2pix(this, 5);
-        mWatermark.setLayoutParams(lp);
-        mWatermark.setPadding(mWatermark.getPaddingLeft() + LayoutUtils.dp2pix(this, 4),
-                mWatermark.getPaddingTop(), mWatermark.getPaddingRight(), mWatermark.getPaddingBottom());
 
         if (METHOD_CREATE_POST == mMethod) {
             mMoreWritableItemsText.setVisibility(View.GONE);
