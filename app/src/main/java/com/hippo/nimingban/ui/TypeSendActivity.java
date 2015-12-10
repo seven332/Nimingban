@@ -95,7 +95,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 
-// TODO add edit text for name, title and so on
 public final class TypeSendActivity extends TranslucentActivity implements View.OnClickListener {
 
     @IntDef({METHOD_NONE, METHOD_REPLY, METHOD_CREATE_POST})
@@ -128,7 +127,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
 
     private NMBClient mNMBClient;
 
-    private LinearLayout mMainLayout;
     private EditText mEditText;
     private View mEmoji;
     private View mImage;
@@ -246,7 +244,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         ToolbarActivityHelper.setContentView(this, R.layout.activity_type_send);
         setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
-        mMainLayout = (LinearLayout) findViewById(R.id.main_layout);
         mEditText = (EditText) findViewById(R.id.edit_text);
         mEmoji = findViewById(R.id.emoji);
         mImage = findViewById(R.id.image);
