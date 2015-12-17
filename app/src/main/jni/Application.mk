@@ -19,3 +19,5 @@ APP_OPTIM := release
 APP_CFLAGS += -ffunction-sections -fdata-sections
 APP_CPPFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 APP_LDFLAGS += -Wl,--gc-sections
+
+NDK_TOOLCHAIN_VERSION := 4.9
