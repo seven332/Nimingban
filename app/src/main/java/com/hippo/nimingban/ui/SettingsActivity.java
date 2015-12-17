@@ -81,6 +81,7 @@ import java.lang.reflect.Field;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -597,15 +598,15 @@ public class SettingsActivity extends AbsPreferenceActivity {
             public void onClick(@NonNull DialogInterface dialog, int which) {
                 InputStream is = null;
                 try {
-                    String str;
+                    List<TransportableHttpCookie> list;
                     if (which == 0) {
-                        str = "[]";
+                        list = new ArrayList<>(0);
                     } else {
                         File file = mFiles[which - 1];
                         is = new FileInputStream(file);
-                        str = IOUtils.readString(is, "UTF-8");
+                        String str = IOUtils.readString(is, "UTF-8");
+                        list = JSON.parseArray(str, TransportableHttpCookie.class);
                     }
-                    List<TransportableHttpCookie> list = JSON.parseArray(str, TransportableHttpCookie.class);
                     SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getActivity());
                     cookieStore.removeAll();
                     for (TransportableHttpCookie thc : list) {
