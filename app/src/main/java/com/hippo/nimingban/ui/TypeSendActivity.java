@@ -123,6 +123,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
     private int mMethod = METHOD_NONE;
 
     private boolean mShare = false;
+    private boolean mReport = false;
 
     private NMBClient mNMBClient;
 
@@ -169,8 +170,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
             return false;
         }
 
-        boolean report = false;
-
         String action = intent.getAction();
         String type = intent.getType();
         if (ACTION_REPLY.equals(action)) {
@@ -182,7 +181,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         } else if (ACTION_REPORT.equals(action)) {
             mMethod = METHOD_CREATE_POST;
             setTitle(R.string.report);
-            report = true;
+            mReport = true;
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             mMethod = METHOD_CREATE_POST;
             setTitle(R.string.create_post);
@@ -207,7 +206,7 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
                 mSite = Site.fromId(site);
                 mId = id;
 
-                if (report) {
+                if (mReport) {
                     Toast.makeText(this, R.string.report_tip, Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -276,7 +275,6 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
         mSend.setOnClickListener(this);
         mDelete.setOnClickListener(this);
         mIndicator.setOnClickListener(this);
-        mForumText.setOnClickListener(this);
         mPreview.setOnClickListener(this);
 
         StateListDrawable drawable = new StateListDrawable();
@@ -325,6 +323,11 @@ public final class TypeSendActivity extends TranslucentActivity implements View.
                 } else {
                     setForum(index);
                 }
+            }
+
+            // Can't select forum if you want report
+            if (!mReport) {
+                mForumText.setOnClickListener(this);
             }
         } else {
             mMoreWritableItemsText.setVisibility(View.VISIBLE);
