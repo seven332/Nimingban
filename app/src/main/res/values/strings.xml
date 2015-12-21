@@ -57,13 +57,7 @@
 
     <string name="add">Add</string>
 
-    <string name="text_image">Text to image</string>
-
-    <string name="convert">Convert</string>
     <string name="converting">Converting…</string>
-    <string name="convert_successfully">Convert successfully</string>
-    <string name="convert_failed">Convert failed</string>
-    <string name="new_feature_available">New feature is available</string>
 
     <string name="reply">Reply</string>
     <string name="go_to">Go to</string>
@@ -97,6 +91,7 @@
     <string name="report_comment">Report comment</string>
 
     <string name="select_image">Select a picture</string>
+    <string name="text_to_image">Text to image</string>
     <string name="take_photo">Take a photo</string>
 
     <string name="comment_copied_clipboard">Copied to clipboard</string>

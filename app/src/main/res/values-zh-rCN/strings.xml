@@ -57,13 +57,7 @@
 
     <string name="add">添加</string>
 
-    <string name="text_image">文字至图片</string>
-
-    <string name="convert">转化</string>
     <string name="converting">转化中…</string>
-    <string name="convert_successfully">转化成功</string>
-    <string name="convert_failed">转化失败</string>
-    <string name="new_feature_available">新功能已开启</string>
 
     <string name="reply">回复</string>
     <string name="go_to">跳页</string>
@@ -97,6 +91,7 @@
     <string name="report_comment">举报评论</string>
 
     <string name="select_image">选择图片</string>
+    <string name="text_to_image">生成文字图片</string>
     <string name="take_photo">拍个照</string>
 
     <string name="comment_copied_clipboard">评论文字已复制到剪贴板</string>

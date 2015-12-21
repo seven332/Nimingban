@@ -26,6 +26,7 @@
 
     <string-array name="image_dialog">
         <item>@string/select_image</item>
+        <item>@string/text_to_image</item>
         <item>@string/take_photo</item>
     </string-array>
 

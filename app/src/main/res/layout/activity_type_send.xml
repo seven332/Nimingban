@@ -14,62 +14,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <include
-        layout="@layout/activity_type_send_content"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:background="?attr/colorPrimary">
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/emoji"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_emoji_dark_x24"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/image"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_file_image_box_dark_x24"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/draw"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_brush_dark_x24"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/draft"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_draft_dark_x24"/>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/send"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_send_dark_x24"/>
-
-    </LinearLayout>
-
-</LinearLayout>
+    android:layout_height="match_parent"/>

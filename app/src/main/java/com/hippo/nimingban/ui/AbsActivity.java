@@ -80,7 +80,7 @@ public abstract class AbsActivity extends AppCompatActivity implements Messenger
         }
     }
 
-    protected void setActionBarUpIndicator(Drawable drawable) {
+    public void setActionBarUpIndicator(Drawable drawable) {
         ActionBarDrawerToggle.Delegate delegate = getDrawerToggleDelegate();
         if (delegate != null) {
             delegate.setActionBarUpIndicator(drawable, 0);

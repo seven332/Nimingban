@@ -14,21 +14,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/action_text_image"
-        android:title="@string/text_image"
-        android:icon="@drawable/ic_text_image_dark_x24"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_convert"
-        android:title="@string/convert"
-        android:icon="@drawable/ic_convert_dark_x24"
-        app:showAsAction="ifRoom"/>
-
-</menu>
+<set>
+    <alpha
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="300"/>
+</set>

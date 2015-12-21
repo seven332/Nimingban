@@ -16,74 +16,24 @@
 
 package com.hippo.nimingban.ui;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
-import android.text.style.URLSpan;
-import android.util.Log;
-import android.util.Pair;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hippo.effect.ViewTransition;
-import com.hippo.nimingban.Analysis;
-import com.hippo.nimingban.Constants;
-import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
-import com.hippo.nimingban.client.NMBClient;
-import com.hippo.nimingban.client.NMBRequest;
-import com.hippo.nimingban.client.NMBUrl;
-import com.hippo.nimingban.client.ReferenceSpan;
-import com.hippo.nimingban.client.ac.NMBUriParser;
-import com.hippo.nimingban.client.ac.data.ACReference;
-import com.hippo.nimingban.client.data.Post;
-import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
-import com.hippo.nimingban.util.OpenUrlHelper;
-import com.hippo.nimingban.util.ReadableTime;
+import com.hippo.nimingban.ui.fragment.FragmentHost;
+import com.hippo.nimingban.ui.fragment.PostFragment;
+import com.hippo.nimingban.ui.fragment.TypeSendFragment;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.nimingban.widget.ContentLayout;
-import com.hippo.nimingban.widget.LinkifyTextView;
-import com.hippo.nimingban.widget.LoadImageView;
-import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ActivityHelper;
-import com.hippo.util.ExceptionUtils;
-import com.hippo.util.TextUtils2;
-import com.hippo.widget.Slider;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.yorozuya.LayoutUtils;
-import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.Messenger;
+import com.hippo.nimingban.widget.PostLayout;
 import com.hippo.yorozuya.ResourcesUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public final class PostActivity extends SwipeActivity
-        implements EasyRecyclerView.OnItemClickListener,
-        EasyRecyclerView.OnItemLongClickListener {
+        implements PostFragment.Callback, TypeSendFragment.Callback {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
     public static final String ACTION_SITE_ID = "com.hippo.nimingban.ui.PostActivity.action.SITE_ID";
@@ -93,81 +43,10 @@ public final class PostActivity extends SwipeActivity
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
 
-    /**
-     * Intent.ACTION_PROCESS_TEXT
-     */
-    public static final String ACTION_PROCESS_TEXT = "android.intent.action.PROCESS_TEXT";
-    /**
-     * Intent.EXTRA_PROCESS_TEXT
-     */
-    public static final String EXTRA_PROCESS_TEXT = "android.intent.extra.PROCESS_TEXT";
-    /**
-     * Intent.EXTRA_PROCESS_TEXT_READONLY
-     */
-    public static final String EXTRA_PROCESS_TEXT_READONLY = "android.intent.extra.PROCESS_TEXT_READONLY";
+    public static final String TAG_FRAGMENT_POST = "post";
+    public static final String TAG_FRAGMENT_TYPE_SEND = "type_send";
 
-    private NMBClient mNMBClient;
-
-    private ContentLayout mContentLayout;
-    private EasyRecyclerView mRecyclerView;
-
-    private ReplyHelper mReplyHelper;
-    private ReplyAdapter mReplyAdapter;
-
-    private NMBRequest mNMBRequest;
-
-    private Site mSite;
-    private String mId;
-    private String mReplyId;
-
-    private CharSequence mPostUser;
-
-    private int mOpColor;
-
-    private int mPageSize = -1;
-
-    // false for error
-    private boolean handlerIntent(Intent intent) {
-        if (intent == null) {
-            return false;
-        }
-
-        String action = intent.getAction();
-        if (ACTION_POST.equals(action)) {
-            Post post = intent.getParcelableExtra(KEY_POST);
-            if (post != null) {
-                mSite = post.getNMBSite();
-                mId = post.getNMBId();
-                mPostUser = post.getNMBDisplayUsername();
-                return true;
-            }
-        } else if (ACTION_SITE_ID.equals(action)) {
-            int site = intent.getIntExtra(KEY_SITE, -1);
-            String id = intent.getStringExtra(KEY_ID);
-            if (Site.isValid(site) && id != null) {
-                mSite = Site.fromId(site);
-                mId = id;
-                return true;
-            }
-        } else if (ACTION_SITE_REPLY_ID.equals(action)) {
-            int site = intent.getIntExtra(KEY_SITE, -1);
-            String id = intent.getStringExtra(KEY_ID);
-            if (Site.isValid(site) && id != null) {
-                mSite = Site.fromId(site);
-                mReplyId = id;
-                return true;
-            }
-        } else if (Intent.ACTION_VIEW.equals(action)) {
-            NMBUriParser.PostResult result = NMBUriParser.parsePostUri(intent.getData());
-            mSite = result.site;
-            mId = result.id;
-            if (mSite != null && mId != null) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    private PostLayout mPostLayout;
 
     @Override
     protected int getLightThemeResId() {
@@ -179,821 +58,107 @@ public final class PostActivity extends SwipeActivity
         return Settings.getColorStatusBar() ? R.style.SwipeActivity_Dark : R.style.SwipeActivity_Dark_NoStatus;
     }
 
+    private Bundle createArgs() {
+        Bundle bundle = new Bundle();
+        Intent intent = getIntent();
+        if (intent != null) {
+            bundle.putString(PostFragment.KEY_ACTION, intent.getAction());
+            bundle.putParcelable(PostFragment.KEY_DATA, intent.getData());
+            bundle.putInt(PostFragment.KEY_SITE, intent.getIntExtra(KEY_SITE, -1));
+            bundle.putString(PostFragment.KEY_ID, intent.getStringExtra(KEY_ID));
+            bundle.putParcelable(PostFragment.KEY_POST, intent.getParcelableExtra(KEY_POST));
+        }
+        return bundle;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!handlerIntent(getIntent())) {
-            finish();
-            return;
-        }
-
-        // Analysis
-        Analysis.readPost(PostActivity.this, mId);
-
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
-        ToolbarActivityHelper.setContentView(this, R.layout.activity_post);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setContentView(R.layout.activity_post);
 
-        if (mId != null) {
-            setTitle(mSite.getPostTitle(this, mId));
-        }
+        mPostLayout = (PostLayout) findViewById(R.id.main);
 
-        mNMBClient = NMBApplication.getNMBClient(this);
-
-        mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
-        mRecyclerView = mContentLayout.getRecyclerView();
-
-        mReplyHelper = new ReplyHelper();
-        mReplyHelper.setEmptyString(getString(R.string.not_found));
-        mContentLayout.setHelper(mReplyHelper);
-        if (Settings.getFastScroller()) {
-            mContentLayout.showFastScroll();
-        } else {
-            mContentLayout.hideFastScroll();
-        }
-
-        mReplyAdapter = new ReplyAdapter();
-        mRecyclerView.setAdapter(mReplyAdapter);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setOnItemClickListener(this);
-        mRecyclerView.setOnItemLongClickListener(this);
-        mRecyclerView.hasFixedSize();
-
-        mOpColor = getResources().getColor(R.color.green_ntr);
-
-        // Refresh
-        mReplyHelper.firstRefresh();
-
-        Messenger.getInstance().register(Constants.MESSENGER_ID_REPLY, this);
-        Messenger.getInstance().register(Constants.MESSENGER_ID_FAST_SCROLLER, this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        Messenger.getInstance().unregister(Constants.MESSENGER_ID_REPLY, this);
-        Messenger.getInstance().unregister(Constants.MESSENGER_ID_FAST_SCROLLER, this);
-
-        if (mNMBRequest != null) {
-            mNMBRequest.cancel();
-            mNMBRequest = null;
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_post, menu);
-        return true;
-    }
-
-    @Override
-    public void onReceive(int id, Object obj) {
-        if (Constants.MESSENGER_ID_REPLY == id) {
-            if (mId.equals(obj)) {
-                int currentPage = mReplyHelper.getPageForBottom();
-                int pages = mReplyHelper.getPages();
-                if (currentPage >= 0 && currentPage + 1 == pages) {
-                    // It is the last page, refresh it
-                    mReplyHelper.doGetData(ContentLayout.ContentHelper.TYPE_REFRESH_PAGE,
-                            currentPage, ContentLayout.ContentHelper.REFRESH_TYPE_FOOTER);
-                }
-            }
-        } else if (Constants.MESSENGER_ID_FAST_SCROLLER == id) {
-            if (obj instanceof Boolean) {
-                if ((Boolean) obj) {
-                    mContentLayout.showFastScroll();
-                } else {
-                    mContentLayout.hideFastScroll();
-                }
-            }
-        } else {
-            super.onReceive(id, obj);
-        }
-    }
-
-    private class GoToDialogHelper implements View.OnClickListener,
-            DialogInterface.OnDismissListener {
-
-        private int mPages;
-
-        private View mView;
-        private Slider mSlider;
-
-        private Dialog mDialog;
-
-        @SuppressLint("InflateParams")
-        private GoToDialogHelper(int pages, int currentPage) {
-            mPages = pages;
-            mView = getLayoutInflater().inflate(R.layout.dialog_go_to, null);
-            ((TextView) mView.findViewById(R.id.start)).setText("1");
-            ((TextView) mView.findViewById(R.id.end)).setText(Integer.toString(pages));
-            mSlider = (Slider) mView.findViewById(R.id.slider);
-            mSlider.setRange(1, pages);
-            mSlider.setProgress(currentPage + 1);
-        }
-
-        public View getView() {
-            return mView;
-        }
-
-        public void setPositiveButtonClickListener(AlertDialog dialog) {
-            mDialog = dialog;
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this);
-            dialog.setOnDismissListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int page = mSlider.getProgress() - 1;
-            if (page >= 0 && page < mPages) {
-                mReplyHelper.goTo(page);
-                if (mDialog != null) {
-                    mDialog.dismiss();
-                    mDialog = null;
-                }
-            } else {
-                Toast.makeText(PostActivity.this, R.string.go_to_error_out_of_range, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog = null;
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+        PostFragment postFragment = new PostFragment();
+        postFragment.setArguments(createArgs());
+        postFragment.setCallback(this);
+        postFragment.setFragmentHost(new FragmentHost() {
+            @Override
+            public void finishFragment() {
                 finish();
-                return true;
-            case R.id.action_go_to:
-                int pages = mReplyHelper.getPages();
-                if (pages > 0 && mReplyHelper.canGoTo()) {
-                    GoToDialogHelper helper = new GoToDialogHelper(pages, mReplyHelper.getPageForTop());
-                    AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.go_to)
-                            .setView(helper.getView())
-                            .setPositiveButton(android.R.string.ok, null)
-                            .create();
-                    dialog.show();
-                    helper.setPositiveButtonClickListener(dialog);
-                }
-                return true;
-            case R.id.action_reply:
-                if (!TextUtils.isEmpty(mId)) {
-                    Intent intent = new Intent(this, TypeSendActivity.class);
-                    intent.setAction(TypeSendActivity.ACTION_REPLY);
-                    intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
-                    intent.putExtra(TypeSendActivity.KEY_ID, mId);
-                    startActivity(intent);
-                }
-                return true;
-            case R.id.action_add_feed:
-                NMBRequest request1 = new NMBRequest();
-                request1.setSite(mSite);
-                request1.setMethod(NMBClient.METHOD_ADD_FEED);
-                request1.setArgs(mSite.getUserId(this), mId);
-                request1.setCallback(new FeedListener(this, true));
-                mNMBClient.execute(request1);
-                return true;
-            case R.id.action_remove_feed:
-                NMBRequest request2 = new NMBRequest();
-                request2.setSite(mSite);
-                request2.setMethod(NMBClient.METHOD_DEL_FEED);
-                request2.setArgs(mSite.getUserId(this), mId);
-                request2.setCallback(new FeedListener(this, false));
-                mNMBClient.execute(request2);
-                return true;
-            case R.id.action_share:
-                ActivityHelper.share(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0));
-                return true;
-            case R.id.action_open_in_other_app:
-                OpenUrlHelper.openUrl(this, NMBUrl.getBrowsablePostUrl(mSite, mId, 0), false);
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+            }
+        });
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.main, postFragment, TAG_FRAGMENT_POST);
+        transaction.commit();
     }
 
-    private void handleURLSpan(URLSpan urlSpan) {
-        OpenUrlHelper.openUrl(PostActivity.this, urlSpan.getURL(), true);
-    }
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);
 
-    private final class ReferenceDialogHelper implements AlertDialog.OnDismissListener,
-            NMBClient.Callback<ACReference>, View.OnClickListener {
-
-        private Site mSite;
-        private String mId;
-
-        private View mView;
-        private ViewTransition mViewTransition;
-
-        public TextView mLeftText;
-        public TextView mCenterText;
-        public TextView mRightText;
-        private LinkifyTextView mContent;
-        private LoadImageView mThumb;
-        private View mButton;
-
-        private AlertDialog mDialog;
-
-        private NMBRequest mRequest;
-
-        private Reply mReply;
-
-        @SuppressLint("InflateParams")
-        public ReferenceDialogHelper(Site site, String id) {
-            mSite = site;
-            mId = id;
-
-            mView = getLayoutInflater().inflate(R.layout.dialog_reference, null);
-
-            View progress = mView.findViewById(R.id.progress_view);
-            View reference = mView.findViewById(R.id.reference);
-            mViewTransition = new ViewTransition(progress, reference);
-
-            mLeftText = (TextView) reference.findViewById(R.id.left_text);
-            mCenterText = (TextView) reference.findViewById(R.id.center_text);
-            mRightText = (TextView) reference.findViewById(R.id.right_text);
-            mContent = (LinkifyTextView) reference.findViewById(R.id.content);
-            mThumb = (LoadImageView) reference.findViewById(R.id.thumb);
-            mButton = reference.findViewById(R.id.button);
-
-            mContent.setOnClickListener(this);
-            mThumb.setOnClickListener(this);
-            RippleSalon.addRipple(mButton, ResourcesUtils.getAttrBoolean(PostActivity.this, R.attr.dark));
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (v == mContent) {
-                ClickableSpan span = mContent.getCurrentSpan();
-                mContent.clearCurrentSpan();
-
-                if (span instanceof URLSpan) {
-                    handleURLSpan((URLSpan) span);
-                } else if (span instanceof ReferenceSpan) {
-                    handleReferenceSpan((ReferenceSpan) span);
-                }
-            } else if (v == mThumb) {
-                if (mReply != null && !TextUtils.isEmpty(mReply.getNMBImageUrl())) {
-                    Intent intent = new Intent(PostActivity.this, GalleryActivity2.class);
-                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity2.KEY_SITE, mSite.getId());
-                    intent.putExtra(GalleryActivity2.KEY_ID, mReply.getNMBId());
-                    intent.putExtra(GalleryActivity2.KEY_IMAGE, mReply.getNMBImageUrl());
-                    PostActivity.this.startActivity(intent);
-                }
+        if (fragment != null && fragment instanceof TypeSendFragment) {
+            TypeSendFragment typeSendFragment = (TypeSendFragment) fragment;
+            if (mPostLayout.getTypeSendState() == PostLayout.STATE_HIDE) {
+                mPostLayout.showTypeSend();
+            } else if (typeSendFragment.checkBeforeFinish()) {
+                typeSendFragment.getFragmentHost().finishFragment();
             }
-        }
-
-        public void setDialog(AlertDialog dialog) {
-            mDialog = dialog;
-        }
-
-        public View getView() {
-            return mView;
-        }
-
-        public void request() {
-            // Try to find in data list first
-            ReplyHelper replyHelper = mReplyHelper;
-            for (int i = 0, n = replyHelper.size(); i < n; i++) {
-                Reply reply = replyHelper.getDataAt(i);
-                if (mId.equals(reply.getNMBId())) {
-                    onGetReference(reply, false);
-                    return;
-                }
-            }
-
-            NMBRequest request = new NMBRequest();
-            mRequest = request;
-            request.setSite(mSite);
-            request.setMethod(NMBClient.METHOD_GET_REFERENCE);
-            request.setArgs(mId);
-            request.setCallback(this);
-            mNMBClient.execute(request);
-        }
-
-        private void onGetReference(final Reply reply, boolean animation) {
-            mReply = reply;
-
-            mLeftText.setText(highlightOp(reply));
-            mCenterText.setText("No." + reply.getNMBId());
-            mRightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
-            mContent.setText(reply.getNMBDisplayContent());
-
-            String thumbUrl = reply.getNMBThumbUrl();
-
-            boolean showImage;
-            boolean loadFromNetwork;
-            int ils = Settings.getImageLoadingStrategy();
-            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
-                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(PostActivity.this))) {
-                showImage = true;
-                loadFromNetwork = true;
-            } else {
-                showImage = Settings.getImageLoadingStrategy2();
-                loadFromNetwork = false;
-            }
-
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
-                mThumb.setVisibility(View.VISIBLE);
-                mThumb.unload();
-                mThumb.load(thumbUrl, thumbUrl, loadFromNetwork);
-            } else {
-                mThumb.setVisibility(View.GONE);
-                mThumb.unload();
-            }
-
-            mContent.setTextSize(Settings.getFontSize());
-            mContent.setLineSpacing(LayoutUtils.dp2pix(PostActivity.this, Settings.getLineSpacing()), 1.0f);
-
-            mViewTransition.showView(1, animation);
-
-            String postId = reply.getNMBPostId();
-
-            if (postId != null && !postId.equals(PostActivity.this.mId) && mDialog != null && mDialog.isShowing()) {
-                mButton.setVisibility(View.VISIBLE);
-                mButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(PostActivity.this, PostActivity.class);
-                        intent.setAction(ACTION_SITE_ID);
-                        intent.putExtra(KEY_SITE, mSite.getId());
-                        intent.putExtra(KEY_ID, reply.getNMBPostId());
-                        PostActivity.this.startActivity(intent);
-                    }
-                });
-            }
-
-            mRequest = null;
-            mDialog = null;
-        }
-
-        @Override
-        public void onSuccess(ACReference result) {
-            onGetReference(result, true);
-        }
-
-        @Override
-        public void onFailure(Exception e) {
-            mLeftText.setVisibility(View.GONE);
-            mRightText.setVisibility(View.GONE);
-            mContent.setText(R.string.cant_get_the_reference);
-            mThumb.setVisibility(View.GONE);
-            mViewTransition.showView(1, true);
-
-            mRequest = null;
-            mDialog = null;
-        }
-
-        @Override
-        public void onCancel() {
-            mRequest = null;
-
-            if (mDialog != null) {
-                mDialog.dismiss();
-                mDialog = null;
-            }
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog = null;
-
-            if (mRequest != null) {
-                mRequest.cancel();
-                mRequest = null;
-            }
-        }
-    }
-
-    private CharSequence highlightOp(Reply reply) {
-        CharSequence user = reply.getNMBDisplayUsername();
-
-        if (!TextUtils.isEmpty(user) && TextUtils2.contentEquals(user, mPostUser)) {
-            Spannable spannable;
-            if (user instanceof Spannable) {
-                spannable = (Spannable) user;
-            } else {
-                spannable = new SpannableString(user);
-            }
-
-            int length = user.length();
-            if (spannable.getSpans(0, length, Object.class).length == 0) {
-                StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
-                ForegroundColorSpan colorSpan = new ForegroundColorSpan(mOpColor);
-                spannable.setSpan(styleSpan, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannable.setSpan(colorSpan, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            return spannable;
         } else {
-            return user;
+            super.onBackPressed();
         }
-    }
-
-    private void handleReferenceSpan(ReferenceSpan referenceSpan) {
-        ReferenceDialogHelper helper = new ReferenceDialogHelper(referenceSpan.getSite(), referenceSpan.getId());
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(helper.getView())
-                .setOnDismissListener(helper).create();
-        helper.setDialog(dialog);
-        dialog.show();
-        helper.request();
-    }
-
-    private class ReplyDailogHelper implements DialogInterface.OnClickListener {
-
-        private Reply mReply;
-        private List<ResolveInfo> mResolveInfoList;
-
-        public ReplyDailogHelper(Reply reply, List<ResolveInfo> resolveInfoList) {
-            mReply = reply;
-            mResolveInfoList = resolveInfoList;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case 0:
-                    // Reply
-                    if (!TextUtils.isEmpty(mId)) {
-                        Intent intent = new Intent(PostActivity.this, TypeSendActivity.class);
-                        intent.setAction(TypeSendActivity.ACTION_REPLY);
-                        intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
-                        intent.putExtra(TypeSendActivity.KEY_ID, mId);
-                        intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
-                        startActivity(intent);
-                    }
-                    break;
-                case 1:
-                    // Copy
-                    ClipboardManager cbm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    cbm.setPrimaryClip(ClipData.newPlainText(null, mReply.getNMBDisplayContent()));
-                    Toast.makeText(PostActivity.this, R.string.comment_copied_clipboard, Toast.LENGTH_SHORT).show();
-                    break;
-                case 2:
-                    // Send
-                    ActivityHelper.share(PostActivity.this, mReply.getNMBDisplayContent().toString());
-                    break;
-                case 3: {
-                    // Report
-                    Intent intent = new Intent(PostActivity.this, TypeSendActivity.class);
-                    intent.setAction(TypeSendActivity.ACTION_REPORT);
-                    intent.putExtra(TypeSendActivity.KEY_SITE, mSite.getId());
-                    intent.putExtra(TypeSendActivity.KEY_ID, mSite.getReportForumId());
-                    intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + mReply.getNMBId() + "\n"); // TODO Let site decides it
-                    startActivity(intent);
-                    break;
-                }
-                default: {
-                    if (mResolveInfoList == null) {
-                        break;
-                    }
-                    int index = which - 4;
-                    if (index < mResolveInfoList.size() && index >= 0) {
-                        ResolveInfo info = mResolveInfoList.get(index);
-                        Intent intent = new Intent()
-                                .setClassName(info.activityInfo.packageName, info.activityInfo.name)
-                                .setAction(ACTION_PROCESS_TEXT)
-                                .setType("text/plain")
-                                .putExtra(EXTRA_PROCESS_TEXT_READONLY, true)
-                                .putExtra(EXTRA_PROCESS_TEXT, mReply.getNMBDisplayContent().toString());
-
-                        startActivity(intent);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    private void showReplyDialog(int position) {
-        List<CharSequence> itemList = new ArrayList<>();
-        String[] items = getResources().getStringArray(R.array.reply_dialog);
-        Collections.addAll(itemList, items);
-
-        PackageManager pm = getPackageManager();
-        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(new Intent()
-                .setAction(ACTION_PROCESS_TEXT)
-                .setType("text/plain"), 0);
-        for (ResolveInfo info : resolveInfos) {
-            itemList.add(info.loadLabel(pm));
-        }
-
-        ReplyDailogHelper helper = new ReplyDailogHelper(mReplyHelper.getDataAt(position), resolveInfos);
-        new AlertDialog.Builder(this).setItems(itemList.toArray(new CharSequence[itemList.size()]), helper).show();
     }
 
     @Override
-    public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
-        showReplyDialog(position);
-        return true;
+    public void reply(Site site, String id, String presetText, boolean report) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);
+
+        if (fragment == null && !TextUtils.isEmpty(id)) {
+            Bundle args = new Bundle();
+            args.putString(TypeSendFragment.KEY_ACTION,
+                    report ? TypeSendFragment.ACTION_REPORT : TypeSendFragment.ACTION_REPLY);
+            args.putInt(TypeSendFragment.KEY_SITE, site.getId());
+            args.putString(TypeSendFragment.KEY_ID, id);
+            args.putString(TypeSendFragment.KEY_TEXT, presetText);
+
+            TypeSendFragment typeSendFragment = new TypeSendFragment();
+            typeSendFragment.setArguments(args);
+            typeSendFragment.setCallback(this);
+            typeSendFragment.setFragmentHost(new FragmentHost() {
+                @Override
+                public void finishFragment() {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);
+                    if (fragment != null) {
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
+                        transaction.remove(fragment);
+                        transaction.commit();
+
+                        setSwipeBackEnable(true);
+
+                        mPostLayout.onRemoveTypeSend();
+                    }
+                }
+            });
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
+            transaction.add(R.id.main, typeSendFragment, TAG_FRAGMENT_TYPE_SEND);
+            transaction.commit();
+
+            setSwipeBackEnable(false);
+        }
     }
 
     @Override
-    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
-        if (holder instanceof ReplyHolder) {
-            ReplyHolder replyHolder = (ReplyHolder) holder;
-            ClickableSpan span = replyHolder.content.getCurrentSpan();
-            replyHolder.content.clearCurrentSpan();
-
-            if (span instanceof URLSpan) {
-                handleURLSpan((URLSpan) span);
-                return true;
-            } else if (span instanceof ReferenceSpan) {
-                handleReferenceSpan((ReferenceSpan) span);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private class ReplyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        public TextView leftText;
-        public TextView centerText;
-        public TextView rightText;
-        public LinkifyTextView content;
-        public LoadImageView thumb;
-
-        public ReplyHolder(View itemView) {
-            super(itemView);
-
-            leftText = (TextView) itemView.findViewById(R.id.left_text);
-            centerText = (TextView) itemView.findViewById(R.id.center_text);
-            rightText = (TextView) itemView.findViewById(R.id.right_text);
-            content = (LinkifyTextView) itemView.findViewById(R.id.content);
-            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
-
-            thumb.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position >= 0 && position < mReplyHelper.size()) {
-                Reply reply = mReplyHelper.getDataAt(position);
-                String image = reply.getNMBImageUrl();
-                if (!TextUtils.isEmpty(image)) {
-                    Intent intent = new Intent(PostActivity.this, GalleryActivity2.class);
-                    intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
-                    intent.putExtra(GalleryActivity2.KEY_SITE, reply.getNMBSite().getId());
-                    intent.putExtra(GalleryActivity2.KEY_ID, reply.getNMBId());
-                    intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
-                    PostActivity.this.startActivity(intent);
-                }
-            }
-        }
-    }
-
-    private class ReplyAdapter extends RecyclerView.Adapter<ReplyHolder> {
-
-        @Override
-        public ReplyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ReplyHolder(getLayoutInflater().inflate(R.layout.item_post, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(ReplyHolder holder, int position) {
-            Reply reply = mReplyHelper.getDataAt(position);
-            holder.leftText.setText(highlightOp(reply));
-            holder.centerText.setText("No." + reply.getNMBId());
-            holder.rightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
-            holder.content.setText(reply.getNMBDisplayContent());
-
-            String thumbUrl = reply.getNMBThumbUrl();
-
-            boolean showImage;
-            boolean loadFromNetwork;
-            int ils = Settings.getImageLoadingStrategy();
-            if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
-                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(PostActivity.this))) {
-                showImage = true;
-                loadFromNetwork = true;
-            } else {
-                showImage = Settings.getImageLoadingStrategy2();
-                loadFromNetwork = false;
-            }
-
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
-                holder.thumb.setVisibility(View.VISIBLE);
-                holder.thumb.unload();
-                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
-            } else {
-                holder.thumb.setVisibility(View.GONE);
-                holder.thumb.unload();
-            }
-
-            holder.content.setTextSize(Settings.getFontSize());
-            holder.content.setLineSpacing(LayoutUtils.dp2pix(PostActivity.this, Settings.getLineSpacing()), 1.0f);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mReplyHelper.size();
-        }
-    }
-
-    private class ReplyHelper extends ContentLayout.ContentHelper<Reply> {
-
-        @Override
-        protected Context getContext() {
-            return PostActivity.this;
-        }
-
-        @Override
-        protected void notifyDataSetChanged() {
-            mReplyAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            mReplyAdapter.notifyItemRangeRemoved(positionStart, itemCount);
-        }
-
-        @Override
-        protected void notifyItemRangeInserted(int positionStart, int itemCount) {
-            mReplyAdapter.notifyItemRangeInserted(positionStart, itemCount);
-        }
-
-        @Override
-        protected void getPageData(int taskId, int type, int page) {
-            if (mNMBRequest != null) {
-                mNMBRequest.cancel();
-                mNMBRequest = null;
-            }
-
-            if (mReplyId != null) {
-                mReplyHelper.showProgressBar();
-                NMBRequest request = new NMBRequest();
-                mNMBRequest = request;
-                request.setSite(mSite);
-                request.setMethod(NMBClient.METHOD_GET_REFERENCE);
-                request.setArgs(mReplyId);
-                request.setCallback(new GetPostIdFromReferenceListener());
-                mNMBClient.execute(request);
-            } else {
-                NMBRequest request = new NMBRequest();
-                mNMBRequest = request;
-                request.setSite(mSite);
-                request.setMethod(NMBClient.METHOD_GET_POST);
-                request.setArgs(mId, page);
-                request.setCallback(new PostListener(taskId, type, page, request));
-                mNMBClient.execute(request);
-            }
-        }
-    }
-
-    private class GetPostIdFromReferenceListener implements NMBClient.Callback<ACReference> {
-
-        @Override
-        public void onSuccess(ACReference result) {
-            mReplyId = null;
-            mId = result.postId;
-            setTitle(mSite.getPostTitle(PostActivity.this, mId));
-            mReplyHelper.refresh();
-        }
-
-        @Override
-        public void onFailure(Exception e) {
-            mReplyHelper.showText(ExceptionUtils.getReadableString(PostActivity.this, e));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    }
-
-    private class PostListener implements NMBClient.Callback<Pair<Post, List<Reply>>> {
-
-        private int mTaskId;
-        private int mTaskType;
-        private int mPage;
-        private NMBRequest mRequest;
-
-        public PostListener(int taskId, int type, int page, NMBRequest request) {
-            mTaskId = taskId;
-            mTaskType = type;
-            mPage = page;
-            mRequest = request;
-        }
-
-        @Override
-        public void onSuccess(Pair<Post, List<Reply>> result) {
-            if (mNMBRequest == mRequest) {
-                // It is current request
-
-                // Clear
-                mNMBRequest = null;
-
-                Post post = result.first;
-                mPostUser = post.getNMBDisplayUsername();
-
-                List<Reply> replies = result.second;
-                if (mPage == 0) {
-                    mPageSize = replies.size();
-                    replies.add(0, post);
-                }
-
-                boolean empty;
-                if (replies.isEmpty()) {
-                    empty = true;
-                    mReplyHelper.onGetEmptyData(mTaskId);
-                } else {
-                    empty = false;
-                    mReplyHelper.onGetPageData(mTaskId, replies);
-                }
-
-                if (!empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) &&
-                        mReplyHelper.size() == post.getNMBReplyCount() + 1) { // post is in data, so +1
-                    mReplyHelper.setPages(mPage + 1); // this is the last page
-                } else if (mPageSize == 0) {
-                    mReplyHelper.setPages(1); // Only post, no reply
-                } else if (empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS)) {
-                    mReplyHelper.setPages(mPage); // previous page is the last page
-                } else if (mPageSize != -1) {
-                    mReplyHelper.setPages(MathUtils.ceilDivide(post.getNMBReplyCount(), mPageSize)); // Guess2
-                } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH_PAGE ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_PRE_PAGE_KEEP_POS ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) {
-                    // Keep the pages
-                } else {
-                    int pages = mReplyHelper.getPages();
-                    if (pages != -1 && pages != Integer.MAX_VALUE) {
-                        // Keep it
-                    } else if (empty) {
-                        mReplyHelper.setPages(1); // At least we get post
-                    } else {
-                        mReplyHelper.setPages(Integer.MAX_VALUE); // Keep going
-                    }
-                }
-            }
-            // Clear
-            mRequest = null;
-        }
-
-        @Override
-        public void onFailure(Exception e) {
-            if (mNMBRequest == mRequest) {
-                // It is current request
-
-                // Clear
-                mNMBRequest = null;
-
-                mReplyHelper.onGetExpection(mTaskId, e);
-            }
-            // Clear
-            mRequest = null;
-        }
-
-        @Override
-        public void onCancel() {
-            if (mNMBRequest == mRequest) {
-                // It is current request
-
-                // Clear
-                mNMBRequest = null;
-            }
-            // Clear
-            mRequest = null;
-        }
-    }
-
-    private static class FeedListener implements NMBClient.Callback<Void> {
-
-        private Context mContext;
-        private boolean mAdd;
-
-        public FeedListener(Context context, boolean add) {
-            mContext = context.getApplicationContext();
-            mAdd = add;
-        }
-
-        @Override
-        public void onSuccess(Void result) {
-            Toast.makeText(mContext, mAdd ? R.string.add_feed_successfully : R.string.remove_feed_successfully, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onFailure(Exception e) {
-            Toast.makeText(mContext, mContext.getString(mAdd ? R.string.add_feed_failed :
-                            R.string.remove_feed_failed) + "\n" + ExceptionUtils.getReadableString(mContext, e),
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onCancel() {
-            Log.d("TAG", "FeedListener onCancel");
+    public void onClickBack(TypeSendFragment fragment) {
+        if (fragment.checkBeforeFinish()) {
+            fragment.getFragmentHost().finishFragment();
+        } else {
+            mPostLayout.showTypeSend();
         }
     }
 }
