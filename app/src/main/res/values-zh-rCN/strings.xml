@@ -44,6 +44,8 @@
     <string name="click_refresh_icon_update_list">点击刷新图标更新板块列表</string>
     <string name="click_add_icon_add_forum">点击添加图标添加自定义版块</string>
 
+    <string name="thread">串</string>
+
     <string name="common_posts">常用串</string>
 
     <string name="let_there_light">要有光</string>

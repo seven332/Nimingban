@@ -208,6 +208,8 @@ public class PostFragment extends BaseFragment
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         if (mId != null) {
             mToolbar.setTitle(mSite.getPostTitle(getContext(), mId));
+        } else {
+            mToolbar.setTitle(getString(R.string.thread));
         }
         mToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

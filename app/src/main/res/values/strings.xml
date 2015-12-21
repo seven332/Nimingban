@@ -44,6 +44,8 @@
     <string name="click_refresh_icon_update_list">Click the refresh icon to update forum list</string>
     <string name="click_add_icon_add_forum">Click the add icon to add a custom forum</string>
 
+    <string name="thread">Thread</string>
+
     <string name="common_posts">Common threads</string>
 
     <string name="let_there_light">Let there be light</string>
