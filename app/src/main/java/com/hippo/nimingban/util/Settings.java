@@ -397,6 +397,17 @@ public final class Settings {
         putBoolean(KEY_GUIDE_SORT_FORUMS_ACTIVITY, value);
     }
 
+    public static final String KEY_GUIDE_TYPE_SEND = "guide_type_send";
+    public static final boolean VALUE_GUIDE_TYPE_SEND = true;
+
+    public static boolean getGuideTypeSend() {
+        return getBoolean(KEY_GUIDE_TYPE_SEND, VALUE_GUIDE_TYPE_SEND);
+    }
+
+    public static void putGuideTypeSend(boolean value) {
+        putBoolean(KEY_GUIDE_TYPE_SEND, value);
+    }
+
     public static final String KEY_CRASH_FILENAME = "crash_filename";
     public static final String VALUE_CRASH_FILENAME = null;
 

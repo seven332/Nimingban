@@ -30,6 +30,8 @@
 
     <string name="cant_make_sure_image_save_location">似乎图片存储位置用不了了，需要重新设置</string>
 
+    <string name="swipe_toolbar_hide_show">上下滑动标题栏来隐藏或显示回复界面</string>
+
     <string name="swipe_right_open_menu">右滑打开菜单</string>
     <string name="swipe_left_open_forum_list">左滑打开板块</string>
     <string name="double_click_toolbar_refresh">双击 toolbar 刷新</string>

@@ -22,7 +22,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
 
+import com.hippo.nimingban.GuideHelper;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.ui.fragment.FragmentHost;
@@ -30,6 +33,7 @@ import com.hippo.nimingban.ui.fragment.PostFragment;
 import com.hippo.nimingban.ui.fragment.TypeSendFragment;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.PostLayout;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 public final class PostActivity extends SwipeActivity
@@ -111,8 +115,28 @@ public final class PostActivity extends SwipeActivity
         }
     }
 
+    private void showSwipeGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setMessagePosition(Gravity.TOP)
+                .setMessage(getString(R.string.swipe_toolbar_hide_show))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Settings.putGuideTypeSend(false);
+                    }
+                }).show();
+    }
+
     @Override
     public void reply(Site site, String id, String presetText, boolean report) {
+        if (Settings.getGuideTypeSend()) {
+            showSwipeGuide();
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);
 

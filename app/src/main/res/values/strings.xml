@@ -30,6 +30,8 @@
 
     <string name="cant_make_sure_image_save_location">It seems your picture saving location is not available. Set it in Settings to save pictures. </string>
 
+    <string name="swipe_toolbar_hide_show">Swipe toolbar vertically to hide and show reply UI</string>
+
     <string name="swipe_right_open_menu">Swipe right for menu</string>
     <string name="swipe_left_open_forum_list">Swipe left for forum list</string>
     <string name="double_click_toolbar_refresh">Double click toolbar to refresh</string>
