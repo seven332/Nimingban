@@ -19,6 +19,7 @@ package com.hippo.nimingban.ui.fragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -308,6 +309,13 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
         mEditText.requestFocus();
         mEditText.requestFocusFromTouch();
+        SimpleHandler.getInstance().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(mEditText, 0);
+            }
+        }, 300);
 
         RippleSalon.addRipple(mEmoji, true);
         RippleSalon.addRipple(mImage, true);
