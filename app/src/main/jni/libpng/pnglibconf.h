@@ -1,6 +1,6 @@
 /* pnglibconf.h - library build configuration */
 
-/* libpng version 1.6.19, July 23, 2015 */
+/* libpng version 1.6.20, December 3, 2015 */
 
 /* Copyright (c) 1998-2014 Glenn Randers-Pehrson */
 
@@ -96,7 +96,7 @@
 #define PNG_READ_tRNS_SUPPORTED
 #define PNG_READ_zTXt_SUPPORTED
 /*#undef PNG_SAVE_INT_32_SUPPORTED*/
-#define PNG_SAVE_UNKNOWN_CHUNKS_SUPPORTED
+/*#undef PNG_SAVE_UNKNOWN_CHUNKS_SUPPORTED*/
 #define PNG_SEQUENTIAL_READ_SUPPORTED
 #define PNG_SETJMP_SUPPORTED
 #define PNG_SET_OPTION_SUPPORTED

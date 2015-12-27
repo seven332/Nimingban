@@ -2918,7 +2918,6 @@ png_image_read_colormap(png_voidp argument)
       default:
          png_error(png_ptr, "invalid PNG color type");
          /*NOT REACHED*/
-         break;
    }
 
    /* Now deal with the output processing */
