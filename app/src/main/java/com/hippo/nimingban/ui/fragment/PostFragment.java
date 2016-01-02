@@ -189,7 +189,7 @@ public class PostFragment extends BaseFragment
         mNMBClient = NMBApplication.getNMBClient(getContext());
 
         if (!handleArgs(getArguments())) {
-            getFragmentHost().finishFragment();
+            getFragmentHost().finishFragment(this);
             return;
         }
 
@@ -215,7 +215,7 @@ public class PostFragment extends BaseFragment
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentHost().finishFragment();
+                getFragmentHost().finishFragment(PostFragment.this);
             }
         });
         mToolbar.inflateMenu(R.menu.activity_post);

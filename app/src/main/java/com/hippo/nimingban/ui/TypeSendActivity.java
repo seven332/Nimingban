@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.ui.fragment.BaseFragment;
 import com.hippo.nimingban.ui.fragment.FragmentHost;
 import com.hippo.nimingban.ui.fragment.TypeSendFragment;
 import com.hippo.nimingban.util.Settings;
@@ -73,8 +74,6 @@ public final class TypeSendActivity extends TranslucentActivity
 
         TypeSendFragment fragment = new TypeSendFragment();
         fragment.setArguments(createArgs());
-        fragment.setFragmentHost(this);
-        fragment.setCallback(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main, fragment, TAG_FRAGMENT_TYPE_SEND);
         transaction.commit();
@@ -89,14 +88,14 @@ public final class TypeSendActivity extends TranslucentActivity
     }
 
     @Override
-    public void finishFragment() {
+    public void finishFragment(BaseFragment fragment) {
         finish();
     }
 
     @Override
     public void onClickBack(TypeSendFragment fragment) {
         if (fragment.checkBeforeFinish()) {
-            fragment.getFragmentHost().finishFragment();
+            fragment.getFragmentHost().finishFragment(fragment);
         }
     }
 }

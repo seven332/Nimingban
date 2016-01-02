@@ -168,8 +168,6 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
 
-    private Callback mCallback;
-
     private boolean handleArgs(Bundle args) {
         if (args == null) {
             return false;
@@ -284,7 +282,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.onClickBack(TypeSendFragment.this);
+                ((Callback) getActivity()).onClickBack(TypeSendFragment.this);
             }
         });
 
@@ -413,9 +411,9 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
                 public void onClick(DialogInterface dialog, int which) {
                     if (which == DialogInterface.BUTTON_POSITIVE) {
                         DB.addDraft(mEditText.getText().toString());
-                        getFragmentHost().finishFragment();
+                        getFragmentHost().finishFragment(TypeSendFragment.this);
                     } else if (which == DialogInterface.BUTTON_NEUTRAL) {
-                        getFragmentHost().finishFragment();
+                        getFragmentHost().finishFragment(TypeSendFragment.this);
                     }
                 }
             };
@@ -488,10 +486,6 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    public void setCallback(Callback callback) {
-        mCallback = callback;
     }
 
     private void setForum(int position) {
@@ -572,7 +566,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         request.setCallback(new ActionListener(getContext(), mMethod, mId, struct.content, mSeletedImageBitmap));
         mNMBClient.execute(request);
 
-        getFragmentHost().finishFragment();
+        getFragmentHost().finishFragment(this);
     }
 
     private void doCreatePost() {
@@ -594,7 +588,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         request.setCallback(new ActionListener(getContext(), mMethod, mId, struct.content, mSeletedImageBitmap));
         mNMBClient.execute(request);
 
-        getFragmentHost().finishFragment();
+        getFragmentHost().finishFragment(this);
     }
 
     private void getCookies() {

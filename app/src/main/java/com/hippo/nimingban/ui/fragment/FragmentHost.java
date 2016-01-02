@@ -18,5 +18,5 @@ package com.hippo.nimingban.ui.fragment;
 
 public interface FragmentHost {
 
-    void finishFragment();
+    void finishFragment(BaseFragment fragment);
 }

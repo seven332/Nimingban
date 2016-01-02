@@ -20,13 +20,7 @@ import android.support.v4.app.Fragment;
 
 public class BaseFragment extends Fragment {
 
-    private FragmentHost mFragmentHost;
-
-    public void setFragmentHost(FragmentHost fragmentHost) {
-        mFragmentHost = fragmentHost;
-    }
-
     public FragmentHost getFragmentHost() {
-        return mFragmentHost;
+        return (FragmentHost) getActivity();
     }
 }

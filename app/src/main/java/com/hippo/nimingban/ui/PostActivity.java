@@ -28,6 +28,7 @@ import android.view.View;
 import com.hippo.nimingban.GuideHelper;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.ui.fragment.BaseFragment;
 import com.hippo.nimingban.ui.fragment.FragmentHost;
 import com.hippo.nimingban.ui.fragment.PostFragment;
 import com.hippo.nimingban.ui.fragment.TypeSendFragment;
@@ -37,7 +38,7 @@ import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 public final class PostActivity extends SwipeActivity
-        implements PostFragment.Callback, TypeSendFragment.Callback {
+        implements FragmentHost, PostFragment.Callback, TypeSendFragment.Callback {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
     public static final String ACTION_SITE_ID = "com.hippo.nimingban.ui.PostActivity.action.SITE_ID";
@@ -87,12 +88,6 @@ public final class PostActivity extends SwipeActivity
         PostFragment postFragment = new PostFragment();
         postFragment.setArguments(createArgs());
         postFragment.setCallback(this);
-        postFragment.setFragmentHost(new FragmentHost() {
-            @Override
-            public void finishFragment() {
-                finish();
-            }
-        });
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.main, postFragment, TAG_FRAGMENT_POST);
         transaction.commit();
@@ -108,7 +103,7 @@ public final class PostActivity extends SwipeActivity
             if (mPostLayout.getTypeSendState() == PostLayout.STATE_HIDE) {
                 mPostLayout.showTypeSend();
             } else if (typeSendFragment.checkBeforeFinish()) {
-                typeSendFragment.getFragmentHost().finishFragment();
+                typeSendFragment.getFragmentHost().finishFragment(typeSendFragment);
             }
         } else {
             super.onBackPressed();
@@ -150,24 +145,6 @@ public final class PostActivity extends SwipeActivity
 
             TypeSendFragment typeSendFragment = new TypeSendFragment();
             typeSendFragment.setArguments(args);
-            typeSendFragment.setCallback(this);
-            typeSendFragment.setFragmentHost(new FragmentHost() {
-                @Override
-                public void finishFragment() {
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);
-                    if (fragment != null) {
-                        FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
-                        transaction.remove(fragment);
-                        transaction.commit();
-
-                        setSwipeBackEnable(true);
-
-                        mPostLayout.onRemoveTypeSend();
-                    }
-                }
-            });
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
             transaction.add(R.id.main, typeSendFragment, TAG_FRAGMENT_TYPE_SEND);
@@ -180,9 +157,26 @@ public final class PostActivity extends SwipeActivity
     @Override
     public void onClickBack(TypeSendFragment fragment) {
         if (fragment.checkBeforeFinish()) {
-            fragment.getFragmentHost().finishFragment();
+            fragment.getFragmentHost().finishFragment(fragment);
         } else {
             mPostLayout.showTypeSend();
+        }
+    }
+
+    @Override
+    public void finishFragment(BaseFragment fragment) {
+        if (fragment instanceof PostFragment) {
+            finish();
+        } else if (fragment instanceof TypeSendFragment) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
+            transaction.remove(fragment);
+            transaction.commit();
+
+            setSwipeBackEnable(true);
+
+            mPostLayout.onRemoveTypeSend();
         }
     }
 }
