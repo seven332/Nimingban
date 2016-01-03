@@ -16,7 +16,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := libpng
+LOCAL_MODULE := png
 LOCAL_SRC_FILES := \
 png.c \
 pngerror.c \
@@ -29,6 +29,6 @@ pngrtran.c \
 pngrutil.c \
 pngset.c \
 pngtrans.c
-LOCAL_EXPORT_LDLIBS := -lz
+LOCAL_LDLIBS := -lz
 
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)

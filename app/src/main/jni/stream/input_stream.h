@@ -18,8 +18,11 @@
 // Created by Hippo on 10/19/2015.
 //
 
-#ifndef INPUT_STREAM_H
-#define INPUT_STREAM_H
+#ifndef STREAM_INPUT_STREAM_H
+#define STREAM_INPUT_STREAM_H
+
+#include "config.h"
+#ifdef STREAM_SUPPORT_INPUT
 
 #include <jni.h>
 #include <stddef.h>
@@ -28,11 +31,15 @@ typedef struct
 {
   jobject is;
   jmethodID readMID;
+  jmethodID closeMID;
   jbyteArray buffer;
 } InputStream;
 
-InputStream* createInputStream(JNIEnv* env, jobject is);
-void destroyInputStream(JNIEnv* env, InputStream* inputStream);
-size_t readInputStream(JNIEnv* env, InputStream* inputStream, unsigned char* buffer, int offset, size_t size);
+InputStream* create_input_stream(JNIEnv* env, jobject is);
+void destroy_input_stream(JNIEnv* env, InputStream** inputStream);
+size_t read_input_stream(JNIEnv* env, InputStream* inputStream, unsigned char* buffer, int offset, size_t size);
+void close_input_stream(JNIEnv* env, InputStream* inputStream);
 
-#endif //INPUT_STREAM_H
+#endif // STREAM_SUPPORT_INPUT
+
+#endif // STREAM_INPUT_STREAM_H

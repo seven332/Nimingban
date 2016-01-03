@@ -16,11 +16,11 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := libgif
+LOCAL_MODULE := gif
 LOCAL_SRC_FILES := \
 dgif_lib.c \
 egif_lib.c \
 gif_hash.c \
 gifalloc.c
 
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)

@@ -18,8 +18,8 @@
 // Created by Hippo on 11/14/2015.
 //
 
-#ifndef GIF_DOWNSIZE_H
-#define GIF_DOWNSIZE_H
+#ifndef GIF_DOWNSIZE_GIF_DOWNSIZE_H
+#define GIF_DOWNSIZE_GIF_DOWNSIZE_H
 
 #include <stdio.h>
 
@@ -29,4 +29,4 @@ bool compress(FILE* input_file, FILE* output_file, int sample_size);
 bool compress_custom(void* input_data, InputFunc input_func,
     void* output_data, OutputFunc output_func, int sample_size);
 
-#endif //GIF_DOWNSIZE_H
+#endif // GIF_DOWNSIZE_GIF_DOWNSIZE_H

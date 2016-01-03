@@ -35,7 +35,7 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.nimingban.widget.SimpleDrawableHelper;
+import com.hippo.nimingban.widget.ImageDrawableHelper;
 import com.hippo.okhttp.GoodHttpClient;
 import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.okhttp.ResponseUtils;
@@ -44,7 +44,6 @@ import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
-import com.squareup.leakcanary.LeakCanary;
 import com.squareup.okhttp.OkHttpClient;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -60,7 +59,7 @@ public final class NMBApplication extends Application
     private SimpleCookieStore mSimpleCookieStore;
     private NMBClient mNMBClient;
     private Conaco mConaco;
-    private SimpleDrawableHelper mDrawableHelper;
+    private ImageDrawableHelper mDrawableHelper;
     private OkHttpClient mOkHttpClient;
 
     private boolean mConnectedWifi;
@@ -89,8 +88,6 @@ public final class NMBApplication extends Application
         BitmapUtils.initialize(this);
         Html.initialize(this);
         ResImageGetter.initialize(this);
-
-        LeakCanary.install(this);
 
         // Remove temp file
         FileUtils.deleteContent(NMBAppConfig.getTempDir());
@@ -226,10 +223,10 @@ public final class NMBApplication extends Application
     }
 
     @NonNull
-    public static SimpleDrawableHelper getSimpleDrawableHelper(@NonNull Context context) {
+    public static ImageDrawableHelper getSimpleDrawableHelper(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mDrawableHelper == null) {
-            application.mDrawableHelper = new SimpleDrawableHelper(context);
+            application.mDrawableHelper = new ImageDrawableHelper();
         }
         return application.mDrawableHelper;
     }

@@ -36,4 +36,8 @@
 #define FILE_LINE MAKESTRING(STRINGIZE, __LINE__ )
 #define EMSG(msg) __FILE__ "(" FILE_LINE ") : "msg
 
+#define OUT_OF_MEMORY "Out of memory"
+
+#define WTF_OM LOGE(EMSG(OUT_OF_MEMORY))
+
 #endif //LOG_H

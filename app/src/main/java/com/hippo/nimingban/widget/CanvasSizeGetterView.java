@@ -42,9 +42,5 @@ public class CanvasSizeGetterView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (SimpleDrawableHelper.sMaxTextureSize == -1) {
-            SimpleDrawableHelper.sMaxTextureSize =
-                    Math.min(canvas.getMaximumBitmapWidth(), canvas.getMaximumBitmapHeight());
-        }
     }
 }

@@ -18,20 +18,25 @@
 // Created by Hippo on 10/19/2015.
 //
 
+#include "config.h"
+#ifdef STREAM_SUPPORT_OUTPUT
+
 #include <stdlib.h>
 
-#include "output_stream.h"
 #include "../log.h"
-#include "utils.h"
+#include "../utils.h"
+#include "output_stream.h"
+#include "stream_utils.h"
 
-OutputStream* createOutputStream(JNIEnv* env, jobject os)
+OutputStream* create_output_stream(JNIEnv* env, jobject os)
 {
   jclass streamCls = (*env)->GetObjectClass(env, os);
   jmethodID writeMID = (*env)->GetMethodID(env, streamCls, "write", "([BII)V");
+  jmethodID closeMID = (*env)->GetMethodID(env, streamCls, "close", "()V");
   jbyteArray buffer;
 
-  if (writeMID == NULL) {
-    LOGE(EMSG("Can't get write method id"));
+  if (writeMID == NULL || closeMID == NULL) {
+    LOGE(EMSG("Can't get write or close method id"));
     return NULL;
   }
 
@@ -50,21 +55,23 @@ OutputStream* createOutputStream(JNIEnv* env, jobject os)
 
   outputStream->os = (*env)->NewGlobalRef(env, os);
   outputStream->writeMID = writeMID;
+  outputStream->closeMID = closeMID;
   outputStream->buffer = buffer;
 
   return outputStream;
 }
 
-void destroyOutputStream(JNIEnv* env, OutputStream* outputStream)
+void destroy_output_stream(JNIEnv* env, OutputStream** outputStream)
 {
-  if (outputStream != NULL) {
-    (*env)->DeleteGlobalRef(env, outputStream->os);
-    (*env)->DeleteGlobalRef(env, outputStream->buffer);
-    free(outputStream);
+  if (outputStream != NULL && *outputStream != NULL) {
+    (*env)->DeleteGlobalRef(env, (*outputStream)->os);
+    (*env)->DeleteGlobalRef(env, (*outputStream)->buffer);
+    free(*outputStream);
+    *outputStream = NULL;
   }
 }
 
-size_t writeOutputStream(JNIEnv* env, OutputStream* outputStream, const unsigned char* buffer, int offset, size_t size)
+size_t write_output_stream(JNIEnv* env, OutputStream* outputStream, const unsigned char* buffer, int offset, size_t size)
 {
   size_t remainSize = size;
   size_t readSize = 0;
@@ -94,3 +101,14 @@ size_t writeOutputStream(JNIEnv* env, OutputStream* outputStream, const unsigned
 
   return readSize;
 }
+
+void close_output_stream(JNIEnv* env, OutputStream* outputStream)
+{
+  (*env)->CallVoidMethod(env, outputStream->os, outputStream->closeMID);
+  if ((*env)->ExceptionCheck(env)) {
+    LOGE(EMSG("Catch exception"));
+    (*env)->ExceptionClear(env);
+  }
+}
+
+#endif // STREAM_SUPPORT_OUTPUT

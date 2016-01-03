@@ -179,6 +179,7 @@ int EGifPutCodeNext(GifFileType *GifFile,
 GifFileType *DGifOpenFileName(const char *GifFileName, int *Error);
 GifFileType *DGifOpenFileHandle(int GifFileHandle, int *Error);
 int DGifSlurp(GifFileType * GifFile);
+int DGifGlance(GifFileType * GifFile);
 GifFileType *DGifOpen(void *userPtr, InputFunc readFunc, int *Error);    /* new one (TVT) */
     int DGifCloseFile(GifFileType * GifFile, int *ErrorCode);
 

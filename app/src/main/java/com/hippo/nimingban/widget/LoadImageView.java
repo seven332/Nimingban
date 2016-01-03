@@ -31,13 +31,10 @@ import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
-import com.hippo.drawable.APngDrawable;
-import com.hippo.drawable.TiledBitmapDrawable;
+import com.hippo.drawable.ImageDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.FixedAspectImageView;
-
-import pl.droidsonroids.gif.GifDrawable;
 
 public class LoadImageView extends FixedAspectImageView implements Unikery,
         View.OnClickListener, View.OnLongClickListener {
@@ -165,7 +162,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         mKey = null;
         mUrl = null;
         mContainer = null;
-        setImageDrawableSafely(null);
+        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -191,7 +188,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     @Override
     public void onMiss(Conaco.Source source) {
         if (source == Conaco.Source.MEMORY) {
-            setImageDrawableSafely(null);
+            setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
             // Release old holder
             if (mHolder != null) {
@@ -201,7 +198,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         }
     }
 
-    private void setImageDrawableSafely(Drawable drawable) {
+    private void setImageDrawableSafely(Drawable drawable, boolean inMemoryCache) {
         Drawable oldDrawable = getDrawable();
         if (oldDrawable instanceof TransitionDrawable) {
             TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
@@ -211,16 +208,11 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
             }
         }
 
-        if (oldDrawable instanceof GifDrawable) {
-            ((GifDrawable) oldDrawable).recycle();
-        }
-
-        if (oldDrawable instanceof APngDrawable) {
-            ((APngDrawable) oldDrawable).recycle();
-        }
-
-        if (oldDrawable instanceof TiledBitmapDrawable) {
-            ((TiledBitmapDrawable) oldDrawable).recycle(null);
+        if (oldDrawable instanceof ImageDrawable) {
+            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
+            if (imageDrawable.isLarge() || !inMemoryCache) {
+                imageDrawable.recycle();
+            }
         }
 
         setImageDrawable(drawable);
@@ -246,19 +238,15 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         holder.obtain();
 
         Drawable drawable = holder.getDrawable();
-        if (drawable instanceof GifDrawable) {
-            ((GifDrawable) drawable).start();
-        }
-
-        if (drawable instanceof APngDrawable) {
-            ((APngDrawable) drawable).start();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).start();
         }
 
         switch (source) {
             default:
             case MEMORY:
             case DISK:
-                setImageDrawableSafely(drawable);
+                setImageDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
                 break;
 
             case NETWORK:
@@ -266,7 +254,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
                 layers[0] = new ColorDrawable(Color.TRANSPARENT);
                 layers[1] = drawable;
                 TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                setImageDrawableSafely(transitionDrawable);
+                setImageDrawableSafely(transitionDrawable, olderHolder != null && olderHolder.isInMemoryCache());
                 transitionDrawable.startTransition(300);
                 break;
         }
@@ -280,7 +268,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setImageDrawableSafely(drawable);
+        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -292,7 +280,8 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     @Override
     public void onFailure() {
         mFailed = true;
-        setImageDrawableSafely(getContext().getResources().getDrawable(R.drawable.image_failed));
+        setImageDrawableSafely(getContext().getResources().getDrawable(R.drawable.image_failed),
+                mHolder != null && mHolder.isInMemoryCache());
         if (mRetryType == RetryType.CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RetryType.LONG_CLICK) {
@@ -307,8 +296,8 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         // Release old holder
         if (mHolder != null) {
             mHolder.release();
+            mHolder = null;
         }
-        mHolder = null;
     }
 
     @Override

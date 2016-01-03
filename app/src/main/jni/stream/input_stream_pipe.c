@@ -18,12 +18,15 @@
 // Created by Hippo on 10/19/2015.
 //
 
+#include "config.h"
+#if defined(STREAM_SUPPORT_INPUT) && defined(STREAM_SUPPORT_INPUT_PIPE)
+
 #include <stdlib.h>
 
 #include "input_stream_pipe.h"
 #include "../log.h"
 
-InputStreamPipe* createInputStreamPipe(JNIEnv* env, jobject isPipe)
+InputStreamPipe* create_input_stream_pipe(JNIEnv* env, jobject isPipe)
 {
   jclass streamPipeCls = (*env)->GetObjectClass(env, isPipe);
   jmethodID obtainMID = (*env)->GetMethodID(env, streamPipeCls, "obtain", "()V");
@@ -51,23 +54,26 @@ InputStreamPipe* createInputStreamPipe(JNIEnv* env, jobject isPipe)
   return inputStreamPipe;
 }
 
-void destroyInputStreamPipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
+void destroy_input_stream_pipe(JNIEnv* env, InputStreamPipe** inputStreamPipe)
 {
-  (*env)->DeleteGlobalRef(env, inputStreamPipe->isPipe);
-  free(inputStreamPipe);
+  if (inputStreamPipe != NULL && *inputStreamPipe != NULL) {
+    (*env)->DeleteGlobalRef(env, (*inputStreamPipe)->isPipe);
+    free(*inputStreamPipe);
+    *inputStreamPipe = NULL;
+  }
 }
 
-void obtainInputStreamPipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
+void obtain_input_stream_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
 {
   (*env)->CallVoidMethod(env, inputStreamPipe->isPipe, inputStreamPipe->obtainMID);
 }
 
-void releaseInputStreamPipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
+void release_input_stream_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
 {
   (*env)->CallVoidMethod(env, inputStreamPipe->isPipe, inputStreamPipe->releaseMID);
 }
 
-InputStream* openInputStream(JNIEnv* env, InputStreamPipe* inputStreamPipe)
+InputStream* open_input_stream_from_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
 {
   jobject is = (*env)->CallObjectMethod(env, inputStreamPipe->isPipe, inputStreamPipe->openMID);
   if ((*env)->ExceptionCheck(env)) {
@@ -76,10 +82,12 @@ InputStream* openInputStream(JNIEnv* env, InputStreamPipe* inputStreamPipe)
     return NULL;
   }
 
-  return createInputStream(env, is);
+  return create_input_stream(env, is);
 }
 
-void closeInputStream(JNIEnv* env, InputStreamPipe* inputStreamPipe)
+void close_input_stream_from_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe)
 {
   (*env)->CallVoidMethod(env, inputStreamPipe->isPipe, inputStreamPipe->closeMID);
 }
+
+#endif // STREAM_SUPPORT_INPUT && STREAM_SUPPORT_INPUT_PIPE

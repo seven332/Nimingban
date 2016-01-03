@@ -30,8 +30,7 @@ import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.Unikery;
-import com.hippo.drawable.APngDrawable;
-import com.hippo.drawable.TiledBitmapDrawable;
+import com.hippo.drawable.ImageDrawable;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.vector.VectorDrawable;
@@ -39,7 +38,6 @@ import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.MathUtils;
 
-import pl.droidsonroids.gif.GifDrawable;
 import uk.co.senab.photoview.PhotoView;
 
 public final class GalleryPage extends FrameLayout implements Unikery, View.OnClickListener {
@@ -123,7 +121,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         updateMaximumScale();
     }
 
-    private void setImageDrawableSafely(Drawable drawable) {
+    private void setImageDrawableSafely(Drawable drawable, boolean inMemoryCache) {
         Drawable oldDrawable = mPhotoView.getDrawable();
         if (oldDrawable instanceof TransitionDrawable) {
             TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
@@ -133,16 +131,11 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
             }
         }
 
-        if (oldDrawable instanceof GifDrawable) {
-            ((GifDrawable) oldDrawable).recycle();
-        }
-
-        if (oldDrawable instanceof APngDrawable) {
-            ((APngDrawable) oldDrawable).recycle();
-        }
-
-        if (oldDrawable instanceof TiledBitmapDrawable) {
-            ((TiledBitmapDrawable) oldDrawable).recycle(null);
+        if (oldDrawable instanceof ImageDrawable) {
+            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
+            if (imageDrawable.isLarge() || !inMemoryCache) {
+                imageDrawable.recycle();
+            }
         }
 
         mPhotoView.setImageDrawable(drawable);
@@ -186,7 +179,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setIndeterminate(true);
         mFailed.setVisibility(GONE);
         mPhotoView.setVisibility(GONE);
-        setImageDrawableSafely(null);
+        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -209,7 +202,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mKey = null;
         mUrl = null;
         mContainer = null;
-        setImageDrawableSafely(null);
+        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -247,14 +240,11 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mPhotoView.setVisibility(VISIBLE);
 
         Drawable drawable = holder.getDrawable();
-        if (drawable instanceof GifDrawable) {
-            ((GifDrawable) drawable).start();
-        }
-        if (drawable instanceof APngDrawable) {
-            ((APngDrawable) drawable).start();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).start();
         }
 
-        setImageDrawableSafely(drawable);
+        setImageDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
 
         if (olderHolder != null) {
             olderHolder.release();
@@ -273,7 +263,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(VISIBLE);
         mPhotoView.setVisibility(GONE);
-        setImageDrawableSafely(null);
+        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -298,15 +288,17 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mFailed.setVisibility(GONE);
         mPhotoView.setVisibility(VISIBLE);
 
-        if (drawable instanceof GifDrawable) {
-            ((GifDrawable) drawable).start();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).start();
         }
 
-        if (drawable instanceof APngDrawable) {
-            ((APngDrawable) drawable).start();
-        }
+        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
 
-        setImageDrawableSafely(drawable);
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+            mHolder = null;
+        }
     }
 
     public void showFailedText() {
@@ -314,7 +306,13 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(VISIBLE);
         mPhotoView.setVisibility(GONE);
-        setImageDrawableSafely(null);
+        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
+
+        // Release old holder
+        if (mHolder != null) {
+            mHolder.release();
+            mHolder = null;
+        }
     }
 
     public boolean isLoaded() {

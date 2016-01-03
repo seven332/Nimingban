@@ -37,8 +37,7 @@ import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.DrawableHolder;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
-import com.hippo.drawable.APngDrawable;
-import com.hippo.drawable.TiledBitmapDrawable;
+import com.hippo.drawable.ImageDrawable;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.NMBAppConfig;
@@ -55,8 +54,6 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import pl.droidsonroids.gif.GifDrawable;
 
 public final class HeaderImageView extends FixedAspectImageView
         implements Unikery, View.OnClickListener, View.OnLongClickListener {
@@ -141,7 +138,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     public void unload() {
         mConaco.cancel(this);
-        setImageDrawableSafely(null);
+        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -172,7 +169,7 @@ public final class HeaderImageView extends FixedAspectImageView
     public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
     }
 
-    private void setImageDrawableSafely(Drawable drawable) {
+    private void setImageDrawableSafely(Drawable drawable, boolean inMemoryCache) {
         Drawable oldDrawable = getDrawable();
         if (oldDrawable instanceof TransitionDrawable) {
             TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
@@ -182,16 +179,11 @@ public final class HeaderImageView extends FixedAspectImageView
             }
         }
 
-        if (oldDrawable instanceof GifDrawable) {
-            ((GifDrawable) oldDrawable).recycle();
-        }
-
-        if (oldDrawable instanceof APngDrawable) {
-            ((APngDrawable) oldDrawable).recycle();
-        }
-
-        if (oldDrawable instanceof TiledBitmapDrawable) {
-            ((TiledBitmapDrawable) oldDrawable).recycle(null);
+        if (oldDrawable instanceof ImageDrawable) {
+            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
+            if (imageDrawable.isLarge() || !inMemoryCache) {
+                imageDrawable.recycle();
+            }
         }
 
         setImageDrawable(drawable);
@@ -213,15 +205,11 @@ public final class HeaderImageView extends FixedAspectImageView
         holder.obtain();
 
         Drawable drawable = holder.getDrawable();
-        if (drawable instanceof GifDrawable) {
-            ((GifDrawable) drawable).start();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).start();
         }
 
-        if (drawable instanceof APngDrawable) {
-            ((APngDrawable) drawable).start();
-        }
-
-        setImageDrawableSafely(drawable);
+        setImageDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
 
         if (olderHolder != null) {
             olderHolder.release();
@@ -232,7 +220,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setImageDrawableSafely(drawable);
+        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
 
         // Release old holder
         if (mHolder != null) {
@@ -276,18 +264,15 @@ public final class HeaderImageView extends FixedAspectImageView
         mImageFile = file;
         mContainer = null;
 
-        if (drawable instanceof GifDrawable) {
-            ((GifDrawable) drawable).start();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).start();
         }
 
-        if (drawable instanceof APngDrawable) {
-            ((APngDrawable) drawable).start();
-        }
-
-        setImageDrawableSafely(drawable);
+        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
 
         if (mHolder != null) {
             mHolder.release();
+            mHolder = null;
         }
     }
 

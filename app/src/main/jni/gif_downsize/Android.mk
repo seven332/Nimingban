@@ -22,7 +22,6 @@ LOCAL_SRC_FILES := \
 gif_downsize.c \
 java_wrapper.c
 LOCAL_LDLIBS := -llog
-LOCAL_STATIC_LIBRARIES := gif
-LOCAL_SHARED_LIBRARIES := stream
+LOCAL_SHARED_LIBRARIES := stream gif
 
 include $(BUILD_SHARED_LIBRARY)

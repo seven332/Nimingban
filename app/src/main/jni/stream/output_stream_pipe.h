@@ -18,8 +18,11 @@
 // Created by Hippo on 10/19/2015.
 //
 
-#ifndef OUTPUT_STREAM_PIPE
-#define OUTPUT_STREAM_PIPE
+#ifndef STREAM_OUTPUT_STREAM_PIPE_H
+#define STREAM_OUTPUT_STREAM_PIPE_H
+
+#include "config.h"
+#if defined(STREAM_SUPPORT_OUTPUT) && defined(STREAM_SUPPORT_OUTPUT_PIPE)
 
 #include <jni.h>
 
@@ -34,11 +37,13 @@ typedef struct
   jmethodID closeMID;
 } OutputStreamPipe;
 
-OutputStreamPipe* createOutputStreamPipe(JNIEnv* env, jobject osPipe);
-void destroyOutputStreamPipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
-void obtainOutputStreamPipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
-void releaseOutputStreamPipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
-OutputStream* openOutputStream(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
-void closeOutputStream(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
+OutputStreamPipe* create_output_stream_pipe(JNIEnv* env, jobject osPipe);
+void destroy_output_stream_pipe(JNIEnv* env, OutputStreamPipe** outputStreamPipe);
+void obtain_output_stream_pipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
+void release_output_stream_pipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
+OutputStream* open_output_stream_from_pipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
+void close_output_stream_from_pipe(JNIEnv* env, OutputStreamPipe* outputStreamPipe);
 
-#endif //OUTPUT_STREAM_PIPE
+#endif // STREAM_SUPPORT_OUTPUT && STREAM_SUPPORT_OUTPUT_PIPE
+
+#endif // STREAM_OUTPUT_STREAM_PIPE_H

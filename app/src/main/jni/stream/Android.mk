@@ -21,7 +21,8 @@ LOCAL_SRC_FILES := \
 input_stream.c \
 input_stream_pipe.c \
 output_stream.c \
-output_stream_pipe.c
+output_stream_pipe.c \
+patch_head_input_stream.c
 LOCAL_LDLIBS := -llog
 
 include $(BUILD_SHARED_LIBRARY)

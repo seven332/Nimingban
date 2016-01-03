@@ -15,6 +15,7 @@ public class GifDownloadSize {
 
     static {
         System.loadLibrary("stream");
+        System.loadLibrary("gif");
         System.loadLibrary("gif_downsize");
     }
 

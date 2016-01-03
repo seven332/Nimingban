@@ -18,20 +18,25 @@
 // Created by Hippo on 10/19/2015.
 //
 
+#include "config.h"
+#ifdef STREAM_SUPPORT_INPUT
+
 #include <stdlib.h>
 
-#include "input_stream.h"
 #include "../log.h"
-#include "utils.h"
+#include "../utils.h"
+#include "input_stream.h"
+#include "stream_utils.h"
 
-InputStream* createInputStream(JNIEnv* env, jobject is)
+InputStream* create_input_stream(JNIEnv* env, jobject is)
 {
   jclass streamCls = (*env)->GetObjectClass(env, is);
   jmethodID readMID = (*env)->GetMethodID(env, streamCls, "read", "([BII)I");
+  jmethodID closeMID = (*env)->GetMethodID(env, streamCls, "close", "()V");
   jbyteArray buffer;
 
-  if (readMID == NULL) {
-    LOGE(EMSG("Can't get read method id"));
+  if (readMID == NULL || closeMID == NULL) {
+    LOGE(EMSG("Can't get read or close method id"));
     return NULL;
   }
 
@@ -50,21 +55,23 @@ InputStream* createInputStream(JNIEnv* env, jobject is)
 
   inputStream->is = (*env)->NewGlobalRef(env, is);
   inputStream->readMID = readMID;
+  inputStream->closeMID = closeMID;
   inputStream->buffer = buffer;
 
   return inputStream;
 }
 
-void destroyInputStream(JNIEnv* env, InputStream* inputStream)
+void destroy_input_stream(JNIEnv* env, InputStream** inputStream)
 {
-  if (inputStream != NULL) {
-    (*env)->DeleteGlobalRef(env, inputStream->is);
-    (*env)->DeleteGlobalRef(env, inputStream->buffer);
-    free(inputStream);
+  if (inputStream != NULL && *inputStream != NULL) {
+    (*env)->DeleteGlobalRef(env, (*inputStream)->is);
+    (*env)->DeleteGlobalRef(env, (*inputStream)->buffer);
+    free(*inputStream);
+    *inputStream = NULL;
   }
 }
 
-size_t readInputStream(JNIEnv* env, InputStream* inputStream, unsigned char* buffer, int offset, size_t size)
+size_t read_input_stream(JNIEnv* env, InputStream* inputStream, unsigned char* buffer, int offset, size_t size)
 {
   size_t remainSize = size;
   size_t readSize = 0;
@@ -95,3 +102,14 @@ size_t readInputStream(JNIEnv* env, InputStream* inputStream, unsigned char* buf
 
   return readSize;
 }
+
+void close_input_stream(JNIEnv* env, InputStream* inputStream)
+{
+  (*env)->CallVoidMethod(env, inputStream->is, inputStream->closeMID);
+  if ((*env)->ExceptionCheck(env)) {
+    LOGE(EMSG("Catch exception"));
+    (*env)->ExceptionClear(env);
+  }
+}
+
+#endif // STREAM_SUPPORT_INPUT

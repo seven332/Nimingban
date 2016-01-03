@@ -47,7 +47,7 @@ static int streamInputFunc(GifFileType* gif, GifByteType* bytes, int size) {
     return 0;
   }
 
-  return readInputStream(env, stream, bytes, 0, (size_t) size);
+  return read_input_stream(env, stream, bytes, 0, (size_t) size);
 }
 
 static int streamOutputFunc(GifFileType* gif, const GifByteType* bytes, int size)
@@ -60,7 +60,7 @@ static int streamOutputFunc(GifFileType* gif, const GifByteType* bytes, int size
     return 0;
   }
 
-  return writeOutputStream(env, stream, bytes, 0, (size_t) size);
+  return write_output_stream(env, stream, bytes, 0, (size_t) size);
 }
 
 JNIEXPORT jboolean JNICALL
@@ -74,7 +74,7 @@ Java_com_hippo_gif_GifDownloadSize_nativeCompress
   jboolean result = JNI_FALSE;
 
   if (in != NULL && out != NULL) {
-    result = compress(in, out, samlpe_size);
+    result = (jboolean) compress(in, out, samlpe_size);
   }
 
   if (in != NULL) {
@@ -95,11 +95,11 @@ JNIEXPORT jboolean JNICALL
 Java_com_hippo_gif_GifDownloadSize_nativeCompressCustom
     (JNIEnv* env, jclass clazz, jobject is, jobject os, jint samlpe_size)
 {
-  InputStream* inputStream = createInputStream(env, is);
-  OutputStream* outputStream = createOutputStream(env, os);
+  InputStream* inputStream = create_input_stream(env, is);
+  OutputStream* outputStream = create_output_stream(env, os);
   if (inputStream == NULL || outputStream == NULL) {
-    destroyInputStream(env, inputStream);
-    destroyOutputStream(env, outputStream);
+    destroy_input_stream(env, &inputStream);
+    destroy_output_stream(env, &outputStream);
   }
 
   return (jboolean) compress_custom(inputStream, &streamInputFunc, outputStream, &streamOutputFunc, samlpe_size);
@@ -115,4 +115,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
   return JNI_VERSION_1_6;
 }
 
-void JNI_OnUnload(JavaVM *vm, void *reserved) {}
+void JNI_OnUnload(JavaVM *vm, void *reserved)
+{
+}

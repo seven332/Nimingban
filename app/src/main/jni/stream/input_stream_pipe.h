@@ -18,8 +18,11 @@
 // Created by Hippo on 10/19/2015.
 //
 
-#ifndef INPUT_STREAM_PIPE
-#define INPUT_STREAM_PIPE
+#ifndef STREAM_INPUT_STREAM_PIPE_H
+#define STREAM_INPUT_STREAM_PIPE_H
+
+#include "config.h"
+#if defined(STREAM_SUPPORT_INPUT) && defined(STREAM_SUPPORT_INPUT_PIPE)
 
 #include <jni.h>
 
@@ -34,11 +37,13 @@ typedef struct
   jmethodID closeMID;
 } InputStreamPipe;
 
-InputStreamPipe* createInputStreamPipe(JNIEnv* env, jobject isPipe);
-void destroyInputStreamPipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
-void obtainInputStreamPipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
-void releaseInputStreamPipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
-InputStream* openInputStream(JNIEnv* env, InputStreamPipe* inputStreamPipe);
-void closeInputStream(JNIEnv* env, InputStreamPipe* inputStreamPipe);
+InputStreamPipe* create_input_stream_pipe(JNIEnv* env, jobject isPipe);
+void destroy_input_stream_pipe(JNIEnv* env, InputStreamPipe** inputStreamPipe);
+void obtain_input_stream_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
+void release_input_stream_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
+InputStream* open_input_stream_from_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
+void close_input_stream_from_pipe(JNIEnv* env, InputStreamPipe* inputStreamPipe);
 
-#endif //INPUT_STREAM_PIPE
+#endif // STREAM_SUPPORT_INPUT && STREAM_SUPPORT_INPUT_PIPE
+
+#endif // STREAM_INPUT_STREAM_PIPE_H

@@ -18,8 +18,11 @@
 // Created by Hippo on 10/19/2015.
 //
 
-#ifndef OUTPUT_STREAM_H
-#define OUTPUT_STREAM_H
+#ifndef STREAM_OUTPUT_STREAM_H
+#define STREAM_OUTPUT_STREAM_H
+
+#include "config.h"
+#ifdef STREAM_SUPPORT_OUTPUT
 
 #include <jni.h>
 #include <stddef.h>
@@ -28,11 +31,15 @@ typedef struct
 {
   jobject os;
   jmethodID writeMID;
+  jmethodID closeMID;
   jbyteArray buffer;
 } OutputStream;
 
-OutputStream* createOutputStream(JNIEnv* env, jobject os);
-void destroyOutputStream(JNIEnv* env, OutputStream* outputStream);
-size_t writeOutputStream(JNIEnv* env, OutputStream* outputStream, const unsigned char* buffer, int offset, size_t size);
+OutputStream* create_output_stream(JNIEnv* env, jobject os);
+void destroy_output_stream(JNIEnv* env, OutputStream** outputStream);
+size_t write_output_stream(JNIEnv* env, OutputStream* outputStream, const unsigned char* buffer, int offset, size_t size);
+void close_output_stream(JNIEnv* env, OutputStream* outputStream);
 
-#endif //OUTPUT_STREAM_H
+#endif // STREAM_SUPPORT_OUTPUT
+
+#endif // STREAM_OUTPUT_STREAM_H
