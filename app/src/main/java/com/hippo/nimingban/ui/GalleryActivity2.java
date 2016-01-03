@@ -38,6 +38,8 @@ import android.widget.Toast;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotify;
+import com.hippo.drawable.ImageDrawable;
+import com.hippo.drawable.ImageWrapper;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -292,9 +294,12 @@ public class GalleryActivity2 extends SwipeActivity {
 
         @Override
         public void bindPagerHolder(GalleryHolder holder, int position) {
-            Drawable drawable = NMBApplication.getSimpleDrawableHelper(GalleryActivity2.this)
+            Object object = NMBApplication.getImageWrapperHelper(GalleryActivity2.this)
                     .decode(new UniFileInputStreamPipe(mImageFile));
-            if (drawable != null) {
+            if (object != null) {
+                ImageWrapper imageWrapper = (ImageWrapper) object;
+                imageWrapper.start();
+                Drawable drawable = new ImageDrawable(imageWrapper);
                 holder.galleryPage.showDrawable(drawable);
             } else {
                 holder.galleryPage.showFailedText();

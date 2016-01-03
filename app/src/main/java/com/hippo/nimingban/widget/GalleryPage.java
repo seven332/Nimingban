@@ -18,7 +18,6 @@ package com.hippo.nimingban.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -28,9 +27,10 @@ import android.widget.FrameLayout;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.DrawableHolder;
+import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.ImageDrawable;
+import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.vector.VectorDrawable;
@@ -54,7 +54,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     private String mUrl;
     private DataContainer mContainer;
 
-    private DrawableHolder mHolder;
+    private ObjectHolder mHolder;
 
     public GalleryPage(Context context) {
         super(context);
@@ -121,25 +121,34 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         updateMaximumScale();
     }
 
-    private void setImageDrawableSafely(Drawable drawable, boolean inMemoryCache) {
-        Drawable oldDrawable = mPhotoView.getDrawable();
-        if (oldDrawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                oldDrawable = tDrawable.getDrawable(number - 1);
-            }
+    private void removeDrawableAndHolder() {
+        // Remove drawable
+        Drawable drawable = mPhotoView.getDrawable();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).recycle();
         }
+        mPhotoView.setImageDrawable(null);
 
-        if (oldDrawable instanceof ImageDrawable) {
-            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
-            if (imageDrawable.isLarge() || !inMemoryCache) {
-                imageDrawable.recycle();
+        // Remove holder
+        if (mHolder != null) {
+            mHolder.release();
+
+            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            if (mHolder.isFree()) {
+                // ImageWrapper is free, stop animate
+                imageWrapper.stop();
+                if (!mHolder.isInMemoryCache()) {
+                    // ImageWrapper is not needed any more, recycle it
+                    imageWrapper.recycle();
+                }
             }
-        }
 
+            mHolder = null;
+        }
+    }
+
+    private void setImageDrawable(Drawable drawable) {
         mPhotoView.setImageDrawable(drawable);
-
         updateMaximumScale();
     }
 
@@ -179,13 +188,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setIndeterminate(true);
         mFailed.setVisibility(GONE);
         mPhotoView.setVisibility(GONE);
-        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        removeDrawableAndHolder();
 
         ConacoTask.Builder builder = new ConacoTask.Builder()
                 .setUnikery(this)
@@ -202,13 +205,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mKey = null;
         mUrl = null;
         mContainer = null;
-        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        removeDrawableAndHolder();
     }
 
     @Override
@@ -224,31 +221,27 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     }
 
     @Override
-    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
         // Release
         mKey = null;
         mUrl = null;
         mContainer = null;
 
-        DrawableHolder olderHolder = mHolder;
-        mHolder = holder;
         holder.obtain();
+
+        removeDrawableAndHolder();
+
+        mHolder = holder;
+        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        Drawable drawable = new ImageDrawable(imageWrapper);
+        imageWrapper.start();
+
+        setImageDrawable(drawable);
 
         mProgressView.setVisibility(GONE);
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(GONE);
         mPhotoView.setVisibility(VISIBLE);
-
-        Drawable drawable = holder.getDrawable();
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
-
-        setImageDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
-
-        if (olderHolder != null) {
-            olderHolder.release();
-        }
 
         return true;
     }
@@ -263,13 +256,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(VISIBLE);
         mPhotoView.setVisibility(GONE);
-        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        removeDrawableAndHolder();
 
         addRetry();
     }
@@ -288,17 +275,9 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mFailed.setVisibility(GONE);
         mPhotoView.setVisibility(VISIBLE);
 
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
+        removeDrawableAndHolder();
 
-        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        setImageDrawable(drawable);
     }
 
     public void showFailedText() {
@@ -306,13 +285,8 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mProgressView.setIndeterminate(false);
         mFailed.setVisibility(VISIBLE);
         mPhotoView.setVisibility(GONE);
-        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        removeDrawableAndHolder();
     }
 
     public boolean isLoaded() {

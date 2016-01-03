@@ -29,9 +29,10 @@ import android.view.View;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.DrawableHolder;
+import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.ImageDrawable;
+import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.FixedAspectImageView;
@@ -47,7 +48,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     private String mUrl;
     private DataContainer mContainer;
 
-    private DrawableHolder mHolder;
+    private ObjectHolder mHolder;
 
     private boolean mFailed;
 
@@ -60,9 +61,9 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     };
 
     public enum RetryType {
-        NONE      (0),
-        CLICK      (1),
-        LONG_CLICK   (2);
+        NONE (0),
+        CLICK (1),
+        LONG_CLICK (2);
 
         RetryType(int ni) {
             nativeInt = ni;
@@ -162,13 +163,8 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         mKey = null;
         mUrl = null;
         mContainer = null;
-        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
 
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        removeDrawableAndHolder();
     }
 
     public void cancel() {
@@ -185,37 +181,44 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         return mTaskId;
     }
 
-    @Override
-    public void onMiss(Conaco.Source source) {
-        if (source == Conaco.Source.MEMORY) {
-            setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
-
-            // Release old holder
-            if (mHolder != null) {
-                mHolder.release();
-                mHolder = null;
+    private void removeDrawableAndHolder() {
+        // Remove drawable
+        Drawable drawable = getDrawable();
+        if (drawable instanceof TransitionDrawable) {
+            TransitionDrawable tDrawable = (TransitionDrawable) drawable;
+            int number = tDrawable.getNumberOfLayers();
+            if (number > 0) {
+                drawable = tDrawable.getDrawable(number - 1);
             }
+        }
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).recycle();
+        }
+        setImageDrawable(null);
+
+        // Remove holder
+        if (mHolder != null) {
+            mHolder.release();
+
+            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            if (mHolder.isFree()) {
+                // ImageWrapper is free, stop animate
+                imageWrapper.stop();
+                if (!mHolder.isInMemoryCache()) {
+                    // ImageWrapper is not needed any more, recycle it
+                    imageWrapper.recycle();
+                }
+            }
+
+            mHolder = null;
         }
     }
 
-    private void setImageDrawableSafely(Drawable drawable, boolean inMemoryCache) {
-        Drawable oldDrawable = getDrawable();
-        if (oldDrawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                oldDrawable = tDrawable.getDrawable(number - 1);
-            }
+    @Override
+    public void onMiss(Conaco.Source source) {
+        if (source == Conaco.Source.MEMORY) {
+            removeDrawableAndHolder();
         }
-
-        if (oldDrawable instanceof ImageDrawable) {
-            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
-            if (imageDrawable.isLarge() || !inMemoryCache) {
-                imageDrawable.recycle();
-            }
-        }
-
-        setImageDrawable(drawable);
     }
 
     @Override
@@ -227,26 +230,26 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     }
 
     @Override
-    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
         // Release
         mKey = null;
         mUrl = null;
         mContainer = null;
 
-        DrawableHolder olderHolder = mHolder;
-        mHolder = holder;
         holder.obtain();
 
-        Drawable drawable = holder.getDrawable();
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
+        removeDrawableAndHolder();
+
+        mHolder = holder;
+        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        Drawable drawable = new ImageDrawable(imageWrapper);
+        imageWrapper.start();
 
         switch (source) {
             default:
             case MEMORY:
             case DISK:
-                setImageDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
+                setImageDrawable(drawable);
                 break;
 
             case NETWORK:
@@ -254,13 +257,9 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
                 layers[0] = new ColorDrawable(Color.TRANSPARENT);
                 layers[1] = drawable;
                 TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                setImageDrawableSafely(transitionDrawable, olderHolder != null && olderHolder.isInMemoryCache());
+                setImageDrawable(transitionDrawable);
                 transitionDrawable.startTransition(300);
                 break;
-        }
-
-        if (olderHolder != null) {
-            olderHolder.release();
         }
 
         return true;
@@ -268,20 +267,16 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
+        removeDrawableAndHolder();
 
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        setImageDrawable(drawable);
     }
 
     @Override
     public void onFailure() {
         mFailed = true;
-        setImageDrawableSafely(getContext().getResources().getDrawable(R.drawable.image_failed),
-                mHolder != null && mHolder.isInMemoryCache());
+        removeDrawableAndHolder();
+        setImageDrawable(getContext().getResources().getDrawable(R.drawable.image_failed));
         if (mRetryType == RetryType.CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RetryType.LONG_CLICK) {
@@ -291,12 +286,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
             mKey = null;
             mUrl = null;
             mContainer = null;
-        }
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
         }
     }
 

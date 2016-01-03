@@ -17,12 +17,11 @@
 package com.hippo.drawable;
 
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.hippo.conaco.Conaco;
-import com.hippo.conaco.DrawableHolder;
+import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
 
 public class UnikeryDrawable extends WrapDrawable implements Unikery {
@@ -31,30 +30,10 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
 
     private View mView;
 
-    private DrawableHolder mHolder;
+    private ObjectHolder mHolder;
 
     public UnikeryDrawable(View view) {
         mView = view;
-    }
-
-    private void setDrawableSafely(Drawable drawable, boolean inMemoryCache) {
-        Drawable oldDrawable = getDrawable();
-        if (oldDrawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                oldDrawable = tDrawable.getDrawable(number - 1);
-            }
-        }
-
-        if (oldDrawable instanceof ImageDrawable) {
-            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
-            if (imageDrawable.isLarge() || !inMemoryCache) {
-                imageDrawable.recycle();
-            }
-        }
-
-        setDrawable(drawable);
     }
 
     @Override
@@ -97,35 +76,53 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
     public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
     }
 
+    private void removeDrawableAndHolder() {
+        // Remove drawable
+        Drawable drawable = getDrawable();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).recycle();
+        }
+        setDrawable(null);
+
+        // Remove holder
+        if (mHolder != null) {
+            mHolder.release();
+
+            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            if (mHolder.isFree()) {
+                // ImageWrapper is free, stop animate
+                imageWrapper.stop();
+                if (!mHolder.isInMemoryCache()) {
+                    // ImageWrapper is not needed any more, recycle it
+                    imageWrapper.recycle();
+                }
+            }
+
+            mHolder = null;
+        }
+    }
+
     @Override
-    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
-        DrawableHolder olderHolder = mHolder;
-        mHolder = holder;
+    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
         holder.obtain();
 
-        Drawable drawable = holder.getDrawable();
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
+        removeDrawableAndHolder();
 
-        setDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
+        mHolder = holder;
+        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        Drawable drawable = new ImageDrawable(imageWrapper);
+        imageWrapper.start();
 
-        if (olderHolder != null) {
-            olderHolder.release();
-        }
+        setDrawable(drawable);
 
         return true;
     }
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
+        removeDrawableAndHolder();
 
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        setDrawable(drawable);
     }
 
     @Override

@@ -19,7 +19,6 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -34,10 +33,11 @@ import android.widget.Toast;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.DrawableHolder;
+import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
 import com.hippo.drawable.ImageDrawable;
+import com.hippo.drawable.ImageWrapper;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.NMBAppConfig;
@@ -69,7 +69,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     private UniFile mImageFile;
     private TempDataContainer mContainer;
-    private DrawableHolder mHolder;
+    private ObjectHolder mHolder;
 
     private OnLongClickImageListener mOnLongClickImageListener;
 
@@ -138,13 +138,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     public void unload() {
         mConaco.cancel(this);
-        setImageDrawableSafely(null, mHolder != null && mHolder.isInMemoryCache());
-
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        removeDrawableAndHolder();
     }
 
     @Override
@@ -169,28 +163,34 @@ public final class HeaderImageView extends FixedAspectImageView
     public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
     }
 
-    private void setImageDrawableSafely(Drawable drawable, boolean inMemoryCache) {
-        Drawable oldDrawable = getDrawable();
-        if (oldDrawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) oldDrawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                oldDrawable = tDrawable.getDrawable(number - 1);
-            }
+    private void removeDrawableAndHolder() {
+        // Remove drawable
+        Drawable drawable = getDrawable();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).recycle();
         }
+        setImageDrawable(null);
 
-        if (oldDrawable instanceof ImageDrawable) {
-            ImageDrawable imageDrawable = (ImageDrawable) oldDrawable;
-            if (imageDrawable.isLarge() || !inMemoryCache) {
-                imageDrawable.recycle();
+        // Remove holder
+        if (mHolder != null) {
+            mHolder.release();
+
+            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            if (mHolder.isFree()) {
+                // ImageWrapper is free, stop animate
+                imageWrapper.stop();
+                if (!mHolder.isInMemoryCache()) {
+                    // ImageWrapper is not needed any more, recycle it
+                    imageWrapper.recycle();
+                }
             }
-        }
 
-        setImageDrawable(drawable);
+            mHolder = null;
+        }
     }
 
     @Override
-    public boolean onGetDrawable(@NonNull DrawableHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
         // Update image file
         if (mImageFile != null) {
             mImageFile = null;
@@ -200,33 +200,25 @@ public final class HeaderImageView extends FixedAspectImageView
             mContainer = null;
         }
 
-        DrawableHolder olderHolder = mHolder;
-        mHolder = holder;
         holder.obtain();
 
-        Drawable drawable = holder.getDrawable();
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
+        removeDrawableAndHolder();
 
-        setImageDrawableSafely(drawable, olderHolder != null && olderHolder.isInMemoryCache());
+        mHolder = holder;
+        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        Drawable drawable = new ImageDrawable(imageWrapper);
+        imageWrapper.start();
 
-        if (olderHolder != null) {
-            olderHolder.release();
-        }
+        setImageDrawable(drawable);
 
         return true;
     }
 
     @Override
     public void onSetDrawable(Drawable drawable) {
-        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
+        removeDrawableAndHolder();
 
-        // Release old holder
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
-        }
+        setImageDrawable(drawable);
     }
 
     @Override
@@ -251,28 +243,23 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     private void setImageFile(UniFile file) {
-        Drawable drawable = NMBApplication.getSimpleDrawableHelper(getContext())
-                .decode(new UniFileInputStreamPipe(file));
-        if (drawable == null) {
-            return;
-        }
+        Object object = NMBApplication.getImageWrapperHelper(getContext())
+                .decode(new UniFileInputStreamPipe(mImageFile));
+        if (object != null) {
+            ImageWrapper imageWrapper = (ImageWrapper) object;
+            imageWrapper.start();
+            Drawable drawable = new ImageDrawable(imageWrapper);
 
-        // Update image file
-        if (mImageFile != null) {
-            mImageFile = null;
-        }
-        mImageFile = file;
-        mContainer = null;
+            removeDrawableAndHolder();
 
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
+            setImageDrawable(drawable);
 
-        setImageDrawableSafely(drawable, mHolder != null && mHolder.isInMemoryCache());
-
-        if (mHolder != null) {
-            mHolder.release();
-            mHolder = null;
+            // Update image file
+            if (mImageFile != null) {
+                mImageFile = null;
+            }
+            mImageFile = file;
+            mContainer = null;
         }
     }
 

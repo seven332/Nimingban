@@ -21,31 +21,22 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.hippo.image.Image;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.SimpleHandler;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageDrawable extends Drawable implements Animatable, Runnable {
-
-    private static final String TAG = ImageDrawable.class.getSimpleName();
+public class ImageDrawable extends Drawable implements ImageWrapper.Callback {
 
     private static final int TILE_SIZE = 512;
 
-    private Image mImage;
+    private ImageWrapper mImageWrapper;
     private Paint mPaint;
 
     private List<Tile> mTileList;
-
-    private boolean mRunning = false;
 
     private static class Tile {
         Bitmap bitmap;
@@ -55,18 +46,23 @@ public class ImageDrawable extends Drawable implements Animatable, Runnable {
         int y;
     }
 
-    private ImageDrawable(@NonNull  Image image) {
-        mImage = image;
+    private static final BitmapPool sBitmapPool = new BitmapPool();
+
+    public ImageDrawable(@NonNull ImageWrapper imageWrapper) {
+        mImageWrapper = imageWrapper;
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTileList = createTileArray();
 
         // Render first frame
         render();
+
+        // Add callback
+        imageWrapper.addCallback(this);
     }
 
     private List<Tile> createTileArray() {
-        int width = mImage.getWidth();
-        int height = mImage.getHeight();
+        int width = mImageWrapper.getWidth();
+        int height = mImageWrapper.getHeight();
         int capacity = MathUtils.clamp(MathUtils.ceilDivide(width, TILE_SIZE) *
                 MathUtils.ceilDivide(height, TILE_SIZE), 0, 100);
         List<Tile> tiles = new ArrayList<>(capacity);
@@ -80,11 +76,7 @@ public class ImageDrawable extends Drawable implements Animatable, Runnable {
                 tile.y = y;
                 tile.w = w;
                 tile.h = h;
-                try {
-                    tile.bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-                } catch (OutOfMemoryError e) {
-                    Log.w(TAG, "Out of memory");
-                }
+                tile.bitmap = sBitmapPool.get(w, h);
                 tiles.add(tile);
             }
         }
@@ -93,28 +85,24 @@ public class ImageDrawable extends Drawable implements Animatable, Runnable {
     }
 
     private void render() {
-        Image image = mImage;
+        ImageWrapper imageWrapper = mImageWrapper;
         List<Tile> tiles = mTileList;
         for (int i = 0, length = tiles.size(); i < length; i++) {
             Tile tile = tiles.get(i);
             if (tile.bitmap != null) {
-                image.render(tile.x, tile.y, tile.bitmap, 0, 0, tile.w, tile.h, false, 0);
+                imageWrapper.render(tile.x, tile.y, tile.bitmap, 0, 0, tile.w, tile.h, false, 0);
             }
         }
     }
 
     @Override
     public int getIntrinsicWidth() {
-        return mImage.getWidth();
+        return mImageWrapper.getWidth();
     }
 
     @Override
     public int getIntrinsicHeight() {
-        return mImage.getHeight();
-    }
-
-    public boolean isLarge() {
-        return mImage.getWidth() * mImage.getHeight() > 256 * 256;
+        return mImageWrapper.getHeight();
     }
 
     @Override
@@ -144,83 +132,24 @@ public class ImageDrawable extends Drawable implements Animatable, Runnable {
     }
 
     public void recycle() {
-        // Stop animte
-        stop();
+        mImageWrapper.removeCallback(this);
 
         // Free tile's bitmap
         List<Tile> tiles = mTileList;
         for (int i = 0, length = tiles.size(); i < length; i++) {
             Tile tile = tiles.get(i);
-            if (tile.bitmap != null) {
-                tile.bitmap.recycle();
-                tile.bitmap = null;
-            }
+            sBitmapPool.put(tile.bitmap);
+            tile.bitmap = null;
         }
-
-        mImage.recycle();
-    }
-
-    public boolean isRecycled() {
-        return mImage.isRecycled();
-    }
-
-    public int getByteCount() {
-        int size = 0;
-        List<Tile> tiles = mTileList;
-        for (int i = 0, length = tiles.size(); i < length; i++) {
-            Tile tile = tiles.get(i);
-            if (tile.bitmap != null) {
-                size += tile.bitmap.getByteCount();
-            }
-        }
-        return size;
     }
 
     @Override
-    public void start() {
-        if (mImage.isRecycled() || mImage.getFrameCount() <= 1 || mRunning) {
-            return;
-        }
-
-        mRunning = true;
-
-        SimpleHandler.getInstance().postDelayed(this, Math.max(0, mImage.getDelay()));
-    }
-
-    @Override
-    public void stop() {
-        mRunning = false;
-        SimpleHandler.getInstance().removeCallbacks(this);
-    }
-
-    @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
-
-    @Override
-    public void run() {
-        // Check recycled
-        if (mImage.isRecycled()) {
-            mRunning = false;
-            return;
-        }
-
-        mImage.advance();
+    public void renderImage(ImageWrapper who) {
         render();
-        invalidateSelf();
-
-        if (mRunning) {
-            SimpleHandler.getInstance().postDelayed(this, Math.max(0, mImage.getDelay()));
-        }
     }
 
-    public static ImageDrawable decode(InputStream is) {
-        Image image = Image.decode(is, false);
-        if (image != null) {
-            return new ImageDrawable(image);
-        } else {
-            return null;
-        }
+    @Override
+    public void invalidateImage(ImageWrapper who) {
+        invalidateSelf();
     }
 }

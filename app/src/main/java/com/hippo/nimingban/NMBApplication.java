@@ -35,7 +35,7 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.nimingban.widget.ImageDrawableHelper;
+import com.hippo.nimingban.widget.ImageWrapperHelper;
 import com.hippo.okhttp.GoodHttpClient;
 import com.hippo.okhttp.GoodRequestBuilder;
 import com.hippo.okhttp.ResponseUtils;
@@ -59,7 +59,7 @@ public final class NMBApplication extends Application
     private SimpleCookieStore mSimpleCookieStore;
     private NMBClient mNMBClient;
     private Conaco mConaco;
-    private ImageDrawableHelper mDrawableHelper;
+    private ImageWrapperHelper mImageWrapperHelper;
     private OkHttpClient mOkHttpClient;
 
     private boolean mConnectedWifi;
@@ -216,19 +216,19 @@ public final class NMBApplication extends Application
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
             builder.okHttpClient = getOkHttpClient(context);
-            builder.drawableHelper = getSimpleDrawableHelper(context);
+            builder.objectHelper = getImageWrapperHelper(context);
             application.mConaco = builder.build();
         }
         return application.mConaco;
     }
 
     @NonNull
-    public static ImageDrawableHelper getSimpleDrawableHelper(@NonNull Context context) {
+    public static ImageWrapperHelper getImageWrapperHelper(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
-        if (application.mDrawableHelper == null) {
-            application.mDrawableHelper = new ImageDrawableHelper();
+        if (application.mImageWrapperHelper == null) {
+            application.mImageWrapperHelper = new ImageWrapperHelper();
         }
-        return application.mDrawableHelper;
+        return application.mImageWrapperHelper;
     }
 
     public static OkHttpClient getOkHttpClient(@NonNull Context context) {
