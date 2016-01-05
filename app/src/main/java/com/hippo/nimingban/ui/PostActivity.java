@@ -87,7 +87,6 @@ public final class PostActivity extends SwipeActivity
 
         PostFragment postFragment = new PostFragment();
         postFragment.setArguments(createArgs());
-        postFragment.setCallback(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.main, postFragment, TAG_FRAGMENT_POST);
         transaction.commit();
