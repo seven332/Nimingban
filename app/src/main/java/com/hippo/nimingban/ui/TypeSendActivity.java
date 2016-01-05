@@ -40,6 +40,8 @@ public final class TypeSendActivity extends TranslucentActivity
     public static final String KEY_ID = TypeSendFragment.KEY_ID;
     public static final String KEY_TEXT = TypeSendFragment.KEY_TEXT;
 
+    public static final String KEY_INIT = "init";
+
     @Override
     protected int getLightThemeResId() {
         return Settings.getColorStatusBar() ? R.style.SwipeActivity : R.style.SwipeActivity_NoStatus;
@@ -72,11 +74,19 @@ public final class TypeSendActivity extends TranslucentActivity
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         setContentView(R.layout.activity_type_send);
 
-        TypeSendFragment fragment = new TypeSendFragment();
-        fragment.setArguments(createArgs());
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main, fragment, TAG_FRAGMENT_TYPE_SEND);
-        transaction.commit();
+        if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_INIT, false)) {
+            TypeSendFragment fragment = new TypeSendFragment();
+            fragment.setArguments(createArgs());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main, fragment, TAG_FRAGMENT_TYPE_SEND);
+            transaction.commit();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_INIT, true);
     }
 
     @Override

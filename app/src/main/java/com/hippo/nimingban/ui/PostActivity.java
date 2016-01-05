@@ -48,6 +48,8 @@ public final class PostActivity extends SwipeActivity
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
 
+    public static final String KEY_INIT = "init";
+
     public static final String TAG_FRAGMENT_POST = "post";
     public static final String TAG_FRAGMENT_TYPE_SEND = "type_send";
 
@@ -85,11 +87,19 @@ public final class PostActivity extends SwipeActivity
 
         mPostLayout = (PostLayout) findViewById(R.id.main);
 
-        PostFragment postFragment = new PostFragment();
-        postFragment.setArguments(createArgs());
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.main, postFragment, TAG_FRAGMENT_POST);
-        transaction.commit();
+        if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_INIT, false)) {
+            PostFragment postFragment = new PostFragment();
+            postFragment.setArguments(createArgs());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.main, postFragment, TAG_FRAGMENT_POST);
+            transaction.commit();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_INIT, true);
     }
 
     @Override
