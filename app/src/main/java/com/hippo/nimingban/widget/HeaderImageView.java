@@ -243,8 +243,12 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     private void setImageFile(UniFile file) {
+        if (file == null) {
+            return;
+        }
+
         Object object = NMBApplication.getImageWrapperHelper(getContext())
-                .decode(new UniFileInputStreamPipe(mImageFile));
+                .decode(new UniFileInputStreamPipe(file));
         if (object != null) {
             ImageWrapper imageWrapper = (ImageWrapper) object;
             imageWrapper.start();
@@ -254,10 +258,6 @@ public final class HeaderImageView extends FixedAspectImageView
 
             setImageDrawable(drawable);
 
-            // Update image file
-            if (mImageFile != null) {
-                mImageFile = null;
-            }
             mImageFile = file;
             mContainer = null;
         }
