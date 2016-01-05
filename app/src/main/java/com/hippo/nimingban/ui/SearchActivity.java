@@ -47,7 +47,10 @@ import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
+import java.lang.ref.WeakReference;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SearchActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
 
@@ -65,6 +68,8 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
     private NMBRequest mNMBRequest;
 
     private String mKeyword;
+
+    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -157,6 +162,14 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             mNMBRequest.cancel();
             mNMBRequest = null;
         }
+
+        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
+            LoadImageView liv = ref.get();
+            if (liv != null) {
+                liv.unload();
+            }
+        }
+        mLoadImageViewSet.clear();
     }
 
     @Override
@@ -237,7 +250,9 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
 
         @Override
         public SearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new SearchHolder(getLayoutInflater().inflate(R.layout.item_search, parent, false));
+            SearchHolder holder = new SearchHolder(getLayoutInflater().inflate(R.layout.item_search, parent, false));
+            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            return holder;
         }
 
         @Override

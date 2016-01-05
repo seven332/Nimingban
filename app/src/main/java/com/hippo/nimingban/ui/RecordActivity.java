@@ -60,6 +60,9 @@ import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.greenrobot.dao.query.LazyList;
 
@@ -75,6 +78,8 @@ public final class RecordActivity extends TranslucentActivity
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+
+    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -186,6 +191,14 @@ public final class RecordActivity extends TranslucentActivity
         if (mLazyList != null) {
             mLazyList.close();
         }
+
+        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
+            LoadImageView liv = ref.get();
+            if (liv != null) {
+                liv.unload();
+            }
+        }
+        mLoadImageViewSet.clear();
     }
 
     @Override
@@ -272,7 +285,9 @@ public final class RecordActivity extends TranslucentActivity
 
         @Override
         public RecordHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new RecordHolder(RecordActivity.this.getLayoutInflater().inflate(R.layout.item_record, parent, false));
+            RecordHolder holder = new RecordHolder(getLayoutInflater().inflate(R.layout.item_record, parent, false));
+            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            return holder;
         }
 
         @Override

@@ -19,6 +19,7 @@ package com.hippo.drawable;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.hippo.image.Image;
 import com.hippo.yorozuya.SimpleHandler;
@@ -29,6 +30,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ImageWrapper implements Animatable, Runnable {
+
+    private static final String TAG = ImageWrapper.class.getSimpleName();
 
     private Image mImage;
 
@@ -55,6 +58,7 @@ public class ImageWrapper implements Animatable, Runnable {
     }
 
     public void recycle() {
+        stop();
         mImage.recycle();
     }
 
@@ -121,12 +125,14 @@ public class ImageWrapper implements Animatable, Runnable {
         return mRunning;
     }
 
-    private void notifyUpdate() {
+    private boolean notifyUpdate() {
+        boolean hasCallback = false;
         final Iterator<WeakReference<Callback>> iterator = mCallbackSet.iterator();
         Callback callback;
         while (iterator.hasNext()) {
             callback = iterator.next().get();
             if (callback != null) {
+                hasCallback = true;
                 callback.renderImage(this);
                 callback.invalidateImage(this);
             } else {
@@ -135,6 +141,7 @@ public class ImageWrapper implements Animatable, Runnable {
                 iterator.remove();
             }
         }
+        return hasCallback;
     }
 
     @Override
@@ -146,10 +153,15 @@ public class ImageWrapper implements Animatable, Runnable {
         }
 
         mImage.advance();
-        notifyUpdate();
 
-        if (mRunning) {
-            SimpleHandler.getInstance().postDelayed(this, Math.max(0, mImage.getDelay()));
+        if (notifyUpdate()) {
+            if (mRunning) {
+                SimpleHandler.getInstance().postDelayed(this, Math.max(0, mImage.getDelay()));
+            }
+        } else {
+            // No callback ? Stop now
+            Log.w(TAG, "No callback");
+            mRunning = false;
         }
     }
 

@@ -59,7 +59,10 @@ import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
+import java.lang.ref.WeakReference;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class FeedActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
 
@@ -77,6 +80,8 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
     private NMBRequest mNMBRequest;
+
+    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -194,6 +199,14 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             mNMBRequest.cancel();
             mNMBRequest = null;
         }
+
+        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
+            LoadImageView liv = ref.get();
+            if (liv != null) {
+                liv.unload();
+            }
+        }
+        mLoadImageViewSet.clear();
     }
 
     @Override
@@ -280,7 +293,9 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
 
         @Override
         public FeedHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            return new FeedHolder(getLayoutInflater().inflate(R.layout.item_feed, viewGroup, false));
+            FeedHolder holder = new FeedHolder(getLayoutInflater().inflate(R.layout.item_feed, viewGroup, false));
+            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            return holder;
         }
 
         @Override

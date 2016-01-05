@@ -82,9 +82,12 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PostFragment extends BaseFragment
         implements Messenger.Receiver,
@@ -135,6 +138,8 @@ public class PostFragment extends BaseFragment
     private int mOpColor;
 
     private int mPageSize = -1;
+
+    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
 
     private boolean handleArgs(Bundle args) {
         if (args == null) {
@@ -262,6 +267,16 @@ public class PostFragment extends BaseFragment
             mNMBRequest.cancel();
             mNMBRequest = null;
         }
+
+        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
+            LoadImageView liv = ref.get();
+            if (liv != null) {
+                liv.unload();
+            }
+        }
+        mLoadImageViewSet.clear();
+
+        Log.d("TAG", "onDestroyView");
     }
 
     @Override
@@ -574,6 +589,8 @@ public class PostFragment extends BaseFragment
                 mRequest.cancel();
                 mRequest = null;
             }
+
+            mThumb.unload();
         }
     }
 
@@ -747,6 +764,8 @@ public class PostFragment extends BaseFragment
 
         @Override
         public ReplyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            ReplyHolder holder = new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
+            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
             return new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
         }
 

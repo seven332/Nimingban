@@ -108,9 +108,12 @@ import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class ListActivity extends AbsActivity
         implements RightDrawer.RightDrawerHelper, LeftDrawer.Helper {
@@ -147,6 +150,9 @@ public final class ListActivity extends AbsActivity
 
     // Double click back exit
     private long mPressBackTime = 0;
+
+    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
+    private Set<WeakReference<ListHolder>> mListHolderSet = new HashSet<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -413,12 +419,21 @@ public final class ListActivity extends AbsActivity
             mCommonPostsRequest = null;
         }
 
-        for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
-            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
-            if (holder instanceof ListHolder) {
-                ((ListHolder) holder).clearReplies();
+        for (WeakReference<ListHolder> ref : mListHolderSet) {
+            ListHolder holder = ref.get();
+            if (holder != null) {
+                holder.clearReplies();
             }
         }
+        mListHolderSet.clear();
+
+        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
+            LoadImageView liv = ref.get();
+            if (liv != null) {
+                liv.unload();
+            }
+        }
+        mLoadImageViewSet.clear();
     }
 
     private void checkForAppStart() {
@@ -1031,7 +1046,10 @@ public final class ListActivity extends AbsActivity
 
         @Override
         public ListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ListHolder(getLayoutInflater().inflate(R.layout.item_list, parent, false));
+            ListHolder holder = new ListHolder(getLayoutInflater().inflate(R.layout.item_list, parent, false));
+            mListHolderSet.add(new WeakReference<>(holder));
+            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            return holder;
         }
 
         @Override
