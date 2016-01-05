@@ -50,7 +50,7 @@ public class ImageDrawable extends Drawable implements ImageWrapper.Callback {
 
     public ImageDrawable(@NonNull ImageWrapper imageWrapper) {
         mImageWrapper = imageWrapper;
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
         mTileList = createTileArray();
 
         // Render first frame
