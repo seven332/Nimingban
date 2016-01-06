@@ -131,7 +131,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
 
         // Remove holder
         if (mHolder != null) {
-            mHolder.release();
+            mHolder.release(this);
 
             ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
             if (mHolder.isFree()) {
@@ -227,7 +227,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mUrl = null;
         mContainer = null;
 
-        holder.obtain();
+        holder.obtain(this);
 
         removeDrawableAndHolder();
 

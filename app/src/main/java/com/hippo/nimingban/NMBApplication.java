@@ -21,7 +21,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.nimingban.client.NMBClient;
@@ -44,6 +46,7 @@ import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
+import com.hippo.yorozuya.SimpleHandler;
 import com.squareup.okhttp.OkHttpClient;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -52,7 +55,11 @@ import java.net.HttpCookie;
 import java.net.URL;
 
 public final class NMBApplication extends Application
-        implements Thread.UncaughtExceptionHandler, Messenger.Receiver {
+        implements Thread.UncaughtExceptionHandler, Messenger.Receiver, Runnable {
+
+    private static final String TAG = NMBApplication.class.getSimpleName();
+
+    private static final boolean LOG_NATIVE_MEMORY = false;
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
@@ -111,6 +118,10 @@ public final class NMBApplication extends Application
             TCAgent.init(this);
         } else {
             mHasInitTCAgent = false;
+        }
+
+        if (LOG_NATIVE_MEMORY) {
+            SimpleHandler.getInstance().post(this);
         }
     }
 
@@ -264,5 +275,11 @@ public final class NMBApplication extends Application
     @Override
     public void onReceive(int id, Object obj) {
         setTheme((Boolean) obj ? R.style.AppTheme_Dark : R.style.AppTheme);
+    }
+
+    @Override
+    public void run() {
+        Log.i(TAG, "Native " + FileUtils.humanReadableByteCount(Debug.getNativeHeapAllocatedSize(), false));
+        SimpleHandler.getInstance().postDelayed(this, 3000);
     }
 }

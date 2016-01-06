@@ -18,6 +18,7 @@ package com.hippo.nimingban.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.hippo.conaco.ObjectHelper;
 import com.hippo.conaco.ObjectHolder;
@@ -26,6 +27,8 @@ import com.hippo.image.Image;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
 public class ImageWrapperHelper implements ObjectHelper {
+
+    private static final String TAG = ImageWrapperHelper.class.getSimpleName();
 
     @Nullable
     @Override
@@ -56,7 +59,10 @@ public class ImageWrapperHelper implements ObjectHelper {
     @Override
     public void onRemove(@NonNull String key, @NonNull ObjectHolder oldValue) {
         if (oldValue.isFree()) {
+            Log.i(TAG, "The holder is free");
             ((ImageWrapper) oldValue.getObject()).recycle();
+        } else {
+            Log.e(TAG, "The holder is not free");
         }
     }
 

@@ -173,7 +173,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
         // Remove holder
         if (mHolder != null) {
-            mHolder.release();
+            mHolder.release(this);
 
             ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
             if (mHolder.isFree()) {
@@ -200,7 +200,7 @@ public final class HeaderImageView extends FixedAspectImageView
             mContainer = null;
         }
 
-        holder.obtain();
+        holder.obtain(this);
 
         removeDrawableAndHolder();
 

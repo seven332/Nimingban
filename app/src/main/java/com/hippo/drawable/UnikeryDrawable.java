@@ -86,7 +86,7 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
 
         // Remove holder
         if (mHolder != null) {
-            mHolder.release();
+            mHolder.release(this);
 
             ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
             if (mHolder.isFree()) {
@@ -104,7 +104,7 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
 
     @Override
     public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
-        holder.obtain();
+        holder.obtain(this);
 
         removeDrawableAndHolder();
 

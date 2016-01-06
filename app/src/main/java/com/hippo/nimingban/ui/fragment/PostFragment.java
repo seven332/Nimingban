@@ -275,8 +275,6 @@ public class PostFragment extends BaseFragment
             }
         }
         mLoadImageViewSet.clear();
-
-        Log.d("TAG", "onDestroyView");
     }
 
     @Override
