@@ -106,7 +106,6 @@ public class Image {
     static {
         System.loadLibrary("stream");
         System.loadLibrary("jpeg-turbo");
-        System.loadLibrary("png");
         System.loadLibrary("gif");
         System.loadLibrary("image");
     }
