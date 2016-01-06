@@ -29,6 +29,7 @@ pngrtran.c \
 pngrutil.c \
 pngset.c \
 pngtrans.c
-LOCAL_LDLIBS := -lz
+LOCAL_EXPORT_LDLIBS := -lz
 
-include $(BUILD_SHARED_LIBRARY)
+# I don't why apng patch make shared library not work
+include $(BUILD_STATIC_LIBRARY)
