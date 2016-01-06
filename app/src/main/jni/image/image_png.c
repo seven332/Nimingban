@@ -78,7 +78,9 @@ static bool read_image(png_structp png_ptr, unsigned char* buffer, unsigned int 
     WTF_OM;
     return false;
   }
-  for (i = 0; i < height; line_buffer_ptr_array[i++] = buffer + width * i * 4);
+  for (i = 0; i < height; i++) {
+    line_buffer_ptr_array[i] = buffer + (width * i * 4);
+  }
   png_read_image(png_ptr, line_buffer_ptr_array);
   free(line_buffer_ptr_array);
   return true;
@@ -192,6 +194,7 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   }
 
   if (setjmp(png_jmpbuf(png_ptr))) {
+    LOGE(EMSG("Error in png decode"));
     free_frame_info_array(frame_info_array, frame_count);
     frame_info_array = NULL;
     free(buffer);
