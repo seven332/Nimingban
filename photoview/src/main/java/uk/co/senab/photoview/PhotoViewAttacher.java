@@ -549,8 +549,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouch(View v, MotionEvent ev) {
+    public boolean doOnTouch(View v, MotionEvent ev) {
         boolean handled = false;
 
         if (mZoomEnabled && hasDrawable((ImageView) v)) {
@@ -610,6 +609,15 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         }
 
         return handled;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent ev) {
+        try {
+            return doOnTouch(v, ev);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

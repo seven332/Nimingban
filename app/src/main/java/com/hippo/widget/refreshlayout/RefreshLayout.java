@@ -932,27 +932,31 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        ensureTarget();
+        try {
+            ensureTarget();
 
-        final int action = MotionEventCompat.getActionMasked(ev);
+            final int action = MotionEventCompat.getActionMasked(ev);
 
-        if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
-            mReturningToStart = false;
-        }
-
-        boolean mIsBeingDragged = false;
-
-        if (isEnabled() && !mReturningToStart && !mHeaderRefreshing && !mFooterRefreshing) {
-            if (!mIsFooterBeingDragged && mEnableSwipeHeader && !canChildScrollUp()) {
-                mIsBeingDragged = headerInterceptTouchEvent(ev);
+            if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
+                mReturningToStart = false;
             }
 
-            if (!mIsHeaderBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
-                mIsBeingDragged |= footerInterceptTouchEvent(ev);
-            }
-        }
+            boolean mIsBeingDragged = false;
 
-        return mIsBeingDragged;
+            if (isEnabled() && !mReturningToStart && !mHeaderRefreshing && !mFooterRefreshing) {
+                if (!mIsFooterBeingDragged && mEnableSwipeHeader && !canChildScrollUp()) {
+                    mIsBeingDragged = headerInterceptTouchEvent(ev);
+                }
+
+                if (!mIsHeaderBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
+                    mIsBeingDragged |= footerInterceptTouchEvent(ev);
+                }
+            }
+
+            return mIsBeingDragged;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private float getMotionEventY(MotionEvent ev, int activePointerId) {
@@ -1198,23 +1202,27 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
+        try {
+            final int action = MotionEventCompat.getActionMasked(ev);
 
-        if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
-            mReturningToStart = false;
-        }
-
-        if (isEnabled() && !mReturningToStart && !mHeaderRefreshing && !mFooterRefreshing) {
-            if (!mIsFooterBeingDragged && mEnableSwipeHeader && !canChildScrollUp()) {
-                headerTouchEvent(ev);
+            if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
+                mReturningToStart = false;
             }
 
-            if (!mIsHeaderBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
-                footerTouchEvent(ev);
-            }
-        }
+            if (isEnabled() && !mReturningToStart && !mHeaderRefreshing && !mFooterRefreshing) {
+                if (!mIsFooterBeingDragged && mEnableSwipeHeader && !canChildScrollUp()) {
+                    headerTouchEvent(ev);
+                }
 
-        return true;
+                if (!mIsHeaderBeingDragged && mEnableSwipeFooter && !canChildScrollDown()) {
+                    footerTouchEvent(ev);
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void animateHeaderOffsetToCorrectPosition(int from, AnimationListener listener) {
