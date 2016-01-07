@@ -69,6 +69,8 @@ public class NMBClient {
 
     public static final int METHOD_SEARCH = 10;
 
+    public static final int METHOD_GET_CDN_PATH = 11;
+
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
 
@@ -317,6 +319,21 @@ public class NMBClient {
             }
         }
 
+        private Object getCdnPath() throws Exception {
+            switch (mSite.getId()) {
+                case Site.AC:
+                    Call call = ACEngine.prepareGetCdnPath(mOkHttpClient);
+                    if (!mStop) {
+                        mCall = call;
+                        return ACEngine.doGetCdnPath(call);
+                    } else {
+                        throw new CancelledException();
+                    }
+                default:
+                    return new IllegalStateException("Can't detect site " + mSite);
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -365,6 +382,8 @@ public class NMBClient {
                         return createPost(params);
                     case METHOD_SEARCH:
                         return search(params);
+                    case METHOD_GET_CDN_PATH:
+                        return getCdnPath();
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

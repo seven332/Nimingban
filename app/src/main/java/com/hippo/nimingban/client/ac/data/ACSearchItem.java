@@ -19,7 +19,7 @@ package com.hippo.nimingban.client.ac.data;
 import android.os.Parcel;
 import android.text.TextUtils;
 
-import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.text.Html;
@@ -60,8 +60,8 @@ public class ACSearchItem extends Reply {
             if (".jpe".equals(ext2)) {
                 ext2 = ".jpeg";
             }
-            mThumb = ACUrl.HOST + "/Public/Upload/thumb/" + img + ext2;
-            mImage = ACUrl.HOST + "/Public/Upload/image/" + img + ext2;
+            mThumb = ACSite.getInstance().getThumbUrl(img, ext2);
+            mImage = ACSite.getInstance().getImageUrl(img, ext2);
         }
     }
 

@@ -41,6 +41,8 @@ public class ACUrl {
 
     public static final String API_GET_COOKIE = HOST + "/Api/getCookie?appid=" + APP_ID;
 
+    public static final String API_GET_CDN_PATH = HOST + "/Api/getCdnPath?appid=" + APP_ID;
+
     public static final String API_GET_FORUM_LIST = HOST + "/Api/getForumList?appid=" + APP_ID;
 
     public static final String API_REPLY = HOST + "/Home/Forum/doReplyThread.html?appid=" + APP_ID;

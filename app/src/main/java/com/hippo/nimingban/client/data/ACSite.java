@@ -20,16 +20,27 @@ import android.content.Context;
 
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.yorozuya.MathUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class ACSite extends Site {
 
+    private static final String TAG = ACSite.class.getSimpleName();
+
+    private static final String DEFAULT_THUMB_PREFIX = ACUrl.HOST + "/Public/Upload/thumb/";
+    private static final String DEFAULT_IMAGE_PREFIX = ACUrl.HOST + "/Public/Upload/image/";
+
     private URL mSiteUrl;
+
+    private List<ACCdnPath> mCdnPathList;
+    private float mRateSum;
 
     private static ACSite sInstance;
 
@@ -86,5 +97,61 @@ public class ACSite extends Site {
     @Override
     public String getReportForumId() {
         return "18"; // TODO how to get it ?
+    }
+
+    public synchronized void setCdnPath(List<ACCdnPath> list) {
+        mCdnPathList = list;
+        if (list == null) {
+            return;
+        }
+
+        mRateSum = 0.0f;
+        for (int i = 0, size = list.size(); i < size; i++) {
+            mRateSum += list.get(i).rate;
+        }
+
+        if (mRateSum <= 0.0f) {
+            // Bad !
+            mCdnPathList = null;
+        }
+    }
+
+    private ACCdnPath getCdnPath() {
+        final float r = MathUtils.random(mRateSum);
+        float sum = 0.0f;
+        List<ACCdnPath> list = mCdnPathList;
+        ACCdnPath cdnPath = null;
+        for (int i = 0, size = list.size(); i < size; i++) {
+            cdnPath = list.get(i);
+            sum += cdnPath.rate;
+            if (r <= sum) {
+                return cdnPath;
+            }
+        }
+        return cdnPath;
+    }
+
+    public synchronized String getThumbUrl(String key, String ext) {
+        String url;
+        ACCdnPath cdnPath;
+        if (mCdnPathList != null && (cdnPath = getCdnPath()) != null) {
+            url = cdnPath.url + "thumb/" + key + ext;
+        } else {
+            url = DEFAULT_THUMB_PREFIX + key + ext;
+        }
+
+        return url;
+    }
+
+    public synchronized String getImageUrl(String key, String ext) {
+        String url;
+        ACCdnPath cdnPath;
+        if (mCdnPathList != null && (cdnPath = getCdnPath()) != null) {
+            url = cdnPath.url + "image/" + key + ext;
+        } else {
+            url = DEFAULT_IMAGE_PREFIX + key + ext;
+        }
+
+        return url;
     }
 }

@@ -68,6 +68,7 @@ import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DisplayForum;
@@ -147,6 +148,7 @@ public final class ListActivity extends AbsActivity
     private NMBRequest mNMBRequest;
     private NMBRequest mUpdateRequest;
     private NMBRequest mCommonPostsRequest;
+    private NMBRequest mCdnPathRequest;
 
     // Double click back exit
     private long mPressBackTime = 0;
@@ -419,6 +421,11 @@ public final class ListActivity extends AbsActivity
             mCommonPostsRequest = null;
         }
 
+        if (mCdnPathRequest != null) {
+            mCdnPathRequest.cancel();
+            mCdnPathRequest = null;
+        }
+
         for (WeakReference<ListHolder> ref : mListHolderSet) {
             ListHolder holder = ref.get();
             if (holder != null) {
@@ -466,32 +473,6 @@ public final class ListActivity extends AbsActivity
             Toast.makeText(this, R.string.cant_make_sure_image_save_location, Toast.LENGTH_SHORT).show();
         }
 
-        // Check update
-        NMBRequest request = new NMBRequest();
-        mUpdateRequest = request;
-        request.setMethod(NMBClient.METHOD_UPDATE);
-        request.setCallback(new NMBClient.Callback<UpdateStatus>() {
-            @Override
-            public void onSuccess(UpdateStatus result) {
-                Log.d("UpdateStatus", ObjectUtils.toString(result));
-
-                mUpdateRequest = null;
-                UpdateHelper.showUpdateDialog(ListActivity.this, result);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                mUpdateRequest = null;
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onCancel() {
-                mUpdateRequest = null;
-            }
-        });
-        mNMBClient.execute(request);
-
         // Check analysis
         if (!Settings.getSetAnalysis()) {
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -520,6 +501,58 @@ public final class ListActivity extends AbsActivity
                 e.printStackTrace();
             }
         }
+
+        // Get cdn path
+        NMBRequest request = new NMBRequest();
+        mCdnPathRequest = request;
+        request.setSite(ACSite.getInstance());
+        request.setMethod(NMBClient.METHOD_GET_CDN_PATH);
+        request.setCallback(new NMBClient.Callback<List<ACCdnPath>>(){
+            @Override
+            public void onSuccess(List<ACCdnPath> result) {
+                // TODO save it to db or share
+                mCommonPostsRequest = null;
+                ACSite.getInstance().setCdnPath(result);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                mCommonPostsRequest = null;
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onCancel() {
+                mCommonPostsRequest = null;
+            }
+        });
+        mNMBClient.execute(request);
+
+        // Check update
+        request = new NMBRequest();
+        mUpdateRequest = request;
+        request.setMethod(NMBClient.METHOD_UPDATE);
+        request.setCallback(new NMBClient.Callback<UpdateStatus>() {
+            @Override
+            public void onSuccess(UpdateStatus result) {
+                Log.d("UpdateStatus", ObjectUtils.toString(result));
+
+                mUpdateRequest = null;
+                UpdateHelper.showUpdateDialog(ListActivity.this, result);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                mUpdateRequest = null;
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onCancel() {
+                mUpdateRequest = null;
+            }
+        });
+        mNMBClient.execute(request);
 
         // Get common post
         request = new NMBRequest();

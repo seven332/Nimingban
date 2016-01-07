@@ -33,6 +33,7 @@ import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.StringEscape;
+import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.ac.data.ACFeed;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.ac.data.ACPost;
@@ -140,6 +141,25 @@ public class ACEngine {
             }
 
             return true;
+        } catch (Exception e) {
+            throwException(call, body, e);
+            throw e;
+        }
+    }
+
+    public static Call prepareGetCdnPath(OkHttpClient okHttpClient) {
+        String url = ACUrl.API_GET_CDN_PATH;
+        Log.d(TAG, url);
+        Request request = new GoodRequestBuilder(url).build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static List<ACCdnPath> doGetCdnPath(Call call) throws Exception {
+        String body = null;
+        try {
+            Response response = call.execute();
+            body = response.body().string();
+            return JSON.parseArray(body, ACCdnPath.class);
         } catch (Exception e) {
             throwException(call, body, e);
             throw e;
