@@ -259,6 +259,7 @@ public class SimpleCookieStore {
                 if (hcwi.hasExpired() || (ObjectUtils.equal(name, hcwi.httpCookie.getName()) &&
                         pathMatches(cookie, url) && portMatches(cookie, url))) {
                     i.remove(); // remove expired cookies
+                    HttpCookieDB.removeCookie(hcwi.id); // remove from DB
                 }
             }
         }
