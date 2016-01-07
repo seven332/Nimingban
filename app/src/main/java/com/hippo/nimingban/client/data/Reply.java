@@ -47,6 +47,10 @@ public abstract class Reply implements Parcelable {
 
     public abstract CharSequence getNMBDisplayContent();
 
+    public abstract String getNMBThumbKey();
+
+    public abstract String getNMBImageKey();
+
     public abstract String getNMBThumbUrl();
 
     public abstract String getNMBImageUrl();

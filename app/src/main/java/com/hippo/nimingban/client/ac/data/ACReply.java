@@ -49,8 +49,10 @@ public class ACReply extends Reply {
     private long mTime;
     private CharSequence mUser;
     private CharSequence mContent;
-    private String mThumb;
-    private String mImage;
+    private String mThumbKey;
+    private String mImageKey;
+    private String mThumbUrl;
+    private String mImageUrl;
 
     @Override
     public String toString() {
@@ -80,8 +82,12 @@ public class ACReply extends Reply {
             if (".jpe".equals(ext2)) {
                 ext2 = ".jpeg";
             }
-            mThumb = ACSite.getInstance().getThumbUrl(img, ext2);
-            mImage = ACSite.getInstance().getImageUrl(img, ext2);
+            String key = img + ext2;
+            mThumbKey = "thumb/" + key;
+            mImageKey = "image/" + key;
+            ACSite acSite = ACSite.getInstance();
+            mThumbUrl = acSite.getPictureUrl(mThumbKey);
+            mImageUrl = acSite.getPictureUrl(mImageKey);
         }
     }
 
@@ -116,13 +122,23 @@ public class ACReply extends Reply {
     }
 
     @Override
+    public String getNMBThumbKey() {
+        return mThumbKey;
+    }
+
+    @Override
+    public String getNMBImageKey() {
+        return mImageKey;
+    }
+
+    @Override
     public String getNMBThumbUrl() {
-        return mThumb;
+        return mThumbUrl;
     }
 
     @Override
     public String getNMBImageUrl() {
-        return mImage;
+        return mImageUrl;
     }
 
 

@@ -271,12 +271,14 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             int position = getAdapterPosition();
             if (position >= 0 && position < mFeedHelper.size()) {
                 Post post = mFeedHelper.getDataAt(position);
+                String key = post.getNMBImageKey();
                 String image = post.getNMBImageUrl();
-                if (!TextUtils.isEmpty(image)) {
+                if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(image)) {
                     Intent intent = new Intent(FeedActivity.this, GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
                     intent.putExtra(GalleryActivity2.KEY_SITE, post.getNMBSite().getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, post.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_KEY, key);
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     FeedActivity.this.startActivity(intent);
                 }
@@ -306,6 +308,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             holder.rightText.setText(ReadableTime.getDisplayTime(post.getNMBTime()));
             holder.content.setText(post.getNMBDisplayContent());
 
+            String thumbKey = post.getNMBThumbKey();
             String thumbUrl = post.getNMBThumbUrl();
 
             boolean showImage;
@@ -320,10 +323,10 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
                 loadFromNetwork = false;
             }
 
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
+            if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
-                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
+                holder.thumb.load(thumbKey, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 holder.thumb.unload();

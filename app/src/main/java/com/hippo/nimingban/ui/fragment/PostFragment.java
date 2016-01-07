@@ -457,12 +457,16 @@ public class PostFragment extends BaseFragment
                     handleReferenceSpan((ReferenceSpan) span);
                 }
             } else if (v == mThumb) {
-                if (mReply != null && !TextUtils.isEmpty(mReply.getNMBImageUrl())) {
+                String key;
+                String image;
+                if (mReply != null && !TextUtils.isEmpty(key = mReply.getNMBImageKey()) &&
+                        !TextUtils.isEmpty(image = mReply.getNMBImageUrl())) {
                     Intent intent = new Intent(getActivity(), GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
                     intent.putExtra(GalleryActivity2.KEY_SITE, mSite.getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, mReply.getNMBId());
-                    intent.putExtra(GalleryActivity2.KEY_IMAGE, mReply.getNMBImageUrl());
+                    intent.putExtra(GalleryActivity2.KEY_KEY, key);
+                    intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     startActivity(intent);
                 }
             }
@@ -504,6 +508,7 @@ public class PostFragment extends BaseFragment
             mRightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
             mContent.setText(reply.getNMBDisplayContent());
 
+            String thumbKey = reply.getNMBThumbKey();
             String thumbUrl = reply.getNMBThumbUrl();
 
             boolean showImage;
@@ -518,7 +523,7 @@ public class PostFragment extends BaseFragment
                 loadFromNetwork = false;
             }
 
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
+            if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 mThumb.setVisibility(View.VISIBLE);
                 mThumb.unload();
                 mThumb.load(thumbUrl, thumbUrl, loadFromNetwork);
@@ -745,12 +750,14 @@ public class PostFragment extends BaseFragment
             int position = getAdapterPosition();
             if (position >= 0 && position < mReplyHelper.size()) {
                 Reply reply = mReplyHelper.getDataAt(position);
+                String key = reply.getNMBImageKey();
                 String image = reply.getNMBImageUrl();
-                if (!TextUtils.isEmpty(image)) {
+                if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(image)) {
                     Intent intent = new Intent(getActivity(), GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
                     intent.putExtra(GalleryActivity2.KEY_SITE, reply.getNMBSite().getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, reply.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_KEY, key);
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     startActivity(intent);
                 }
@@ -775,6 +782,7 @@ public class PostFragment extends BaseFragment
             holder.rightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
             holder.content.setText(reply.getNMBDisplayContent());
 
+            String thumbKey = reply.getNMBThumbKey();
             String thumbUrl = reply.getNMBThumbUrl();
 
             boolean showImage;
@@ -789,7 +797,7 @@ public class PostFragment extends BaseFragment
                 loadFromNetwork = false;
             }
 
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
+            if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
                 holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);

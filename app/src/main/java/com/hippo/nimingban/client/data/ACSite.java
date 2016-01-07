@@ -34,8 +34,7 @@ public class ACSite extends Site {
 
     private static final String TAG = ACSite.class.getSimpleName();
 
-    private static final String DEFAULT_THUMB_PREFIX = ACUrl.HOST + "/Public/Upload/thumb/";
-    private static final String DEFAULT_IMAGE_PREFIX = ACUrl.HOST + "/Public/Upload/image/";
+    private static final String DEFAULT_PICTURE_PREFIX = ACUrl.HOST + "/Public/Upload/";
 
     private URL mSiteUrl;
 
@@ -131,25 +130,14 @@ public class ACSite extends Site {
         return cdnPath;
     }
 
-    public synchronized String getThumbUrl(String key, String ext) {
+    public synchronized String getPictureUrl(String key) {
         String url;
         ACCdnPath cdnPath;
-        if (mCdnPathList != null && (cdnPath = getCdnPath()) != null) {
-            url = cdnPath.url + "thumb/" + key + ext;
-        } else {
-            url = DEFAULT_THUMB_PREFIX + key + ext;
-        }
 
-        return url;
-    }
-
-    public synchronized String getImageUrl(String key, String ext) {
-        String url;
-        ACCdnPath cdnPath;
         if (mCdnPathList != null && (cdnPath = getCdnPath()) != null) {
-            url = cdnPath.url + "image/" + key + ext;
+            url = cdnPath.url + key;
         } else {
-            url = DEFAULT_IMAGE_PREFIX + key + ext;
+            url = DEFAULT_PICTURE_PREFIX + key;
         }
 
         return url;

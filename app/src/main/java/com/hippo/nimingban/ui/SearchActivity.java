@@ -233,12 +233,14 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             int position = getAdapterPosition();
             if (position >= 0 && position < mSearchHelper.size()) {
                 ACSearchItem item = mSearchHelper.getDataAt(position);
+                String key = item.getNMBImageKey();
                 String image = item.getNMBImageUrl();
-                if (!TextUtils.isEmpty(image)) {
+                if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(image)) {
                     Intent intent = new Intent(SearchActivity.this, GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
                     intent.putExtra(GalleryActivity2.KEY_SITE, item.getNMBSite().getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, item.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_KEY, key);
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     SearchActivity.this.startActivity(intent);
                 }
@@ -263,6 +265,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             holder.rightText.setText(ReadableTime.getDisplayTime(item.getNMBTime()));
             holder.content.setText(item.getNMBDisplayContent());
 
+            String thumbKey = item.getNMBThumbKey();
             String thumbUrl = item.getNMBThumbUrl();
 
             boolean showImage;
@@ -277,7 +280,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
                 loadFromNetwork = false;
             }
 
-            if (!TextUtils.isEmpty(thumbUrl) && showImage) {
+            if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
                 holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);

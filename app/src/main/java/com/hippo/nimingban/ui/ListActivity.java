@@ -996,12 +996,14 @@ public final class ListActivity extends AbsActivity
             int position = getAdapterPosition();
             if (position >= 0 && position < mPostHelper.size()) {
                 Post post = mPostHelper.getDataAt(position);
+                String key = post.getNMBImageKey();
                 String image = post.getNMBImageUrl();
-                if (!TextUtils.isEmpty(image)) {
+                if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(image)) {
                     Intent intent = new Intent(ListActivity.this, GalleryActivity2.class);
                     intent.setAction(GalleryActivity2.ACTION_SINGLE_IMAGE);
                     intent.putExtra(GalleryActivity2.KEY_SITE, post.getNMBSite().getId());
                     intent.putExtra(GalleryActivity2.KEY_ID, post.getNMBId());
+                    intent.putExtra(GalleryActivity2.KEY_KEY, key);
                     intent.putExtra(GalleryActivity2.KEY_IMAGE, image);
                     ListActivity.this.startActivity(intent);
                 }
@@ -1096,6 +1098,7 @@ public final class ListActivity extends AbsActivity
 
             TextView bottomText = holder.bottomText;
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottomText.getLayoutParams();
+            String thumbKey = post.getNMBThumbKey();
             String thumbUrl = post.getNMBThumbUrl();
 
             boolean tryShowImage;
@@ -1111,7 +1114,7 @@ public final class ListActivity extends AbsActivity
             }
 
             boolean showImage;
-            if (!TextUtils.isEmpty(thumbUrl) && tryShowImage) {
+            if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && tryShowImage) {
                 showImage = true;
 
                 holder.thumb.setVisibility(View.VISIBLE);

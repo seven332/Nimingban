@@ -76,6 +76,7 @@ public class GalleryActivity2 extends SwipeActivity {
 
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
+    public static final String KEY_KEY = "key";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_UNI_FILE_URI = "uni_file_uri";
 
@@ -93,9 +94,10 @@ public class GalleryActivity2 extends SwipeActivity {
         if (ACTION_SINGLE_IMAGE.equals(action)) {
             int site = intent.getIntExtra(KEY_SITE, -1);
             String id = intent.getStringExtra(KEY_ID);
+            String key = intent.getStringExtra(KEY_KEY);
             String image = intent.getStringExtra(KEY_IMAGE);
-            if (Site.isValid(site) && id != null && image != null) {
-                mGalleryAdapter = new SingleImageAdapter(Site.fromId(site), id, image);
+            if (Site.isValid(site) && id != null && key != null && image != null) {
+                mGalleryAdapter = new SingleImageAdapter(Site.fromId(site), id, key, image);
                 return true;
             }
         } else if (ACTION_IMAGE_FILE.equals(action)) {
@@ -321,11 +323,13 @@ public class GalleryActivity2 extends SwipeActivity {
 
         private Site mSite;
         private String mId;
+        private String mKey;
         private String mImage;
 
-        public SingleImageAdapter(Site site, String id, String image) {
+        public SingleImageAdapter(Site site, String id, String key, String image) {
             mSite = site;
             mId = id;
+            mKey = key;
             mImage = image;
         }
 
@@ -339,7 +343,7 @@ public class GalleryActivity2 extends SwipeActivity {
                 container = new UniFileDataContain(GalleryActivity2.this, dir,
                         mSite.getReadableName(GalleryActivity2.this) + "-" + mId);
             } else {
-                key = mImage;
+                key = mKey;
                 container = null;
             }
 

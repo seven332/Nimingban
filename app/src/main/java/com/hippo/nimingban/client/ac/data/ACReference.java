@@ -24,7 +24,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
-import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.text.Html;
@@ -48,8 +47,10 @@ public class ACReference extends Reply {
     private long mTime;
     private CharSequence mUser;
     private CharSequence mContent;
-    private String mThumb;
-    private String mImage;
+    private String mThumbKey;
+    private String mImageKey;
+    private String mThumbUrl;
+    private String mImageUrl;
 
     @Override
     public String toString() {
@@ -75,12 +76,20 @@ public class ACReference extends Reply {
 
         mContent = ACPost.generateContent(content, "", title, "", email);
 
-        // Make it could hit cache
         if (!TextUtils.isEmpty(thumb)) {
-            mThumb = thumb.replaceAll("http://[^/]+/", (ACUrl.HOST + "/"));
+            mThumbUrl = thumb;
+            int index = thumb.indexOf("/thumb/");
+            if (index >= 0) {
+                mThumbKey = thumb.substring(index + 1);
+            }
         }
+
         if (!TextUtils.isEmpty(image)) {
-            mImage = image.replaceAll("http://[^/]+/", (ACUrl.HOST + "/"));
+            mImageUrl = image;
+            int index = image.indexOf("/image/");
+            if (index >= 0) {
+                mImageUrl = image.substring(index + 1);
+            }
         }
     }
 
@@ -115,15 +124,24 @@ public class ACReference extends Reply {
     }
 
     @Override
+    public String getNMBThumbKey() {
+        return mThumbKey;
+    }
+
+    @Override
+    public String getNMBImageKey() {
+        return mImageKey;
+    }
+
+    @Override
     public String getNMBThumbUrl() {
-        return mThumb;
+        return mThumbUrl;
     }
 
     @Override
     public String getNMBImageUrl() {
-        return mImage;
+        return mImageUrl;
     }
-
 
     @Override
     public int describeContents() {
