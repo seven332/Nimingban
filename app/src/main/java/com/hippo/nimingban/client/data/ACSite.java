@@ -26,6 +26,7 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.yorozuya.MathUtils;
 
+import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -80,6 +81,21 @@ public class ACSite extends Site {
             return -2;
         } else {
             return cookie.getMaxAge();
+        }
+    }
+
+    @Override
+    public void setCookieMaxAge(Context context, long maxAge) {
+        SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(context);
+        HttpCookieWithId cookie = cookieStore.getCookie(mSiteUrl, "userhash");
+        if (cookie != null) {
+            // Remove it
+            cookieStore.remove(mSiteUrl, "userhash");
+
+            // Update it
+            HttpCookie httpCookie = cookie.httpCookie;
+            httpCookie.setMaxAge(maxAge);
+            cookieStore.add(mSiteUrl, httpCookie);
         }
     }
 

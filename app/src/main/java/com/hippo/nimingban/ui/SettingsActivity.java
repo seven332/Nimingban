@@ -31,7 +31,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -40,12 +39,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,10 +61,12 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.network.TransportableHttpCookie;
 import com.hippo.nimingban.service.DaDiaoService;
+import com.hippo.nimingban.util.CountDownTimerEx;
 import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.nimingban.widget.PopupTextView;
 import com.hippo.preference.FixedSwitchPreference;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
@@ -70,6 +75,7 @@ import com.hippo.util.LogCat;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 
 import java.io.File;
@@ -401,14 +407,35 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mImageSaveLocation;
         private Preference mAboutAnalysis;
 
+        private long mMaxAgeDiff = 0;
         private TimingLife mTimingLife;
 
         private final long[] mHits = new long[8];
 
+        private PopupWindow mPopupWindow;
+        private PopupTextView mPopupTextView;
+        private int[] mLocation = new int[2];
+
+        private int mClick = 0;
+        private int mXuMing;
+        private String mXuMingStr;
+
         @Override
         public void onDestroy() {
             super.onDestroy();
+
+            // Update cookie max age
+            if (mMaxAgeDiff != 0) {
+                ACSite acSite = ACSite.getInstance();
+                long maxAge = acSite.getCookieMaxAge(getActivity());
+                acSite.setCookieMaxAge(getActivity(), maxAge + mMaxAgeDiff / 1000);
+            }
+
             stopTimingLife();
+
+            if (mPopupWindow.isShowing()) {
+                mPopupWindow.dismiss();
+            }
         }
 
         @Override
@@ -434,10 +461,28 @@ public class SettingsActivity extends AbsPreferenceActivity {
             setACCookiesSummary(maxAge);
             updateFeedIdSummary();
             updateImageSaveLocation();
+
+            mPopupTextView = new PopupTextView(getActivity());
+            mPopupWindow = new PopupWindow(mPopupTextView);
+            mPopupWindow.setOutsideTouchable(false);
+            mPopupWindow.setTouchable(false);
+            mPopupWindow.setFocusable(false);
+            mPopupWindow.setAnimationStyle(0);
+
+            // Popup window
+            ((SettingsActivity) getActivity()).getListView()
+                    .getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    ((SettingsActivity) getActivity()).getListView().getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    ensurePopupWindow();
+                }
+            });
         }
 
         private void startTimingLife(long millisInFuture) {
             if (mTimingLife == null) {
+                mMaxAgeDiff = 0;
                 mTimingLife = new TimingLife(millisInFuture, 1000);
                 mTimingLife.start();
             }
@@ -445,6 +490,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private void stopTimingLife() {
             if (mTimingLife != null) {
+                mMaxAgeDiff = 0;
                 mTimingLife.cancel();
                 mTimingLife = null;
             }
@@ -701,15 +747,93 @@ public class SettingsActivity extends AbsPreferenceActivity {
             }
         }
 
+        private boolean ensurePopupWindow() {
+            View view = getView();
+            if (view == null) {
+                return false;
+            }
+            ListView listView = (ListView) view.findViewById(android.R.id.list);
+            if (listView == null) {
+                return false;
+            }
+
+            view = listView.getChildAt(0);
+            if (view == null) {
+                return false;
+            }
+            view.getLocationInWindow(mLocation);
+
+            if (!mPopupWindow.isShowing()) {
+                mPopupWindow.showAtLocation(listView, Gravity.TOP | Gravity.LEFT,
+                        mLocation[0] + view.getWidth() / 3, mLocation[1]);
+                mPopupWindow.update(view.getWidth() * 2 / 3, view.getHeight());
+            } else {
+                mPopupWindow.update(mLocation[0] + view.getWidth() / 3, mLocation[1],
+                        view.getWidth() * 2 / 3, view.getHeight(), false);
+            }
+            return true;
+        }
+
+        public void getXuMing() {
+            int click = mClick;
+            // Get xu ming
+            if (click % 10 < 9 || MathUtils.random(1.0f) < 0.95f) {
+                switch (click / 10) {
+                    case 0:
+                        mXuMing = 1000;
+                        mXuMingStr = "+1s";
+                        break;
+                    case 1:
+                        mXuMing = 60 * 1000;
+                        mXuMingStr = "+1m";
+                        break;
+                    case 2:
+                        mXuMing = 60 * 60 * 1000;
+                        mXuMingStr = "+1h";
+                        break;
+                    default:
+                        mXuMing = 24 * 60 * 60 * 1000;
+                        mXuMingStr = "+1d";
+                        break;
+                }
+            } else {
+                switch (click / 10) {
+                    case 0:
+                        mXuMing = -10 * 1000;
+                        mXuMingStr = "-10s";
+                        break;
+                    case 1:
+                        mXuMing = -10 * 60 * 1000;
+                        mXuMingStr = "-10m";
+                        break;
+                    case 2:
+                        mXuMing = -10 * 60 * 60 * 1000;
+                        mXuMingStr = "-10h";
+                        break;
+                    default:
+                        mXuMing = -10 * 24 * 60 * 60 * 1000;
+                        mXuMingStr = "-10d";
+                        break;
+                }
+                mClick = 0;
+            }
+        }
+
         @Override
         public boolean onPreferenceClick(Preference preference) {
             String key = preference.getKey();
-            if (KEY_AC_COOKIES.equals(key)) {
+            if (KEY_AC_COOKIES.equals(key) && mTimingLife != null) {
                 System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
                 mHits[mHits.length - 1] = SystemClock.uptimeMillis();
-                if (mHits[0] >= (SystemClock.uptimeMillis() - 3000)) {
-                    Arrays.fill(mHits, 0);
-                    // TODO
+                if (mHits[0] >= (SystemClock.uptimeMillis() - 3000) && ensurePopupWindow()) {
+                    getXuMing();
+                    if (mPopupTextView.popupText(mXuMingStr)) {
+                        mMaxAgeDiff += mXuMing;
+                        mTimingLife.update(mXuMing);
+                        mClick++;
+                    }
+                } else {
+                    mClick = 0;
                 }
                 return true;
             } else if (KEY_SAVE_COOKIES.equals(key)) {
@@ -800,7 +924,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             }
         }
 
-        private class TimingLife extends CountDownTimer {
+        private class TimingLife extends CountDownTimerEx {
 
             public TimingLife(long millisInFuture, long countDownInterval) {
                 super(millisInFuture, countDownInterval);
@@ -813,6 +937,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             @Override
             public void onFinish() {
+                setACCookiesSummary(-2);
+                mMaxAgeDiff = 0;
+                mTimingLife = null;
             }
         }
     }
