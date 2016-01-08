@@ -526,7 +526,7 @@ public class PostFragment extends BaseFragment
             if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 mThumb.setVisibility(View.VISIBLE);
                 mThumb.unload();
-                mThumb.load(thumbUrl, thumbUrl, loadFromNetwork);
+                mThumb.load(thumbKey, thumbUrl, loadFromNetwork);
             } else {
                 mThumb.setVisibility(View.GONE);
                 mThumb.unload();
@@ -800,7 +800,7 @@ public class PostFragment extends BaseFragment
             if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
-                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
+                holder.thumb.load(thumbKey, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 holder.thumb.unload();

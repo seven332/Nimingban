@@ -283,7 +283,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             if (!TextUtils.isEmpty(thumbKey) && !TextUtils.isEmpty(thumbUrl) && showImage) {
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
-                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
+                holder.thumb.load(thumbKey, thumbUrl, loadFromNetwork);
             } else {
                 holder.thumb.setVisibility(View.GONE);
                 holder.thumb.unload();

@@ -1119,7 +1119,7 @@ public final class ListActivity extends AbsActivity
 
                 holder.thumb.setVisibility(View.VISIBLE);
                 holder.thumb.unload();
-                holder.thumb.load(thumbUrl, thumbUrl, loadFromNetwork);
+                holder.thumb.load(thumbKey, thumbUrl, loadFromNetwork);
             } else {
                 showImage = false;
 
