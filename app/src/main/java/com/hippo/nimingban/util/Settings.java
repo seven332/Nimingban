@@ -47,27 +47,12 @@ public final class Settings {
     private static Context sContext;
     private static SharedPreferences sSettingsPre;
 
-    private static String sExtendFeedId;
+    private static boolean sCheckExtendFeedId = false;
+    private static String sExtendFeedId = null;
 
     public static void initialize(Context context) {
         sContext = context.getApplicationContext();
         sSettingsPre = PreferenceManager.getDefaultSharedPreferences(sContext);
-
-        // Get extend feed id
-        File feedIdFile = NMBAppConfig.getFileInAppDir(KEY_FEED_ID);
-        if (feedIdFile != null) {
-            FileInputStream fis;
-            try {
-                fis = new FileInputStream(feedIdFile);
-                String feedId = IOUtils.readString(fis, "UTF-8");
-                if (!TextUtils.isEmpty(feedId)) {
-                    sExtendFeedId = feedId;
-                    putFeedId(sExtendFeedId);
-                }
-            } catch (IOException e) {
-                // Ignore
-            }
-        }
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
@@ -230,6 +215,25 @@ public final class Settings {
     }
 
     public static String getFeedId() {
+        if (!sCheckExtendFeedId) {
+            sCheckExtendFeedId = true;
+            // Get extend feed id
+            File feedIdFile = NMBAppConfig.getFileInAppDir(KEY_FEED_ID);
+            if (feedIdFile != null) {
+                FileInputStream fis;
+                try {
+                    fis = new FileInputStream(feedIdFile);
+                    String feedId = IOUtils.readString(fis, "UTF-8");
+                    if (!TextUtils.isEmpty(feedId)) {
+                        sExtendFeedId = feedId;
+                        putFeedId(sExtendFeedId);
+                    }
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+        }
+
         if (sExtendFeedId != null) {
             return sExtendFeedId;
         } else {
