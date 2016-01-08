@@ -48,8 +48,6 @@ public final class PostActivity extends SwipeActivity
     public static final String KEY_SITE = "site";
     public static final String KEY_ID = "id";
 
-    public static final String KEY_INIT = "init";
-
     public static final String TAG_FRAGMENT_POST = "post";
     public static final String TAG_FRAGMENT_TYPE_SEND = "type_send";
 
@@ -85,21 +83,32 @@ public final class PostActivity extends SwipeActivity
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         setContentView(R.layout.activity_post);
 
-        mPostLayout = (PostLayout) findViewById(R.id.main);
+        mPostLayout = (PostLayout) findViewById(R.id.fragment_container);
 
-        if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_INIT, false)) {
-            PostFragment postFragment = new PostFragment();
-            postFragment.setArguments(createArgs());
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.main, postFragment, TAG_FRAGMENT_POST);
-            transaction.commit();
+        if (mPostLayout != null) {
+            if (savedInstanceState == null) {
+                PostFragment postFragment = new PostFragment();
+                postFragment.setArguments(createArgs());
+                postFragment.setFragmentHost(this);
+                postFragment.setCallback(this);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(R.id.fragment_container, postFragment, TAG_FRAGMENT_POST);
+                transaction.commit();
+            } else {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                PostFragment postFragment = (PostFragment) fragmentManager.findFragmentByTag(TAG_FRAGMENT_POST);
+                if (postFragment != null) {
+                    postFragment.setFragmentHost(this);
+                    postFragment.setCallback(this);
+                }
+                TypeSendFragment typeSendFragment = (TypeSendFragment)
+                        fragmentManager.findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);
+                if (typeSendFragment != null) {
+                    typeSendFragment.setFragmentHost(this);
+                    typeSendFragment.setCallback(this);
+                }
+            }
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_INIT, true);
     }
 
     @Override
@@ -154,9 +163,11 @@ public final class PostActivity extends SwipeActivity
 
             TypeSendFragment typeSendFragment = new TypeSendFragment();
             typeSendFragment.setArguments(args);
+            typeSendFragment.setFragmentHost(this);
+            typeSendFragment.setCallback(this);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
-            transaction.add(R.id.main, typeSendFragment, TAG_FRAGMENT_TYPE_SEND);
+            transaction.add(R.id.fragment_container, typeSendFragment, TAG_FRAGMENT_TYPE_SEND);
             transaction.commit();
 
             setSwipeBackEnable(false);

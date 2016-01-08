@@ -168,6 +168,12 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
 
+    private Callback mCallback;
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
     private boolean handleArgs(Bundle args) {
         if (args == null) {
             return false;
@@ -282,7 +288,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Callback) getActivity()).onClickBack(TypeSendFragment.this);
+                mCallback.onClickBack(TypeSendFragment.this);
             }
         });
 

@@ -141,6 +141,12 @@ public class PostFragment extends BaseFragment
 
     private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
 
+    private Callback mCallback;
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
     private boolean handleArgs(Bundle args) {
         if (args == null) {
             return false;
@@ -316,7 +322,7 @@ public class PostFragment extends BaseFragment
                 }
                 return true;
             case R.id.action_reply:
-                ((Callback) getActivity()).reply(mSite, mId, null, false);
+                mCallback.reply(mSite, mId, null, false);
                 return true;
             case R.id.action_add_feed:
                 NMBRequest request1 = new NMBRequest();
@@ -644,7 +650,7 @@ public class PostFragment extends BaseFragment
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case 0:
-                    ((Callback) getActivity()).reply(mSite, mId, ">>No." + mReply.getNMBId() + "\n", false); // TODO Let site decides it
+                    mCallback.reply(mSite, mId, ">>No." + mReply.getNMBId() + "\n", false); // TODO Let site decides it
                     break;
                 case 1:
                     // Copy
@@ -658,7 +664,7 @@ public class PostFragment extends BaseFragment
                     break;
                 case 3: {
                     // Report
-                    ((Callback) getActivity()).reply(mSite, mSite.getReportForumId(), ">>No." + mReply.getNMBId() + "\n", true); // TODO Let site decides it
+                    mCallback.reply(mSite, mSite.getReportForumId(), ">>No." + mReply.getNMBId() + "\n", true); // TODO Let site decides it
                     break;
                 }
                 default: {
