@@ -404,7 +404,7 @@ public class GalleryActivity2 extends SwipeActivity {
             }
             String name = mSite.getReadableName(GalleryActivity2.this) + "-" + mId;
 
-            mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, dir, name, mImage, share);
+            mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, dir, name, mKey, share);
             mSaveTask.execute();
         }
     }
