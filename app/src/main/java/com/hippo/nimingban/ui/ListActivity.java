@@ -473,6 +473,20 @@ public final class ListActivity extends AbsActivity
             Toast.makeText(this, R.string.cant_make_sure_image_save_location, Toast.LENGTH_SHORT).show();
         }
 
+        // Check new icon
+        if (Settings.getNewIcon()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.app_new_icon_title)
+                    .setMessage(R.string.app_new_icon_msg)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            Settings.putNewIcon(false);
+                        }
+                    }).show();
+        }
+
         // Check analysis
         if (!Settings.getSetAnalysis()) {
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {

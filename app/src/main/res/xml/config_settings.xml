@@ -59,6 +59,17 @@
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>
 
+    <com.hippo.preference.IconListPreference
+        style="?android:attr/preferenceStyle"
+        android:key="app_icon"
+        android:title="@string/main_app_icon"
+        android:summary="%s"
+        android:entries="@array/app_icon_entries"
+        android:entryValues="@array/app_icon_entry_values"
+        app:entryIcons="@array/app_icon_entry_icons"
+        android:defaultValue="0"
+        android:widgetLayout="@layout/preference_widget_icon_list"/>
+
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:key="analysis"

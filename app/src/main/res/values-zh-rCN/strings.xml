@@ -236,6 +236,7 @@
     <string name="main_save_image_auto_summary_off">点击保存按钮才会存图</string>
     <string name="main_image_save_location">图片存储路径</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+    <string name="main_app_icon">应用图标（也许需要重启）</string>
     <string name="main_analysis">启用数据统计</string>
     <string name="main_about_analysis">关于数据统计</string>
     <string name="main_author">作者</string>
@@ -248,6 +249,9 @@
     <string name="main_help_nimingban_summary">了解如何帮助匿名版做得更好</string>
     <string name="main_help">帮助</string>
     <string name="main_help_summary">如果你还不知道，直接问开发者吧</string>
+
+    <string name="app_new_icon_title">新图标</string>
+    <string name="app_new_icon_msg">(＾o＾)ﾉ\n匿名版有了新的图标设计，可至 设置->配置->应用图标 更换。\n\n如果你有好的图标设计也可以与开发者联系。</string>
 
     <string name="text_format">文本格式</string>
     <string name="font_size">字体大小</string>

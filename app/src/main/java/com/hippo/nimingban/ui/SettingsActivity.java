@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -68,6 +69,7 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.PopupTextView;
 import com.hippo.preference.FixedSwitchPreference;
+import com.hippo.preference.IconListPreference;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
@@ -77,6 +79,7 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.NumberUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -390,7 +393,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class ConfigFragment extends PreferenceFragment
-            implements Preference.OnPreferenceClickListener {
+            implements Preference.OnPreferenceClickListener,
+            Preference.OnPreferenceChangeListener {
 
         public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
         public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
@@ -398,6 +402,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_AC_COOKIES = "ac_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
+        private static final String KEY_APP_ICON = "app_icon";
         private static final String KEY_ABOUT_ANALYSIS = "about_analysis";
 
         private Preference mACCookies;
@@ -405,6 +410,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mRestoreCookies;
         private Preference mFeedId;
         private Preference mImageSaveLocation;
+        private IconListPreference mAppIcon;
         private Preference mAboutAnalysis;
 
         private long mMaxAgeDiff = 0;
@@ -448,6 +454,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mFeedId = findPreference(Settings.KEY_FEED_ID);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
+            mAppIcon = (IconListPreference) findPreference(KEY_APP_ICON);
             mAboutAnalysis = findPreference(KEY_ABOUT_ANALYSIS);
 
             mACCookies.setOnPreferenceClickListener(this);
@@ -456,6 +463,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mFeedId.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
             mAboutAnalysis.setOnPreferenceClickListener(this);
+
+            mAppIcon.setOnPreferenceChangeListener(this);
 
             long maxAge = ACSite.getInstance().getCookieMaxAge(getActivity());
             setACCookiesSummary(maxAge);
@@ -560,6 +569,29 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     .setPositiveButton(android.R.string.ok, listener)
                     .setNeutralButton(R.string.document, listener)
                     .show();
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String key = preference.getKey();
+            if (KEY_APP_ICON.equals(key)) {
+                int index = NumberUtils.parseIntSafely((String) newValue, 0);
+                if (index < 0 || index >= Settings.ICON_ACTIVITY_ARRAY.length) {
+                    return false;
+                }
+
+                PackageManager p = getActivity().getPackageManager();
+                for (int i = 0; i < Settings.ICON_ACTIVITY_ARRAY.length; i++) {
+                    ComponentName c = new ComponentName(getActivity(), Settings.ICON_ACTIVITY_ARRAY[i]);
+                    p.setComponentEnabledSetting(c,
+                            i == index ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+                }
+                return true;
+            }
+
+            return false;
         }
 
         private class SaveCookieTask extends AsyncTask<Void, Void, String> {

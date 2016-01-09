@@ -390,6 +390,30 @@ public final class Settings {
         putBoolean(KEY_GUIDE_LIST_ACTIVITY, value);
     }
 
+    public static final String KEY_NEW_ICON = "new_icon";
+    public static final boolean VALUE_NEW_ICON = true;
+
+    public static boolean getNewIcon() {
+        return getBoolean(KEY_NEW_ICON, VALUE_NEW_ICON);
+    }
+
+    public static void putNewIcon(boolean value) {
+        putBoolean(KEY_NEW_ICON, value);
+    }
+
+    public static final String[] ICON_ACTIVITY_ARRAY = {
+            "com.hippo.nimingban.ui.ListActivity",
+            "com.hippo.nimingban.ui.ListActivity-ibuki",
+    };
+
+    public static String getDefaultIconActivity() {
+        return ICON_ACTIVITY_ARRAY[0];
+    }
+
+    public static String getCurrentIconActivity() {
+        return ICON_ACTIVITY_ARRAY[getIntFromStr("app_icon", 0)];
+    }
+
     public static final String KEY_GUIDE_SORT_FORUMS_ACTIVITY = "guide_sort_forums_activity";
     public static final boolean VALUE_GUIDE_SORT_FORUMS_ACTIVITY = true;
 

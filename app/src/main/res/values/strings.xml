@@ -243,6 +243,7 @@
     <string name="main_save_image_auto_summary_off">Image will be saved only when you click the save button</string>
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+    <string name="main_app_icon">App icon (Maybe reboot required)</string>
     <string name="main_analysis">Enable data analysis</string>
     <string name="main_about_analysis">About data analysis</string>
     <string name="main_author">Author</string>
@@ -256,6 +257,9 @@
     <string name="main_help_nimingban_summary">Learn how to make Nimingban better</string>
     <string name="main_help">Help</string>
     <string name="main_help_summary">Ask the developer if you can\'t find the answer</string>
+
+    <string name="app_new_icon_title">New Icon</string>
+    <string name="app_new_icon_msg">(＾o＾)ﾉ\nNew icon design! Settings->Config->App icon, you can try the new icon.\n\nContact the developer if you have a good icon design.</string>
 
     <string name="text_format">Text format</string>
     <string name="font_size">Font size</string>

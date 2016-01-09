@@ -63,3 +63,5 @@ Here is the libraries
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+ic_launcher_ibuki 图标为 ibuki 所有，如需使用请注明出处与作者

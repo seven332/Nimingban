@@ -16,6 +16,9 @@
 
 package com.hippo.nimingban.ui;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -26,6 +29,7 @@ import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.Utilities;
 import com.tendcloud.tenddata.TCAgent;
 
 public abstract class AbsActivity extends AppCompatActivity implements Messenger.Receiver {
@@ -76,6 +80,25 @@ public abstract class AbsActivity extends AppCompatActivity implements Messenger
     @Override
     public void onReceive(final int id, final Object obj) {
         if (id == Constants.MESSENGER_ID_CHANGE_THEME) {
+            String cls = getComponentName().getClassName();
+            // Change icon will disable this activity, recreate will crash
+            // So we need to find the enabled activity
+            if (Utilities.contain(Settings.ICON_ACTIVITY_ARRAY, cls)) {
+                ComponentName c = new ComponentName(this, cls);
+                PackageManager p = getPackageManager();
+                int state = p.getComponentEnabledSetting(c);
+
+                if ((state == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT &&
+                        !cls.equals(Settings.getDefaultIconActivity())) |
+                        state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
+                    finish();
+                    Intent intent = new Intent();
+                    intent.setClassName(this, Settings.getCurrentIconActivity());
+                    startActivity(intent);
+                    return;
+                }
+            }
+
             recreate();
         }
     }

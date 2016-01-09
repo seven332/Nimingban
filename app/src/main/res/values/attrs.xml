@@ -112,6 +112,10 @@
         <attr name="disableDependentsState" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="IconListPreference">
+        <attr name="entryIcons" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="FastScroller">
         <attr name="handler" format="reference"/>
         <attr name="draggable" format="boolean"/>
