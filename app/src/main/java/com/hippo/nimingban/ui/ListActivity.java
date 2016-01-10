@@ -77,7 +77,6 @@ import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.UpdateStatus;
-import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.LinkMovementMethod2;
@@ -115,6 +114,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public final class ListActivity extends AbsActivity
         implements RightDrawer.RightDrawerHelper, LeftDrawer.Helper {
@@ -280,7 +281,7 @@ public final class ListActivity extends AbsActivity
             mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
             mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
-            mRecyclerView.setItemAnimator(new FloatItemAnimator(mRecyclerView));
+            mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         } else {
             mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

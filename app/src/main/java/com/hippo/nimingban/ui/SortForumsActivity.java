@@ -45,6 +45,9 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
@@ -613,12 +616,12 @@ public class SortForumsActivity extends TranslucentActivity {
         }
 
         @Override
-        public int onGetSwipeReactionType(ForumHolder holder, int i, int i1, int i2) {
-            return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        public int onGetSwipeReactionType(ForumHolder holder, int position, int x, int y) {
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
         }
 
         @Override
-        public void onSetSwipeBackground(ForumHolder holder, int i, int i1) {
+        public void onSetSwipeBackground(ForumHolder holder, int position, int type) {
             // Empty
         }
 
@@ -628,29 +631,38 @@ public class SortForumsActivity extends TranslucentActivity {
         }
 
         @Override
-        public int onSwipeItem(ForumHolder holder, int position, int result) {
+        public SwipeResultAction onSwipeItem(ForumHolder holder, int position, int result) {
             switch (result) {
-                // remove
-                case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-                // other --- do nothing
-                case RecyclerViewSwipeManager.RESULT_CANCELED:
+                // swipe right
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+                case SwipeableItemConstants.RESULT_SWIPED_LEFT:
+                    return new DeleteAction(position);
+                case SwipeableItemConstants.RESULT_CANCELED:
                 default:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+                    return null;
             }
+        }
+    }
+
+    private class DeleteAction extends SwipeResultActionRemoveItem {
+
+        private int mPosition;
+
+        public DeleteAction(int position) {
+            mPosition = position;
         }
 
         @Override
-        public void onPerformAfterSwipeReaction(ForumHolder holder, int position, int result, int reaction) {
-            if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                final ACForumRaw raw = mLazyList.get(position);
-                if (raw != null) {
-                    DB.removeACForum(mLazyList.get(position));
-                    updateLazyList(true);
-                    notifyItemRemoved(position);
-                    mNeedUpdate = true;
-                }
+        protected void onPerformAction() {
+            super.onPerformAction();
+
+            final int position = mPosition;
+            final ACForumRaw raw = mLazyList.get(position);
+            if (raw != null) {
+                DB.removeACForum(mLazyList.get(position));
+                updateLazyList(true);
+                mAdapter.notifyItemRemoved(position);
+                mNeedUpdate = true;
             }
         }
     }

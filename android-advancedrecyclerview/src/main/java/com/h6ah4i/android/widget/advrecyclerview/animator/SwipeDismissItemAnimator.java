@@ -148,7 +148,9 @@ public class SwipeDismissItemAnimator extends GeneralItemAnimator {
             final int reaction = item2.getAfterSwipeReaction();
 
             return ((result == RecyclerViewSwipeManager.RESULT_SWIPED_LEFT) ||
-                    (result == RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT)) &&
+                    (result == RecyclerViewSwipeManager.RESULT_SWIPED_UP) ||
+                    (result == RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT) ||
+                    (result == RecyclerViewSwipeManager.RESULT_SWIPED_DOWN)) &&
                     (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM);
         }
 
@@ -284,7 +286,7 @@ public class SwipeDismissItemAnimator extends GeneralItemAnimator {
             ViewCompat.setTranslationY(oldHolder.itemView, prevTranslationY);
             ViewCompat.setAlpha(oldHolder.itemView, prevAlpha);
 
-            if (newHolder != null && newHolder.itemView != null) {
+            if (newHolder != null) {
                 // carry over translation values
                 endAnimation(newHolder);
                 ViewCompat.setTranslationX(newHolder.itemView, -deltaX);

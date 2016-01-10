@@ -20,7 +20,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.hippo.nimingban"
@@ -92,13 +92,13 @@ dependencies {
     compile project(':unifile')
     compile project(':vector')
     compile project(':yorozuya')
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.android.support:cardview-v7:23.0.1'
-    compile 'com.android.support:customtabs:23.0.1'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.alibaba:fastjson:1.1.45.android'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:customtabs:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'de.greenrobot:greendao:1.3.7'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.jsoup:jsoup:1.8.3'
-    compile 'de.greenrobot:greendao:1.3.7'
 }

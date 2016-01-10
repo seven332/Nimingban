@@ -35,7 +35,6 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
-import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -51,6 +50,8 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class SearchActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
 
@@ -140,7 +141,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
             recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
-            recyclerView.setItemAnimator(new FloatItemAnimator(recyclerView));
+            recyclerView.setItemAnimator(new SlideInUpAnimator());
         } else {
             recyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
             recyclerView.setLayoutManager(new LinearLayoutManager(this));

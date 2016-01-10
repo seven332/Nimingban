@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.List;
 
 public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
@@ -30,11 +32,17 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
     private RecyclerView.Adapter<VH> mWrappedAdapter;
     private BridgeObserver mBridgeObserver;
 
+    protected static final List<Object> FULLUPDATE_PAYLOADS = Collections.emptyList();
+
     public BaseWrapperAdapter(RecyclerView.Adapter<VH> adapter) {
         mWrappedAdapter = adapter;
         mBridgeObserver = new BridgeObserver<>(this);
         mWrappedAdapter.registerAdapterDataObserver(mBridgeObserver);
         super.setHasStableIds(mWrappedAdapter.hasStableIds());
+    }
+
+    public boolean isWrappedAdapterAlive(){
+        return mWrappedAdapter!=null;
     }
 
     public void release() {
@@ -58,33 +66,40 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        mWrappedAdapter.onAttachedToRecyclerView(recyclerView);
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        mWrappedAdapter.onDetachedFromRecyclerView(recyclerView);
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.onDetachedFromRecyclerView(recyclerView);
     }
 
     @Override
     public void onViewAttachedToWindow(VH holder) {
-        mWrappedAdapter.onViewAttachedToWindow(holder);
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.onViewAttachedToWindow(holder);
     }
 
     @Override
     public void onViewDetachedFromWindow(VH holder) {
-        mWrappedAdapter.onViewDetachedFromWindow(holder);
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.onViewDetachedFromWindow(holder);
     }
 
     @Override
     public void onViewRecycled(VH holder) {
-        mWrappedAdapter.onViewRecycled(holder);
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.onViewRecycled(holder);
     }
 
     @Override
     public void setHasStableIds(boolean hasStableIds) {
         super.setHasStableIds(hasStableIds);
-        mWrappedAdapter.setHasStableIds(hasStableIds);
+
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.setHasStableIds(hasStableIds);
     }
 
     @Override
@@ -94,12 +109,18 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
-        mWrappedAdapter.onBindViewHolder(holder, position);
+        onBindViewHolder(holder, position, FULLUPDATE_PAYLOADS);
+    }
+
+    @Override
+    public void onBindViewHolder(VH holder, int position, List<Object> payloads) {
+        if (isWrappedAdapterAlive())
+            mWrappedAdapter.onBindViewHolder(holder, position, payloads);
     }
 
     @Override
     public int getItemCount() {
-        return mWrappedAdapter.getItemCount();
+        return isWrappedAdapterAlive() ? mWrappedAdapter.getItemCount() : 0;
     }
 
     @Override
@@ -118,6 +139,10 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
 
     protected void onHandleWrappedAdapterItemRangeChanged(int positionStart, int itemCount) {
         notifyItemRangeChanged(positionStart, itemCount);
+    }
+
+    protected void onHandleWrappedAdapterItemRangeChanged(int positionStart, int itemCount, Object payload) {
+        notifyItemRangeChanged(positionStart, itemCount, payload);
     }
 
     protected void onHandleWrappedAdapterItemRangeInserted(int positionStart, int itemCount) {
@@ -150,6 +175,14 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         }
 
         onHandleWrappedAdapterItemRangeChanged(positionStart, itemCount);
+    }
+
+    /*package*/ final void onWrappedAdapterItemRangeChanged(int positionStart, int itemCount, Object payload) {
+        if (LOCAL_LOGD) {
+            Log.d(TAG, "onWrappedAdapterItemRangeChanged(positionStart = " + positionStart + ", itemCount = " + itemCount + ", payload = " + payload + ")");
+        }
+
+        onHandleWrappedAdapterItemRangeChanged(positionStart, itemCount, payload);
     }
 
     /*package*/ final void onWrappedAdapterItemRangeInserted(int positionStart, int itemCount) {
@@ -196,6 +229,14 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
             final BaseWrapperAdapter<VH> holder = mRefHolder.get();
             if (holder != null) {
                 holder.onWrappedAdapterItemRangeChanged(positionStart, itemCount);
+            }
+        }
+
+        @Override
+        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            final BaseWrapperAdapter<VH> holder = mRefHolder.get();
+            if (holder != null) {
+                holder.onWrappedAdapterItemRangeChanged(positionStart, itemCount, payload);
             }
         }
 

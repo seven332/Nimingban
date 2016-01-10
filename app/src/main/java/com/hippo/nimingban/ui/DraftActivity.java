@@ -31,6 +31,9 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
@@ -244,12 +247,12 @@ public final class DraftActivity extends TranslucentActivity implements EasyRecy
         }
 
         @Override
-        public int onGetSwipeReactionType(DraftHolder draftHolder, int i, int i1, int i2) {
-            return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        public int onGetSwipeReactionType(DraftHolder holder, int position, int x, int y) {
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
         }
 
         @Override
-        public void onSetSwipeBackground(DraftHolder draftHolder, int i, int i1) {
+        public void onSetSwipeBackground(DraftHolder holder, int position, int type) {
             // Empty
         }
 
@@ -259,42 +262,54 @@ public final class DraftActivity extends TranslucentActivity implements EasyRecy
         }
 
         @Override
-        public int onSwipeItem(DraftHolder holder, int position, int result) {
+        public SwipeResultAction onSwipeItem(DraftHolder holder, int position, int result) {
             switch (result) {
-                // remove
-                case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-                // other --- do nothing
-                case RecyclerViewSwipeManager.RESULT_CANCELED:
+                // swipe right
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+                case SwipeableItemConstants.RESULT_SWIPED_LEFT:
+                    return new DeleteAction(position);
+                case SwipeableItemConstants.RESULT_CANCELED:
                 default:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
-            }
-        }
-
-        @Override
-        public void onPerformAfterSwipeReaction(DraftHolder holder, int position, int result, int reaction) {
-            if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                final DraftRaw raw = mLazyList.get(position);
-                if (raw != null) {
-                    DB.removeDraft(raw.getId());
-                    updateLazyList();
-                    notifyItemRemoved(position);
-                    checkEmpty(true);
-
-                    Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.draft_deleted, Snackbar.LENGTH_LONG);
-                    snackbar.setAction(R.string.undo, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            DB.addDraft(raw.getContent(), raw.getTime());
-                            updateLazyList();
-                            notifyDataSetChanged();
-                            checkEmpty(true);
-                        }
-                    });
-                    snackbar.show();
-                }
+                    return null;
             }
         }
     }
+
+    private class DeleteAction extends SwipeResultActionRemoveItem {
+
+        private int mPosition;
+
+        public DeleteAction(int position) {
+            mPosition = position;
+        }
+
+        @Override
+        protected void onPerformAction() {
+            super.onPerformAction();
+
+            final int position = mPosition;
+            final DraftRaw raw = mLazyList.get(position);
+            if (raw != null) {
+                DB.removeDraft(raw.getId());
+                updateLazyList();
+                mAdapter.notifyItemRemoved(position);
+                checkEmpty(true);
+
+                Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.draft_deleted, Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DB.addDraft(raw.getContent(), raw.getTime());
+                        updateLazyList();
+                        mAdapter.notifyDataSetChanged();
+                        checkEmpty(true);
+                    }
+                });
+                snackbar.show();
+            }
+        }
+    }
+
+
+
 }

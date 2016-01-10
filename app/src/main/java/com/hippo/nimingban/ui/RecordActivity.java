@@ -31,6 +31,9 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
@@ -42,7 +45,6 @@ import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.dao.ACRecordRaw;
-import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
@@ -65,6 +67,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.greenrobot.dao.query.LazyList;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public final class RecordActivity extends TranslucentActivity
         implements EasyRecyclerView.OnItemClickListener {
@@ -113,7 +116,7 @@ public final class RecordActivity extends TranslucentActivity
             mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
             mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
-            mRecyclerView.setItemAnimator(new FloatItemAnimator(mRecyclerView));
+            mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         } else {
             mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -330,12 +333,12 @@ public final class RecordActivity extends TranslucentActivity
         }
 
         @Override
-        public int onGetSwipeReactionType(RecordHolder holder, int i, int i1, int i2) {
-            return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        public int onGetSwipeReactionType(RecordHolder holder, int position, int x, int y) {
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
         }
 
         @Override
-        public void onSetSwipeBackground(RecordHolder holder, int i, int i1) {
+        public void onSetSwipeBackground(RecordHolder holder, int position, int type) {
             // Empty
         }
 
@@ -345,53 +348,62 @@ public final class RecordActivity extends TranslucentActivity
         }
 
         @Override
-        public int onSwipeItem(RecordHolder holder, int position, int result) {
+        public SwipeResultAction onSwipeItem(RecordHolder holder, int position, int result) {
             switch (result) {
-                // remove
-                case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-                // other --- do nothing
-                case RecyclerViewSwipeManager.RESULT_CANCELED:
+                // swipe right
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+                case SwipeableItemConstants.RESULT_SWIPED_LEFT:
+                    return new DeleteAction(position);
+                case SwipeableItemConstants.RESULT_CANCELED:
                 default:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+                    return null;
             }
+        }
+    }
+
+    private class DeleteAction extends SwipeResultActionRemoveItem {
+
+        private int mPosition;
+
+        public DeleteAction(int position) {
+            mPosition = position;
         }
 
         @Override
-        public void onPerformAfterSwipeReaction(RecordHolder holder, int position, int result, int reaction) {
-            if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                final ACRecordRaw raw = mLazyList.get(position);
-                if (raw != null) {
-                    DB.removeACRecord(mLazyList.get(position));
-                    updateLazyList();
-                    notifyItemRemoved(position);
-                    checkEmpty(true);
+        protected void onPerformAction() {
+            super.onPerformAction();
 
-                    Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.record_deleted, Snackbar.LENGTH_LONG);
-                    snackbar.setAction(R.string.undo, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            DB.addACRecord(raw.getType(), raw.getRecordid(), raw.getPostid(),
-                                    raw.getContent(), raw.getImage(), raw.getTime());
-                            updateLazyList();
-                            notifyDataSetChanged();
-                            checkEmpty(true);
-                        }
-                    });
-                    snackbar.setCallback(new Snackbar.Callback() {
-                        @Override
-                        public void onDismissed(Snackbar snackbar, int event) {
-                            if (event != DISMISS_EVENT_ACTION) {
-                                String image = raw.getImage();
-                                if (image != null) {
-                                    new File(image).delete();
-                                }
+            final int position = mPosition;
+            final ACRecordRaw raw = mLazyList.get(position);
+            if (raw != null) {
+                DB.removeACRecord(mLazyList.get(position));
+                updateLazyList();
+                mAdapter.notifyItemRemoved(position);
+                checkEmpty(true);
+
+                Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.record_deleted, Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DB.addACRecord(raw.getType(), raw.getRecordid(), raw.getPostid(),
+                                raw.getContent(), raw.getImage(), raw.getTime());
+                        updateLazyList();
+                        mAdapter.notifyDataSetChanged();
+                        checkEmpty(true);
+                    }
+                });
+                snackbar.setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        if (event != DISMISS_EVENT_ACTION) {
+                            String image = raw.getImage();
+                            if (image != null) {
+                                new File(image).delete();
                             }
                         }
-                    });
-                    snackbar.show();
-                }
+                    }
+                });
+                snackbar.show();
             }
         }
     }

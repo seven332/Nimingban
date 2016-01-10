@@ -33,6 +33,9 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
@@ -44,7 +47,6 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Site;
-import com.hippo.nimingban.itemanimator.FloatItemAnimator;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -63,6 +65,8 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public final class FeedActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
 
@@ -121,7 +125,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
             mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
-            mRecyclerView.setItemAnimator(new FloatItemAnimator(mRecyclerView));
+            mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         } else {
             mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -339,7 +343,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         @Override
         public long getItemId(int position) {
             Post post = mFeedHelper.getDataAt(position);
-            return NumberUtils.parseLongSafely(post.getNMBId(), 0l);
+            return NumberUtils.parseLongSafely(post.getNMBId(), 0L);
         }
 
         @Override
@@ -349,11 +353,11 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
 
         @Override
         public int onGetSwipeReactionType(FeedHolder holder, int position, int x, int y) {
-            return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
         }
 
         @Override
-        public void onSetSwipeBackground(FeedHolder draftHolder, int i, int i1) {
+        public void onSetSwipeBackground(FeedHolder holder, int position, int type) {
             // Empty
         }
 
@@ -363,88 +367,97 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         }
 
         @Override
-        public int onSwipeItem(FeedHolder holder, int position, int result) {
+        public SwipeResultAction onSwipeItem(FeedHolder holder, int position, int result) {
+            mFeedHelper.setEnable(true);
+
             switch (result) {
-                // remove
-                case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-                // other --- do nothing
-                case RecyclerViewSwipeManager.RESULT_CANCELED:
+                // swipe right
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+                case SwipeableItemConstants.RESULT_SWIPED_LEFT:
+                    return new DeleteAction(position);
+                case SwipeableItemConstants.RESULT_CANCELED:
                 default:
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+                    return null;
             }
+        }
+    }
+
+    private class DeleteAction extends SwipeResultActionRemoveItem {
+
+        private int mPosition;
+
+        public DeleteAction(int position) {
+            mPosition = position;
         }
 
         @Override
-        public void onPerformAfterSwipeReaction(FeedHolder holder, final int position, int result, int reaction) {
-            mFeedHelper.setEnable(true);
+        protected void onPerformAction() {
+            super.onPerformAction();
 
-            if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-                String previousId;
-                String nextId;
-                if (position <= 0) {
-                    previousId = null;
-                } else {
-                    previousId = mFeedHelper.getDataAt(position - 1).getNMBId();
-                }
-                if (position >= mFeedHelper.size() - 1) {
-                    nextId = null;
-                } else {
-                    nextId = mFeedHelper.getDataAt(position + 1).getNMBId();
-                }
-                final Post post = mFeedHelper.getDataAt(position);
-                final String id = post.getNMBId();
-                final String oldPreviousId = previousId;
-                final String oldNextId = nextId;
-
-                mFeedHelper.removeAt(position);
-                if (mFeedHelper.size() == 0) {
-                    mFeedHelper.showEmptyString();
-                }
-
-                Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.feed_deleted, Snackbar.LENGTH_LONG);
-                snackbar.setAction(R.string.undo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String previousId;
-                        String nextId;
-                        if (position <= 0) {
-                            previousId = null;
-                        } else {
-                            previousId = mFeedHelper.getDataAt(position - 1).getNMBId();
-                        }
-                        if (position >= mFeedHelper.size()) {
-                            nextId = null;
-                        } else {
-                            nextId = mFeedHelper.getDataAt(position).getNMBId();
-                        }
-
-                        if (ObjectUtils.equal(previousId, oldPreviousId) && ObjectUtils.equal(nextId, oldNextId)) {
-                            mFeedHelper.addAt(position, post);
-                            if (mFeedHelper.size() != 0) {
-                                mFeedHelper.showContent();
-                            }
-                        } else {
-                            mFeedHelper.refresh();
-                        }
-                    }
-                });
-                snackbar.setCallback(new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        if (event != DISMISS_EVENT_ACTION) {
-                            NMBRequest request = new NMBRequest();
-                            request.setSite(ACSite.getInstance());
-                            request.setMethod(NMBClient.METHOD_DEL_FEED);
-                            request.setArgs(ACSite.getInstance().getUserId(FeedActivity.this), id);
-                            request.setCallback(new DelFeedListener());
-                            mNMBClient.execute(request);
-                        }
-                    }
-                });
-                snackbar.show();
+            final int position = mPosition;
+            String previousId;
+            String nextId;
+            if (position <= 0) {
+                previousId = null;
+            } else {
+                previousId = mFeedHelper.getDataAt(position - 1).getNMBId();
             }
+            if (position >= mFeedHelper.size() - 1) {
+                nextId = null;
+            } else {
+                nextId = mFeedHelper.getDataAt(position + 1).getNMBId();
+            }
+            final Post post = mFeedHelper.getDataAt(position);
+            final String id = post.getNMBId();
+            final String oldPreviousId = previousId;
+            final String oldNextId = nextId;
+
+            mFeedHelper.removeAt(position);
+            if (mFeedHelper.size() == 0) {
+                mFeedHelper.showEmptyString();
+            }
+
+            Snackbar snackbar = Snackbar.make(mRecyclerView, R.string.feed_deleted, Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.undo, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String previousId;
+                    String nextId;
+                    if (position <= 0) {
+                        previousId = null;
+                    } else {
+                        previousId = mFeedHelper.getDataAt(position - 1).getNMBId();
+                    }
+                    if (position >= mFeedHelper.size()) {
+                        nextId = null;
+                    } else {
+                        nextId = mFeedHelper.getDataAt(position).getNMBId();
+                    }
+
+                    if (ObjectUtils.equal(previousId, oldPreviousId) && ObjectUtils.equal(nextId, oldNextId)) {
+                        mFeedHelper.addAt(position, post);
+                        if (mFeedHelper.size() != 0) {
+                            mFeedHelper.showContent();
+                        }
+                    } else {
+                        mFeedHelper.refresh();
+                    }
+                }
+            });
+            snackbar.setCallback(new Snackbar.Callback() {
+                @Override
+                public void onDismissed(Snackbar snackbar, int event) {
+                    if (event != DISMISS_EVENT_ACTION) {
+                        NMBRequest request = new NMBRequest();
+                        request.setSite(ACSite.getInstance());
+                        request.setMethod(NMBClient.METHOD_DEL_FEED);
+                        request.setArgs(ACSite.getInstance().getUserId(FeedActivity.this), id);
+                        request.setCallback(new DelFeedListener());
+                        mNMBClient.execute(request);
+                    }
+                }
+            });
+            snackbar.show();
         }
     }
 
