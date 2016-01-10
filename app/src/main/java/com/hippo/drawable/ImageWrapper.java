@@ -67,7 +67,7 @@ public class ImageWrapper implements Animatable, Runnable {
     }
 
     public boolean isLarge() {
-        return mImage.getWidth() * mImage.getHeight() > 256 * 256;
+        return mImage.getWidth() * mImage.getHeight() > 512 * 512;
     }
 
     public void addCallback(@NonNull Callback callback) {
