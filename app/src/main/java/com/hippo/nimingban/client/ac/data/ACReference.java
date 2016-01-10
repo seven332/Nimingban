@@ -88,7 +88,7 @@ public class ACReference extends Reply {
             mImageUrl = image;
             int index = image.indexOf("/image/");
             if (index >= 0) {
-                mImageUrl = image.substring(index + 1);
+                mImageKey = image.substring(index + 1);
             }
         }
     }
