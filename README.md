@@ -38,13 +38,17 @@ Here is the libraries
 - [android-advancedrecyclerview](https://github.com/h6ah4i/android-advancedrecyclerview)
 - [android-gesture-detectors](https://github.com/Almeros/android-gesture-detectors)
 - [android-gif-drawable](https://github.com/koral--/android-gif-drawable)
+- [apng](http://apng.sourceforge.net/)
 - [fastjson](https://github.com/alibaba/fastjson)
 - [giflib](http://giflib.sourceforge.net)
 - [greenDAO](https://github.com/greenrobot/greenDAO)
 - [jsoup](https://github.com/jhy/jsoup)
 - [leakcanary](https://github.com/square/leakcanary)
+- [libjpeg-turbo](http://libjpeg-turbo.virtualgl.org/)
+- [libpng](http://www.libpng.org/pub/png/libpng.html)
 - [okhttp](https://github.com/square/okhttp)
 - [PhotoView](https://github.com/chrisbanes/PhotoView)
+- [recyclerview-animators](https://github.com/wasabeef/recyclerview-animators)
 - [SwipeBackLayout](https://github.com/ikew0ng/SwipeBackLayout)
 
 
