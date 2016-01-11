@@ -225,6 +225,9 @@
     <string name="main_color_status_bar_summary_off">Default status bar. It may solve compatibility problem</string>
     <string name="main_color_status_bar_summary_on">Colored status bar. It may cause compatibility problem</string>
     <string name="main_color_status_bar_summary_disable">Only work in Android 4.4</string>
+    <string name="main_fix_emoji_display">Fix emoji display</string>
+    <string name="main_fix_emoji_display_summary_off">Use system default font</string>
+    <string name="main_fix_emoji_display_summary_on">Use internal font</string>
     <string name="main_ac_cookies">Cookies</string>
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you don\'t have any cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>

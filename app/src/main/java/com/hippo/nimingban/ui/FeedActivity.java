@@ -50,6 +50,7 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
+import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.Snackbar;
@@ -254,7 +255,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         public TextView leftText;
         public TextView centerText;
         public TextView rightText;
-        private TextView content;
+        private FontTextView content;
         private LoadImageView thumb;
 
         public FeedHolder(View itemView) {
@@ -264,7 +265,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
-            content = (TextView) itemView.findViewById(R.id.content);
+            content = (FontTextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
 
             thumb.setOnClickListener(this);
@@ -338,6 +339,11 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
 
             holder.content.setTextSize(Settings.getFontSize());
             holder.content.setLineSpacing(LayoutUtils.dp2pix(FeedActivity.this, Settings.getLineSpacing()), 1.0f);
+            if (Settings.getFixEmojiDisplay()) {
+                holder.content.useCustomTypeface();
+            } else {
+                holder.content.useOriginalTypeface();
+            }
         }
 
         @Override

@@ -540,6 +540,11 @@ public class PostFragment extends BaseFragment
 
             mContent.setTextSize(Settings.getFontSize());
             mContent.setLineSpacing(LayoutUtils.dp2pix(getContext(), Settings.getLineSpacing()), 1.0f);
+            if (Settings.getFixEmojiDisplay()) {
+                mContent.useCustomTypeface();
+            } else {
+                mContent.useOriginalTypeface();
+            }
 
             mViewTransition.showView(1, animation);
 
@@ -814,6 +819,11 @@ public class PostFragment extends BaseFragment
 
             holder.content.setTextSize(Settings.getFontSize());
             holder.content.setLineSpacing(LayoutUtils.dp2pix(getContext(), Settings.getLineSpacing()), 1.0f);
+            if (Settings.getFixEmojiDisplay()) {
+                holder.content.useCustomTypeface();
+            } else {
+                holder.content.useOriginalTypeface();
+            }
         }
 
         @Override

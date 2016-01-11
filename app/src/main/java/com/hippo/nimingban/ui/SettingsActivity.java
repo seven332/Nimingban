@@ -67,6 +67,7 @@ import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.PopupTextView;
 import com.hippo.preference.FixedSwitchPreference;
 import com.hippo.preference.IconListPreference;
@@ -253,6 +254,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private FixedSwitchPreference mImageLoadingStrategy2;
         private FixedSwitchPreference mFastScroller;
         private FixedSwitchPreference mColorStatusBar;
+        private FixedSwitchPreference mFixEmojiDisplay;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -268,6 +270,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mImageLoadingStrategy2 = (FixedSwitchPreference) findPreference(Settings.KEY_IMAGE_LOADING_STRATEGY_2);
             mFastScroller = (FixedSwitchPreference) findPreference(Settings.KEY_FAST_SCROLLER);
             mColorStatusBar = (FixedSwitchPreference) findPreference(Settings.KEY_COLOR_STATUS_BAR);
+            mFixEmojiDisplay = (FixedSwitchPreference) findPreference(Settings.KEY_FIX_EMOJI_DISPLAY);
 
             mPrettyTime.setOnPreferenceChangeListener(this);
             mDynamicComments.setOnPreferenceChangeListener(this);
@@ -275,6 +278,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mImageLoadingStrategy2.setOnPreferenceChangeListener(this);
             mFastScroller.setOnPreferenceChangeListener(this);
             mColorStatusBar.setOnPreferenceChangeListener(this);
+            mFixEmojiDisplay.setOnPreferenceChangeListener(this);
 
             mTextFormat.setOnPreferenceClickListener(this);
 
@@ -319,6 +323,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 return true;
             } else if (Settings.KEY_COLOR_STATUS_BAR.equals(key)) {
                 Messenger.getInstance().notify(Constants.MESSENGER_ID_CHANGE_THEME, Settings.getDarkTheme());
+            } else if (Settings.KEY_FIX_EMOJI_DISPLAY.equals(key)) {
+                getActivity().setResult(RESULT_OK);
+                return true;
             }
             return true;
         }
@@ -327,14 +334,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 DialogInterface.OnClickListener {
 
             public View mView;
-            public TextView mPreview;
+            public FontTextView mPreview;
             public Slider mFontSize;
             public Slider mLineSpacing;
 
             @SuppressLint("InflateParams")
             public TextFormatDialogHelper() {
                 mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_text_format, null);
-                mPreview = (TextView) mView.findViewById(R.id.preview);
+                mPreview = (FontTextView) mView.findViewById(R.id.preview);
                 mFontSize = (Slider) mView.findViewById(R.id.font_size);
                 mLineSpacing = (Slider) mView.findViewById(R.id.line_spacing);
 
@@ -343,6 +350,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
                 mPreview.setTextSize(fontSize);
                 mPreview.setLineSpacing(LayoutUtils.dp2pix(getActivity(), lineSpacing), 1.0f);
+                if (Settings.getFixEmojiDisplay()) {
+                    mPreview.useCustomTypeface();
+                } else {
+                    mPreview.useOriginalTypeface();
+                }
 
                 mFontSize.setProgress(fontSize);
                 mLineSpacing.setProgress(lineSpacing);

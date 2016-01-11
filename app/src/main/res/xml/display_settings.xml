@@ -74,4 +74,13 @@
         android:defaultValue="true"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
 
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:key="fix_emoji_display"
+        android:title="@string/main_fix_emoji_display"
+        app:summaryOff="@string/main_fix_emoji_display_summary_off"
+        app:summaryOn="@string/main_fix_emoji_display_summary_on"
+        android:defaultValue="false"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
+
 </PreferenceScreen>

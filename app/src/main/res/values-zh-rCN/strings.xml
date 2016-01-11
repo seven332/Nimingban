@@ -209,6 +209,9 @@
     <string name="main_color_status_bar_summary_off">状态栏的背景色为默认颜色。这可能解决兼容性问题</string>
     <string name="main_color_status_bar_summary_on">状态栏的背景色为主题色。这可能导致兼容性问题</string>
     <string name="main_color_status_bar_summary_disable">仅在 Android 4.4 下有效</string>
+    <string name="main_fix_emoji_display">修正颜文字显示</string>
+    <string name="main_fix_emoji_display_summary_off">使用系统默认字体</string>
+    <string name="main_fix_emoji_display_summary_on">使用内置字体</string>
     <string name="main_pretty_time_summary">显示 %1$s 而不是 %2$s</string>
     <string name="main_text_format">字体大小与行间距</string>
     <string name="main_text_format_summary">字体大小：%1$d\n行间距：%2$d</string>

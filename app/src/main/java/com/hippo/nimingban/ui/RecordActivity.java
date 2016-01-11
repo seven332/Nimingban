@@ -48,6 +48,7 @@ import com.hippo.nimingban.dao.ACRecordRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
@@ -264,7 +265,7 @@ public final class RecordActivity extends TranslucentActivity
         public View swipable;
         public TextView leftText;
         public TextView rightText;
-        private TextView content;
+        private FontTextView content;
         private LoadImageView thumb;
 
         public RecordHolder(View itemView) {
@@ -273,7 +274,7 @@ public final class RecordActivity extends TranslucentActivity
             swipable = itemView.findViewById(R.id.swipable);
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
-            content = (TextView) itemView.findViewById(R.id.content);
+            content = (FontTextView) itemView.findViewById(R.id.content);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
         }
 
@@ -320,6 +321,11 @@ public final class RecordActivity extends TranslucentActivity
 
             holder.content.setTextSize(Settings.getFontSize());
             holder.content.setLineSpacing(LayoutUtils.dp2pix(RecordActivity.this, Settings.getLineSpacing()), 1.0f);
+            if (Settings.getFixEmojiDisplay()) {
+                holder.content.useCustomTypeface();
+            } else {
+                holder.content.useOriginalTypeface();
+            }
         }
 
         @Override

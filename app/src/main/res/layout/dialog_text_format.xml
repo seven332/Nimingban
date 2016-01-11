@@ -26,7 +26,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <TextView
+    <com.hippo.nimingban.widget.FontTextView
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="96dp"

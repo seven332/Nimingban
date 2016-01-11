@@ -77,6 +77,8 @@ import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.nimingban.widget.FontEditText;
+import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
@@ -148,7 +150,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
     private NMBClient mNMBClient;
 
-    private EditText mEditText;
+    private FontEditText mEditText;
     private View mEmoji;
     private View mImage;
     private View mDraw;
@@ -292,7 +294,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
             }
         });
 
-        mEditText = (EditText) contentView.findViewById(R.id.edit_text);
+        mEditText = (FontEditText) contentView.findViewById(R.id.edit_text);
         mEmoji = contentView.findViewById(R.id.emoji);
         mImage = contentView.findViewById(R.id.image);
         mDraw = contentView.findViewById(R.id.draw);
@@ -313,6 +315,11 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
         mEditText.requestFocus();
         mEditText.requestFocusFromTouch();
+        if (Settings.getFixEmojiDisplay()) {
+            mEditText.useCustomTypeface();
+        } else {
+            mEditText.useOriginalTypeface();
+        }
         SimpleHandler.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -683,8 +690,14 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
             @SuppressLint("InflateParams")
             @Override
             public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new SimpleHolder(
+                SimpleHolder holder = new SimpleHolder(
                         getActivity().getLayoutInflater().inflate(R.layout.item_emoji, null));
+                if (Settings.getFixEmojiDisplay()) {
+                    ((FontTextView) holder.itemView).useCustomTypeface();
+                } else {
+                    ((FontTextView) holder.itemView).useOriginalTypeface();
+                }
+                return holder;
             }
 
             @Override

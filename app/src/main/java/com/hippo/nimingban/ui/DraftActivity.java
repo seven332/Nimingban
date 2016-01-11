@@ -43,6 +43,7 @@ import com.hippo.nimingban.dao.DraftRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Snackbar;
@@ -202,14 +203,14 @@ public final class DraftActivity extends TranslucentActivity implements EasyRecy
 
         private View swipable;
         public TextView time;
-        public TextView content;
+        public FontTextView content;
 
         public DraftHolder(View itemView) {
             super(itemView);
 
             swipable = itemView.findViewById(R.id.swipable);
             time = (TextView) itemView.findViewById(R.id.time);
-            content = (TextView) itemView.findViewById(R.id.content);
+            content = (FontTextView) itemView.findViewById(R.id.content);
         }
 
         @Override
@@ -234,6 +235,11 @@ public final class DraftActivity extends TranslucentActivity implements EasyRecy
 
             holder.content.setTextSize(Settings.getFontSize());
             holder.content.setLineSpacing(LayoutUtils.dp2pix(DraftActivity.this, Settings.getLineSpacing()), 1.0f);
+            if (Settings.getFixEmojiDisplay()) {
+                holder.content.useCustomTypeface();
+            } else {
+                holder.content.useOriginalTypeface();
+            }
         }
 
         @Override

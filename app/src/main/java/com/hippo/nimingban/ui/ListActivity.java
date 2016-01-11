@@ -83,6 +83,7 @@ import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
+import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
@@ -974,7 +975,7 @@ public final class ListActivity extends AbsActivity
         public TextView leftText;
         public TextView centerText;
         public TextView rightText;
-        public TextView content;
+        public FontTextView content;
         public TextView bottomText;
         public LoadImageView thumb;
         public TextSwitcher reply;
@@ -992,7 +993,7 @@ public final class ListActivity extends AbsActivity
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             centerText = (TextView) itemView.findViewById(R.id.center_text);
             rightText = (TextView) itemView.findViewById(R.id.right_text);
-            content = (TextView) itemView.findViewById(R.id.content);
+            content = (FontTextView) itemView.findViewById(R.id.content);
             bottomText = (TextView) itemView.findViewById(R.id.bottom_text);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
             reply = (TextSwitcher) itemView.findViewById(R.id.reply);
@@ -1166,6 +1167,11 @@ public final class ListActivity extends AbsActivity
 
             holder.content.setTextSize(Settings.getFontSize());
             holder.content.setLineSpacing(LayoutUtils.dp2pix(ListActivity.this, Settings.getLineSpacing()), 1.0f);
+            if (Settings.getFixEmojiDisplay()) {
+                holder.content.useCustomTypeface();
+            } else {
+                holder.content.useOriginalTypeface();
+            }
         }
 
         @Override

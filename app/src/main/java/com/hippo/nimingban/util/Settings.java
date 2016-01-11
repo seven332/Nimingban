@@ -143,6 +143,9 @@ public final class Settings {
     public static final String KEY_COLOR_STATUS_BAR = "color_status_bar";
     public static final boolean DEFAULT_COLOR_STATUS_BAR = true;
 
+    public static final String KEY_FIX_EMOJI_DISPLAY = "fix_emoji_display";
+    public static final boolean DEFAULT_FIX_EMOJI_DISPLAY = false;
+
     public static final String KEY_WATERMARK = "watermark";
     public static final boolean DEFAULT_WATERMARKD = true;
 
@@ -208,6 +211,10 @@ public final class Settings {
 
     public static boolean getColorStatusBar() {
         return getBoolean(KEY_COLOR_STATUS_BAR, DEFAULT_COLOR_STATUS_BAR);
+    }
+
+    public static boolean getFixEmojiDisplay() {
+        return getBoolean(KEY_FIX_EMOJI_DISPLAY, DEFAULT_FIX_EMOJI_DISPLAY);
     }
 
     public static boolean getWatermark() {
