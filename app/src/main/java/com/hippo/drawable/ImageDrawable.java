@@ -86,6 +86,10 @@ public class ImageDrawable extends Drawable implements ImageWrapper.Callback {
 
     private void render() {
         ImageWrapper imageWrapper = mImageWrapper;
+        if (imageWrapper.isRecycled()) {
+            return;
+        }
+
         List<Tile> tiles = mTileList;
         for (int i = 0, length = tiles.size(); i < length; i++) {
             Tile tile = tiles.get(i);
