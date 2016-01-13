@@ -392,8 +392,8 @@ DGifGetImageDesc(GifFileType *GifFile)
 
     if (GifFile->SavedImages) {
         SavedImage* new_saved_images =
-            (SavedImage *)realloc(GifFile->SavedImages,
-                            sizeof(SavedImage) * (GifFile->ImageCount + 1));
+            (SavedImage *)reallocarray(GifFile->SavedImages,
+                            (GifFile->ImageCount + 1), sizeof(SavedImage));
         if (new_saved_images == NULL) {
             GifFile->Error = D_GIF_ERR_NOT_ENOUGH_MEM;
             return GIF_ERROR;
@@ -763,6 +763,12 @@ DGifSetupDecompress(GifFileType *GifFile)
     }
     BitsPerPixel = CodeSize;
 
+    /* this can only happen on a severely malformed GIF */
+    if (BitsPerPixel > 8 || Private->RunningBits > 32) {
+	GifFile->Error = D_GIF_ERR_READ_FAILED;	/* somewhat bogus error code */
+	return GIF_ERROR;    /* Failed to read Code size. */
+    }
+
     Private->Buf[0] = 0;    /* Input Buffer empty. */
     Private->BitsPerPixel = BitsPerPixel;
     Private->ClearCode = (1 << BitsPerPixel);
@@ -1098,7 +1104,7 @@ DGifSlurp(GifFileType *GifFile)
               if (ImageSize > (SIZE_MAX / sizeof(GifPixelType))) {
                   return GIF_ERROR;
               }
-              sp->RasterBits = (unsigned char *)malloc(ImageSize *
+              sp->RasterBits = (unsigned char *)reallocarray(NULL, ImageSize,
                       sizeof(GifPixelType));
 
               if (sp->RasterBits == NULL) {
@@ -1170,6 +1176,12 @@ DGifSlurp(GifFileType *GifFile)
         }
     } while (RecordType != TERMINATE_RECORD_TYPE);
 
+    /* Sanity check for corrupted file */
+    if (GifFile->ImageCount == 0) {
+	GifFile->Error = D_GIF_ERR_NO_IMAG_DSCR;
+	return(GIF_ERROR);
+    }
+
     return (GIF_OK);
 }
 
@@ -1179,112 +1191,114 @@ DGifSlurp(GifFileType *GifFile)
 int
 DGifGlance(GifFileType *GifFile)
 {
-  size_t ImageSize;
-  GifRecordType RecordType;
-  SavedImage *sp = NULL;
-  GifByteType *ExtData;
-  int ExtFunction;
+    size_t ImageSize;
+    GifRecordType RecordType;
+    SavedImage *sp = NULL;
+    GifByteType *ExtData;
+    int ExtFunction;
 
-  GifFile->ExtensionBlocks = NULL;
-  GifFile->ExtensionBlockCount = 0;
+    GifFile->ExtensionBlocks = NULL;
+    GifFile->ExtensionBlockCount = 0;
 
-  do {
-    if (DGifGetRecordType(GifFile, &RecordType) == GIF_ERROR)
-      return (GIF_ERROR);
-
-    switch (RecordType) {
-      case IMAGE_DESC_RECORD_TYPE:
-        if (DGifGetImageDesc(GifFile) == GIF_ERROR)
-          return (GIF_ERROR);
-
-        sp = &GifFile->SavedImages[GifFile->ImageCount - 1];
-        /* Allocate memory for the image */
-        if (sp->ImageDesc.Width < 0 && (sp->ImageDesc.Height < 0) && (sp->ImageDesc.Width > (INT_MAX / sp->ImageDesc.Height))) {
-          return GIF_ERROR;
-        }
-        ImageSize = sp->ImageDesc.Width * sp->ImageDesc.Height;
-
-        if (ImageSize > (SIZE_MAX / sizeof(GifPixelType))) {
-          return GIF_ERROR;
-        }
-        sp->RasterBits = (unsigned char *)malloc(ImageSize * sizeof(GifPixelType));
-
-        if (sp->RasterBits == NULL) {
-          return GIF_ERROR;
-        }
-
-        if (sp->ImageDesc.Interlace) {
-          int i, j;
-          /*
-           * The way an interlaced image should be read -
-           * offsets and jumps...
-           */
-          int InterlacedOffset[] = { 0, 4, 2, 1 };
-          int InterlacedJumps[] = { 8, 8, 4, 2 };
-          /* Need to perform 4 passes on the image */
-          for (i = 0; i < 4; i++)
-            for (j = InterlacedOffset[i];
-                 j < sp->ImageDesc.Height;
-                 j += InterlacedJumps[i]) {
-              if (DGifGetLine(GifFile,
-                  sp->RasterBits+j*sp->ImageDesc.Width,
-                  sp->ImageDesc.Width) == GIF_ERROR)
-                return GIF_ERROR;
-            }
-        }
-        else {
-          if (DGifGetLine(GifFile,sp->RasterBits,ImageSize)==GIF_ERROR)
+    do {
+        if (DGifGetRecordType(GifFile, &RecordType) == GIF_ERROR)
             return (GIF_ERROR);
+
+        switch (RecordType) {
+          case IMAGE_DESC_RECORD_TYPE:
+              if (DGifGetImageDesc(GifFile) == GIF_ERROR)
+                  return (GIF_ERROR);
+
+              sp = &GifFile->SavedImages[GifFile->ImageCount - 1];
+              /* Allocate memory for the image */
+              if (sp->ImageDesc.Width < 0 && sp->ImageDesc.Height < 0 &&
+                      sp->ImageDesc.Width > (INT_MAX / sp->ImageDesc.Height)) {
+                  return GIF_ERROR;
+              }
+              ImageSize = sp->ImageDesc.Width * sp->ImageDesc.Height;
+
+              if (ImageSize > (SIZE_MAX / sizeof(GifPixelType))) {
+                  return GIF_ERROR;
+              }
+              sp->RasterBits = (unsigned char *)reallocarray(NULL, ImageSize,
+                      sizeof(GifPixelType));
+
+              if (sp->RasterBits == NULL) {
+                  return GIF_ERROR;
+              }
+
+	      if (sp->ImageDesc.Interlace) {
+		  int i, j;
+		   /* 
+		    * The way an interlaced image should be read - 
+		    * offsets and jumps...
+		    */
+		  int InterlacedOffset[] = { 0, 4, 2, 1 };
+		  int InterlacedJumps[] = { 8, 8, 4, 2 };
+		  /* Need to perform 4 passes on the image */
+		  for (i = 0; i < 4; i++)
+		      for (j = InterlacedOffset[i]; 
+			   j < sp->ImageDesc.Height;
+			   j += InterlacedJumps[i]) {
+			  if (DGifGetLine(GifFile, 
+					  sp->RasterBits+j*sp->ImageDesc.Width, 
+					  sp->ImageDesc.Width) == GIF_ERROR)
+			      return GIF_ERROR;
+		      }
+	      }
+	      else {
+		  if (DGifGetLine(GifFile,sp->RasterBits,ImageSize)==GIF_ERROR)
+		      return (GIF_ERROR);
+	      }
+
+              if (GifFile->ExtensionBlocks) {
+                  sp->ExtensionBlocks = GifFile->ExtensionBlocks;
+                  sp->ExtensionBlockCount = GifFile->ExtensionBlockCount;
+
+                  GifFile->ExtensionBlocks = NULL;
+                  GifFile->ExtensionBlockCount = 0;
+              }
+              break;
+
+          case EXTENSION_RECORD_TYPE:
+              if (DGifGetExtension(GifFile,&ExtFunction,&ExtData) == GIF_ERROR)
+                  return (GIF_ERROR);
+	      /* Create an extension block with our data */
+              if (ExtData != NULL) {
+		  if (GifAddExtensionBlock(&GifFile->ExtensionBlockCount,
+					   &GifFile->ExtensionBlocks, 
+					   ExtFunction, ExtData[0], &ExtData[1])
+		      == GIF_ERROR)
+		      return (GIF_ERROR);
+	      }
+              while (ExtData != NULL) {
+                  if (DGifGetExtensionNext(GifFile, &ExtData) == GIF_ERROR)
+                      return (GIF_ERROR);
+                  /* Continue the extension block */
+		  if (ExtData != NULL)
+		      if (GifAddExtensionBlock(&GifFile->ExtensionBlockCount,
+					       &GifFile->ExtensionBlocks,
+					       CONTINUE_EXT_FUNC_CODE, 
+					       ExtData[0], &ExtData[1]) == GIF_ERROR)
+                      return (GIF_ERROR);
+              }
+              break;
+
+          case TERMINATE_RECORD_TYPE:
+              break;
+
+          default:    /* Should be trapped by DGifGetRecordType */
+              break;
         }
+    } while (RecordType != TERMINATE_RECORD_TYPE && sp == NULL);
 
-        if (GifFile->ExtensionBlocks) {
-          sp->ExtensionBlocks = GifFile->ExtensionBlocks;
-          sp->ExtensionBlockCount = GifFile->ExtensionBlockCount;
-
-          GifFile->ExtensionBlocks = NULL;
-          GifFile->ExtensionBlockCount = 0;
-        }
-        break;
-
-      case EXTENSION_RECORD_TYPE:
-        if (DGifGetExtension(GifFile,&ExtFunction,&ExtData) == GIF_ERROR)
-          return (GIF_ERROR);
-        /* Create an extension block with our data */
-        if (ExtData != NULL) {
-          if (GifAddExtensionBlock(&GifFile->ExtensionBlockCount,
-              &GifFile->ExtensionBlocks,
-              ExtFunction, ExtData[0], &ExtData[1])
-              == GIF_ERROR)
-            return (GIF_ERROR);
-        }
-        while (ExtData != NULL) {
-          if (DGifGetExtensionNext(GifFile, &ExtData) == GIF_ERROR)
-            return (GIF_ERROR);
-          /* Continue the extension block */
-          if (ExtData != NULL)
-          if (GifAddExtensionBlock(&GifFile->ExtensionBlockCount,
-              &GifFile->ExtensionBlocks,
-              CONTINUE_EXT_FUNC_CODE,
-              ExtData[0], &ExtData[1]) == GIF_ERROR)
-            return (GIF_ERROR);
-        }
-        break;
-
-      case TERMINATE_RECORD_TYPE:
-        break;
-
-      default:    /* Should be trapped by DGifGetRecordType */
-        break;
+    /* Sanity check for corrupted file */
+    if (GifFile->ImageCount == 0) {
+	GifFile->Error = D_GIF_ERR_NO_IMAG_DSCR;
+	return(GIF_ERROR);
     }
-  } while (RecordType != TERMINATE_RECORD_TYPE && sp == NULL);
 
-  /* Sanity check for corrupted file */
-  if (GifFile->ImageCount == 0) {
-    GifFile->Error = D_GIF_ERR_NO_IMAG_DSCR;
-    return(GIF_ERROR);
-  }
-
-  return (GIF_OK);
+    return (GIF_OK);
 }
 
 /* end */
