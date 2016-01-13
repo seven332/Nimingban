@@ -146,6 +146,7 @@ public final class ListActivity extends AbsActivity
 
     private PostHelper mPostHelper;
     private PostAdapter mPostAdapter;
+    private RecyclerView.OnScrollListener mOnScrollListener;
 
     private NMBRequest mNMBRequest;
     private NMBRequest mUpdateRequest;
@@ -275,6 +276,17 @@ public final class ListActivity extends AbsActivity
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
+        mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
+                    pauseReplies();
+                } else if (RecyclerView.SCROLL_STATE_IDLE == newState) {
+                    resumeReplies();
+                }
+            }
+        };
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         if (getResources().getBoolean(R.bool.two_way)) {
@@ -376,15 +388,15 @@ public final class ListActivity extends AbsActivity
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+    private void resumeReplies() {
         Iterator<WeakReference<ListHolder>> iterator = mListHolderList.iterator();
         while (iterator.hasNext()) {
             ListHolder holder = iterator.next().get();
             if (holder != null) {
-                holder.resumeReplies();
+                // Only resume attached view holder
+                if (holder.itemView.getParent() != null) {
+                    holder.resumeReplies();
+                }
             } else {
                 iterator.remove();
             }
@@ -392,9 +404,12 @@ public final class ListActivity extends AbsActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onResume() {
+        super.onResume();
+        resumeReplies();
+    }
 
+    private void pauseReplies() {
         Iterator<WeakReference<ListHolder>> iterator = mListHolderList.iterator();
         while (iterator.hasNext()) {
             ListHolder holder = iterator.next().get();
@@ -404,6 +419,12 @@ public final class ListActivity extends AbsActivity
                 iterator.remove();
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pauseReplies();
     }
 
     @Override
@@ -432,6 +453,8 @@ public final class ListActivity extends AbsActivity
             mCdnPathRequest.cancel();
             mCdnPathRequest = null;
         }
+
+        mRecyclerView.removeOnScrollListener(mOnScrollListener);
 
         for (WeakReference<ListHolder> ref : mListHolderList) {
             ListHolder holder = ref.get();
