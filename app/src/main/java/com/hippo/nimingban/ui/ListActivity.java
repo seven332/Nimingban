@@ -112,9 +112,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -155,8 +155,7 @@ public final class ListActivity extends AbsActivity
     // Double click back exit
     private long mPressBackTime = 0;
 
-    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
-    private Set<WeakReference<ListHolder>> mListHolderSet = new HashSet<>();
+    private List<WeakReference<ListHolder>> mListHolderList = new LinkedList<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -381,10 +380,13 @@ public final class ListActivity extends AbsActivity
     protected void onResume() {
         super.onResume();
 
-        for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
-            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
-            if (holder instanceof ListHolder) {
-                ((ListHolder) holder).resumeReplies();
+        Iterator<WeakReference<ListHolder>> iterator = mListHolderList.iterator();
+        while (iterator.hasNext()) {
+            ListHolder holder = iterator.next().get();
+            if (holder != null) {
+                holder.resumeReplies();
+            } else {
+                iterator.remove();
             }
         }
     }
@@ -393,10 +395,13 @@ public final class ListActivity extends AbsActivity
     protected void onPause() {
         super.onPause();
 
-        for (int i = 0, n = mRecyclerView.getChildCount(); i < n; i++) {
-            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
-            if (holder instanceof ListHolder) {
-                ((ListHolder) holder).pauseReplies();
+        Iterator<WeakReference<ListHolder>> iterator = mListHolderList.iterator();
+        while (iterator.hasNext()) {
+            ListHolder holder = iterator.next().get();
+            if (holder != null) {
+                holder.pauseReplies();
+            } else {
+                iterator.remove();
             }
         }
     }
@@ -428,21 +433,14 @@ public final class ListActivity extends AbsActivity
             mCdnPathRequest = null;
         }
 
-        for (WeakReference<ListHolder> ref : mListHolderSet) {
+        for (WeakReference<ListHolder> ref : mListHolderList) {
             ListHolder holder = ref.get();
             if (holder != null) {
                 holder.clearReplies();
+                holder.thumb.unload();
             }
         }
-        mListHolderSet.clear();
-
-        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
-            LoadImageView liv = ref.get();
-            if (liv != null) {
-                liv.unload();
-            }
-        }
-        mLoadImageViewSet.clear();
+        mListHolderList.clear();
     }
 
     private void checkForAppStart() {
@@ -518,8 +516,10 @@ public final class ListActivity extends AbsActivity
             }
         }
 
+        NMBRequest request;
+
         // Get cdn path
-        NMBRequest request = new NMBRequest();
+        request = new NMBRequest();
         mCdnPathRequest = request;
         request.setSite(ACSite.getInstance());
         request.setMethod(NMBClient.METHOD_GET_CDN_PATH);
@@ -1098,8 +1098,7 @@ public final class ListActivity extends AbsActivity
         @Override
         public ListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ListHolder holder = new ListHolder(getLayoutInflater().inflate(R.layout.item_list, parent, false));
-            mListHolderSet.add(new WeakReference<>(holder));
-            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            mListHolderList.add(new WeakReference<>(holder));
             return holder;
         }
 

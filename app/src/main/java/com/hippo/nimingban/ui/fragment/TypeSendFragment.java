@@ -579,7 +579,12 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         request.setCallback(new ActionListener(getContext(), mMethod, mId, struct.content, mSeletedImageBitmap));
         mNMBClient.execute(request);
 
-        getFragmentHost().finishFragment(this);
+        SimpleHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentHost().finishFragment(TypeSendFragment.this);
+            }
+        });
     }
 
     private void doCreatePost() {
@@ -601,7 +606,12 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         request.setCallback(new ActionListener(getContext(), mMethod, mId, struct.content, mSeletedImageBitmap));
         mNMBClient.execute(request);
 
-        getFragmentHost().finishFragment(this);
+        SimpleHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentHost().finishFragment(TypeSendFragment.this);
+            }
+        });
     }
 
     private void getCookies() {
