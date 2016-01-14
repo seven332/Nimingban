@@ -815,7 +815,7 @@ public class PostFragment extends BaseFragment
         public ReplyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ReplyHolder holder = new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
             mHolderList.add(new WeakReference<>(holder));
-            return new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
+            return holder;
         }
 
         @Override

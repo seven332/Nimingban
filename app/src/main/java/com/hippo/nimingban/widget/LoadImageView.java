@@ -275,21 +275,15 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         Drawable drawable = new ImageDrawable(imageWrapper);
         imageWrapper.start();
 
-        switch (source) {
-            default:
-            case MEMORY:
-            case DISK:
-                setImageDrawable(drawable);
-                break;
-
-            case NETWORK:
-                Drawable[] layers = new Drawable[2];
-                layers[0] = new ColorDrawable(Color.TRANSPARENT);
-                layers[1] = drawable;
-                TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                setImageDrawable(transitionDrawable);
-                transitionDrawable.startTransition(300);
-                break;
+        if (source == Conaco.Source.NETWORK && imageWrapper.getFrameCount() <= 1) {
+            Drawable[] layers = new Drawable[2];
+            layers[0] = new ColorDrawable(Color.TRANSPARENT);
+            layers[1] = drawable;
+            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+            setImageDrawable(transitionDrawable);
+            transitionDrawable.startTransition(300);
+        } else {
+            setImageDrawable(drawable);
         }
 
         return true;

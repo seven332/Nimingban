@@ -57,6 +57,10 @@ public class ImageWrapper implements Animatable, Runnable {
                 width, height, fillBlank, defaultColor);
     }
 
+    public int getFrameCount() {
+        return mImage.getFrameCount();
+    }
+
     public void recycle() {
         stop();
         mImage.recycle();
@@ -146,7 +150,7 @@ public class ImageWrapper implements Animatable, Runnable {
 
     @Override
     public void run() {
-        //Log.i(TAG, this + " run");
+        Log.i(TAG, this + " run");
 
         // Check recycled
         if (mImage.isRecycled()) {
