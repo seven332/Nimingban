@@ -48,9 +48,9 @@ import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -71,7 +71,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
 
     private String mKeyword;
 
-    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
+    private List<WeakReference<SearchHolder>> mHolderList = new LinkedList<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -165,13 +165,46 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             mNMBRequest = null;
         }
 
-        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
-            LoadImageView liv = ref.get();
-            if (liv != null) {
-                liv.unload();
+        for (WeakReference<SearchHolder> ref : mHolderList) {
+            SearchHolder holder = ref.get();
+            if (holder != null) {
+                holder.thumb.unload();
             }
         }
-        mLoadImageViewSet.clear();
+        mHolderList.clear();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Iterator<WeakReference<SearchHolder>> iterator = mHolderList.iterator();
+        while (iterator.hasNext()) {
+            SearchHolder holder = iterator.next().get();
+            if (holder != null) {
+                // Only resume attached view holder
+                if (holder.itemView.getParent() != null) {
+                    holder.thumb.start();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Iterator<WeakReference<SearchHolder>> iterator = mHolderList.iterator();
+        while (iterator.hasNext()) {
+            SearchHolder holder = iterator.next().get();
+            if (holder != null) {
+                holder.thumb.stop();
+            } else {
+                iterator.remove();
+            }
+        }
     }
 
     @Override
@@ -255,7 +288,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
         @Override
         public SearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             SearchHolder holder = new SearchHolder(getLayoutInflater().inflate(R.layout.item_search, parent, false));
-            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            mHolderList.add(new WeakReference<>(holder));
             return holder;
         }
 
@@ -303,6 +336,16 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
         @Override
         public int getItemCount() {
             return mSearchHelper.size();
+        }
+
+        @Override
+        public void onViewAttachedToWindow(SearchHolder holder) {
+            holder.thumb.start();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(SearchHolder holder) {
+            holder.thumb.stop();
         }
     }
 

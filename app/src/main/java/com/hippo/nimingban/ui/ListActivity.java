@@ -280,9 +280,9 @@ public final class ListActivity extends AbsActivity
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
-                    pauseReplies();
+                    pauseHolders();
                 } else if (RecyclerView.SCROLL_STATE_IDLE == newState) {
-                    resumeReplies();
+                    resumeHolders();
                 }
             }
         };
@@ -388,7 +388,7 @@ public final class ListActivity extends AbsActivity
         }
     }
 
-    private void resumeReplies() {
+    private void resumeHolders() {
         Iterator<WeakReference<ListHolder>> iterator = mListHolderList.iterator();
         while (iterator.hasNext()) {
             ListHolder holder = iterator.next().get();
@@ -396,6 +396,7 @@ public final class ListActivity extends AbsActivity
                 // Only resume attached view holder
                 if (holder.itemView.getParent() != null) {
                     holder.resumeReplies();
+                    holder.thumb.start();
                 }
             } else {
                 iterator.remove();
@@ -406,15 +407,16 @@ public final class ListActivity extends AbsActivity
     @Override
     protected void onResume() {
         super.onResume();
-        resumeReplies();
+        resumeHolders();
     }
 
-    private void pauseReplies() {
+    private void pauseHolders() {
         Iterator<WeakReference<ListHolder>> iterator = mListHolderList.iterator();
         while (iterator.hasNext()) {
             ListHolder holder = iterator.next().get();
             if (holder != null) {
                 holder.pauseReplies();
+                holder.thumb.stop();
             } else {
                 iterator.remove();
             }
@@ -424,7 +426,7 @@ public final class ListActivity extends AbsActivity
     @Override
     protected void onPause() {
         super.onPause();
-        pauseReplies();
+        pauseHolders();
     }
 
     @Override
@@ -1204,11 +1206,13 @@ public final class ListActivity extends AbsActivity
         @Override
         public void onViewAttachedToWindow(ListHolder holder) {
             holder.resumeReplies();
+            holder.thumb.start();
         }
 
         @Override
         public void onViewDetachedFromWindow(ListHolder holder) {
             holder.pauseReplies();
+            holder.thumb.stop();
         }
     }
 

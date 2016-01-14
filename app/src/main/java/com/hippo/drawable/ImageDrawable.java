@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
@@ -29,7 +30,7 @@ import com.hippo.yorozuya.MathUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageDrawable extends Drawable implements ImageWrapper.Callback {
+public class ImageDrawable extends Drawable implements ImageWrapper.Callback, Animatable {
 
     private static final int TILE_SIZE = 512;
 
@@ -155,5 +156,20 @@ public class ImageDrawable extends Drawable implements ImageWrapper.Callback {
     @Override
     public void invalidateImage(ImageWrapper who) {
         invalidateSelf();
+    }
+
+    @Override
+    public void start() {
+        mImageWrapper.start();
+    }
+
+    @Override
+    public void stop() {
+        mImageWrapper.stop();
+    }
+
+    @Override
+    public boolean isRunning() {
+        return mImageWrapper.isRunning();
     }
 }

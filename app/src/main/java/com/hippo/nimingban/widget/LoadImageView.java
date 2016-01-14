@@ -214,6 +214,36 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         }
     }
 
+    public void start() {
+        Drawable drawable = getDrawable();
+        if (drawable instanceof TransitionDrawable) {
+            TransitionDrawable tDrawable = (TransitionDrawable) drawable;
+            int number = tDrawable.getNumberOfLayers();
+            if (number > 0) {
+                drawable = tDrawable.getDrawable(number - 1);
+            }
+        }
+
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).start();
+        }
+    }
+
+    public void stop() {
+        Drawable drawable = getDrawable();
+        if (drawable instanceof TransitionDrawable) {
+            TransitionDrawable tDrawable = (TransitionDrawable) drawable;
+            int number = tDrawable.getNumberOfLayers();
+            if (number > 0) {
+                drawable = tDrawable.getDrawable(number - 1);
+            }
+        }
+
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).stop();
+        }
+    }
+
     @Override
     public void onMiss(Conaco.Source source) {
         if (source == Conaco.Source.MEMORY) {

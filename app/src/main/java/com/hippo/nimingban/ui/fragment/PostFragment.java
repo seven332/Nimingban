@@ -85,9 +85,9 @@ import com.hippo.yorozuya.ResourcesUtils;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class PostFragment extends BaseFragment
         implements Messenger.Receiver,
@@ -139,7 +139,7 @@ public class PostFragment extends BaseFragment
 
     private int mPageSize = -1;
 
-    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
+    private List<WeakReference<ReplyHolder>> mHolderList = new LinkedList<>();
 
     private Callback mCallback;
 
@@ -274,13 +274,46 @@ public class PostFragment extends BaseFragment
             mNMBRequest = null;
         }
 
-        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
-            LoadImageView liv = ref.get();
-            if (liv != null) {
-                liv.unload();
+        for (WeakReference<ReplyHolder> ref : mHolderList) {
+            ReplyHolder holder = ref.get();
+            if (holder != null) {
+                holder.thumb.unload();
             }
         }
-        mLoadImageViewSet.clear();
+        mHolderList.clear();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Iterator<WeakReference<ReplyHolder>> iterator = mHolderList.iterator();
+        while (iterator.hasNext()) {
+            ReplyHolder holder = iterator.next().get();
+            if (holder != null) {
+                // Only resume attached view holder
+                if (holder.itemView.getParent() != null) {
+                    holder.thumb.start();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Iterator<WeakReference<ReplyHolder>> iterator = mHolderList.iterator();
+        while (iterator.hasNext()) {
+            ReplyHolder holder = iterator.next().get();
+            if (holder != null) {
+                holder.thumb.stop();
+            } else {
+                iterator.remove();
+            }
+        }
     }
 
     @Override
@@ -781,7 +814,7 @@ public class PostFragment extends BaseFragment
         @Override
         public ReplyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ReplyHolder holder = new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
-            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            mHolderList.add(new WeakReference<>(holder));
             return new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
         }
 
@@ -829,6 +862,16 @@ public class PostFragment extends BaseFragment
         @Override
         public int getItemCount() {
             return mReplyHelper.size();
+        }
+
+        @Override
+        public void onViewAttachedToWindow(ReplyHolder holder) {
+            holder.thumb.start();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(ReplyHolder holder) {
+            holder.thumb.stop();
         }
     }
 

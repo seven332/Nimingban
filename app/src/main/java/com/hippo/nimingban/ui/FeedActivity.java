@@ -63,9 +63,9 @@ import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -86,7 +86,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
 
     private NMBRequest mNMBRequest;
 
-    private Set<WeakReference<LoadImageView>> mLoadImageViewSet = new HashSet<>();
+    private List<WeakReference<FeedHolder>> mHolderList = new LinkedList<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -205,13 +205,46 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             mNMBRequest = null;
         }
 
-        for (WeakReference<LoadImageView> ref : mLoadImageViewSet) {
-            LoadImageView liv = ref.get();
-            if (liv != null) {
-                liv.unload();
+        for (WeakReference<FeedHolder> ref : mHolderList) {
+            FeedHolder holder = ref.get();
+            if (holder != null) {
+                holder.thumb.unload();
             }
         }
-        mLoadImageViewSet.clear();
+        mHolderList.clear();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Iterator<WeakReference<FeedHolder>> iterator = mHolderList.iterator();
+        while (iterator.hasNext()) {
+            FeedHolder holder = iterator.next().get();
+            if (holder != null) {
+                // Only resume attached view holder
+                if (holder.itemView.getParent() != null) {
+                    holder.thumb.start();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Iterator<WeakReference<FeedHolder>> iterator = mHolderList.iterator();
+        while (iterator.hasNext()) {
+            FeedHolder holder = iterator.next().get();
+            if (holder != null) {
+                holder.thumb.stop();
+            } else {
+                iterator.remove();
+            }
+        }
     }
 
     @Override
@@ -301,7 +334,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         @Override
         public FeedHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             FeedHolder holder = new FeedHolder(getLayoutInflater().inflate(R.layout.item_feed, viewGroup, false));
-            mLoadImageViewSet.add(new WeakReference<>(holder.thumb));
+            mHolderList.add(new WeakReference<>(holder));
             return holder;
         }
 
@@ -355,6 +388,16 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         @Override
         public int getItemCount() {
             return mFeedHelper.size();
+        }
+
+        @Override
+        public void onViewAttachedToWindow(FeedHolder holder) {
+            holder.thumb.start();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(FeedHolder holder) {
+            holder.thumb.stop();
         }
 
         @Override
