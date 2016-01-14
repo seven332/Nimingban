@@ -68,4 +68,6 @@ Here is the libraries
     See the License for the specific language governing permissions and
     limitations under the License.
 
+ic_launcher 图标为 Hippo Seven 所有，所有权利保留
+
 ic_launcher_ibuki 图标为 ibuki 所有，如需使用请注明出处与作者
