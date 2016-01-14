@@ -62,7 +62,7 @@ public final class OpenUrlHelper {
 
         // CustomTabs
         if (context instanceof Activity) {
-            String packageName = CustomTabsHelper.getPackageNameToUse(context);
+            String packageName = CustomTabsHelper.getPackageNameToUseFixed(context);
             if (packageName != null) {
                 new CustomTabsIntent.Builder()
                         .setToolbarColor(ResourcesUtils.getAttrColor(context, R.attr.colorPrimary))
@@ -75,7 +75,7 @@ public final class OpenUrlHelper {
 
         // Intent.ACTION_VIEW
         intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
+        intent.setData(uri);
         PackageManager pm = context.getPackageManager();
         ResolveInfo ri = pm.resolveActivity(intent, 0);
         if (ri != null) {
