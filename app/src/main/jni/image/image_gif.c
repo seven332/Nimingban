@@ -94,6 +94,24 @@ static void read_gcb(GifFileType* gif_file, int index, GIF_FRAME_INFO* frame_inf
   }
 }
 
+static void fix_gif_file(GifFileType* gif_file) {
+  if (gif_file->ImageCount == 0) {
+    return;
+  }
+
+  SavedImage last_image = gif_file->SavedImages[gif_file->ImageCount - 1];
+  // If RasterBits is NULL, discard this frame
+  if (last_image.RasterBits == NULL) {
+    gif_file->ImageCount--;
+    // Free last image
+    if (last_image.ImageDesc.ColorMap != NULL) {
+      GifFreeMapObject(last_image.ImageDesc.ColorMap);
+      last_image.ImageDesc.ColorMap = NULL;
+    }
+    GifFreeExtensions(&last_image.ExtensionBlockCount, &last_image.ExtensionBlocks);
+  }
+}
+
 void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, bool partially)
 {
   GIF* gif = NULL;
@@ -162,7 +180,9 @@ void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
     gif->patch_head_input_stream = patch_head_input_stream;
   } else {
     // Slurp
-    DGifSlurp(gif_file);
+    if (DGifSlurp(gif_file) == GIF_ERROR) {
+      fix_gif_file(gif_file);
+    }
     if (gif_file->ImageCount <= 0) {
       LOGE(EMSG("No frame"));
       DGifCloseFile(gif_file, &error_code);
@@ -225,7 +245,9 @@ bool GIF_complete(GIF* gif)
     return false;
   }
 
-  DGifSlurp(gif->gif_file);
+  if (DGifSlurp(gif->gif_file) == GIF_ERROR) {
+    fix_gif_file(gif->gif_file);
+  }
 
   // Close input stream
   close_patch_head_input_stream(get_env(), gif->patch_head_input_stream);
