@@ -248,10 +248,7 @@ public final class Settings {
             if (!TextUtils.isEmpty(feedId)) {
                 return feedId;
             } else {
-                feedId = getMacFeedId();
-                if (feedId == null) {
-                    feedId = getRandomFeedId();
-                }
+                feedId = getRandomFeedId();
                 putFeedId(feedId);
                 return feedId;
             }
