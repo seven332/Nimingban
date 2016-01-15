@@ -41,6 +41,7 @@ import com.hippo.conaco.ProgressNotify;
 import com.hippo.drawable.ImageDrawable;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.io.UniFileInputStreamPipe;
+import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
@@ -51,11 +52,13 @@ import com.hippo.unifile.MediaFile;
 import com.hippo.unifile.UniFile;
 import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
-import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -262,15 +265,6 @@ public class GalleryActivity2 extends SwipeActivity {
             mImageFile = imageFile;
         }
 
-        public UniFile getCurrentImageSaveFile() {
-            UniFile dir = Settings.getImageSaveLocation();
-            if (dir != null) {
-                return dir.createFile(mImageFile.getName());
-            } else {
-                return null;
-            }
-        }
-
         @Override
         public void reloadCurrentImage() {
             // Empty
@@ -279,18 +273,13 @@ public class GalleryActivity2 extends SwipeActivity {
         @Override
         public void saveCurrentImage(boolean share) {
             GalleryHolder holder = getPagerHolder(0);
-            if (holder == null || !holder.galleryPage.isLoaded()) {
+            UniFile dir = Settings.getImageSaveLocation();
+            if (holder == null || !holder.galleryPage.isLoaded() || dir == null) {
                 onSaveTaskOver(null, share);
                 return;
             }
 
-            UniFile uniFile = getCurrentImageSaveFile();
-            if (uniFile == null) {
-                onSaveTaskOver(null, share);
-                return;
-            }
-
-            mSaveTask = new ImageFileSaveTask(GalleryActivity2.this, mImageFile, uniFile, share);
+            mSaveTask = new ImageFileSaveTask(GalleryActivity2.this, mImageFile, dir, share);
             mSaveTask.execute();
         }
 
@@ -392,16 +381,12 @@ public class GalleryActivity2 extends SwipeActivity {
         @Override
         public void saveCurrentImage(boolean share) {
             GalleryHolder holder = getPagerHolder(0);
-            if (holder == null || !holder.galleryPage.isLoaded()) {
+            UniFile dir = Settings.getImageSaveLocation();
+            if (holder == null || !holder.galleryPage.isLoaded() || dir == null) {
                 onSaveTaskOver(null, share);
                 return;
             }
 
-            UniFile dir = Settings.getImageSaveLocation();
-            if (dir == null) {
-                onSaveTaskOver(null, share);
-                return;
-            }
             String name = mSite.getReadableName(GalleryActivity2.this) + "-" + mId;
 
             mSaveTask = new SingleImageSaveTask(GalleryActivity2.this, dir, name, mKey, share);
@@ -462,8 +447,8 @@ public class GalleryActivity2 extends SwipeActivity {
         private Context mContext;
         private UniFile mDir;
         private String mName;
-        private @Nullable UniFile mFile;
-        private @Nullable String mExtension;
+        @Nullable
+        private String mFilename;
 
         public UniFileDataContain(Context context, @NonNull UniFile dir, String name) {
             mContext = context.getApplicationContext();
@@ -477,16 +462,23 @@ public class GalleryActivity2 extends SwipeActivity {
 
         @Override
         public boolean save(InputStream is, long length, String mediaType, ProgressNotify notify) {
+            // Get extension and filename
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mediaType);
+            if (!TextUtils.isEmpty(extension)) {
+                mFilename = mName + '.' + extension;
+            } else {
+                mFilename = mName;
+            }
+
+            UniFile file = mDir.createFile(mFilename);
+            if (file == null) {
+                return false;
+            }
+
             OutputStream os = null;
             try {
-                if (mFile == null) {
-                    mFile = mDir.createFile(mName);
-                }
-                if (mFile == null) {
-                    return false;
-                }
 
-                os = mFile.openOutputStream();
+                os = file.openOutputStream();
 
                 final byte buffer[] = new byte[1024 * 4];
                 long receivedSize = 0;
@@ -502,39 +494,30 @@ public class GalleryActivity2 extends SwipeActivity {
                 os.flush();
                 IOUtils.closeQuietly(os);
 
-                // Get extension
-                String extension = null;
-                if (mediaType != null) {
-                    extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mediaType);
-                }
-                if (TextUtils.isEmpty(extension)) {
-                    extension = "jpg";
-                }
-
-                // Rename file if the extension is wrong
-                if (!extension.equals(mExtension)) {
-                    mFile.renameTo(mFile.getName() + '.' + extension);
-                }
-
                 // Notify media scanner
-                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, mFile.getUri()));
+                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
 
                 return true;
             } catch (IOException e) {
                 IOUtils.closeQuietly(os);
-                mFile.delete();
+                file.delete();
                 return false;
             }
         }
 
         @Override
         public InputStreamPipe get() {
+            if (mFilename != null) {
+                UniFile file = mDir.findFile(mFilename);
+                if (file.exists()) {
+                    return new UniFileInputStreamPipe(file);
+                }
+            }
+
             String[] extension = new String[1];
             UniFile file = findFileForName(mDir, mName, IMAGE_EXTENSIONS, extension);
             if (file != null) {
-                mFile = file;
-                mExtension = extension[0];
-                return new UniFileInputStreamPipe(mFile);
+                return new UniFileInputStreamPipe(file);
             }
 
             return null;
@@ -551,52 +534,29 @@ public class GalleryActivity2 extends SwipeActivity {
         public abstract void onActivityDestory();
     }
 
-    private static boolean addImageExtension(UniFile uniFile) {
-        String filename = uniFile.getName();
-        String extension = FileUtils.getExtensionFromFilename(filename);
-        if (extension != null) {
-            return true;
-        }
-
-        // Get extexsin
-        InputStream is = null;
-        try {
-            is = uniFile.openInputStream();
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(is, null, options);
-            extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(options.outMimeType);
-        } catch (IOException e) {
-            return false;
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
-
-        String newFilename = filename + "." + extension;
-        // Remove old file
-        UniFile parent = uniFile.getParentFile();
-        if (parent != null) {
-            UniFile oldFile = parent.findFile(newFilename);
-            if (oldFile != null) {
-                oldFile .delete();
-            }
-        }
-        // Rename
-        return uniFile.renameTo(newFilename);
-    }
-
     private static class ImageFileSaveTask extends SaveTask {
 
         private Context mContext;
         private UniFile mFrom;
-        private UniFile mTo;
+        private UniFile mSaveDir;
         private boolean mShare;
 
-        public ImageFileSaveTask(Context context, UniFile from, UniFile to, boolean share) {
+        public ImageFileSaveTask(Context context, UniFile from, UniFile saveDir, boolean share) {
             mContext = context;
             mFrom = from;
-            mTo = to;
+            mSaveDir = saveDir;
             mShare = share;
+        }
+
+        public UniFile createSaveFile(String mineType) {
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mineType);
+            String displayName;
+            if (TextUtils.isEmpty(extension)) {
+                displayName = mFrom.getName();
+            } else {
+                displayName = mFrom.getName() + '.' + extension;
+            }
+            return mSaveDir.createFile(displayName);
         }
 
         private static String getFilePathForUri(Context context, Uri uri) {
@@ -607,14 +567,40 @@ public class GalleryActivity2 extends SwipeActivity {
             }
         }
 
+        /**
+         * @return Null for failed
+         */
         @Override
         protected Uri doInBackground(Void... params) {
+            UniFile to = null;
+
+            // Get from MineType and get out save file
+            InputStream is = null;
+            try {
+                is = mFrom.openInputStream();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(is, null, options);
+                if (options.outMimeType != null) {
+                    to = createSaveFile(options.outMimeType);
+                }
+            } catch (IOException e) {
+                return null;
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+
+            // Check save file null
+            if (to == null) {
+                return null;
+            }
+
+            // Is from and to is the same ?
             Uri fromUri = mFrom.getUri();
-            Uri toUri = mTo.getUri();
+            Uri toUri = to.getUri();
             if (fromUri.equals(toUri)) {
                 return fromUri;
             }
-
             String fromPath = getFilePathForUri(mContext, fromUri);
             String toPath = getFilePathForUri(mContext, toUri);
             if (fromPath != null && fromPath.equals(toPath)) {
@@ -622,12 +608,10 @@ public class GalleryActivity2 extends SwipeActivity {
             }
 
             boolean ok;
-
-            InputStream is = null;
             OutputStream os = null;
             try {
                 is = mFrom.openInputStream();
-                os = mTo.openOutputStream();
+                os = to.openOutputStream();
                 IOUtils.copy(is, os);
                 ok = true;
             } catch (IOException e) {
@@ -638,16 +622,11 @@ public class GalleryActivity2 extends SwipeActivity {
             }
 
             if (!ok) {
-                mTo.delete();
+                to.delete();
                 return null;
             }
 
-            if (addImageExtension(mTo)) {
-                return mTo.getUri();
-            } else {
-                mTo.delete();
-                return null;
-            }
+            return to.getUri();
         }
 
         @Override
@@ -666,23 +645,34 @@ public class GalleryActivity2 extends SwipeActivity {
     private static class SingleImageSaveTask extends SaveTask {
 
         private Context mContext;
-        private UniFile mDir;
+        private UniFile mSaveDir;
         private String mName;
         private String mKey;
         private boolean mShare;
 
-        public SingleImageSaveTask(Context context, UniFile dir, String name, String key, boolean share) {
+        public SingleImageSaveTask(Context context, UniFile saveDir, String name, String key, boolean share) {
             mContext = context;
-            mDir = dir;
+            mSaveDir = saveDir;
             mName = name;
             mKey = key;
             mShare = share;
         }
 
+        public UniFile createSaveFile(String mineType) {
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mineType);
+            String displayName;
+            if (TextUtils.isEmpty(extension)) {
+                displayName = mName;
+            } else {
+                displayName = mName + '.' + extension;
+            }
+            return mSaveDir.createFile(displayName);
+        }
+
         @Override
         protected Uri doInBackground(Void... params) {
             // First try to find file in dir
-            UniFile file = findFileForName(mDir, mName, IMAGE_EXTENSIONS, null);
+            UniFile file = findFileForName(mSaveDir, mName, IMAGE_EXTENSIONS, null);
             if (file != null) {
                 // Check is it a image
                 Bitmap bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), 100, 100, -1, true, false, null);
@@ -695,16 +685,15 @@ public class GalleryActivity2 extends SwipeActivity {
                 }
             }
 
-            file = mDir.createFile(mName);
-            if (file == null) {
+            // Save image to temp file
+            File temp = NMBAppConfig.createTempFile();
+            if (temp == null) {
                 return null;
             }
-
             boolean ok = true;
-
             OutputStream os = null;
             try {
-                os = file.openOutputStream();
+                os = new FileOutputStream(temp);
                 Conaco conaco = NMBApplication.getConaco(mContext);
                 ok = conaco.getBeerBelly().pullFromDiskCache(mKey, os);
             } catch (IOException e) {
@@ -712,16 +701,53 @@ public class GalleryActivity2 extends SwipeActivity {
             } finally {
                 IOUtils.closeQuietly(os);
             }
-
             if (!ok) {
-                file.delete();
+                temp.delete();
                 return null;
             }
 
-            if (addImageExtension(file)) {
-                return file.getUri();
+            UniFile to = null;
+            // Get extension and create save file
+            InputStream is = null;
+            try {
+                is = new FileInputStream(temp);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(is, null, options);
+                if (options.outMimeType != null) {
+                    to = createSaveFile(options.outMimeType);
+                }
+            } catch (IOException e) {
+                return null;
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+
+            // Check save file null
+            if (to == null) {
+                temp.delete();
+                return null;
+            }
+
+            // Copy temp to save file
+            try {
+                is = new FileInputStream(temp);
+                os = to.openOutputStream();
+                IOUtils.copy(is, os);
+                ok = true;
+            } catch (IOException e) {
+                ok = false;
+            } finally {
+                IOUtils.closeQuietly(is);
+                IOUtils.closeQuietly(os);
+            }
+
+            // Clean up
+            temp.delete();
+            if (ok) {
+                return to.getUri();
             } else {
-                file.delete();
+                to.delete();
                 return null;
             }
         }
