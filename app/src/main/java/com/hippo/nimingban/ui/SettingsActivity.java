@@ -995,6 +995,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_SOURCE = "source";
         private static final String KEY_NOTICE = "notice";
         private static final String KEY_VERSION = "version";
+        private static final String KEY_RELEASE_NOTES = "release_notes";
         private static final String KEY_DUMP_LOGCAT = "dump_logcat";
         private static final String KEY_HELP_NIMINGBAN = "help_nimingban";
         private static final String KEY_HELP = "help";
@@ -1003,6 +1004,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mSource;
         private Preference mNotice;
         private Preference mVersion;
+        private Preference mReleaseNotes;
         private Preference mDumpLogcat;
         private Preference mHelpNimingban;
         private Preference mHelp;
@@ -1019,6 +1021,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mSource = findPreference(KEY_SOURCE);
             mNotice = findPreference(KEY_NOTICE);
             mVersion = findPreference(KEY_VERSION);
+            mReleaseNotes = findPreference(KEY_RELEASE_NOTES);
             mDumpLogcat = findPreference(KEY_DUMP_LOGCAT);
             mHelpNimingban = findPreference(KEY_HELP_NIMINGBAN);
             mHelp = findPreference(KEY_HELP);
@@ -1027,6 +1030,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mSource.setOnPreferenceClickListener(this);
             mNotice.setOnPreferenceClickListener(this);
             mVersion.setOnPreferenceClickListener(this);
+            mReleaseNotes.setOnPreferenceClickListener(this);
             mDumpLogcat.setOnPreferenceClickListener(this);
             mHelpNimingban.setOnPreferenceClickListener(this);
             mHelp.setOnPreferenceClickListener(this);
@@ -1076,6 +1080,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         getActivity().startService(intent);
                     }
                 }
+            } else if (KEY_RELEASE_NOTES.equals(key)) {
+                OpenUrlHelper.openUrl(getActivity(), "http://nimingban.herokuapp.com/release_notes.html", false);
             } else if (KEY_DUMP_LOGCAT.equals(key)) {
                 boolean ok;
                 File file = null;

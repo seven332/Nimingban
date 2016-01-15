@@ -254,6 +254,7 @@
     <string name="main_source_summary" translatable="false">https://github.com/seven332/Nimingban</string>
     <string name="main_notice">NOTICE</string>
     <string name="main_version">Version</string>
+    <string name="main_release_notes">Release Notes</string>
     <string name="main_dump_logcat">Dump logcat</string>
     <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;nya nya~~</string>
     <string name="main_help_nimingban">Help nimingban</string>

@@ -150,7 +150,7 @@ public class ImageWrapper implements Animatable, Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, this + " run");
+        //Log.i(TAG, this + " run");
 
         // Check recycled
         if (mImage.isRecycled()) {

@@ -246,6 +246,7 @@
     <string name="main_source">源码</string>
     <string name="main_notice">通知文档</string>
     <string name="main_version">版本</string>
+    <string name="main_release_notes">更新日志</string>
     <string name="main_dump_logcat">导出 Logcat</string>
     <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;喵喵~~</string>
     <string name="main_help_nimingban">帮助匿名版</string>
