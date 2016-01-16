@@ -126,6 +126,7 @@ public class PostFragment extends BaseFragment
 
     private ReplyHelper mReplyHelper;
     private ReplyAdapter mReplyAdapter;
+    private RecyclerView.OnScrollListener mOnScrollListener;
 
     private NMBRequest mNMBRequest;
 
@@ -250,6 +251,17 @@ public class PostFragment extends BaseFragment
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
         mRecyclerView.hasFixedSize();
+        mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
+                    pauseHolders();
+                } else if (RecyclerView.SCROLL_STATE_IDLE == newState) {
+                    resumeHolders();
+                }
+            }
+        };
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         mOpColor = getResources().getColor(R.color.green_ntr);
 
@@ -274,6 +286,8 @@ public class PostFragment extends BaseFragment
             mNMBRequest = null;
         }
 
+        mRecyclerView.removeOnScrollListener(mOnScrollListener);
+
         for (WeakReference<ReplyHolder> ref : mHolderList) {
             ReplyHolder holder = ref.get();
             if (holder != null) {
@@ -283,10 +297,7 @@ public class PostFragment extends BaseFragment
         mHolderList.clear();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    private void resumeHolders() {
         Iterator<WeakReference<ReplyHolder>> iterator = mHolderList.iterator();
         while (iterator.hasNext()) {
             ReplyHolder holder = iterator.next().get();
@@ -302,9 +313,12 @@ public class PostFragment extends BaseFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onResume() {
+        super.onResume();
+        resumeHolders();
+    }
 
+    private void pauseHolders() {
         Iterator<WeakReference<ReplyHolder>> iterator = mHolderList.iterator();
         while (iterator.hasNext()) {
             ReplyHolder holder = iterator.next().get();
@@ -314,6 +328,12 @@ public class PostFragment extends BaseFragment
                 iterator.remove();
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pauseHolders();
     }
 
     @Override

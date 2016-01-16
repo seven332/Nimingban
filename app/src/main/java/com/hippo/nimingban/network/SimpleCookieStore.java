@@ -232,7 +232,7 @@ public class SimpleCookieStore {
 
     public synchronized void remove(URL url, HttpCookie cookie) {
         if (url == null) {
-            throw new NullPointerException("cookie == null");
+            throw new NullPointerException("url == null");
         }
 
         url = cookiesUrl(url);

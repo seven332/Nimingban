@@ -63,9 +63,11 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
     private NMBClient mNMBClient;
 
     private ContentLayout mContentLayout;
+    private EasyRecyclerView mRecyclerView;
 
     private SearchAdapter mSearchAdapter;
     private SearchHelper mSearchHelper;
+    private RecyclerView.OnScrollListener mOnScrollListener;
 
     private NMBRequest mNMBRequest;
 
@@ -119,6 +121,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
 
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
         EasyRecyclerView recyclerView = mContentLayout.getRecyclerView();
+        mRecyclerView = recyclerView;
 
         mSearchHelper = new SearchHelper();
         mSearchHelper.setEmptyString(getString(R.string.not_found));
@@ -136,6 +139,17 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
         recyclerView.setOnItemClickListener(this);
         recyclerView.hasFixedSize();
         recyclerView.setClipToPadding(false);
+        mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
+                    pauseHolders();
+                } else if (RecyclerView.SCROLL_STATE_IDLE == newState) {
+                    resumeHolders();
+                }
+            }
+        };
+        recyclerView.addOnScrollListener(mOnScrollListener);
 
         int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
         if (getResources().getBoolean(R.bool.two_way)) {
@@ -165,6 +179,8 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             mNMBRequest = null;
         }
 
+        mRecyclerView.removeOnScrollListener(mOnScrollListener);
+
         for (WeakReference<SearchHolder> ref : mHolderList) {
             SearchHolder holder = ref.get();
             if (holder != null) {
@@ -174,10 +190,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
         mHolderList.clear();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    private void resumeHolders() {
         Iterator<WeakReference<SearchHolder>> iterator = mHolderList.iterator();
         while (iterator.hasNext()) {
             SearchHolder holder = iterator.next().get();
@@ -193,9 +206,12 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onResume() {
+        super.onResume();
+        resumeHolders();
+    }
 
+    private void pauseHolders() {
         Iterator<WeakReference<SearchHolder>> iterator = mHolderList.iterator();
         while (iterator.hasNext()) {
             SearchHolder holder = iterator.next().get();
@@ -205,6 +221,12 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
                 iterator.remove();
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pauseHolders();
     }
 
     @Override

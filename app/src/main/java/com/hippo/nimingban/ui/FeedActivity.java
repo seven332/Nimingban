@@ -83,6 +83,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+    private RecyclerView.OnScrollListener mOnScrollListener;
 
     private NMBRequest mNMBRequest;
 
@@ -159,6 +160,17 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setClipChildren(false);
+        mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
+                    pauseHolders();
+                } else if (RecyclerView.SCROLL_STATE_IDLE == newState) {
+                    resumeHolders();
+                }
+            }
+        };
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         // NOTE:
         // The initialization order is very important! This order determines the priority of touch event handling.
@@ -188,6 +200,11 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             mRecyclerViewTouchActionGuardManager = null;
         }
 
+        if (mOnScrollListener != null) {
+            mRecyclerView.removeOnScrollListener(mOnScrollListener);
+            mOnScrollListener = null;
+        }
+
         if (mRecyclerView != null) {
             mRecyclerView.setItemAnimator(null);
             mRecyclerView.setAdapter(null);
@@ -214,10 +231,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         mHolderList.clear();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    private void resumeHolders() {
         Iterator<WeakReference<FeedHolder>> iterator = mHolderList.iterator();
         while (iterator.hasNext()) {
             FeedHolder holder = iterator.next().get();
@@ -233,9 +247,12 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onResume() {
+        super.onResume();
+        resumeHolders();
+    }
 
+    private void pauseHolders() {
         Iterator<WeakReference<FeedHolder>> iterator = mHolderList.iterator();
         while (iterator.hasNext()) {
             FeedHolder holder = iterator.next().get();
@@ -245,6 +262,12 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
                 iterator.remove();
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pauseHolders();
     }
 
     @Override
