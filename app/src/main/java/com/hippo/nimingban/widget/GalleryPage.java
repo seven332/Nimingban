@@ -27,8 +27,8 @@ import android.widget.FrameLayout;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
+import com.hippo.conaco.ValueHolder;
 import com.hippo.drawable.ImageDrawable;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.NMBApplication;
@@ -40,11 +40,11 @@ import com.hippo.yorozuya.MathUtils;
 
 import uk.co.senab.photoview.PhotoView;
 
-public final class GalleryPage extends FrameLayout implements Unikery, View.OnClickListener {
+public final class GalleryPage extends FrameLayout implements Unikery<ImageWrapper>, View.OnClickListener {
 
     private int mTaskId = Unikery.INVAILD_ID;
 
-    private Conaco mConaco;
+    private Conaco<ImageWrapper> mConaco;
 
     private ProgressView mProgressView;
     private SimpleImageView mFailed;
@@ -54,7 +54,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     private String mUrl;
     private DataContainer mContainer;
 
-    private ObjectHolder mHolder;
+    private ValueHolder<ImageWrapper> mHolder;
 
     public GalleryPage(Context context) {
         super(context);
@@ -133,7 +133,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         if (mHolder != null) {
             mHolder.release(this);
 
-            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            ImageWrapper imageWrapper = mHolder.getValue();
             if (mHolder.isFree()) {
                 // ImageWrapper is free, stop animate
                 imageWrapper.stop();
@@ -190,7 +190,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         mPhotoView.setVisibility(GONE);
         removeDrawableAndHolder();
 
-        ConacoTask.Builder builder = new ConacoTask.Builder()
+        ConacoTask.Builder<ImageWrapper> builder = new ConacoTask.Builder<ImageWrapper>()
                 .setUnikery(this)
                 .setKey(key)
                 .setUrl(url)
@@ -221,7 +221,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
     }
 
     @Override
-    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ValueHolder<ImageWrapper> holder, Conaco.Source source) {
         // Release
         mKey = null;
         mUrl = null;
@@ -232,7 +232,7 @@ public final class GalleryPage extends FrameLayout implements Unikery, View.OnCl
         removeDrawableAndHolder();
 
         mHolder = holder;
-        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        ImageWrapper imageWrapper = holder.getValue();
         Drawable drawable = new ImageDrawable(imageWrapper);
         imageWrapper.start();
 

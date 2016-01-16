@@ -29,26 +29,26 @@ import android.view.View;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
+import com.hippo.conaco.ValueHolder;
 import com.hippo.drawable.ImageDrawable;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.FixedAspectImageView;
 
-public class LoadImageView extends FixedAspectImageView implements Unikery,
+public class LoadImageView extends FixedAspectImageView implements Unikery<ImageWrapper>,
         View.OnClickListener, View.OnLongClickListener {
 
     private int mTaskId = Unikery.INVAILD_ID;
 
-    private Conaco mConaco;
+    private Conaco<ImageWrapper> mConaco;
 
     private String mKey;
     private String mUrl;
     private DataContainer mContainer;
 
-    private ObjectHolder mHolder;
+    private ValueHolder<ImageWrapper> mHolder;
 
     private boolean mFailed;
 
@@ -149,7 +149,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         mUrl = url;
         mContainer = container;
 
-        ConacoTask.Builder builder = new ConacoTask.Builder()
+        ConacoTask.Builder<ImageWrapper> builder = new ConacoTask.Builder<ImageWrapper>()
                 .setUnikery(this)
                 .setKey(key)
                 .setUrl(url)
@@ -200,7 +200,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         if (mHolder != null) {
             mHolder.release(this);
 
-            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            ImageWrapper imageWrapper = mHolder.getValue();
             if (mHolder.isFree()) {
                 // ImageWrapper is free, stop animate
                 imageWrapper.stop();
@@ -260,7 +260,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
     }
 
     @Override
-    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ValueHolder<ImageWrapper> holder, Conaco.Source source) {
         // Release
         mKey = null;
         mUrl = null;
@@ -271,7 +271,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery,
         removeDrawableAndHolder();
 
         mHolder = holder;
-        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        ImageWrapper imageWrapper = holder.getValue();
         Drawable drawable = new ImageDrawable(imageWrapper);
         imageWrapper.start();
 

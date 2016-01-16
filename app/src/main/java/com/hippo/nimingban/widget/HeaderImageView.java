@@ -33,9 +33,9 @@ import android.widget.Toast;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.ProgressNotify;
 import com.hippo.conaco.Unikery;
+import com.hippo.conaco.ValueHolder;
 import com.hippo.drawable.ImageDrawable;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.io.UniFileInputStreamPipe;
@@ -56,20 +56,20 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public final class HeaderImageView extends FixedAspectImageView
-        implements Unikery, View.OnClickListener, View.OnLongClickListener {
+        implements Unikery<ImageWrapper>, View.OnClickListener, View.OnLongClickListener {
 
     private static final String KEY_SUPER = "super";
     private static final String KEY_IMAGE_UNI_FILE_URI = "image_uni_file_uri";
 
     private int mTaskId = Unikery.INVAILD_ID;
 
-    private Conaco mConaco;
+    private Conaco<ImageWrapper> mConaco;
 
     private final long[] mHits = new long[8];
 
     private UniFile mImageFile;
     private TempDataContainer mContainer;
-    private ObjectHolder mHolder;
+    private ValueHolder<ImageWrapper> mHolder;
 
     private OnLongClickImageListener mOnLongClickImageListener;
 
@@ -128,7 +128,7 @@ public final class HeaderImageView extends FixedAspectImageView
 
     public void load() {
         mContainer = new TempDataContainer(getContext());
-        ConacoTask.Builder builder = new ConacoTask.Builder()
+        ConacoTask.Builder<ImageWrapper> builder = new ConacoTask.Builder<ImageWrapper>()
                 .setUnikery(this)
                 .setKey(null)
                 .setUrl("http://cover.acfunwiki.org/cover.php")
@@ -175,7 +175,7 @@ public final class HeaderImageView extends FixedAspectImageView
         if (mHolder != null) {
             mHolder.release(this);
 
-            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            ImageWrapper imageWrapper = mHolder.getValue();
             if (mHolder.isFree()) {
                 // ImageWrapper is free, stop animate
                 imageWrapper.stop();
@@ -190,7 +190,7 @@ public final class HeaderImageView extends FixedAspectImageView
     }
 
     @Override
-    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ValueHolder<ImageWrapper> holder, Conaco.Source source) {
         // Update image file
         if (mImageFile != null) {
             mImageFile = null;
@@ -205,7 +205,7 @@ public final class HeaderImageView extends FixedAspectImageView
         removeDrawableAndHolder();
 
         mHolder = holder;
-        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        ImageWrapper imageWrapper = holder.getValue();
         Drawable drawable = new ImageDrawable(imageWrapper);
         imageWrapper.start();
 

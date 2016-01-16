@@ -18,21 +18,20 @@ package com.hippo.nimingban.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.hippo.conaco.ObjectHelper;
-import com.hippo.conaco.ObjectHolder;
+import com.hippo.conaco.ValueHelper;
+import com.hippo.conaco.ValueHolder;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
-public class ImageWrapperHelper implements ObjectHelper {
+public class ImageWrapperHelper implements ValueHelper<ImageWrapper> {
 
     private static final String TAG = ImageWrapperHelper.class.getSimpleName();
 
     @Nullable
     @Override
-    public Object decode(@NonNull InputStreamPipe isPipe) {
+    public ImageWrapper decode(@NonNull InputStreamPipe isPipe) {
         try {
             isPipe.obtain();
             Image image = Image.decode(isPipe.open(), false);
@@ -51,23 +50,19 @@ public class ImageWrapperHelper implements ObjectHelper {
     }
 
     @Override
-    public int sizeOf(@NonNull String key, @NonNull Object value) {
-        ImageWrapper imageWrapper = (ImageWrapper) value;
-        return imageWrapper.getWidth() * imageWrapper.getHeight() * 4;
+    public int sizeOf(@NonNull String key, @NonNull ImageWrapper value) {
+        return value.getWidth() * value.getHeight() * 4;
     }
 
     @Override
-    public void onRemove(@NonNull String key, @NonNull ObjectHolder oldValue) {
+    public void onRemove(@NonNull String key, @NonNull ValueHolder<ImageWrapper> oldValue) {
         if (oldValue.isFree()) {
-            Log.i(TAG, "The holder is free");
-            ((ImageWrapper) oldValue.getObject()).recycle();
-        } else {
-            Log.e(TAG, "The holder is not free");
+            oldValue.getValue().recycle();
         }
     }
 
     @Override
-    public boolean useMemoryCache(@NonNull String key, ObjectHolder holder) {
-        return holder == null || !((ImageWrapper) holder.getObject()).isLarge();
+    public boolean useMemoryCache(@NonNull String key, ValueHolder<ImageWrapper> holder) {
+        return holder == null || !holder.getValue().isLarge();
     }
 }

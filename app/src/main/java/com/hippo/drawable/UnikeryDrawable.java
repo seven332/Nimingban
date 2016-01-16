@@ -21,16 +21,16 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.hippo.conaco.Conaco;
-import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
+import com.hippo.conaco.ValueHolder;
 
-public class UnikeryDrawable extends WrapDrawable implements Unikery {
+public class UnikeryDrawable extends WrapDrawable implements Unikery<ImageWrapper> {
 
     private int mTaskId = Unikery.INVAILD_ID;
 
     private View mView;
 
-    private ObjectHolder mHolder;
+    private ValueHolder<ImageWrapper> mHolder;
 
     public UnikeryDrawable(View view) {
         mView = view;
@@ -88,7 +88,7 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
         if (mHolder != null) {
             mHolder.release(this);
 
-            ImageWrapper imageWrapper = (ImageWrapper) mHolder.getObject();
+            ImageWrapper imageWrapper = mHolder.getValue();
             if (mHolder.isFree()) {
                 // ImageWrapper is free, stop animate
                 imageWrapper.stop();
@@ -103,13 +103,13 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
     }
 
     @Override
-    public boolean onGetObject(@NonNull ObjectHolder holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ValueHolder<ImageWrapper> holder, Conaco.Source source) {
         holder.obtain(this);
 
         removeDrawableAndHolder();
 
         mHolder = holder;
-        ImageWrapper imageWrapper = (ImageWrapper) holder.getObject();
+        ImageWrapper imageWrapper = holder.getValue();
         Drawable drawable = new ImageDrawable(imageWrapper);
         imageWrapper.start();
 

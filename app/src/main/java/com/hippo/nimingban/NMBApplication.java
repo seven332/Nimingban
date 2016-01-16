@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.HttpCookieDB;
@@ -65,7 +66,7 @@ public final class NMBApplication extends Application
 
     private SimpleCookieStore mSimpleCookieStore;
     private NMBClient mNMBClient;
-    private Conaco mConaco;
+    private Conaco<ImageWrapper> mConaco;
     private ImageWrapperHelper mImageWrapperHelper;
     private OkHttpClient mOkHttpClient;
 
@@ -217,10 +218,10 @@ public final class NMBApplication extends Application
     }
 
     @NonNull
-    public static Conaco getConaco(@NonNull Context context) {
+    public static Conaco<ImageWrapper> getConaco(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mConaco == null) {
-            Conaco.Builder builder = new Conaco.Builder();
+            Conaco.Builder<ImageWrapper> builder = new Conaco.Builder<>();
             builder.hasMemoryCache = true;
             builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
             builder.hasDiskCache = true;
