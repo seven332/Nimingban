@@ -25,7 +25,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -34,8 +33,8 @@ import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.hippo.vector.PathInterpolator;
 import com.hippo.nimingban.R;
+import com.hippo.vector.PathInterpolator;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
@@ -134,21 +133,10 @@ public class ProgressView extends View {
     private void startAnimationActually() {
         ArrayList<Animator> animators = mAnimators;
         int N = animators.size();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            for (int i = 0; i < N; i++) {
-                Animator animator = animators.get(i);
-                if (animator.isPaused()) {
-                    animator.resume();
-                } else if (!animator.isRunning()) {
-                    animator.start();
-                }
-            }
-        } else {
-            for (int i = 0; i < N; i++) {
-                Animator animator = animators.get(i);
-                if (!animator.isRunning()) {
-                    animator.start();
-                }
+        for (int i = 0; i < N; i++) {
+            Animator animator = animators.get(i);
+            if (!animator.isRunning()) {
+                animator.start();
             }
         }
     }
@@ -157,14 +145,8 @@ public class ProgressView extends View {
         mShouldStartAnimationDrawable = false;
         ArrayList<Animator> animators = mAnimators;
         int N = animators.size();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            for (int i = 0; i < N; i++) {
-                animators.get(i).pause();
-            }
-        } else {
-            for (int i = 0; i < N; i++) {
-                animators.get(i).cancel();
-            }
+        for (int i = 0; i < N; i++) {
+            animators.get(i).cancel();
         }
     }
 
