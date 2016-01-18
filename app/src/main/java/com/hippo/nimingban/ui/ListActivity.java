@@ -1067,7 +1067,7 @@ public final class ListActivity extends AbsActivity
                 mReplies = replies;
                 mShowIndex = MathUtils.random(replies.length);
                 reply.setVisibility(View.VISIBLE);
-                reply.setText(replies[mShowIndex].getNMBDisplayContent());
+                reply.setCurrentText(replies[mShowIndex].getNMBDisplayContent());
 
                 if (replies.length > 1 && !mRunning) {
                     mRunning = true;
