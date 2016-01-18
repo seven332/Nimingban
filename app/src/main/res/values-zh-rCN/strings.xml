@@ -240,6 +240,9 @@
     <string name="main_image_save_location">图片存储路径</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
     <string name="main_app_icon">应用图标（也许需要重启）</string>
+    <string name="main_fix_image_urls">修正图片链接</string>
+    <string name="main_fix_image_urls_summary_on">使用默认图片链接</string>
+    <string name="main_fix_image_urls_summary_off">通过 API 获取图片链接。若图片加载失败，请启用该项。</string>
     <string name="main_analysis">启用数据统计</string>
     <string name="main_about_analysis">关于数据统计</string>
     <string name="main_author">作者</string>

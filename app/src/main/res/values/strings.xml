@@ -247,6 +247,9 @@
     <string name="main_image_save_location">Image save location</string>
     <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
     <string name="main_app_icon">App icon (Maybe reboot required)</string>
+    <string name="main_fix_image_urls">Fix image URLs</string>
+    <string name="main_fix_image_urls_summary_on">Use default image URLs</string>
+    <string name="main_fix_image_urls_summary_off">Get image URLs from the API. Enable it if loading images failed</string>
     <string name="main_analysis">Enable data analysis</string>
     <string name="main_about_analysis">About data analysis</string>
     <string name="main_author">Author</string>
