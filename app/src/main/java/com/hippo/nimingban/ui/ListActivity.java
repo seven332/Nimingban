@@ -68,7 +68,6 @@ import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.ac.ACUrl;
-import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DisplayForum;
@@ -542,32 +541,6 @@ public final class ListActivity extends AbsActivity
         }
 
         NMBRequest request;
-
-        // Get cdn path
-        request = new NMBRequest();
-        mCdnPathRequest = request;
-        request.setSite(ACSite.getInstance());
-        request.setMethod(NMBClient.METHOD_GET_CDN_PATH);
-        request.setCallback(new NMBClient.Callback<List<ACCdnPath>>(){
-            @Override
-            public void onSuccess(List<ACCdnPath> result) {
-                // TODO save it to db or share
-                mCommonPostsRequest = null;
-                ACSite.getInstance().setCdnPath(result);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                mCommonPostsRequest = null;
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onCancel() {
-                mCommonPostsRequest = null;
-            }
-        });
-        mNMBClient.execute(request);
 
         // Check update
         request = new NMBRequest();

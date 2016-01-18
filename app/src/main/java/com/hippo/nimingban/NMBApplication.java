@@ -25,9 +25,12 @@ import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.hippo.conaco.Conaco;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.NMBRequest;
+import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
@@ -45,6 +48,7 @@ import com.hippo.okhttp.ResponseUtils;
 import com.hippo.text.Html;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.SimpleHandler;
@@ -52,8 +56,14 @@ import com.squareup.okhttp.OkHttpClient;
 import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpCookie;
 import java.net.URL;
+import java.util.List;
 
 public final class NMBApplication extends Application
         implements Thread.UncaughtExceptionHandler, Messenger.Receiver, Runnable {
@@ -61,6 +71,8 @@ public final class NMBApplication extends Application
     private static final String TAG = NMBApplication.class.getSimpleName();
 
     private static final boolean LOG_NATIVE_MEMORY = false;
+
+    private static final String AC_CDN_PATH_FILENAME = "ac_cdn_path";
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
@@ -124,6 +136,66 @@ public final class NMBApplication extends Application
         if (LOG_NATIVE_MEMORY) {
             SimpleHandler.getInstance().post(this);
         }
+
+        start();
+    }
+
+    private void start() {
+        updateACCdnPath();
+    }
+
+    private void readACCdnPathFromFile() {
+        File file = new File(getFilesDir(), AC_CDN_PATH_FILENAME);
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            String str = IOUtils.readString(is, "utf-8");
+            List<ACCdnPath> list = JSON.parseArray(str, ACCdnPath.class);
+            ACSite.getInstance().setCdnPath(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    private void writeACCdnPathToFile(List<ACCdnPath> cdnPaths) {
+        File file = new File(getFilesDir(), AC_CDN_PATH_FILENAME);
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            os.write(JSON.toJSONString(cdnPaths).getBytes("utf-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    private void updateACCdnPath() {
+        // First read cdn path from file
+        readACCdnPathFromFile();
+
+        NMBRequest request = new NMBRequest();
+        request.setSite(ACSite.getInstance());
+        request.setMethod(NMBClient.METHOD_GET_CDN_PATH);
+        request.setCallback(new NMBClient.Callback<List<ACCdnPath>>(){
+            @Override
+            public void onSuccess(List<ACCdnPath> result) {
+                ACSite.getInstance().setCdnPath(result);
+                writeACCdnPathToFile(result);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onCancel() {
+            }
+        });
+        getNMBClient(this).execute(request);
     }
 
     private void update() throws PackageManager.NameNotFoundException {
