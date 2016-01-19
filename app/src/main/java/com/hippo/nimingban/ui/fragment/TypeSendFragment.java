@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -152,7 +153,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     private NMBClient mNMBClient;
 
     private FontEditText mEditText;
-    private View mEmoji;
+    private SimpleImageView mEmoji;
     private View mImage;
     private View mDraw;
     private View mDraft;
@@ -168,6 +169,9 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     private CheckBox mWatermark;
     private TextView mForumText;
     private EasyRecyclerView mEmojiKeyboard;
+
+    private Drawable mEmojiOff;
+    private Drawable mEmojiOn;
 
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
@@ -297,7 +301,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         });
 
         mEditText = (FontEditText) contentView.findViewById(R.id.edit_text);
-        mEmoji = contentView.findViewById(R.id.emoji);
+        mEmoji = (SimpleImageView) contentView.findViewById(R.id.emoji);
         mImage = contentView.findViewById(R.id.image);
         mDraw = contentView.findViewById(R.id.draw);
         mDraft = contentView.findViewById(R.id.draft);
@@ -314,6 +318,10 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         mName = (EditText) mWritableItem.findViewById(R.id.name);
         mEmail = (EditText) mWritableItem.findViewById(R.id.email);
         mTitle = (EditText) mWritableItem.findViewById(R.id.title);
+
+        mEmojiOff = getResources().getDrawable(R.drawable.ic_emoji_off_dark_x48_24);
+        mEmojiOn = getResources().getDrawable(R.drawable.ic_emoji_on_dark_x48_24);
+        mEmoji.setDrawable(mEmojiOff);
 
         if (Settings.getFixEmojiDisplay()) {
             mEditText.useCustomTypeface();
@@ -501,6 +509,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     }
 
     private void showEmojiKeyboard() {
+        mEmoji.setDrawable(mEmojiOn);
+
         // Hide ime keyboard
         View view = getActivity().getCurrentFocus();
         if (view != null) {
@@ -541,6 +551,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     }
 
     private void hideEmojiKeyboard() {
+        mEmoji.setDrawable(mEmojiOff);
+
         // Clear FLAG_ALT_FOCUSABLE_IM
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 

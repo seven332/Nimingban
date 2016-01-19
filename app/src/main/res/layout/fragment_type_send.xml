@@ -32,10 +32,9 @@
 
         <com.hippo.widget.SimpleImageView
             android:id="@+id/emoji"
-            android:layout_width="48dp"
+            android:layout_width="72dp"
             android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_emoji_dark_x24"/>
+            android:padding="12dp"/>
 
         <com.hippo.widget.SimpleImageView
             android:id="@+id/image"
