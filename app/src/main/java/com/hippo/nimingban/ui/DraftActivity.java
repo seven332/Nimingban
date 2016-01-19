@@ -37,6 +37,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.dao.DraftRaw;
@@ -47,7 +48,6 @@ import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Snackbar;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 

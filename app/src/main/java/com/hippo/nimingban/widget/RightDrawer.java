@@ -26,11 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.slidingdrawerlayout.DrawerLayoutChild;
 import com.hippo.yorozuya.ResourcesUtils;
 

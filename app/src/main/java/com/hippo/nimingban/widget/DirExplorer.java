@@ -25,10 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hippo.easyrecyclerview.EasyRecyclerView;
+import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.nimingban.R;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 

@@ -28,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hippo.easyrecyclerview.EasyRecyclerView;
+import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -41,8 +43,6 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;

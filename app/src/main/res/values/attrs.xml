@@ -28,14 +28,6 @@
         <attr name="dark" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="MonoRecyclerView">
-        <attr name="space" format="dimension"/>
-        <attr name="spaceLeft" format="dimension"/>
-        <attr name="spaceRight" format="dimension"/>
-        <attr name="spaceTop" format="dimension"/>
-        <attr name="spaceBottom" format="dimension"/>
-    </declare-styleable>
-
     <declare-styleable name="ProgressView">
         <attr name="color"/>
         <attr name="indeterminate" format="boolean"/>
@@ -114,11 +106,6 @@
 
     <declare-styleable name="IconListPreference">
         <attr name="entryIcons" format="reference"/>
-    </declare-styleable>
-
-    <declare-styleable name="FastScroller">
-        <attr name="handler" format="reference"/>
-        <attr name="draggable" format="boolean"/>
     </declare-styleable>
 
 </resources>

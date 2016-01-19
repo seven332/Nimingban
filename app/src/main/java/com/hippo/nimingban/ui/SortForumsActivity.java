@@ -52,6 +52,7 @@ import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchAct
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.hippo.app.ProgressDialogBuilder;
+import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.GuideHelper;
 import com.hippo.nimingban.NMBApplication;
@@ -66,7 +67,6 @@ import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;

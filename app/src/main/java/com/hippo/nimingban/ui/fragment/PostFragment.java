@@ -49,6 +49,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
@@ -76,7 +77,6 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.Slider;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;

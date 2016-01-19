@@ -54,6 +54,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.app.ProgressDialogBuilder;
+import com.hippo.easyrecyclerview.EasyRecyclerView;
+import com.hippo.easyrecyclerview.SimpleHolder;
 import com.hippo.io.UriInputStreamPipe;
 import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
@@ -84,8 +86,6 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.SimpleHolder;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;

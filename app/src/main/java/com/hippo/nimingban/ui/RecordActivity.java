@@ -39,6 +39,8 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemView
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotify;
+import com.hippo.easyrecyclerview.EasyRecyclerView;
+import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.effect.ViewTransition;
 import com.hippo.io.FileInputStreamPipe;
 import com.hippo.nimingban.Constants;
@@ -54,8 +56,6 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Snackbar;
-import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.MarginItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;

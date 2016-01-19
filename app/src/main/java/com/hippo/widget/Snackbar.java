@@ -40,7 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hippo.animation.SimpleAnimationListener;
+import com.hippo.anani.SimpleAnimationListener;
 import com.hippo.nimingban.R;
 import com.hippo.util.AnimationUtils2;
 

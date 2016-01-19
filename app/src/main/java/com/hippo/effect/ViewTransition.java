@@ -20,7 +20,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 
-import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.anani.SimpleAnimatorListener;
 
 public class ViewTransition {
 

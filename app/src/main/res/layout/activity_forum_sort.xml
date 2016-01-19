@@ -45,7 +45,7 @@
 
     </LinearLayout>
 
-    <com.hippo.widget.recyclerview.EasyRecyclerView
+    <com.hippo.easyrecyclerview.EasyRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

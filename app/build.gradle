@@ -85,6 +85,7 @@ dependencies {
     compile project(':android-advancedrecyclerview')
     compile project(':beerbelly')
     compile project(':conaco')
+    compile project(':easyrecyclerview')
     compile project(':hotspot')
     compile project(':photoview')
     compile project(':rippleold')

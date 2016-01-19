@@ -19,3 +19,9 @@
 [submodule "vector"]
 	path = vector
 	url = git@github.com:seven332/Vector.git
+[submodule "anani"]
+	path = anani
+	url = https://github.com/seven332/Anani
+[submodule "easyrecyclerview"]
+	path = easyrecyclerview
+	url = https://github.com/seven332/EasyRecyclerView

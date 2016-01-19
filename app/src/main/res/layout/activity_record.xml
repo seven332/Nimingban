@@ -45,7 +45,7 @@
 
     </LinearLayout>
 
-    <com.hippo.widget.recyclerview.EasyRecyclerView
+    <com.hippo.easyrecyclerview.EasyRecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
