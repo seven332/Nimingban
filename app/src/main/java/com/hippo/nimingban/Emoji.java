@@ -16,9 +16,11 @@
 
 package com.hippo.nimingban;
 
+import com.hippo.yorozuya.AssertUtils;
+
 public final class Emoji {
 
-    public static final int COUNT = 92;
+    public static final int COUNT = 93;
 
     public static final String[] EMOJI_NAME = {
             "|∀ﾟ",          "(´ﾟДﾟ`)",      "(;´Д`)",
@@ -51,7 +53,7 @@ public final class Emoji {
             "ﾟÅﾟ )　",       "⊂彡☆))д`)",  "⊂彡☆))д´)",
             "⊂彡☆))∀`)",    "(´∀((☆ミつ",  "（<ゝω・）☆",
             "¯\\_(ツ)_/¯",   "☎110",        "⚧",        // 90
-            "☕",            "(`ε´ (つ*⊂)"
+            "☕",            "(`ε´ (つ*⊂)",  "全角空格"
     };
 
     public static final String[] EMOJI_VALUE = {
@@ -85,6 +87,11 @@ public final class Emoji {
             "ﾟÅﾟ )　",       "⊂彡☆))д`)",  "⊂彡☆))д´)",
             "⊂彡☆))∀`)",    "(´∀((☆ミつ",  "（<ゝω・）☆",
             "¯\\_(ツ)_/¯",   "☎110",        "⚧",        // 90
-            "☕",            "(`ε´ (つ*⊂)"
+            "☕",            "(`ε´ (つ*⊂)",  "\u3000"
     };
+
+    static {
+        AssertUtils.assertEquals("EMOJI_NAME.length should be COUNT", COUNT, EMOJI_NAME.length);
+        AssertUtils.assertEquals("EMOJI_VALUE.length should be COUNT", COUNT, EMOJI_VALUE.length);
+    }
 }

@@ -16,7 +16,6 @@
 
 package com.hippo.nimingban.ui.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Service;
@@ -43,6 +42,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -166,6 +167,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     private EditText mTitle;
     private CheckBox mWatermark;
     private TextView mForumText;
+    private EasyRecyclerView mEmojiKeyboard;
 
     private Dialog mProgressDialog;
     private NMBRequest mNMBRequest;
@@ -313,18 +315,22 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         mEmail = (EditText) mWritableItem.findViewById(R.id.email);
         mTitle = (EditText) mWritableItem.findViewById(R.id.title);
 
-        mEditText.requestFocus();
-        mEditText.requestFocusFromTouch();
         if (Settings.getFixEmojiDisplay()) {
             mEditText.useCustomTypeface();
         } else {
             mEditText.useOriginalTypeface();
         }
+        mEditText.requestFocus();
+        mEditText.requestFocusFromTouch();
+
+        // Show ime
         SimpleHandler.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
-                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(mEditText, 0);
+                if (TypeSendFragment.this.isAdded()) {
+                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mEditText, 0);
+                }
             }
         }, 300);
 
@@ -411,12 +417,20 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+
+        // Cancel FLAG_ALT_FOCUSABLE_IM
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
     /**
      * @return True for finish now, false for wait
      */
     public boolean checkBeforeFinish() {
+        if (isEmojiKeyboardShown()) {
+            hideEmojiKeyboard();
+            return false;
+        }
+
         final String text = mEditText.getText().toString().trim();
         if (!text.isEmpty()) {
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -445,6 +459,103 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         }
     }
 
+    private class EmojiKeyboardHelper extends RecyclerView.Adapter<SimpleHolder>
+            implements EasyRecyclerView.OnItemClickListener {
+
+        @Override
+        public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            SimpleHolder holder = new SimpleHolder(
+                    getActivity().getLayoutInflater().inflate(R.layout.item_emoji, parent, false));
+            if (Settings.getFixEmojiDisplay()) {
+                ((FontTextView) holder.itemView).useCustomTypeface();
+            } else {
+                ((FontTextView) holder.itemView).useOriginalTypeface();
+            }
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(SimpleHolder holder, int position) {
+            ((TextView) holder.itemView).setText(Emoji.EMOJI_NAME[position]);
+        }
+
+        @Override
+        public int getItemCount() {
+            return Emoji.COUNT;
+        }
+
+        @Override
+        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+            EditText editText = mEditText;
+            String emoji = Emoji.EMOJI_VALUE[position];
+            int start = Math.max(editText.getSelectionStart(), 0);
+            int end = Math.max(editText.getSelectionEnd(), 0);
+            editText.getText().replace(Math.min(start, end), Math.max(start, end),
+                    emoji, 0, emoji.length());
+            return true;
+        }
+    }
+
+    private boolean isEmojiKeyboardShown() {
+        return mEmojiKeyboard != null && mEmojiKeyboard.getVisibility() == View.VISIBLE;
+    }
+
+    private void showEmojiKeyboard() {
+        // Hide ime keyboard
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+        // Add FLAG_ALT_FOCUSABLE_IM
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+        view = getView();
+        if (view == null) {
+            return;
+        }
+
+        if (mEmojiKeyboard == null) {
+            ViewStub stub = (ViewStub) view.findViewById(R.id.stub);
+            mEmojiKeyboard = (EasyRecyclerView) stub.inflate();
+            EmojiKeyboardHelper helper = new EmojiKeyboardHelper();
+            mEmojiKeyboard.setAdapter(helper);
+            mEmojiKeyboard.setLayoutManager(new StaggeredGridLayoutManager(
+                    3, StaggeredGridLayoutManager.VERTICAL));// TODO adjust by view width
+            mEmojiKeyboard.setSelector(RippleSalon.generateRippleDrawable(
+                    ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark)));
+            mEmojiKeyboard.setOnItemClickListener(helper);
+        }
+        mEmojiKeyboard.setVisibility(View.VISIBLE);
+
+        // Show a stub dialog to make FLAG_ALT_FOCUSABLE_IM work
+        final Dialog dialog = new Dialog(getContext(), R.style.Theme_Dialog_DoNotDim);
+        dialog.show();
+        SimpleHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void hideEmojiKeyboard() {
+        // Clear FLAG_ALT_FOCUSABLE_IM
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+        // Show ime keyboard
+        SimpleHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(mEditText, 0);
+            }
+        });
+
+        mEmojiKeyboard.setVisibility(View.GONE);
+    }
+
     @Override
     public void onClick(View v) {
         if (mSend == v) {
@@ -458,7 +569,11 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
                 tryGettingCookies();
             }
         } else if (mEmoji == v) {
-            showEmojiDialog();
+            if (isEmojiKeyboardShown()) {
+                hideEmojiKeyboard();
+            } else {
+                showEmojiKeyboard();
+            }
         } else if (mImage == v) {
             showImageDialog();
         } else if (mDraft == v) {
@@ -645,91 +760,6 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
                 .setPositiveButton(android.R.string.ok, listener)
                 .setNegativeButton(android.R.string.cancel, listener)
                 .setNeutralButton(R.string.i_dont_care, listener).show();
-    }
-
-    private class EmojiDialogHelper implements EasyRecyclerView.OnItemClickListener,
-            DialogInterface.OnDismissListener {
-
-        private Dialog mDialog;
-        private View mView;
-
-        private EmojiDialogHelper() {
-            @SuppressLint("InflateParams")
-            EasyRecyclerView recyclerView = (EasyRecyclerView)
-                    getActivity().getLayoutInflater().inflate(R.layout.dialog_emoji, null);
-            recyclerView.setAdapter(new EmojiAdapter());
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
-                    3, StaggeredGridLayoutManager.VERTICAL));// TODO adjust by view width
-            recyclerView.setSelector(RippleSalon.generateRippleDrawable(
-                    ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark)));
-            recyclerView.setOnItemClickListener(this);
-            mView = recyclerView;
-        }
-
-        public View getView() {
-            return mView;
-        }
-
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        @Override
-        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-            if (mDialog != null) {
-                EditText editText = mEditText;
-                String emoji = Emoji.EMOJI_VALUE[position];
-                int start = Math.max(editText.getSelectionStart(), 0);
-                int end = Math.max(editText.getSelectionEnd(), 0);
-                editText.getText().replace(Math.min(start, end), Math.max(start, end),
-                        emoji, 0, emoji.length());
-                mDialog.dismiss();
-                mDialog = null;
-            }
-            return true;
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog = null;
-        }
-
-
-        private class EmojiAdapter extends RecyclerView.Adapter<SimpleHolder> {
-
-            @SuppressLint("InflateParams")
-            @Override
-            public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                SimpleHolder holder = new SimpleHolder(
-                        getActivity().getLayoutInflater().inflate(R.layout.item_emoji, null));
-                if (Settings.getFixEmojiDisplay()) {
-                    ((FontTextView) holder.itemView).useCustomTypeface();
-                } else {
-                    ((FontTextView) holder.itemView).useOriginalTypeface();
-                }
-                return holder;
-            }
-
-            @Override
-            public void onBindViewHolder(SimpleHolder holder, int position) {
-                ((TextView) holder.itemView).setText(Emoji.EMOJI_NAME[position]);
-            }
-
-            @Override
-            public int getItemCount() {
-                return Emoji.COUNT;
-            }
-        }
-    }
-
-    private void showEmojiDialog() {
-        EmojiDialogHelper helper = new EmojiDialogHelper();
-        Dialog dialog = new AlertDialog.Builder(getContext())
-                .setView(helper.getView())
-                .setOnDismissListener(helper)
-                .create();
-        helper.setDialog(dialog);
-        dialog.show();
     }
 
     private void showImageDialog() {
