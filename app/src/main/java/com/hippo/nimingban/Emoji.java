@@ -16,11 +16,15 @@
 
 package com.hippo.nimingban;
 
+import android.content.Context;
+
 import com.hippo.yorozuya.AssertUtils;
 
 public final class Emoji {
 
     public static final int COUNT = 93;
+
+    public static final int INDEX_IDEOGRAPHIC_SPACE = 92;
 
     public static final String[] EMOJI_NAME = {
             "|∀ﾟ",          "(´ﾟДﾟ`)",      "(;´Д`)",
@@ -53,7 +57,7 @@ public final class Emoji {
             "ﾟÅﾟ )　",       "⊂彡☆))д`)",  "⊂彡☆))д´)",
             "⊂彡☆))∀`)",    "(´∀((☆ミつ",  "（<ゝω・）☆",
             "¯\\_(ツ)_/¯",   "☎110",        "⚧",        // 90
-            "☕",            "(`ε´ (つ*⊂)",  "全角空格"
+            "☕",            "(`ε´ (つ*⊂)",  "ideographic_space"
     };
 
     public static final String[] EMOJI_VALUE = {
@@ -93,5 +97,9 @@ public final class Emoji {
     static {
         AssertUtils.assertEquals("EMOJI_NAME.length should be COUNT", COUNT, EMOJI_NAME.length);
         AssertUtils.assertEquals("EMOJI_VALUE.length should be COUNT", COUNT, EMOJI_VALUE.length);
+    }
+
+    public static void initialize(Context context) {
+        EMOJI_NAME[INDEX_IDEOGRAPHIC_SPACE] = context.getString(R.string.ideographic_space);
     }
 }

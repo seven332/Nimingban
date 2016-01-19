@@ -108,6 +108,7 @@ public final class NMBApplication extends Application
         BitmapUtils.initialize(this);
         Html.initialize(this);
         ResImageGetter.initialize(this);
+        Emoji.initialize(this);
 
         // Remove temp file
         FileUtils.deleteContent(NMBAppConfig.getTempDir());

@@ -338,4 +338,6 @@
 
     <string name="network_receiver">Network receiver</string>
 
+    <string name="ideographic_space">Full-width space</string>
+
 </resources>

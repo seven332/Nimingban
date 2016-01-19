@@ -330,4 +330,6 @@
 
     <string name="network_receiver">网络监视器</string>
 
+    <string name="ideographic_space">全角空格</string>
+
 </resources>
