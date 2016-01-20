@@ -19,15 +19,16 @@ package com.hippo.nimingban.client;
 import android.util.Log;
 
 import com.hippo.network.ResponseCodeException;
-import com.hippo.okhttp.GoodRequestBuilder;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import com.hippo.okhttp.ChromeRequestBuilder;
 
 import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ConvertEngine {
 
@@ -36,13 +37,13 @@ public class ConvertEngine {
     private static final String URL = "http://opencc.herokuapp.com/opencc";
 
     public static Call prepareConvert(OkHttpClient okHttpClient, String config, String content) {
-        RequestBody formBody = new FormEncodingBuilder()
+        RequestBody formBody = new FormBody.Builder()
                 .add("config", config)
                 .add("content", content)
                 .build();
         String url = URL;
         Log.d(TAG, url);
-        Request request = new GoodRequestBuilder(url).post(formBody).build();
+        Request request = new ChromeRequestBuilder(url).post(formBody).build();
         return okHttpClient.newCall(request);
     }
 

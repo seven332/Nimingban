@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo Seven
+ * Copyright 2016 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@
 
 package com.hippo.okhttp;
 
-import com.squareup.okhttp.OkHttpClient;
+public class ChromeRequestBuilder extends RequestBuilder {
 
-import java.util.concurrent.TimeUnit;
+    public ChromeRequestBuilder(String url) {
+        super(url);
+    }
 
-public class GoodHttpClient extends OkHttpClient {
-
-    public GoodHttpClient() {
-        setCookieHandler(new EmptyCookieHandler());
-        setConnectTimeout(15, TimeUnit.SECONDS);
-        setWriteTimeout(15, TimeUnit.SECONDS);
-        setReadTimeout(15, TimeUnit.SECONDS);
+    @Override
+    public String getUserAgent() {
+        return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36";
     }
 }

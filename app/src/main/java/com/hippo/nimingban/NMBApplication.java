@@ -42,9 +42,7 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ImageWrapperHelper;
-import com.hippo.okhttp.GoodHttpClient;
-import com.hippo.okhttp.GoodRequestBuilder;
-import com.hippo.okhttp.ResponseUtils;
+import com.hippo.okhttp.CookieDBJar;
 import com.hippo.text.Html;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
@@ -52,7 +50,6 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.SimpleHandler;
-import com.squareup.okhttp.OkHttpClient;
 import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
@@ -64,6 +61,9 @@ import java.io.OutputStream;
 import java.net.HttpCookie;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 public final class NMBApplication extends Application
         implements Thread.UncaughtExceptionHandler, Messenger.Receiver, Runnable {
@@ -103,8 +103,6 @@ public final class NMBApplication extends Application
         DB.initialize(this);
         HttpCookieDB.initialize(this);
         ReadableTime.initialize(this);
-        GoodRequestBuilder.initialize(this);
-        ResponseUtils.initialize(this);
         BitmapUtils.initialize(this);
         Html.initialize(this);
         ResImageGetter.initialize(this);
@@ -319,7 +317,12 @@ public final class NMBApplication extends Application
     public static OkHttpClient getOkHttpClient(@NonNull Context context) {
         NMBApplication application = ((NMBApplication) context.getApplicationContext());
         if (application.mOkHttpClient == null) {
-            application.mOkHttpClient = new GoodHttpClient();
+            application.mOkHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .cookieJar(new CookieDBJar(getSimpleCookieStore(context)))
+                    .build();
         }
         return application.mOkHttpClient;
     }

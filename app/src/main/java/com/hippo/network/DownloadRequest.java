@@ -18,8 +18,8 @@ package com.hippo.network;
 
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.io.OutputStreamPipe;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
 
 public class DownloadRequest {
 

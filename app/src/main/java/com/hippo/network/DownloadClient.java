@@ -20,20 +20,21 @@ import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.io.UniFileOutputStreamPipe;
-import com.hippo.okhttp.GoodRequestBuilder;
+import com.hippo.okhttp.ChromeRequestBuilder;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.io.OutputStreamPipe;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class DownloadClient {
 
@@ -87,7 +88,7 @@ public class DownloadClient {
         UniFile uniFile = null;
         OutputStreamPipe osPipe = null;
         try {
-            Call call = okHttpClient.newCall(new GoodRequestBuilder(request.mUrl).build());
+            Call call = okHttpClient.newCall(new ChromeRequestBuilder(request.mUrl).build());
             request.mCall = call;
 
             // Listener

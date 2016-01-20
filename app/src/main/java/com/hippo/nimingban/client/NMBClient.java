@@ -26,14 +26,15 @@ import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
 
 public class NMBClient {
 

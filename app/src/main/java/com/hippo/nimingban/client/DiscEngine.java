@@ -19,13 +19,14 @@ package com.hippo.nimingban.client;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class DiscEngine {
 
@@ -90,7 +91,7 @@ public class DiscEngine {
         }
 
         body = okHttpClient.newCall(new Request.Builder().url(URL_WEIYUN_OUTLINK)
-                .post(new FormEncodingBuilder()
+                .post(new FormBody.Builder()
                         .add("data", getWeiyunPostJson(matcher.group(1))).build()).build()).execute()
                 .body().string();
         matcher = PATTERN_WEIYUN_2.matcher(body);
