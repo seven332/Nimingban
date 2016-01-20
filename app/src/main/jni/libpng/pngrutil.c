@@ -1,8 +1,8 @@
 
 /* pngrutil.c - utilities to read a PNG file
  *
- * Last changed in libpng 1.6.20 [December 3, 2015]
- * Copyright (c) 1998-2015 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.20 [December 3, 2014]
+ * Copyright (c) 1998-2002,2004,2006-2015 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -3255,9 +3255,9 @@ png_combine_row(png_const_structrp png_ptr, png_bytep dp, int display)
     * any call to png_read_update_info at this point.  Do not continue if we got
     * this wrong.
     */
-//   if (png_ptr->info_rowbytes != 0 && png_ptr->info_rowbytes !=
-//          PNG_ROWBYTES(pixel_depth, row_width))
-//      png_error(png_ptr, "internal row size calculation error");
+   if (png_ptr->info_rowbytes != 0 && png_ptr->info_rowbytes !=
+          PNG_ROWBYTES(pixel_depth, row_width))
+      png_error(png_ptr, "internal row size calculation error");
 
    /* Don't expect this to ever happen: */
    if (row_width == 0)
