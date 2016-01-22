@@ -976,6 +976,7 @@ public final class ListActivity extends AbsActivity
         public FontTextView content;
         public TextView bottomText;
         public LoadImageView thumb;
+        public View bottom;
         public TextSwitcher reply;
 
         private int mShowIndex;
@@ -995,6 +996,7 @@ public final class ListActivity extends AbsActivity
             bottomText = (TextView) itemView.findViewById(R.id.bottom_text);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
             reply = (TextSwitcher) itemView.findViewById(R.id.reply);
+            bottom = itemView.findViewById(R.id.bottom);
 
             thumb.setOnClickListener(this);
 
@@ -1034,7 +1036,7 @@ public final class ListActivity extends AbsActivity
 
             if (replies == null || replies.length == 0) {
                 mReplies = null;
-                reply.setVisibility(View.GONE);
+                reply.setVisibility(View.INVISIBLE);
                 return false;
             } else {
                 mReplies = replies;
@@ -1109,8 +1111,8 @@ public final class ListActivity extends AbsActivity
             holder.content.setText(post.getNMBDisplayContent());
             holder.bottomText.setText(post.getNMBReplyDisplayCount());
 
-            TextView bottomText = holder.bottomText;
-            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottomText.getLayoutParams();
+            View bottom = holder.bottom;
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) bottom.getLayoutParams();
             String thumbKey = post.getNMBThumbKey();
             String thumbUrl = post.getNMBThumbUrl();
 
@@ -1151,15 +1153,15 @@ public final class ListActivity extends AbsActivity
             if (showImage && !showReplies) {
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.thumb);
                 lp.addRule(RelativeLayout.BELOW, 0);
-                bottomText.setLayoutParams(lp);
-            } else if (showReplies) {
+                bottom.setLayoutParams(lp);
+            } else if (showImage) {
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, 0);
-                lp.addRule(RelativeLayout.BELOW, R.id.reply);
-                bottomText.setLayoutParams(lp);
+                lp.addRule(RelativeLayout.BELOW, R.id.thumb);
+                bottom.setLayoutParams(lp);
             } else {
                 lp.addRule(RelativeLayout.ALIGN_BOTTOM, 0);
                 lp.addRule(RelativeLayout.BELOW, R.id.content);
-                bottomText.setLayoutParams(lp);
+                bottom.setLayoutParams(lp);
             }
 
             holder.content.setTextSize(Settings.getFontSize());

@@ -57,22 +57,30 @@
         android:layout_marginTop="8dp"
         app:retryType="longClick"/>
 
-    <TextSwitcher
-        android:id="@+id/reply"
+    <LinearLayout
+        android:id="@+id/bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/thumb"
-        android:layout_marginTop="8dp"
-        android:inAnimation="@anim/anim_fade_in"
-        android:outAnimation="@anim/anim_fade_out"/>
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/bottom_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:drawablePadding="8dp"/>
+        <TextSwitcher
+            android:id="@+id/reply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="16dp"
+            android:inAnimation="@anim/anim_fade_in"
+            android:outAnimation="@anim/anim_fade_out"/>
+
+        <TextView
+            android:id="@+id/bottom_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:drawablePadding="8dp"/>
+
+    </LinearLayout>
 
 </merge>
