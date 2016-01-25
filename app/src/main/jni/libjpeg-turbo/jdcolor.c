@@ -104,6 +104,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #define ycc_rgb_convert_internal ycc_extrgb_convert_internal
 #define gray_rgb_convert_internal gray_extrgb_convert_internal
 #define rgb_rgb_convert_internal rgb_extrgb_convert_internal
+#define cmyk_rgb_convert_internal cmyk_extrgb_convert_internal
 #include "jdcolext.c"
 #undef RGB_RED
 #undef RGB_GREEN
@@ -112,6 +113,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef ycc_rgb_convert_internal
 #undef gray_rgb_convert_internal
 #undef rgb_rgb_convert_internal
+#undef cmyk_rgb_convert_internal
 
 #define RGB_RED EXT_RGBX_RED
 #define RGB_GREEN EXT_RGBX_GREEN
@@ -121,6 +123,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #define ycc_rgb_convert_internal ycc_extrgbx_convert_internal
 #define gray_rgb_convert_internal gray_extrgbx_convert_internal
 #define rgb_rgb_convert_internal rgb_extrgbx_convert_internal
+#define cmyk_rgb_convert_internal cmyk_extrgbx_convert_internal
 #include "jdcolext.c"
 #undef RGB_RED
 #undef RGB_GREEN
@@ -130,6 +133,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef ycc_rgb_convert_internal
 #undef gray_rgb_convert_internal
 #undef rgb_rgb_convert_internal
+#undef cmyk_rgb_convert_internal
 
 #define RGB_RED EXT_BGR_RED
 #define RGB_GREEN EXT_BGR_GREEN
@@ -138,6 +142,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #define ycc_rgb_convert_internal ycc_extbgr_convert_internal
 #define gray_rgb_convert_internal gray_extbgr_convert_internal
 #define rgb_rgb_convert_internal rgb_extbgr_convert_internal
+#define cmyk_rgb_convert_internal cmyk_extbgr_convert_internal
 #include "jdcolext.c"
 #undef RGB_RED
 #undef RGB_GREEN
@@ -146,6 +151,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef ycc_rgb_convert_internal
 #undef gray_rgb_convert_internal
 #undef rgb_rgb_convert_internal
+#undef cmyk_rgb_convert_internal
 
 #define RGB_RED EXT_BGRX_RED
 #define RGB_GREEN EXT_BGRX_GREEN
@@ -155,6 +161,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #define ycc_rgb_convert_internal ycc_extbgrx_convert_internal
 #define gray_rgb_convert_internal gray_extbgrx_convert_internal
 #define rgb_rgb_convert_internal rgb_extbgrx_convert_internal
+#define cmyk_rgb_convert_internal cmyk_extbgrx_convert_internal
 #include "jdcolext.c"
 #undef RGB_RED
 #undef RGB_GREEN
@@ -164,6 +171,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef ycc_rgb_convert_internal
 #undef gray_rgb_convert_internal
 #undef rgb_rgb_convert_internal
+#undef cmyk_rgb_convert_internal
 
 #define RGB_RED EXT_XBGR_RED
 #define RGB_GREEN EXT_XBGR_GREEN
@@ -173,6 +181,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #define ycc_rgb_convert_internal ycc_extxbgr_convert_internal
 #define gray_rgb_convert_internal gray_extxbgr_convert_internal
 #define rgb_rgb_convert_internal rgb_extxbgr_convert_internal
+#define cmyk_rgb_convert_internal cmyk_extxbgr_convert_internal
 #include "jdcolext.c"
 #undef RGB_RED
 #undef RGB_GREEN
@@ -182,6 +191,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef ycc_rgb_convert_internal
 #undef gray_rgb_convert_internal
 #undef rgb_rgb_convert_internal
+#undef cmyk_rgb_convert_internal
 
 #define RGB_RED EXT_XRGB_RED
 #define RGB_GREEN EXT_XRGB_GREEN
@@ -191,6 +201,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #define ycc_rgb_convert_internal ycc_extxrgb_convert_internal
 #define gray_rgb_convert_internal gray_extxrgb_convert_internal
 #define rgb_rgb_convert_internal rgb_extxrgb_convert_internal
+#define cmyk_rgb_convert_internal cmyk_extxrgb_convert_internal
 #include "jdcolext.c"
 #undef RGB_RED
 #undef RGB_GREEN
@@ -200,6 +211,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef ycc_rgb_convert_internal
 #undef gray_rgb_convert_internal
 #undef rgb_rgb_convert_internal
+#undef cmyk_rgb_convert_internal
 
 
 /*
@@ -524,6 +536,52 @@ rgb_rgb_convert (j_decompress_ptr cinfo,
 
 
 /*
+ * Convert CMYK to RGB
+ */
+
+METHODDEF(void)
+cmyk_rgb_convert (j_decompress_ptr cinfo,
+        JSAMPIMAGE input_buf, JDIMENSION input_row,
+        JSAMPARRAY output_buf, int num_rows)
+{
+  switch (cinfo->out_color_space) {
+    case JCS_EXT_RGB:
+      cmyk_extrgb_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                   num_rows);
+          break;
+    case JCS_EXT_RGBX:
+    case JCS_EXT_RGBA:
+      cmyk_extrgbx_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                    num_rows);
+          break;
+    case JCS_EXT_BGR:
+      cmyk_extbgr_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                   num_rows);
+          break;
+    case JCS_EXT_BGRX:
+    case JCS_EXT_BGRA:
+      cmyk_extbgrx_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                    num_rows);
+          break;
+    case JCS_EXT_XBGR:
+    case JCS_EXT_ABGR:
+      cmyk_extxbgr_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                    num_rows);
+          break;
+    case JCS_EXT_XRGB:
+    case JCS_EXT_ARGB:
+      cmyk_extxrgb_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                    num_rows);
+          break;
+    default:
+      cmyk_rgb_convert_internal(cinfo, input_buf, input_row, output_buf,
+                                num_rows);
+          break;
+  }
+}
+
+
+/*
  * Adobe-style YCCK->CMYK conversion.
  * We convert YCbCr to R=1-C, G=1-M, and B=1-Y using the same
  * conversion as above, while passing K (black) unchanged.
@@ -802,7 +860,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
       cconvert->pub.color_convert = rgb_gray_convert;
       build_rgb_y_table(cinfo);
     } else
-      ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+      ERREXIT2(cinfo, JERR_CONVERSION_NOTIMPL, cinfo->jpeg_color_space, cinfo->out_color_space);
     break;
 
   case JCS_RGB:
@@ -834,8 +892,10 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
         cconvert->pub.color_convert = null_convert;
       else
         cconvert->pub.color_convert = rgb_rgb_convert;
+    } else if (cinfo->jpeg_color_space == JCS_CMYK) {
+      cconvert->pub.color_convert = cmyk_rgb_convert;
     } else
-      ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+      ERREXIT2(cinfo, JERR_CONVERSION_NOTIMPL, cinfo->jpeg_color_space, cinfo->out_color_space);
     break;
 
   case JCS_RGB565:
@@ -853,7 +913,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
       } else if (cinfo->jpeg_color_space == JCS_RGB) {
         cconvert->pub.color_convert = rgb_rgb565_convert;
       } else
-        ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+        ERREXIT2(cinfo, JERR_CONVERSION_NOTIMPL, cinfo->jpeg_color_space, cinfo->out_color_space);
     } else {
       /* only ordered dithering is supported */
       if (cinfo->jpeg_color_space == JCS_YCbCr) {
@@ -864,7 +924,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
       } else if (cinfo->jpeg_color_space == JCS_RGB) {
         cconvert->pub.color_convert = rgb_rgb565D_convert;
       } else
-        ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+        ERREXIT2(cinfo, JERR_CONVERSION_NOTIMPL, cinfo->jpeg_color_space, cinfo->out_color_space);
     }
     break;
 
@@ -876,7 +936,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
     } else if (cinfo->jpeg_color_space == JCS_CMYK) {
       cconvert->pub.color_convert = null_convert;
     } else
-      ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+      ERREXIT2(cinfo, JERR_CONVERSION_NOTIMPL, cinfo->jpeg_color_space, cinfo->out_color_space);
     break;
 
   default:
@@ -885,7 +945,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
       cinfo->out_color_components = cinfo->num_components;
       cconvert->pub.color_convert = null_convert;
     } else                      /* unsupported non-null conversion */
-      ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+      ERREXIT2(cinfo, JERR_CONVERSION_NOTIMPL, cinfo->jpeg_color_space, cinfo->out_color_space);
     break;
   }
 
