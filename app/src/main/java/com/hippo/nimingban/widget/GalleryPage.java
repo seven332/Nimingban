@@ -42,7 +42,7 @@ import uk.co.senab.photoview.PhotoView;
 
 public final class GalleryPage extends FrameLayout implements Unikery<ImageWrapper>, View.OnClickListener {
 
-    private int mTaskId = Unikery.INVAILD_ID;
+    private int mTaskId = Unikery.INVALID_ID;
 
     private Conaco<ImageWrapper> mConaco;
 

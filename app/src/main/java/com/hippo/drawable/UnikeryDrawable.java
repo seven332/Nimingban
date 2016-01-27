@@ -26,7 +26,7 @@ import com.hippo.conaco.ValueHolder;
 
 public class UnikeryDrawable extends WrapDrawable implements Unikery<ImageWrapper> {
 
-    private int mTaskId = Unikery.INVAILD_ID;
+    private int mTaskId = Unikery.INVALID_ID;
 
     private View mView;
 

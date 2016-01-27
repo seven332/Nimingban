@@ -61,7 +61,7 @@ public final class HeaderImageView extends FixedAspectImageView
     private static final String KEY_SUPER = "super";
     private static final String KEY_IMAGE_UNI_FILE_URI = "image_uni_file_uri";
 
-    private int mTaskId = Unikery.INVAILD_ID;
+    private int mTaskId = Unikery.INVALID_ID;
 
     private Conaco<ImageWrapper> mConaco;
 

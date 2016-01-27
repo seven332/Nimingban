@@ -38,7 +38,7 @@ import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
-import com.hippo.yorozuya.IdIntGenerator;
+import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -188,7 +188,7 @@ public class ContentLayout extends FrameLayout {
         /**
          * Generate task id
          */
-        private IdIntGenerator mIdGenerator = new IdIntGenerator();
+        private IntIdGenerator mIdGenerator = new IntIdGenerator();
 
         /**
          * Store the page divider index
