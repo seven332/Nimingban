@@ -88,4 +88,7 @@
     <color name="round_side_light">#ffececec</color>
     <color name="round_side_dark">#ff3e3e3e</color>
 
+    <color name="keyboard_background_light">#ffeceff1</color>
+    <color name="keyboard_background_dark">#ff263238</color>
+
 </resources>

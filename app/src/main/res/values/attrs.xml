@@ -24,6 +24,7 @@
         <attr name="colorPureInverse" format="color"/>
         <attr name="preferenceHeaderTitleColor" format="color"/>
         <attr name="colorRoundSide" format="color"/>
+        <attr name="colorKeyboardBackground" format="color"/>
 
         <attr name="dark" format="boolean"/>
     </declare-styleable>
