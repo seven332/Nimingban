@@ -275,7 +275,8 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         Drawable drawable = new ImageDrawable(imageWrapper);
         imageWrapper.start();
 
-        if (source == Conaco.Source.NETWORK && imageWrapper.getFrameCount() <= 1) {
+        if ((source == Conaco.Source.DISK || source == Conaco.Source.NETWORK) &&
+                imageWrapper.getFrameCount() <= 1) {
             Drawable[] layers = new Drawable[2];
             layers[0] = new ColorDrawable(Color.TRANSPARENT);
             layers[1] = drawable;
