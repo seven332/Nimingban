@@ -35,7 +35,7 @@
             android:theme="@style/NormalActivity"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:enabled="true">
 
             <intent-filter>
