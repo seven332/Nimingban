@@ -41,6 +41,7 @@ Here is the libraries
 - [apng](http://apng.sourceforge.net/)
 - [fastjson](https://github.com/alibaba/fastjson)
 - [giflib](http://giflib.sourceforge.net)
+- [gifsicle](https://github.com/kohler/gifsicle)
 - [greenDAO](https://github.com/greenrobot/greenDAO)
 - [jsoup](https://github.com/jhy/jsoup)
 - [leakcanary](https://github.com/square/leakcanary)
