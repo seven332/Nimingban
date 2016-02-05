@@ -65,6 +65,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -617,6 +618,53 @@ public class ACEngine {
 
     private static final long MAX_IMAGE_SIZE = 2000 * 1024;
 
+    private static boolean compressByGifDownloadsize(File input, File output) throws IOException {
+        FileInputStreamPipe isp = new FileInputStreamPipe(input);
+        FileOutputStreamPipe osp = new FileOutputStreamPipe(output);
+        final int startSampleSize = Math.max(2, (int) Math.sqrt(MathUtils.ceilDivide(input.length(), MAX_IMAGE_SIZE)) + 1);
+        int sampleSize = startSampleSize;
+        while (sampleSize < startSampleSize + 3) {
+            GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
+            isp.close();
+            osp.close();
+
+            if (output.length() < MAX_IMAGE_SIZE) {
+                return true;
+            }
+
+            sampleSize++;
+        }
+
+        return false;
+    }
+
+    private static boolean compressGifSicle(File input, File output) throws IOException {
+        File gifsicle = new File(NMBAppConfig.getNativeLibDir(), "libgifsicle-executable.so");
+        if (!gifsicle.canExecute()) {
+            return false;
+        }
+
+        float scale = (float) Math.sqrt((float) MAX_IMAGE_SIZE / (float) input.length());
+        for (int i = 0; i < 5 && scale > 0.0001; i++) {
+            String cmd = String.format(Locale.US, "%s --scale %f --output %s %s",
+                    gifsicle.getPath(), scale, output.getPath(), input.getPath());
+            Process process = Runtime.getRuntime().exec(cmd);
+            try {
+                if (process.waitFor() != 0) {
+                    return false;
+                }
+                if (output.length() < MAX_IMAGE_SIZE) {
+                    return true;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+            scale -= 0.05;
+        }
+        return false;
+    }
+
     /**
      * @return null for not changed
      */
@@ -642,23 +690,22 @@ public class ACEngine {
             }
 
             if ("image/gif".equals(imageType)) {
-                FileOutputStreamPipe osp = new FileOutputStreamPipe(temp);
-                final int startSampleSize = Math.max(2, (int) Math.sqrt(MathUtils.ceilDivide(size, MAX_IMAGE_SIZE)) + 1);
-                int sampleSize = startSampleSize;
-                while (sampleSize < startSampleSize + 3) {
-                    GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
-                    isp.close();
-                    osp.close();
-
-                    size = temp.length();
-                    if (size < MAX_IMAGE_SIZE) {
-                        return temp;
-                    }
-
-                    sampleSize++;
+                File output = NMBAppConfig.createTempFile();
+                if (output == null) {
+                    throw new NMBException(DumpSite.getInstance(), "Can't create temp file");
                 }
 
-                throw new IOException("Can't compress gif");
+                if (compressGifSicle(temp, output)) {
+                    Log.d("TAG", "compressGifSicle ok");
+                    return output;
+                } else {
+                    if (compressByGifDownloadsize(temp, output)) {
+                        Log.d("TAG", "compressByGifDownloadsize ok");
+                        return output;
+                    } else {
+                        throw new NMBException(DumpSite.getInstance(), "Can't compress gif");
+                    }
+                }
             } else {
                 int[] sampleScaleArray = new int[1];
                 BitmapUtils.decodeStream(new FileInputStreamPipe(temp), -1, -1, -1, true, true, sampleScaleArray);

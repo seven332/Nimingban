@@ -65,8 +65,15 @@ android {
                 '-j', Runtime.runtime.availableProcessors()
     }
 
+    //noinspection GroovyAssignabilityCheck
+    task renameGifSicle(type: Exec, description: 'Compile JNI source via NDK') {
+        commandLine 'cmd', '/c', 'rename_gifsicle.bat'
+    }
+
+    renameGifSicle.dependsOn ndkBuild
+
     tasks.withType(JavaCompile) {
-        compileTask -> compileTask.dependsOn ndkBuild
+        compileTask -> compileTask.dependsOn renameGifSicle
     }
 }
 

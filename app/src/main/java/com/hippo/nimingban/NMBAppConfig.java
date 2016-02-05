@@ -42,6 +42,10 @@ public class NMBAppConfig {
         sContext = context.getApplicationContext();
     }
 
+    public static File getNativeLibDir() {
+        return new File(sContext.getApplicationInfo().nativeLibraryDir);
+    }
+
     public static @Nullable File getExternalAppDir() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             File file = new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
