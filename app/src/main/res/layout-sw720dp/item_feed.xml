@@ -30,7 +30,6 @@
         app:cardBackgroundColor="?attr/colorPure">
 
         <RelativeLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/keyline_margin_horizontal"

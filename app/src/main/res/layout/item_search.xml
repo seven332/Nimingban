@@ -27,7 +27,6 @@
         android:background="@drawable/item_shadow_top"/>
 
     <RelativeLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/keyline_margin_horizontal"

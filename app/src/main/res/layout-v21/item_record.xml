@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,25 +15,25 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/CardView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="?attr/colorPure">
+    android:clipChildren="false">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/swipable"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/keyline_margin_horizontal"
         android:paddingRight="@dimen/keyline_margin_horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:background="?attr/colorPure"
+        android:elevation="1.5dp">
 
         <include
-            layout="@layout/item_list_include"/>
+            layout="@layout/item_record_include"/>
 
     </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</FrameLayout>
