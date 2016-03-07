@@ -59,6 +59,14 @@
         android:key="image_save_location"
         android:title="@string/main_image_save_location"/>
 
+    <ListPreference
+        android:key="chaos_level"
+        android:title="@string/main_chaos_level"
+        android:summary="%s"
+        android:entries="@array/chaos_level_entries"
+        android:entryValues="@array/chaos_level_entry_values"
+        android:defaultValue="0"/>
+
     <com.hippo.preference.IconListPreference
         style="?android:attr/preferenceStyle"
         android:key="app_icon"

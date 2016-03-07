@@ -168,6 +168,9 @@ public final class Settings {
     public static final String KEY_IMAGE_SAVE_QUERY = "image_query";
     public static final String KEY_IMAGE_SAVE_FRAGMENT = "image_fragment";
 
+    public static final String KEY_CHAOS_LEVEL = "chaos_level";
+    public static final int DEFAULT_CHAOS_LEVEL = 0;
+
     public static final String KEY_SET_ANALYSIS = "set_analysis";
     public static final boolean DEFAULT_SET_ANALYSIS = false;
     public static final String KEY_ANALYSIS = "analysis";
@@ -357,6 +360,10 @@ public final class Settings {
 
         // Analysis
         Analysis.setting(sContext, KEY_IMAGE_SAVE_LOACTION, uri.toString());
+    }
+
+    public static int getChaosLevel() {
+        return getIntFromStr(KEY_CHAOS_LEVEL, DEFAULT_CHAOS_LEVEL);
     }
 
     public static boolean getSetAnalysis() {

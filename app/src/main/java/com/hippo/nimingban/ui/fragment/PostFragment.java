@@ -664,6 +664,10 @@ public class PostFragment extends BaseFragment
     private CharSequence highlightOp(Reply reply) {
         CharSequence user = reply.getNMBDisplayUsername();
 
+        if (2 == Settings.getChaosLevel()) { // Absolutely chaotic
+            return user;
+        }
+
         if (!TextUtils.isEmpty(user) && TextUtils2.contentEquals(user, mPostUser)) {
             Spannable spannable;
             if (user instanceof Spannable) {

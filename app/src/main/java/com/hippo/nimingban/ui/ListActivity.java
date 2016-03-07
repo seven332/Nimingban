@@ -127,6 +127,8 @@ public final class ListActivity extends AbsActivity
     public static final int REQUEST_CODE_SETTINGS = 0;
     public static final int REQUEST_CODE_SORT_FORUMS = 1;
 
+    public static final int RESULT_CODE_REFRESH = 10;
+
     private NMBClient mNMBClient;
 
     private SlidingDrawerLayout mSlidingDrawerLayout;
@@ -654,6 +656,8 @@ public final class ListActivity extends AbsActivity
         if (requestCode == REQUEST_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
                 mPostAdapter.notifyDataSetChanged();
+            } else if (resultCode == RESULT_CODE_REFRESH) {
+                mPostHelper.refresh();
             }
         } else if (requestCode == REQUEST_CODE_SORT_FORUMS) {
             if (resultCode == RESULT_OK) {

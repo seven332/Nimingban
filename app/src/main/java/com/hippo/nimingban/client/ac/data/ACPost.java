@@ -18,6 +18,7 @@ package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
 import android.os.Parcel;
+import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -31,10 +32,12 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.Settings;
 import com.hippo.text.Html;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
 
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +47,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class ACPost extends Post {
 
@@ -287,6 +294,91 @@ public class ACPost extends Post {
         }
     }
 
+    private static final int COUNT_NUMBER = '9' - '0' + 1;
+    private static final int COUNT_UPPERCASE_LETTER = 'z' - 'a' + 1;
+    private static final int COUNT_LOWERCASE_LETTER = 'Z' - 'A' + 1;
+    private static final int COUNT_SUM = COUNT_NUMBER + COUNT_UPPERCASE_LETTER + COUNT_LOWERCASE_LETTER;
+
+    private static final byte[] IV = new byte[] {0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF};
+
+    private static char getReadableChar(byte b) {
+        int i = (b & 0xFF) % COUNT_SUM;
+        if (i < COUNT_NUMBER) {
+            return (char) ('0' + i);
+        } else if (i < COUNT_NUMBER + COUNT_UPPERCASE_LETTER) {
+            return (char) ('a' + i - COUNT_NUMBER);
+        } else if (i < COUNT_NUMBER + COUNT_UPPERCASE_LETTER + COUNT_LOWERCASE_LETTER) {
+            return (char) ('A' + i - COUNT_NUMBER - COUNT_UPPERCASE_LETTER);
+        } else {
+            return '?';
+        }
+    }
+
+    private static String toReadableString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length);
+        for (byte b: bytes) {
+            sb.append(getReadableChar(b));
+        }
+        return sb.toString();
+    }
+
+    private static boolean isSimpleUser(@Nullable String userID) {
+        if (null == userID) {
+            return false;
+        }
+
+        for (int i = 0, n = userID.length(); i < n; i++) {
+            char ch = userID.charAt(i);
+            if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'z') && !(ch >= 'A' && ch <= 'Z')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static CharSequence handleUser(CharSequence user, String postId, String id) {
+        String key;
+
+        switch (Settings.getChaosLevel()) {
+            case 1: // Relatively chaotic
+                key = postId;
+                break;
+            case 2: // Absolutely chaotic
+                key = id;
+                break;
+            default:
+                return user;
+        }
+
+        String userStr = user.toString();
+
+        if (!isSimpleUser(userStr)) {
+            return user;
+        }
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(key.getBytes("utf-8"));
+            byte[] keyBytes = digest.digest();
+            byte[] input = userStr.getBytes("utf-8");
+
+            IvParameterSpec ivSpec = new IvParameterSpec(IV);
+            SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivSpec);
+
+            byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
+            int ctLength = cipher.update(input, 0, input.length, cipherText, 0);
+            cipher.doFinal(cipherText, ctLength);
+
+            return toReadableString(cipherText);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return user;
+        }
+    }
+
     @Override
     public void generate(Site site) {
         mSite = site;
@@ -298,7 +390,7 @@ public class ACPost extends Post {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = Html.fromHtml(userid);
+            mUser = ACPost.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
         }
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
@@ -340,8 +432,8 @@ public class ACPost extends Post {
             replys = new ArrayList<>(0);
         } else {
             for (ACReply reply : replys) {
-                reply.generate(site);
                 reply.mPostId = id;
+                reply.generate(site);
             }
         }
     }

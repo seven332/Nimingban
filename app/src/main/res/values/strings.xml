@@ -221,6 +221,10 @@
     <string name="main_image_loading_strategy_2">When Picture preload is not available…</string>
     <string name="main_image_loading_strategy_2_summary_off">Don\'t show the picture anyway</string>
     <string name="main_image_loading_strategy_2_summary_on">Show the picture button, and load the preview when long-clicking it</string>
+    <string name="main_chaos_level">Chaos level</string>
+    <string name="chaos_level_sane">Sane — What you see is what it is</string>
+    <string name="chaos_level_relatively_chaotic">Relatively chaotic — Can\'t finger out the guy outside the thread</string>
+    <string name="chaos_level_absolutely_chaotic">Absolutely chaotic — Noting is right</string>
     <string name="main_color_status_bar">Color status bar</string>
     <string name="main_color_status_bar_summary_off">Default status bar. It may solve compatibility problem</string>
     <string name="main_color_status_bar_summary_on">Colored status bar. It may cause compatibility problem</string>

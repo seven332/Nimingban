@@ -71,7 +71,7 @@ public class ACReference extends Reply {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userId.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = Html.fromHtml(userId);
+            mUser = ACPost.handleUser(Html.fromHtml(userId), getNMBPostId(), getNMBId());
         }
 
         mContent = ACPost.generateContent(content, "", title, "", email);

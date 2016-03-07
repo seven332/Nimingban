@@ -42,6 +42,18 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="chaos_level_entries">
+        <item>@string/chaos_level_sane</item>
+        <item>@string/chaos_level_relatively_chaotic</item>
+        <item>@string/chaos_level_absolutely_chaotic</item>
+    </string-array>
+
+    <string-array name="chaos_level_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="app_icon_entries" translatable="false">
         <item>By Hippo</item>
         <item>By ibuki</item>

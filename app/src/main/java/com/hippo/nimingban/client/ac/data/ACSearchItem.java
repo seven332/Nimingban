@@ -53,7 +53,7 @@ public class ACSearchItem extends Reply {
 
         mTime = ACPost.parseTime(now);
 
-        mUser = Html.fromHtml(userid);
+        mUser = ACPost.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
 
         mContent = ACPost.generateContent(content, sage, title, "", email);
 

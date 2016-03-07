@@ -205,6 +205,10 @@
     <string name="main_image_loading_strategy_2">无图是啥</string>
     <string name="main_image_loading_strategy_2_summary_off">无图就是无图</string>
     <string name="main_image_loading_strategy_2_summary_on">无图是指尝试从缓存中加载，长按从网络中加载</string>
+    <string name="main_chaos_level">混乱等级</string>
+    <string name="chaos_level_sane">理智 — 所见即所能见</string>
+    <string name="chaos_level_relatively_chaotic">相对混乱 — 仅串中可辨</string>
+    <string name="chaos_level_absolutely_chaotic">绝对混乱 — 皆不可辨</string>
     <string name="main_color_status_bar">彩色状态栏</string>
     <string name="main_color_status_bar_summary_off">状态栏的背景色为默认颜色。这可能解决兼容性问题</string>
     <string name="main_color_status_bar_summary_on">状态栏的背景色为主题色。这可能导致兼容性问题</string>

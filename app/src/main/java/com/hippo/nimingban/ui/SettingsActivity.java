@@ -232,9 +232,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_FRAGMENT) {
-            if (resultCode == RESULT_OK) {
-                setResult(RESULT_OK);
-            }
+            setResult(resultCode);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -422,6 +420,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mRestoreCookies;
         private Preference mFeedId;
         private Preference mImageSaveLocation;
+        private Preference mChaosLevel;
         private IconListPreference mAppIcon;
         private Preference mAboutAnalysis;
 
@@ -466,6 +465,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mFeedId = findPreference(Settings.KEY_FEED_ID);
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
+            mChaosLevel = findPreference(Settings.KEY_CHAOS_LEVEL);
             mAppIcon = (IconListPreference) findPreference(KEY_APP_ICON);
             mAboutAnalysis = findPreference(KEY_ABOUT_ANALYSIS);
 
@@ -476,6 +476,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mImageSaveLocation.setOnPreferenceClickListener(this);
             mAboutAnalysis.setOnPreferenceClickListener(this);
 
+            mChaosLevel.setOnPreferenceChangeListener(this);
             mAppIcon.setOnPreferenceChangeListener(this);
 
             long maxAge = ACSite.getInstance().getCookieMaxAge(getActivity());
@@ -586,7 +587,10 @@ public class SettingsActivity extends AbsPreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String key = preference.getKey();
-            if (KEY_APP_ICON.equals(key)) {
+            if (Settings.KEY_CHAOS_LEVEL.equals(key)) {
+                getActivity().setResult(ListActivity.RESULT_CODE_REFRESH);
+                return true;
+            } else if (KEY_APP_ICON.equals(key)) {
                 int index = NumberUtils.parseIntSafely((String) newValue, 0);
                 if (index < 0 || index >= Settings.ICON_ACTIVITY_ARRAY.length) {
                     return false;
