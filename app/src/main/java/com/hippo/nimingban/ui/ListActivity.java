@@ -57,6 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.nimingban.Analysis;
@@ -68,6 +69,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBException;
 import com.hippo.nimingban.client.NMBRequest;
+import com.hippo.nimingban.client.Notice;
 import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.ACSite;
@@ -152,7 +154,7 @@ public final class ListActivity extends AbsActivity
     private NMBRequest mNMBRequest;
     private NMBRequest mUpdateRequest;
     private NMBRequest mCommonPostsRequest;
-    private NMBRequest mCdnPathRequest;
+    private NMBRequest mNoticeRequest;
 
     // Double click back exit
     private long mPressBackTime = 0;
@@ -452,9 +454,9 @@ public final class ListActivity extends AbsActivity
             mCommonPostsRequest = null;
         }
 
-        if (mCdnPathRequest != null) {
-            mCdnPathRequest.cancel();
-            mCdnPathRequest = null;
+        if (mNoticeRequest != null) {
+            mNoticeRequest.cancel();
+            mNoticeRequest = null;
         }
 
         mRecyclerView.removeOnScrollListener(mOnScrollListener);
@@ -591,6 +593,55 @@ public final class ListActivity extends AbsActivity
             @Override
             public void onCancel() {
                 mCommonPostsRequest = null;
+            }
+        });
+        mNMBClient.execute(request);
+
+        // Get Notice
+        request = new NMBRequest();
+        mNoticeRequest = request;
+        request.setSite(ACSite.getInstance());
+        request.setMethod(NMBClient.METHOD_NOTICE);
+        request.setCallback(new NMBClient.Callback<Notice>() {
+            @Override
+            public void onSuccess(Notice result) {
+                mNoticeRequest = null;
+
+                if (isFinishing()) {
+                    return;
+                }
+                if (!result.enable) {
+                    return;
+                }
+                long oldDate = Settings.getNoticeDate();
+                final long newDate = result.date;
+                if (newDate <= oldDate) {
+                    return;
+                }
+
+                final CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(
+                        ListActivity.this, Html.fromHtml(result.content), getString(R.string.get_it), false);
+                Dialog dialog = builder.setTitle(R.string.notice).setOnDismissListener(
+                        new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                if (builder.isChecked()) {
+                                    Settings.putNoticeDate(newDate);
+                                }
+                            }
+                }).setPositiveButton(android.R.string.ok, null).show();
+                ((TextView) dialog.findViewById(R.id.message)).setMovementMethod(
+                        new LinkMovementMethod2(ListActivity.this));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                mNoticeRequest = null;
+            }
+
+            @Override
+            public void onCancel() {
+                mNoticeRequest = null;
             }
         });
         mNMBClient.execute(request);

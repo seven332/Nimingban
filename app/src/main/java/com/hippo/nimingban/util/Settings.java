@@ -454,6 +454,17 @@ public final class Settings {
         putBoolean(KEY_GUIDE_TYPE_SEND, value);
     }
 
+    public static final String KEY_NOTICE_DATE = "notice_date";
+    public static final long VALUE_NOTICE_DATE = -1;
+
+    public static long getNoticeDate() {
+        return getLong(KEY_NOTICE_DATE, VALUE_NOTICE_DATE);
+    }
+
+    public static void putNoticeDate(long value) {
+        putLong(KEY_NOTICE_DATE, value);
+    }
+
     public static final String KEY_CRASH_FILENAME = "crash_filename";
     public static final String VALUE_CRASH_FILENAME = null;
 

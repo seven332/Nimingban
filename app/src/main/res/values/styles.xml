@@ -64,4 +64,9 @@
         <item name="maxActionInlineWidth">@dimen/design_snackbar_action_inline_max_width</item>
     </style>
 
+    <style name="Indicating">
+        <item name="indicatorHeight">1dp</item>
+        <item name="indicatorColor">?attr/colorDivider</item>
+    </style>
+
 </resources>

@@ -19,6 +19,7 @@ package com.hippo.nimingban.client;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.alibaba.fastjson.JSON;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACEngine;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
@@ -35,10 +36,14 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class NMBClient {
 
     public static final String TAG = NMBClient.class.getSimpleName();
+
+    public static final int METHOD_NOTICE = -6;
 
     public static final int METHOD_CONVERT = -5;
 
@@ -339,6 +344,17 @@ public class NMBClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
+                    case METHOD_NOTICE: {
+                        Request request = new Request.Builder().url("http://cover.acfunwiki.org/nmb-notice.json").build();
+                        Call call = mOkHttpClient.newCall(request);
+                        if (!mStop) {
+                            mCall = call;
+                            Response response = call.execute();
+                            return JSON.parseObject(response.body().string(), Notice.class);
+                        } else {
+                            throw new CancelledException();
+                        }
+                    }
                     case METHOD_CONVERT: {
                         Call call = ConvertEngine.prepareConvert(mOkHttpClient, (String) params[0], (String) params[1]);
                         if (!mStop) {
