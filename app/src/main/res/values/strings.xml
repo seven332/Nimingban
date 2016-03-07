@@ -270,6 +270,7 @@
     <string name="main_help_nimingban_summary">Learn how to make Nimingban better</string>
     <string name="main_help">Help</string>
     <string name="main_help_summary">Ask the developer if you can\'t find the answer</string>
+    <string name="main_donate">Donate</string>
 
     <string name="app_new_icon_title">New Icon</string>
     <string name="app_new_icon_msg">(＾o＾)ﾉ\nNew icon design! Settings->Config->App icon, you can try the new icon.\n\nContact the developer if you have a good icon design.</string>
@@ -322,6 +323,8 @@
 
     <string name="help_nimingban_title">How to make Nimingban better</string>
     <string name="help_nimingban_message">You can make Nimingban better!\n(＾o＾)ﾉ\n\nA request for sending error message via e-mail will be asked when the app launched next time if Nimingban crashes. Error message helps developer a lot. If you can\'t send e-mail at once, you can send error message which in &lt;internal storage&gt;/nmb/crash to the developer at any time.\n\nIf no request asked or you think the app goes wrong, click the item above \"Dump logcat\", and send the logcat to the developer. Logcat also helps developer a lot.</string>
+
+    <string name="donate_explain">Your donation can help me develop more and better applications.\n\nAlipay: seven332#163.com</string>
 
     <string name="forum">Forum</string>
     <string name="sort_forums">Sort forums</string>

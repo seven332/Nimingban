@@ -1003,6 +1003,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_DUMP_LOGCAT = "dump_logcat";
         private static final String KEY_HELP_NIMINGBAN = "help_nimingban";
         private static final String KEY_HELP = "help";
+        private static final String KEY_DONATE = "donate";
 
         private Preference mAuthor;
         private Preference mSource;
@@ -1012,6 +1013,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mDumpLogcat;
         private Preference mHelpNimingban;
         private Preference mHelp;
+        private Preference mDonate;
 
         private boolean mShowTip = true;
         private final long[] mHits = new long[8];
@@ -1029,6 +1031,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mDumpLogcat = findPreference(KEY_DUMP_LOGCAT);
             mHelpNimingban = findPreference(KEY_HELP_NIMINGBAN);
             mHelp = findPreference(KEY_HELP);
+            mDonate = findPreference(KEY_DONATE);
 
             mAuthor.setOnPreferenceClickListener(this);
             mSource.setOnPreferenceClickListener(this);
@@ -1038,6 +1041,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mDumpLogcat.setOnPreferenceClickListener(this);
             mHelpNimingban.setOnPreferenceClickListener(this);
             mHelp.setOnPreferenceClickListener(this);
+            mDonate.setOnPreferenceClickListener(this);
 
             mAuthor.setSummary("Hippo <hipposeven332$gmail.com>".replaceAll("\\$", "@"));
 
@@ -1107,6 +1111,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         .show();
             } else if (KEY_HELP.equals(key)) {
                 OpenUrlHelper.openUrl(getActivity(), "http://nimingban.herokuapp.com/help.html", false);
+            } else if (KEY_DONATE.equals(key)) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.main_donate)
+                        .setMessage(getString(R.string.donate_explain).replace('#', '@'))
+                        .show();
             }
             return true;
         }

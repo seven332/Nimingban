@@ -262,6 +262,7 @@
     <string name="main_help_nimingban_summary">了解如何帮助匿名版做得更好</string>
     <string name="main_help">帮助</string>
     <string name="main_help_summary">如果你还不知道，直接问开发者吧</string>
+    <string name="main_donate">捐赠</string>
 
     <string name="app_new_icon_title">新图标</string>
     <string name="app_new_icon_msg">(＾o＾)ﾉ\n匿名版有了新的图标设计，可至 设置->配置->应用图标 更换。\n\n如果你有好的图标设计也可以与开发者联系。</string>
@@ -314,6 +315,8 @@
 
     <string name="help_nimingban_title">帮助匿名版做得更好</string>
     <string name="help_nimingban_message">你可以帮助匿名版做得更好！\n(＾o＾)ﾉ\n\n如果匿名版突然崩溃了，一般来说在下次启动的时候会请求通过电子邮件发送错误日志。错误日志对应用的维护与优化有很大帮助，如果你在当时不能发送电子邮件，可以在其他方便的时候发送。错误日志位于 &lt;内置 SD 卡&gt;/nmb/crash 。\n\n如果没有提示发送错误日志，或者你认为应用运行有问题，你可以点击该项上方的“导出 logcat”，将 logcat 通过电子邮件发送给开发者。这也可以帮助开发者解决你所提出的问题。</string>
+
+    <string name="donate_explain">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332#163.com</string>
 
     <string name="forum">板块</string>
     <string name="sort_forums">板块排序</string>

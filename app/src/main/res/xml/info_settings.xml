@@ -54,4 +54,8 @@
         android:title="@string/main_help"
         android:summary="@string/main_help_summary"/>
 
+    <Preference
+        android:key="donate"
+        android:title="@string/main_donate"/>
+
 </PreferenceScreen>
