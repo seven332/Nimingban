@@ -27,9 +27,9 @@ public class Image {
     public static final int FORMAT_GIF = 0x02;
 
     private long mNativePtr;
-    private int mFormat;
-    private int mWidth;
-    private int mHeight;
+    private final int mFormat;
+    private final int mWidth;
+    private final int mHeight;
 
     private Image(long nativePtr, int format, int width, int height) {
         mNativePtr = nativePtr;
@@ -66,11 +66,16 @@ public class Image {
         return nativeIsCompleted(mNativePtr, mFormat);
     }
 
-    public boolean render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
+    public void render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
             int width, int height, boolean fillBlank, int defaultColor) {
         checkRecycled();
-        return nativeRender(mNativePtr, mFormat, srcX, srcY, dst, dstX, dstY,
+        nativeRender(mNativePtr, mFormat, srcX, srcY, dst, dstX, dstY,
                 width, height, fillBlank, defaultColor);
+    }
+
+    public void texImage(boolean init, int tileType, int offsetX, int offsetY) {
+        checkRecycled();
+        nativeTexImage(mNativePtr, mFormat, init, tileType, offsetX, offsetY);
     }
 
     public void advance() {
@@ -86,6 +91,11 @@ public class Image {
     public int getFrameCount() {
         checkRecycled();
         return nativeFrameCount(mNativePtr, mFormat);
+    }
+
+    public boolean isOpaque() {
+        checkRecycled();
+        return nativeIsOpaque(mNativePtr, mFormat);
     }
 
     public void recycle() {
@@ -104,9 +114,6 @@ public class Image {
     }
 
     static {
-        System.loadLibrary("stream");
-        System.loadLibrary("jpeg-turbo");
-        System.loadLibrary("gif");
         System.loadLibrary("image");
     }
 
@@ -116,15 +123,20 @@ public class Image {
 
     private static native boolean nativeIsCompleted(long nativePtr, int format);
 
-    private static native boolean nativeRender(long nativePtr, int format,
+    private static native void nativeRender(long nativePtr, int format,
             int srcX, int srcY, Bitmap dst, int dstX, int dstY,
             int width, int height, boolean fillBlank, int defaultColor);
+
+    private static native void nativeTexImage(long nativePtr, int format,
+            boolean init, int tileType, int offsetX, int offsetY);
 
     private static native void nativeAdvance(long nativePtr, int format);
 
     private static native int nativeGetDelay(long nativePtr, int format);
 
     private static native int nativeFrameCount(long nativePtr, int format);
+
+    private static native boolean nativeIsOpaque(long nativePtr, int format);
 
     private static native void nativeRecycle(long nativePtr, int format);
 }

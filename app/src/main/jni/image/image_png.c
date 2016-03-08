@@ -36,7 +36,7 @@ static void user_read_fn(png_structp png_ptr,
   JNIEnv *env = get_env();
 
   if (env == NULL) {
-    LOGE(EMSG("Can't get JNIEnv"));
+    LOGE(MSG("Can't get JNIEnv"));
   }
 
   read_patch_head_input_stream(env, patch_head_input_stream, data, 0, length);
@@ -45,13 +45,13 @@ static void user_read_fn(png_structp png_ptr,
 static void user_error_fn(png_structp png_ptr,
     png_const_charp error_msg)
 {
-  LOGE(EMSG("%s"), error_msg);
+  LOGE(MSG("%s"), error_msg);
 }
 
 static void user_warn_fn(png_structp png_ptr,
     png_const_charp error_msg)
 {
-  LOGW(EMSG("%s"), error_msg);
+  LOGW(MSG("%s"), error_msg);
 }
 
 static void free_frame_info_array(PNG_FRAME_INFO* frame_info_array, unsigned int count)
@@ -160,6 +160,7 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   unsigned int height;
   int color_type;
   int bit_depth;
+  bool is_opaque;
   unsigned char* buffer = NULL;
   unsigned int frame_count = 0;
   bool hide_first_frame = false;
@@ -194,7 +195,7 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   }
 
   if (setjmp(png_jmpbuf(png_ptr))) {
-    LOGE(EMSG("Error in png decode"));
+    LOGE(MSG("Error in png decode"));
     free_frame_info_array(frame_info_array, frame_count);
     frame_info_array = NULL;
     free(buffer);
@@ -271,7 +272,10 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
     png_set_gray_to_rgb(png_ptr);
   }
   if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
+    is_opaque = true;
     png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
+  } else {
+    is_opaque = false;
   }
 
   if (apng) {
@@ -316,6 +320,7 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
     // Fill PNG
     png->width = width;
     png->height = height;
+    png->is_opaque = is_opaque;
     png->buffer = buffer;
     png->apng = true;
     png->buffer_index = -1;
@@ -363,7 +368,7 @@ bool PNG_complete(PNG* png)
   }
 
   if (png->png_ptr == NULL || png->info_ptr == NULL || png->patch_head_input_stream == NULL) {
-    LOGE(EMSG("Some stuff is NULL"));
+    LOGE(MSG("Some stuff is NULL"));
     return false;
   }
 
@@ -405,11 +410,11 @@ int PNG_get_height(PNG* png)
   return png->height;
 }
 
-bool PNG_render(PNG* png, int src_x, int src_y,
+void PNG_render(PNG* png, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color)
 {
-  return copy_pixels(png->buffer, png->width, png->height, src_x, src_y,
+  copy_pixels(png->buffer, png->width, png->height, src_x, src_y,
       dst, dst_w, dst_h, dst_x, dst_y,
       width, height, fill_blank, default_color);
 }
@@ -429,7 +434,7 @@ static void backup(PNG* png)
 static void restore(PNG* png)
 {
   if (png->backup == NULL) {
-    LOGE(EMSG("Backup is NULL"));
+    LOGE(MSG("Backup is NULL"));
   } else {
     memcpy(png->buffer, png->backup, png->width * png->height * 4);
   }
@@ -500,13 +505,13 @@ void PNG_advance(PNG* png)
   int index;
 
   if (!png->apng) {
-    LOGW(EMSG("It is not apng, no need to advance"));
+    LOGW(MSG("It is not apng, no need to advance"));
     return;
   }
 
   index = (png->buffer_index + 1) % png->frame_count;
   if (index != 0 && png->partially) {
-    LOGE(EMSG("The png is only decoded partially. Only the first frame can be shown."));
+    LOGE(MSG("The png is only decoded partially. Only the first frame can be shown."));
     return;
   }
 
@@ -558,6 +563,11 @@ int PNG_get_frame_count(PNG* png)
   } else {
     return 1;
   }
+}
+
+bool PNG_is_opaque(PNG* png)
+{
+  return png->is_opaque;
 }
 
 void PNG_recycle(PNG* png)

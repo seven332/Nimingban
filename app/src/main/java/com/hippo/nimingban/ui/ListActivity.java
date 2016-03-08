@@ -636,6 +636,7 @@ public final class ListActivity extends AbsActivity
 
             @Override
             public void onFailure(Exception e) {
+                e.printStackTrace();
                 mNoticeRequest = null;
             }
 

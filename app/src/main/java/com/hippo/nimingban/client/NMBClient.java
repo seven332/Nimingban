@@ -18,6 +18,7 @@ package com.hippo.nimingban.client;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.hippo.nimingban.NMBApplication;
@@ -345,6 +346,7 @@ public class NMBClient {
             try {
                 switch (mMethod) {
                     case METHOD_NOTICE: {
+                        Log.d(TAG, "http://cover.acfunwiki.org/nmb-notice.json");
                         Request request = new Request.Builder().url("http://cover.acfunwiki.org/nmb-notice.json").build();
                         Call call = mOkHttpClient.newCall(request);
                         if (!mStop) {

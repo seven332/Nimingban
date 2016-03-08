@@ -51,7 +51,7 @@ static size_t custom_read(void * custom_stuff, unsigned char * buffer, size_t si
   JNIEnv *env = get_env();
 
   if (env == NULL) {
-    LOGE(EMSG("Can't get JNIEnv"));
+    LOGE(MSG("Can't get JNIEnv"));
     return 0;
   }
 
@@ -80,7 +80,7 @@ void* JPEG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, bo
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = my_error_exit;
   if (setjmp(jerr.setjmp_buffer)) {
-    LOGE(EMSG("%s"), emsg);
+    LOGE(MSG("%s"), emsg);
     free(jpeg);
     free(buffer);
     jpeg_destroy_decompress(&cinfo);
@@ -153,11 +153,11 @@ int JPEG_get_height(JPEG* jpeg)
   return jpeg->height;
 }
 
-bool JPEG_render(JPEG* jpeg, int src_x, int src_y,
+void JPEG_render(JPEG* jpeg, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color)
 {
-  return copy_pixels(jpeg->buffer, jpeg->width, jpeg->height, src_x, src_y,
+  copy_pixels(jpeg->buffer, jpeg->width, jpeg->height, src_x, src_y,
       dst, dst_w, dst_h, dst_x, dst_y,
       width, height, fill_blank, default_color);
 }
@@ -174,6 +174,11 @@ int JPEG_get_delay(JPEG* jpeg)
 int JPEG_get_frame_count(JPEG* jpeg)
 {
   return 1;
+}
+
+bool JPEG_is_opaque(JPEG* jpeg)
+{
+  return true;
 }
 
 void JPEG_recycle(JPEG* jpeg)

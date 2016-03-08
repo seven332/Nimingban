@@ -26,9 +26,7 @@ import android.webkit.MimeTypeMap;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hippo.gif.GifDownloadSize;
 import com.hippo.io.FileInputStreamPipe;
-import com.hippo.io.FileOutputStreamPipe;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.client.CancelledException;
 import com.hippo.nimingban.client.NMBException;
@@ -48,7 +46,6 @@ import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.yorozuya.IOUtils;
-import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 
@@ -618,26 +615,6 @@ public class ACEngine {
 
     private static final long MAX_IMAGE_SIZE = 2000 * 1024;
 
-    private static boolean compressByGifDownloadsize(File input, File output) throws IOException {
-        FileInputStreamPipe isp = new FileInputStreamPipe(input);
-        FileOutputStreamPipe osp = new FileOutputStreamPipe(output);
-        final int startSampleSize = Math.max(2, (int) Math.sqrt(MathUtils.ceilDivide(input.length(), MAX_IMAGE_SIZE)) + 1);
-        int sampleSize = startSampleSize;
-        while (sampleSize < startSampleSize + 3) {
-            GifDownloadSize.compress(isp.open(), osp.open(), sampleSize);
-            isp.close();
-            osp.close();
-
-            if (output.length() < MAX_IMAGE_SIZE) {
-                return true;
-            }
-
-            sampleSize++;
-        }
-
-        return false;
-    }
-
     private static boolean compressGifSicle(File input, File output) throws IOException {
         File gifsicle = new File(NMBAppConfig.getNativeLibDir(), "libgifsicle-executable.so");
         if (!gifsicle.canExecute()) {
@@ -699,12 +676,7 @@ public class ACEngine {
                     Log.d("TAG", "compressGifSicle ok");
                     return output;
                 } else {
-                    if (compressByGifDownloadsize(temp, output)) {
-                        Log.d("TAG", "compressByGifDownloadsize ok");
-                        return output;
-                    } else {
-                        throw new NMBException(DumpSite.getInstance(), "Can't compress gif");
-                    }
+                    throw new NMBException(DumpSite.getInstance(), "Can't compress gif");
                 }
             } else {
                 int[] sampleScaleArray = new int[1];
