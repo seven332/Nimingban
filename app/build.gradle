@@ -54,6 +54,10 @@ android {
     // noinspection GroovyAssignabilityCheck
     task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
         def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
+        if (ndkDir == null) {
+            ndkDir = System.getenv('NDK_HOME')
+        }
+        assert ndkDir != null
         def ndkBuilder
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             ndkBuilder = 'ndk-build.cmd'
@@ -66,8 +70,37 @@ android {
     }
 
     //noinspection GroovyAssignabilityCheck
-    task renameGifSicle(type: Exec, description: 'Compile JNI source via NDK') {
-        commandLine 'cmd', '/c', 'rename_gifsicle.bat'
+    task renameGifSicle(type: Copy) {
+        from('./src/main/libs/arm64-v8a') {
+            include 'gifsicle'
+            into 'arm64-v8a'
+        }
+        from('./src/main/libs/armeabi') {
+            include 'gifsicle'
+            into 'armeabi'
+        }
+        from('./src/main/libs/armeabi-v7a') {
+            include 'gifsicle'
+            into 'armeabi-v7a'
+        }
+        from('./src/main/libs/mips') {
+            include 'gifsicle'
+            into 'mips'
+        }
+        from('./src/main/libs/mips64') {
+            include 'gifsicle'
+            into 'mips64'
+        }
+        from('./src/main/libs/x86') {
+            include 'gifsicle'
+            into 'x86'
+        }
+        from('./src/main/libs/x86_64') {
+            include 'gifsicle'
+            into 'x86_64'
+        }
+        into './src/main/libs'
+        rename 'gifsicle', 'libgifsicle-executable.so'
     }
 
     renameGifSicle.dependsOn ndkBuild
