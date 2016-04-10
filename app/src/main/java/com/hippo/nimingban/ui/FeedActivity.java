@@ -41,6 +41,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemView
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
+import com.hippo.easyrecyclerview.RawMarginItemDecoration;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -122,14 +123,16 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
         }
 
         // Layout Manager
-        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
+        int interval = getResources().getDimensionPixelOffset(R.dimen.card_interval);
         if (getResources().getBoolean(R.bool.two_way)) {
             mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-            mRecyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-            mRecyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
+            MarginItemDecoration decoration = new MarginItemDecoration(interval, interval, interval, interval, interval);
+            mRecyclerView.addItemDecoration(decoration);
+            decoration.applyPaddings(mRecyclerView);
             mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         } else {
-            mRecyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
+            int halfInterval = interval / 2;
+            mRecyclerView.addItemDecoration(new RawMarginItemDecoration(0, halfInterval, 0, halfInterval));
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerView.setPadding(0, halfInterval, 0, halfInterval);
         }

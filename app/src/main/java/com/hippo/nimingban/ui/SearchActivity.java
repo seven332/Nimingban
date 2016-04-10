@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
+import com.hippo.easyrecyclerview.RawMarginItemDecoration;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -151,16 +152,18 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
         };
         recyclerView.addOnScrollListener(mOnScrollListener);
 
-        int halfInterval = getResources().getDimensionPixelOffset(R.dimen.card_interval) / 2;
+        int interval = getResources().getDimensionPixelOffset(R.dimen.card_interval);
         if (getResources().getBoolean(R.bool.two_way)) {
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-            recyclerView.addItemDecoration(new MarginItemDecoration(halfInterval));
-            recyclerView.setPadding(halfInterval, halfInterval, halfInterval, halfInterval);
-            recyclerView.setItemAnimator(new SlideInUpAnimator());
+            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+            MarginItemDecoration decoration = new MarginItemDecoration(interval, interval, interval, interval, interval);
+            mRecyclerView.addItemDecoration(decoration);
+            decoration.applyPaddings(mRecyclerView);
+            mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         } else {
-            recyclerView.addItemDecoration(new MarginItemDecoration(0, halfInterval, 0, halfInterval));
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setPadding(0, halfInterval, 0, halfInterval);
+            int halfInterval = interval / 2;
+            mRecyclerView.addItemDecoration(new RawMarginItemDecoration(0, halfInterval, 0, halfInterval));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setPadding(0, halfInterval, 0, halfInterval);
         }
 
         mSearchHelper.firstRefresh();

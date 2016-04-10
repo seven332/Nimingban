@@ -266,10 +266,10 @@ public class ContentLayout extends FrameLayout {
             }
         };
 
-        private LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
+        private final LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
                 new LayoutManagerUtils.OnScrollToPositionListener() {
                     @Override
-                    public void onScrollToPosition() {
+                    public void onScrollToPosition(int position) {
                         ContentHelper.this.onScrollToPosition();
                     }
                 };
@@ -653,11 +653,11 @@ public class ContentLayout extends FrameLayout {
         }
 
         public int getPageForTop() {
-            return getPageForPosition(LayoutManagerUtils.getFirstVisibleItemPostion(mRecyclerView.getLayoutManager()));
+            return getPageForPosition(LayoutManagerUtils.getFirstVisibleItemPosition(mRecyclerView.getLayoutManager()));
         }
 
         public int getPageForBottom() {
-            return getPageForPosition(LayoutManagerUtils.getLastVisibleItemPostion(mRecyclerView.getLayoutManager()));
+            return getPageForPosition(LayoutManagerUtils.getLastVisibleItemPosition(mRecyclerView.getLayoutManager()));
         }
 
         public boolean canGoTo() {

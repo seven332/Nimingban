@@ -76,7 +76,7 @@ public final class RightDrawer extends EasyRecyclerView
         setSelector(RippleSalon.generateRippleDrawable(
                 ResourcesUtils.getAttrBoolean(context, R.attr.dark)));
 
-        mActionBarHeight = ResourcesUtils.getDimensionPixelOffset(context, R.attr.actionBarSize);
+        mActionBarHeight = ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.actionBarSize);
     }
 
     public void setForums(List<? extends Forum> forums) {

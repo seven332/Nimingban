@@ -131,7 +131,7 @@ public class DownloadClient {
                 request.mFilename = filename;
 
                 // Use Temp filename
-                uniFile = request.mDir.createFile(FileUtils.ensureFilename(filename + ".download"));
+                uniFile = request.mDir.createFile(FileUtils.sanitizeFilename(filename + ".download"));
                 if (uniFile == null) {
                     // Listener
                     if (listener != null) {

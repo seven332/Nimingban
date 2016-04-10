@@ -7,3 +7,9 @@ manifest-merger-release-report.txt
 
 # Intellij
 *.iml
+
+# flyme icon
+/src/main/res/mipmap-hdpi/ic_launcher_flyme.png
+/src/main/res/mipmap-xhdpi/ic_launcher_flyme.png
+/src/main/res/mipmap-xxhdpi/ic_launcher_flyme.png
+/src/main/res/mipmap-xxxhdpi/ic_launcher_flyme.png
