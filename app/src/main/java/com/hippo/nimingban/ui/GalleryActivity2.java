@@ -48,7 +48,6 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
-import com.hippo.unifile.MediaFile;
 import com.hippo.unifile.UniFile;
 import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
@@ -559,11 +558,11 @@ public class GalleryActivity2 extends SwipeActivity {
             return mSaveDir.createFile(displayName);
         }
 
-        private static String getFilePathForUri(Context context, Uri uri) {
+        private static String getFilePathForUri(Uri uri) {
             if (UniFile.isFileUri(uri)) {
                 return uri.getPath();
             } else {
-                return MediaFile.getPath(context, uri);
+                return null;
             }
         }
 
@@ -601,8 +600,8 @@ public class GalleryActivity2 extends SwipeActivity {
             if (fromUri.equals(toUri)) {
                 return fromUri;
             }
-            String fromPath = getFilePathForUri(mContext, fromUri);
-            String toPath = getFilePathForUri(mContext, toUri);
+            String fromPath = getFilePathForUri(fromUri);
+            String toPath = getFilePathForUri(toUri);
             if (fromPath != null && fromPath.equals(toPath)) {
                 return fromUri;
             }
