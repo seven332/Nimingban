@@ -26,8 +26,8 @@ android {
         applicationId "com.hippo.nimingban"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 40
-        versionName "1.2.26"
+        versionCode 41
+        versionName "1.2.27"
         resConfigs "zh", "zh-rCN"
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
