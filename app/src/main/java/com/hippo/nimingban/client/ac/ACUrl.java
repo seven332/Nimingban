@@ -23,7 +23,7 @@ public class ACUrl {
 
     public static final String APP_ID = "nimingban";
 
-    public static final String HOST = "http://h.nimingban.com";
+    public static final String HOST = "https://h.nimingban.com";
 
     public static final String API_POST_LIST = HOST + "/Api/showf?appid=" + APP_ID;
 
