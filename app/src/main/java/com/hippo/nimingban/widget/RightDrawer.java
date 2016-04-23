@@ -26,20 +26,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hippo.drawerlayout.DrawerLayoutChild;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.ripple.Ripple;
 import com.hippo.vector.VectorDrawable;
-import com.hippo.widget.slidingdrawerlayout.DrawerLayoutChild;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class RightDrawer extends EasyRecyclerView
-        implements EasyRecyclerView.OnItemClickListener,
-        DrawerLayoutChild {
+        implements EasyRecyclerView.OnItemClickListener, DrawerLayoutChild {
 
     private static final Object COMMOM_POSTS = new Object();
 

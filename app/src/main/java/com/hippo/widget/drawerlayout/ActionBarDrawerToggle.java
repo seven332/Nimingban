@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.widget.slidingdrawerlayout;
+
+package com.hippo.widget.drawerlayout;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.StringRes;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +28,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.hippo.drawerlayout.DrawerLayout;
 
 /**
  * This class provides a handy way to tie together the functionality of
@@ -58,10 +60,10 @@ import android.view.View;
  * {@link android.support.v7.appcompat.R.styleable#DrawerArrowToggle drawerArrowStyle} in your
  * ActionBar theme.
  */
-public class ActionBarDrawerToggle implements SlidingDrawerLayout.DrawerListener {
+public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
 
     private android.support.v7.app.ActionBarDrawerToggle.Delegate mActivityImpl;
-    private final SlidingDrawerLayout mDrawerLayout;
+    private final DrawerLayout mDrawerLayout;
 
     private DrawerToggle mSlider;
     private Drawable mHomeAsUpIndicator;
@@ -93,7 +95,7 @@ public class ActionBarDrawerToggle implements SlidingDrawerLayout.DrawerListener
      * @param closeDrawerContentDescRes A String resource to describe the "close drawer" action
      *                                  for accessibility
      */
-    public ActionBarDrawerToggle(Activity activity, SlidingDrawerLayout drawerLayout,
+    public ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout,
             @StringRes int openDrawerContentDescRes,
             @StringRes int closeDrawerContentDescRes) {
         this(activity, null, drawerLayout, null, openDrawerContentDescRes,
@@ -113,7 +115,7 @@ public class ActionBarDrawerToggle implements SlidingDrawerLayout.DrawerListener
      * String resources must be provided to describe the open/close drawer actions for
      * accessibility services.
      * <p>
-     * Please use {@link #ActionBarDrawerToggle(Activity, SlidingDrawerLayout, int, int)} if you are
+     * Please use {@link #ActionBarDrawerToggle(Activity, DrawerLayout, int, int)} if you are
      * setting the Toolbar as the ActionBar of your activity.
      *
      * @param activity                  The Activity hosting the drawer.
@@ -124,7 +126,7 @@ public class ActionBarDrawerToggle implements SlidingDrawerLayout.DrawerListener
      * @param closeDrawerContentDescRes A String resource to describe the "close drawer" action
      *                                  for accessibility
      */
-    public ActionBarDrawerToggle(Activity activity, SlidingDrawerLayout drawerLayout,
+    public ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout,
             Toolbar toolbar, @StringRes int openDrawerContentDescRes,
             @StringRes int closeDrawerContentDescRes) {
         this(activity, toolbar, drawerLayout, null, openDrawerContentDescRes,
@@ -137,7 +139,7 @@ public class ActionBarDrawerToggle implements SlidingDrawerLayout.DrawerListener
      * animation.
      */
     <T extends Drawable & DrawerToggle> ActionBarDrawerToggle(Activity activity, Toolbar toolbar,
-            SlidingDrawerLayout drawerLayout, T slider,
+            DrawerLayout drawerLayout, T slider,
             @StringRes int openDrawerContentDescRes,
             @StringRes int closeDrawerContentDescRes) {
         if (activity instanceof AppCompatActivity) { // Allow the Activity to provide an impl

@@ -33,11 +33,11 @@ import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
+import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleImageView;
-import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
@@ -60,8 +60,6 @@ public class ContentLayout extends FrameLayout {
     private FastScroller mFastScroller;
     private View mImageView;
     private TextView mTextView;
-
-    private ContentHelper mContentHelper;
 
     private int mRecyclerViewOriginTop;
     private int mRecyclerViewOriginBottom;
@@ -125,7 +123,6 @@ public class ContentLayout extends FrameLayout {
     }
 
     public void setHelper(ContentHelper helper) {
-        mContentHelper = helper;
         helper.init(this);
     }
 

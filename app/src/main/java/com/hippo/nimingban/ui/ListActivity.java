@@ -58,6 +58,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.hippo.app.CheckBoxDialogBuilder;
+import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.easyrecyclerview.RawMarginItemDecoration;
@@ -100,8 +101,7 @@ import com.hippo.vector.VectorDrawable;
 import com.hippo.view.SimpleDoubleTapListener;
 import com.hippo.view.SimpleGestureListener;
 import com.hippo.widget.AutoWrapLayout;
-import com.hippo.widget.slidingdrawerlayout.ActionBarDrawerToggle;
-import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
+import com.hippo.widget.drawerlayout.ActionBarDrawerToggle;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
@@ -134,7 +134,7 @@ public final class ListActivity extends AbsActivity
 
     private NMBClient mNMBClient;
 
-    private SlidingDrawerLayout mSlidingDrawerLayout;
+    private DrawerLayout mDrawerLayout;
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
     private LeftDrawer mLeftDrawer;
@@ -180,11 +180,11 @@ public final class ListActivity extends AbsActivity
         mNMBClient = NMBApplication.getNMBClient(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mSlidingDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawer_layout);
-        mContentLayout = (ContentLayout) mSlidingDrawerLayout.findViewById(R.id.content_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mContentLayout = (ContentLayout) mDrawerLayout.findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
-        mLeftDrawer = (LeftDrawer) mSlidingDrawerLayout.findViewById(R.id.left_drawer);
-        mRightDrawer = (RightDrawer) mSlidingDrawerLayout.findViewById(R.id.right_drawer);
+        mLeftDrawer = (LeftDrawer) mDrawerLayout.findViewById(R.id.left_drawer);
+        mRightDrawer = (RightDrawer) mDrawerLayout.findViewById(R.id.right_drawer);
 
         final GestureDetector gestureDetector = new GestureDetector(this, new SimpleGestureListener());
         gestureDetector.setOnDoubleTapListener(new SimpleDoubleTapListener() {
@@ -203,7 +203,7 @@ public final class ListActivity extends AbsActivity
         });
         setSupportActionBar(toolbar);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mSlidingDrawerLayout,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 
             @Override
@@ -251,7 +251,7 @@ public final class ListActivity extends AbsActivity
                 }
             }
         };
-        mSlidingDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -259,9 +259,9 @@ public final class ListActivity extends AbsActivity
             actionBar.setHomeButtonEnabled(true);
         }
 
-        mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_left), Gravity.LEFT);
-        mSlidingDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_right), Gravity.RIGHT);
-        mSlidingDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
+        mDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_left), Gravity.LEFT);
+        mDrawerLayout.setDrawerShadow(ContextCompat.getDrawable(this, R.drawable.drawer_shadow_right), Gravity.RIGHT);
+        mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
 
         mPostHelper = new PostHelper();
         mPostHelper.setEmptyString(getString(R.string.no_post));
@@ -725,9 +725,9 @@ public final class ListActivity extends AbsActivity
 
     @Override
     public void onBackPressed() {
-        if (mSlidingDrawerLayout != null && (mSlidingDrawerLayout.isDrawerOpen(Gravity.LEFT) ||
-                mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT))) {
-            mSlidingDrawerLayout.closeDrawers();
+        if (mDrawerLayout != null && (mDrawerLayout.isDrawerOpen(Gravity.LEFT) ||
+                mDrawerLayout.isDrawerOpen(Gravity.RIGHT))) {
+            mDrawerLayout.closeDrawers();
         } else {
             long time = System.currentTimeMillis();
             if (time - mPressBackTime > BACK_PRESSED_INTERVAL) {
@@ -760,7 +760,7 @@ public final class ListActivity extends AbsActivity
         mRefresh = menu.findItem(R.id.action_refresh);
         mSortForumsMenu = menu.findItem(R.id.action_sort_forums);
 
-        if (mSlidingDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+        if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
             mRule.setVisible(false);
             mCreatePost.setVisible(false);
             mRefresh.setVisible(false);
@@ -821,12 +821,12 @@ public final class ListActivity extends AbsActivity
         Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mSlidingDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mSlidingDrawerLayout.closeDrawer(Gravity.LEFT);
+                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    mDrawerLayout.closeDrawer(Gravity.LEFT);
                 } else {
-                    mSlidingDrawerLayout.openDrawer(Gravity.LEFT);
+                    mDrawerLayout.openDrawer(Gravity.LEFT);
                 }
-                mSlidingDrawerLayout.closeDrawer(Gravity.RIGHT);
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
                 return true;
             case R.id.action_rule:
                 if (mCurrentForum != null && mCurrentForum.getNMBMsg() != null) {
@@ -903,7 +903,7 @@ public final class ListActivity extends AbsActivity
                         !mCurrentForum.getNMBId().equals(forum.getNMBId()))) {
             mCurrentForum = forum;
             updateTitleByForum(mCurrentForum);
-            mSlidingDrawerLayout.closeDrawer(Gravity.RIGHT);
+            mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
     }

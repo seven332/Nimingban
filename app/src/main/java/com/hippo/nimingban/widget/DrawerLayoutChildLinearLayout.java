@@ -20,7 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-import com.hippo.widget.slidingdrawerlayout.DrawerLayoutChild;
+import com.hippo.drawerlayout.DrawerLayoutChild;
 
 public class DrawerLayoutChildLinearLayout extends LinearLayout implements DrawerLayoutChild {
 
