@@ -72,7 +72,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
@@ -245,8 +245,8 @@ public class PostFragment extends BaseFragment
 
         mReplyAdapter = new ReplyAdapter();
         mRecyclerView.setAdapter(mReplyAdapter);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(
-                ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark)));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(
+                getContext(), ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark)));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
@@ -501,7 +501,7 @@ public class PostFragment extends BaseFragment
 
             mContent.setOnClickListener(this);
             mThumb.setOnClickListener(this);
-            RippleSalon.addRipple(mButton, ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark));
+            Ripple.addRipple(mButton, ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark));
         }
 
         @Override

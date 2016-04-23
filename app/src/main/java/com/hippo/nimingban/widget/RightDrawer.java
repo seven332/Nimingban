@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Forum;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.slidingdrawerlayout.DrawerLayoutChild;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -73,8 +73,8 @@ public final class RightDrawer extends EasyRecyclerView
         setAdapter(mAdapter);
         setLayoutManager(new LinearLayoutManager(context));
         setOnItemClickListener(this);
-        setSelector(RippleSalon.generateRippleDrawable(
-                ResourcesUtils.getAttrBoolean(context, R.attr.dark)));
+        setSelector(Ripple.generateRippleDrawable(
+                context, ResourcesUtils.getAttrBoolean(context, R.attr.dark)));
 
         mActionBarHeight = ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.actionBarSize);
     }

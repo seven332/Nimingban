@@ -43,7 +43,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -135,7 +135,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
 
         mSearchAdapter = new SearchAdapter();
         recyclerView.setAdapter(mSearchAdapter);
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
+        recyclerView.setSelector(Ripple.generateRippleDrawable(this, ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         recyclerView.setDrawSelectorOnTop(true);
         recyclerView.setOnItemClickListener(this);
         recyclerView.hasFixedSize();

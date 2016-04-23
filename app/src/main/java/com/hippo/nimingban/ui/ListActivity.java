@@ -91,7 +91,7 @@ import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.nimingban.widget.RightDrawer;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
 import com.hippo.unifile.UniFile;
@@ -274,8 +274,8 @@ public final class ListActivity extends AbsActivity
 
         mPostAdapter = new PostAdapter();
         mRecyclerView.setAdapter(mPostAdapter);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(
-                ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(
+                this, ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
         mRecyclerView.hasFixedSize();

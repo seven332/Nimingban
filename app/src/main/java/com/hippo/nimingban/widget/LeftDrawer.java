@@ -31,7 +31,7 @@ import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.unifile.UniFile;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.DrawerListView;
@@ -108,7 +108,7 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
         mDarkTheme.setText(Settings.getDarkTheme() ? R.string.let_there_light : R.string.let_there_dark);
         mDarkTheme.setOnClickListener(this);
-        RippleSalon.addRipple(mDarkTheme, ResourcesUtils.getAttrBoolean(context, R.attr.dark));
+        Ripple.addRipple(mDarkTheme, ResourcesUtils.getAttrBoolean(context, R.attr.dark));
     }
 
     public void loadHeaderImageView() {

@@ -33,7 +33,7 @@ import com.hippo.nimingban.PermissionRequester;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.DirExplorer;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
@@ -82,7 +82,7 @@ public class DirPickerActivity extends TranslucentActivity implements View.OnCli
         mDirExplorer.setCurrentFile(file);
         mDirExplorer.setOnChangeDirListener(this);
 
-        RippleSalon.addRipple(mOk, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
+        Ripple.addRipple(mOk, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
 
         mOk.setOnClickListener(this);
 

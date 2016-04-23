@@ -40,7 +40,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ColorPickerView;
 import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.nimingban.widget.ThicknessPreviewView;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.util.AnimationUtils2;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
@@ -113,15 +113,15 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
 
         mDoodleView.setHelper(this);
 
-        RippleSalon.addRipple(mPalette, true);
-        RippleSalon.addRipple(mThickness, true);
-        RippleSalon.addRipple(mDrawAction, true);
-        RippleSalon.addRipple(mImage, true);
-        RippleSalon.addRipple(mUndo, true);
-        RippleSalon.addRipple(mRedo, true);
-        RippleSalon.addRipple(mClear, true);
-        RippleSalon.addRipple(mOk, true);
-        RippleSalon.addRipple(mMenu, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
+        Ripple.addRipple(mPalette, true);
+        Ripple.addRipple(mThickness, true);
+        Ripple.addRipple(mDrawAction, true);
+        Ripple.addRipple(mImage, true);
+        Ripple.addRipple(mUndo, true);
+        Ripple.addRipple(mRedo, true);
+        Ripple.addRipple(mClear, true);
+        Ripple.addRipple(mOk, true);
+        Ripple.addRipple(mMenu, ResourcesUtils.getAttrBoolean(this, R.attr.dark));
 
         mSide.setOnClickListener(this);
         mPalette.setOnClickListener(this);

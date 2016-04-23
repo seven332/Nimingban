@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include ':app', ':daogenerator', ':swipebacklayout', ':vector', ':photoview', ':android-advancedrecyclerview', 'yorozuya', 'hotspot', 'rippleold', 'conaco', 'beerbelly', 'anani', 'easyrecyclerview'
+include ':app', ':daogenerator', ':swipebacklayout', ':vector', ':photoview', ':android-advancedrecyclerview', 'yorozuya', 'conaco', 'beerbelly', 'anani', 'easyrecyclerview'

@@ -83,7 +83,7 @@ import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.FontEditText;
 import com.hippo.nimingban.widget.FontTextView;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
@@ -342,12 +342,12 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
             }
         }, 300);
 
-        RippleSalon.addRipple(mEmoji, true);
-        RippleSalon.addRipple(mImage, true);
-        RippleSalon.addRipple(mDraw, true);
-        RippleSalon.addRipple(mDraft, true);
-        RippleSalon.addRipple(mSend, true);
-        RippleSalon.addRipple(mIndicator, ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark));
+        Ripple.addRipple(mEmoji, true);
+        Ripple.addRipple(mImage, true);
+        Ripple.addRipple(mDraw, true);
+        Ripple.addRipple(mDraft, true);
+        Ripple.addRipple(mSend, true);
+        Ripple.addRipple(mIndicator, ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark));
 
         mEmoji.setOnClickListener(this);
         mImage.setOnClickListener(this);
@@ -533,8 +533,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
             mEmojiKeyboard.setAdapter(helper);
             mEmojiKeyboard.setLayoutManager(new StaggeredGridLayoutManager(
                     3, StaggeredGridLayoutManager.VERTICAL));// TODO adjust by view width
-            mEmojiKeyboard.setSelector(RippleSalon.generateRippleDrawable(
-                    ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark)));
+            mEmojiKeyboard.setSelector(Ripple.generateRippleDrawable(
+                    getContext(), ResourcesUtils.getAttrBoolean(getContext(), R.attr.dark)));
             mEmojiKeyboard.setOnItemClickListener(helper);
         }
         mEmojiKeyboard.setVisibility(View.VISIBLE);
