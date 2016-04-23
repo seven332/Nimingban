@@ -17,16 +17,13 @@
 
 <vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:width="24dp"
     android:height="24dp"
-    app:width="24dp"
-    app:height="24dp"
-    app:viewportWidth="24"
-    app:viewportHeight="24">
+    android:width="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
     <path
-        app:pathData="@string/pd_rss"
-        app:fillColor="?attr/colorDrawablePrimary"/>
+        android:pathData="@string/pd_tag"
+        android:fillColor="?attr/colorDrawablePrimary"/>
 
 </vector>

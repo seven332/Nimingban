@@ -97,7 +97,7 @@ import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
-import com.hippo.vector.VectorDrawable;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.SimpleDoubleTapListener;
 import com.hippo.view.SimpleGestureListener;
 import com.hippo.widget.AutoWrapLayout;
@@ -1061,7 +1061,7 @@ public final class ListActivity extends AbsActivity
 
             reply.setFactory(this);
 
-            Drawable drawable = VectorDrawable.create(ListActivity.this, R.drawable.ic_comment_multiple_outline);
+            Drawable drawable = DrawableManager.getDrawable(ListActivity.this, R.drawable.v_comment_multiple_outline);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             bottomText.setCompoundDrawables(drawable, null, null, null);
         }

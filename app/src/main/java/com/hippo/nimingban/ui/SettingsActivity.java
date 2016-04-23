@@ -374,6 +374,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
             }
 
             @Override
+            public void onFingerDown() {}
+
+            @Override
+            public void onFingerUp() {}
+
+            @Override
             public void onClick(@NonNull DialogInterface dialog, int which) {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
                     Settings.putFontSize(mFontSize.getProgress());

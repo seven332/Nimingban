@@ -25,11 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <com.hippo.widget.SimpleImageView
+
+    <ImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/failed"
         android:layout_width="168dp"
         android:layout_height="168dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/v_empty"/>
 
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/image_view"

@@ -31,7 +31,7 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Forum;
 import com.hippo.ripple.Ripple;
-import com.hippo.vector.VectorDrawable;
+import com.hippo.util.DrawableManager;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.util.ArrayList;
@@ -135,7 +135,7 @@ public final class RightDrawer extends EasyRecyclerView
             View view;
             if (viewType == TYPE_COMMOM_POSTS) {
                 view = LayoutInflater.from(getContext()).inflate(R.layout.item_commom_posts, parent, false);
-                Drawable tag = VectorDrawable.create(getContext(), R.drawable.ic_tag);
+                Drawable tag = DrawableManager.getDrawable(getContext(), R.drawable.v_tag);
                 tag.setBounds(0, 0, tag.getIntrinsicWidth(), tag.getIntrinsicHeight());
                 TextView tv = (TextView) view;
                 tv.setText(R.string.common_posts);

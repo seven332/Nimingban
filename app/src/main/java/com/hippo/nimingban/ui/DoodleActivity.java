@@ -42,8 +42,6 @@ import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.nimingban.widget.ThicknessPreviewView;
 import com.hippo.ripple.Ripple;
 import com.hippo.util.AnimationUtils2;
-import com.hippo.vector.VectorDrawable;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -66,7 +64,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
     private View mRedo;
     private View mClear;
     private View mOk;
-    private SimpleImageView mMenu;
+    private View mMenu;
 
     private File mOutputFile;
 
@@ -109,7 +107,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         mRedo = findViewById(R.id.redo);
         mClear = findViewById(R.id.clear);
         mOk = findViewById(R.id.ok);
-        mMenu = (SimpleImageView) findViewById(R.id.menu);
+        mMenu = findViewById(R.id.menu);
 
         mDoodleView.setHelper(this);
 
@@ -133,11 +131,6 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         mClear.setOnClickListener(this);
         mOk.setOnClickListener(this);
         mMenu.setOnClickListener(this);
-
-        int color = ResourcesUtils.getAttrColor(this, R.attr.colorPureInverse) & 0x00ffffff | 0x38000000;
-        VectorDrawable menuDrawable = VectorDrawable.create(this, R.drawable.ic_menu);
-        ((VectorDrawable.VFullPath) menuDrawable.getTargetByName("menu")).setFillColor(color);
-        mMenu.setDrawable(menuDrawable);
 
         updateUndoRedo();
 
@@ -310,6 +303,12 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         public void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm) {
             mTpv.setThickness(LayoutUtils.dp2pix(DoodleActivity.this, newProgress));
         }
+
+        @Override
+        public void onFingerDown() {}
+
+        @Override
+        public void onFingerUp() {}
     }
 
     private void showThicknessDialog() {

@@ -84,8 +84,8 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.FontEditText;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.ripple.Ripple;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
@@ -358,9 +358,10 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         mIndicator.setOnClickListener(this);
         mPreview.setOnClickListener(this);
 
+        // TODO Use AnimatedVectorDrawable
         StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[]{android.R.attr.state_activated}, VectorDrawable.create(getContext(), R.drawable.ic_chevron_up));
-        drawable.addState(new int[]{}, VectorDrawable.create(getContext(), R.drawable.ic_chevron_down));
+        drawable.addState(new int[]{android.R.attr.state_activated}, DrawableManager.getDrawable(getContext(), R.drawable.v_chevron_up));
+        drawable.addState(new int[]{}, DrawableManager.getDrawable(getContext(), R.drawable.v_chevron_down));
         mIndicator.setDrawable(drawable);
 
         mWatermark.setChecked(Settings.getWatermark());

@@ -28,6 +28,7 @@ android {
         targetSdkVersion 23
         versionCode 41
         versionName "1.2.27"
+        vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN"
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
@@ -128,7 +129,6 @@ dependencies {
     compile project(':easyrecyclerview')
     compile project(':photoview')
     compile project(':swipebacklayout')
-    compile project(':vector')
     compile project(':yorozuya')
     compile 'com.alibaba:fastjson:1.1.46.android'
     compile 'com.android.support:appcompat-v7:23.3.0'

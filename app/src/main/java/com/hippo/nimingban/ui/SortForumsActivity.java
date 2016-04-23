@@ -65,7 +65,7 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.vector.VectorDrawable;
+import com.hippo.util.DrawableManager;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -143,9 +143,6 @@ public class SortForumsActivity extends TranslucentActivity {
         mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mViewTransition = new ViewTransition(mTip, mRecyclerView);
-        SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
-
-        imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -511,9 +508,9 @@ public class SortForumsActivity extends TranslucentActivity {
 
             StateListDrawable drawable = new StateListDrawable();
             drawable.addState(new int[]{android.R.attr.state_activated},
-                    VectorDrawable.create(SortForumsActivity.this, R.drawable.ic_eye));
+                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye));
             drawable.addState(new int[]{},
-                    VectorDrawable.create(SortForumsActivity.this, R.drawable.ic_eye_off));
+                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_off));
             visibility.setDrawable(drawable);
         }
 

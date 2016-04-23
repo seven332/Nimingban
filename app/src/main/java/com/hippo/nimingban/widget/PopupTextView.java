@@ -25,11 +25,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.nimingban.R;
 import com.hippo.util.AnimationUtils2;
 import com.hippo.yorozuya.Pool;
 import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 
 public class PopupTextView extends FrameLayout {
 

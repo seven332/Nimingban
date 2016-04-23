@@ -17,16 +17,13 @@
 
 <vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:width="16dp"
-    android:height="16dp"
-    app:width="16dp"
-    app:height="16dp"
-    app:viewportWidth="24"
-    app:viewportHeight="24">
+    android:height="24dp"
+    android:width="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
     <path
-        app:pathData="@string/pd_comment_multiple_outline"
-        app:fillColor="?attr/colorDrawablePrimary"/>
+        android:pathData="@string/pd_eye_off"
+        android:fillColor="?attr/colorDrawablePrimary"/>
 
 </vector>

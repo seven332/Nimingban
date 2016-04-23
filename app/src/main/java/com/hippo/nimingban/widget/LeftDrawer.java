@@ -33,7 +33,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.ripple.Ripple;
 import com.hippo.unifile.UniFile;
-import com.hippo.vector.VectorDrawable;
+import com.hippo.util.DrawableManager;
 import com.hippo.widget.DrawerListView;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -85,10 +85,10 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
         Resources resources = context.getResources();
 
-        Drawable search = VectorDrawable.create(context, R.drawable.ic_magnify);
-        Drawable feed = VectorDrawable.create(context, R.drawable.ic_rss);
-        Drawable record = VectorDrawable.create(context, R.drawable.ic_history);
-        Drawable settings = VectorDrawable.create(context, R.drawable.ic_settings);
+        Drawable search = DrawableManager.getDrawable(context, R.drawable.v_magnify);
+        Drawable feed = DrawableManager.getDrawable(context, R.drawable.v_rss);
+        Drawable record = DrawableManager.getDrawable(context, R.drawable.v_history);
+        Drawable settings = DrawableManager.getDrawable(context, R.drawable.v_settings);
 
         Drawable[] drawables = {
                 search,

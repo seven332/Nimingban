@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,16 +17,13 @@
 
 <vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:width="24dp"
-    android:height="24dp"
-    app:width="24dp"
-    app:height="24dp"
-    app:viewportWidth="24"
-    app:viewportHeight="24">
+    android:width="@dimen/slider_bubble_width"
+    android:height="@dimen/slider_bubble_height"
+    android:viewportWidth="26"
+    android:viewportHeight="32">
 
     <path
-        app:pathData="@string/pd_chevron_down"
-        app:fillColor="?attr/colorDrawablePrimary"/>
+        android:fillColor="@android:color/black"
+        android:pathData="@string/pd_slider_bubble"/>
 
 </vector>

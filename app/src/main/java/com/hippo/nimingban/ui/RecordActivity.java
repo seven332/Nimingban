@@ -54,8 +54,6 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.ripple.Ripple;
-import com.hippo.vector.VectorDrawable;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.widget.Snackbar;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
@@ -108,9 +106,6 @@ public final class RecordActivity extends TranslucentActivity
         View tip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mViewTransition = new ViewTransition(tip, mRecyclerView);
-        SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
-
-        imageView.setDrawable(VectorDrawable.create(this, R.drawable.ic_empty));
 
         // Layout Manager
         int interval = getResources().getDimensionPixelOffset(R.dimen.card_interval);

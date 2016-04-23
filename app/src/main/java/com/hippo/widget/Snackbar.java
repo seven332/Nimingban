@@ -40,9 +40,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hippo.anani.SimpleAnimationListener;
 import com.hippo.nimingban.R;
 import com.hippo.util.AnimationUtils2;
+import com.hippo.yorozuya.SimpleAnimationListener;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

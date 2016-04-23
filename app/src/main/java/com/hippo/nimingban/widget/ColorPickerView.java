@@ -164,6 +164,12 @@ public class ColorPickerView extends LinearLayout implements Slider.OnSetProgres
     }
 
     @Override
+    public void onFingerDown() {}
+
+    @Override
+    public void onFingerUp() {}
+
+    @Override
     public void onClick(View v) {
         int colorResId = R.color.red_500;
 
