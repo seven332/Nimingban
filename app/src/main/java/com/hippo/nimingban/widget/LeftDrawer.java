@@ -85,10 +85,10 @@ public final class LeftDrawer extends ScrollView implements AdapterView.OnItemCl
 
         Resources resources = context.getResources();
 
-        Drawable search = DrawableManager.getDrawable(context, R.drawable.v_magnify);
-        Drawable feed = DrawableManager.getDrawable(context, R.drawable.v_rss);
-        Drawable record = DrawableManager.getDrawable(context, R.drawable.v_history);
-        Drawable settings = DrawableManager.getDrawable(context, R.drawable.v_settings);
+        Drawable search = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
+        Drawable feed = DrawableManager.getDrawable(context, R.drawable.v_rss_x24);
+        Drawable record = DrawableManager.getDrawable(context, R.drawable.v_history_x24);
+        Drawable settings = DrawableManager.getDrawable(context, R.drawable.v_settings_x24);
 
         Drawable[] drawables = {
                 search,

@@ -22,19 +22,19 @@
     <item
         android:id="@+id/action_save"
         android:title="@string/save"
-        android:icon="@drawable/ic_content_save_dark_x24"
+        android:icon="@drawable/v_content_save_dark_x24"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_share"
         android:title="@string/save"
-        android:icon="@drawable/ic_share_dark_x24"
+        android:icon="@drawable/v_share_dark_x24"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_refresh"
         android:title="@string/refresh"
-        android:icon="@drawable/ic_refresh_dark_x24"
+        android:icon="@drawable/v_refresh_dark_x24"
         app:showAsAction="ifRoom"/>
 
 </menu>

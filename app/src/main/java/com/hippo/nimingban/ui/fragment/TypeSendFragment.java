@@ -161,7 +161,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     private View mImagePreview;
     private ImageView mPreview;
     private View mDelete;
-    private SimpleImageView mIndicator;
+    private ImageView mIndicator;
     private View mWritableItem;
     private EditText mName;
     private EditText mEmail;
@@ -292,7 +292,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(mTitleText);
-        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        toolbar.setNavigationIcon(DrawableManager.getDrawable(getContext(), R.drawable.v_arrow_left_dark_x24));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -310,7 +310,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         mPreview = (ImageView) mImagePreview.findViewById(R.id.preview);
         mDelete = mImagePreview.findViewById(R.id.delete);
         mWatermark = (CheckBox) mImagePreview.findViewById(R.id.watermark);
-        mIndicator = (SimpleImageView) contentView.findViewById(R.id.indicator);
+        mIndicator = (ImageView) contentView.findViewById(R.id.indicator);
         TextView moreWritableItemsText = (TextView) contentView.findViewById(R.id.more_writable_items_text);
         View selectForum = contentView.findViewById(R.id.select_forum);
         mForumText = (TextView) selectForum.findViewById(R.id.forum_text);
@@ -319,8 +319,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         mEmail = (EditText) mWritableItem.findViewById(R.id.email);
         mTitle = (EditText) mWritableItem.findViewById(R.id.title);
 
-        mEmojiOff = getResources().getDrawable(R.drawable.ic_emoji_off_dark_x48_24);
-        mEmojiOn = getResources().getDrawable(R.drawable.ic_emoji_on_dark_x48_24);
+        mEmojiOff = DrawableManager.getDrawable(getContext(), R.drawable.v_emoji_off_dark);
+        mEmojiOn = DrawableManager.getDrawable(getContext(), R.drawable.v_emoji_on_dark);
         mEmoji.setDrawable(mEmojiOff);
 
         if (Settings.getFixEmojiDisplay()) {
@@ -360,9 +360,9 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
         // TODO Use AnimatedVectorDrawable
         StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[]{android.R.attr.state_activated}, DrawableManager.getDrawable(getContext(), R.drawable.v_chevron_up));
-        drawable.addState(new int[]{}, DrawableManager.getDrawable(getContext(), R.drawable.v_chevron_down));
-        mIndicator.setDrawable(drawable);
+        drawable.addState(new int[]{android.R.attr.state_activated}, DrawableManager.getDrawable(getContext(), R.drawable.v_chevron_up_x24));
+        drawable.addState(new int[]{}, DrawableManager.getDrawable(getContext(), R.drawable.v_chevron_down_x24));
+        mIndicator.setImageDrawable(drawable);
 
         mWatermark.setChecked(Settings.getWatermark());
 

@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/indicator"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -202,12 +202,13 @@
                 android:maxHeight="256dp"
                 android:contentDescription="@null"/>
 
-            <com.hippo.widget.SimpleImageView
+            <ImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/delete"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="12dp"
-                android:src="@drawable/delete_image"/>
+                app:srcCompat="@drawable/v_delete_image"/>
 
         </FrameLayout>
 

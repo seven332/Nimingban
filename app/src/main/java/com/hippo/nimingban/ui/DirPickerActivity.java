@@ -34,6 +34,7 @@ import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.DirExplorer;
 import com.hippo.ripple.Ripple;
+import com.hippo.util.DrawableManager;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public class DirPickerActivity extends TranslucentActivity implements View.OnCli
 
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         ToolbarActivityHelper.setContentView(this, R.layout.activity_dir_picker);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         mPath = (TextView) findViewById(R.id.path);
         mDirExplorer = (DirExplorer) findViewById(R.id.dir_explorer);

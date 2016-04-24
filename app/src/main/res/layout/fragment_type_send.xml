@@ -25,6 +25,7 @@
         layout="@layout/activity_type_send_content"/>
 
     <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
@@ -36,38 +37,38 @@
             android:layout_height="48dp"
             android:padding="12dp"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/image"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:src="@drawable/ic_file_image_box_dark_x24"/>
+            app:srcCompat="@drawable/v_image_dark_x24"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/draw"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:src="@drawable/ic_brush_dark_x24"/>
+            app:srcCompat="@drawable/v_brush_dark_x24"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/draft"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:src="@drawable/ic_draft_dark_x24"/>
+            app:srcCompat="@drawable/v_draft_dark_x24"/>
 
         <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/send"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:src="@drawable/ic_send_dark_x24"/>
+            app:srcCompat="@drawable/v_send_dark_x24"/>
 
     </LinearLayout>
 

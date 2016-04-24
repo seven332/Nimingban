@@ -44,6 +44,7 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.ripple.Ripple;
+import com.hippo.util.DrawableManager;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -118,7 +119,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
 
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         ToolbarActivityHelper.setContentView(this, R.layout.activity_search);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
         EasyRecyclerView recyclerView = mContentLayout.getRecyclerView();

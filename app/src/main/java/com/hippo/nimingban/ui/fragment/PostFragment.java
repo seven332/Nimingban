@@ -74,6 +74,7 @@ import com.hippo.nimingban.widget.LinkifyTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.ripple.Ripple;
 import com.hippo.util.ActivityHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.TextUtils2;
 import com.hippo.widget.Slider;
@@ -221,7 +222,7 @@ public class PostFragment extends BaseFragment
         } else {
             mToolbar.setTitle(getString(R.string.thread));
         }
-        mToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        mToolbar.setNavigationIcon(DrawableManager.getDrawable(getContext(), R.drawable.v_arrow_left_dark_x24));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

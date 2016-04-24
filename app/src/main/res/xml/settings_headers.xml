@@ -21,16 +21,16 @@
     <header
         android:fragment="com.hippo.nimingban.ui.SettingsActivity$DisplayFragment"
         android:title="@string/display_settings_title"
-        android:icon="@drawable/ic_cellphone_android_primary_x24"/>
+        android:icon="@drawable/v_cellphone_android_primary_x24"/>
 
     <header
         android:fragment="com.hippo.nimingban.ui.SettingsActivity$ConfigFragment"
         android:title="@string/config_settings_title"
-        android:icon="@drawable/ic_spanner_primary_x24"/>
+        android:icon="@drawable/v_spanner_primary_x24"/>
 
     <header
         android:fragment="com.hippo.nimingban.ui.SettingsActivity$InfoFragment"
         android:title="@string/info_settings_title"
-        android:icon="@drawable/ic_information_primary_x24"/>
+        android:icon="@drawable/v_information_primary_x24"/>
 
 </preference-headers>

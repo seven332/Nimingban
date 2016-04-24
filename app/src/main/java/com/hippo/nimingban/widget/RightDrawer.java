@@ -135,7 +135,7 @@ public final class RightDrawer extends EasyRecyclerView
             View view;
             if (viewType == TYPE_COMMOM_POSTS) {
                 view = LayoutInflater.from(getContext()).inflate(R.layout.item_commom_posts, parent, false);
-                Drawable tag = DrawableManager.getDrawable(getContext(), R.drawable.v_tag);
+                Drawable tag = DrawableManager.getDrawable(getContext(), R.drawable.v_tag_x24);
                 tag.setBounds(0, 0, tag.getIntrinsicWidth(), tag.getIntrinsicHeight());
                 TextView tv = (TextView) view;
                 tv.setText(R.string.common_posts);

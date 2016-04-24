@@ -27,6 +27,7 @@ import android.webkit.WebViewClient;
 
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.util.DrawableManager;
 import com.hippo.yorozuya.ResourcesUtils;
 
 public class WebViewActivity extends TranslucentActivity {
@@ -56,7 +57,7 @@ public class WebViewActivity extends TranslucentActivity {
 
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         ToolbarActivityHelper.setContentView(this, R.layout.activity_web_view);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
         setTitle(url);
 
         WebView webView = (WebView) findViewById(R.id.web_view);

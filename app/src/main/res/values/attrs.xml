@@ -20,6 +20,7 @@
     <declare-styleable name="Theme">
         <attr name="colorDivider" format="color"/>
         <attr name="colorDrawablePrimary" format="color"/>
+        <attr name="colorDrawablePrimaryInverse" format="color"/>
         <attr name="colorPure" format="color"/>
         <attr name="colorPureInverse" format="color"/>
         <attr name="preferenceHeaderTitleColor" format="color"/>

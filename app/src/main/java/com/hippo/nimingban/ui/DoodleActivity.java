@@ -22,11 +22,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hippo.app.ProgressDialogBuilder;
@@ -42,6 +44,7 @@ import com.hippo.nimingban.widget.DoodleView;
 import com.hippo.nimingban.widget.ThicknessPreviewView;
 import com.hippo.ripple.Ripple;
 import com.hippo.util.AnimationUtils2;
+import com.hippo.util.DrawableManager;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -58,10 +61,10 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
     private View mSide;
     private View mPalette;
     private View mThickness;
-    private View mDrawAction;
+    private ImageView mDrawAction;
     private View mImage;
-    private View mUndo;
-    private View mRedo;
+    private ImageView mUndo;
+    private ImageView mRedo;
     private View mClear;
     private View mOk;
     private View mMenu;
@@ -101,15 +104,36 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         mSide = findViewById(R.id.side);
         mPalette = findViewById(R.id.palette);
         mThickness = findViewById(R.id.thickness);
-        mDrawAction = findViewById(R.id.draw_action);
+        mDrawAction = (ImageView) findViewById(R.id.draw_action);
         mImage = findViewById(R.id.image);
-        mUndo = findViewById(R.id.undo);
-        mRedo = findViewById(R.id.redo);
+        mUndo = (ImageView) findViewById(R.id.undo);
+        mRedo = (ImageView) findViewById(R.id.redo);
         mClear = findViewById(R.id.clear);
         mOk = findViewById(R.id.ok);
         mMenu = findViewById(R.id.menu);
 
         mDoodleView.setHelper(this);
+
+        StateListDrawable undoDrawable = new StateListDrawable();
+        undoDrawable.addState(new int[]{-android.R.attr.state_enabled},
+                DrawableManager.getDrawable(this, R.drawable.v_undo_disabled_dark_x24));
+        undoDrawable.addState(new int[]{},
+                DrawableManager.getDrawable(this, R.drawable.v_undo_default_dark_x24));
+        mUndo.setImageDrawable(undoDrawable);
+
+        StateListDrawable redoDrawable = new StateListDrawable();
+        redoDrawable.addState(new int[]{-android.R.attr.state_enabled},
+                DrawableManager.getDrawable(this, R.drawable.v_redo_disabled_dark_x24));
+        redoDrawable.addState(new int[]{},
+                DrawableManager.getDrawable(this, R.drawable.v_redo_default_dark_x24));
+        mRedo.setImageDrawable(redoDrawable);
+
+        StateListDrawable actionDrawable = new StateListDrawable();
+        actionDrawable.addState(new int[]{android.R.attr.state_activated},
+                DrawableManager.getDrawable(this, R.drawable.v_eraser_dark_x24));
+        actionDrawable.addState(new int[]{},
+                DrawableManager.getDrawable(this, R.drawable.v_brush_dark_x24));
+        mDrawAction.setImageDrawable(actionDrawable);
 
         Ripple.addRipple(mPalette, true);
         Ripple.addRipple(mThickness, true);

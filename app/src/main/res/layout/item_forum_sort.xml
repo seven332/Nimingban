@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.hippo.widget.SimpleImageView
+            <ImageView
                 android:id="@+id/visibility"
                 android:layout_width="48dp"
                 android:layout_height="48dp"

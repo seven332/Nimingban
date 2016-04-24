@@ -49,6 +49,7 @@ import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.DrawableManager;
 import com.hippo.widget.viewpager.PagerHolder;
 import com.hippo.widget.viewpager.RecyclerPagerAdapter;
 import com.hippo.yorozuya.IOUtils;
@@ -135,7 +136,7 @@ public class GalleryActivity2 extends SwipeActivity {
 
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         ToolbarActivityHelper.setContentView(this, R.layout.activity_gallery_2);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
 

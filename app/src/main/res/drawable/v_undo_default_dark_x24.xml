@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,20 +15,15 @@
   ~ limitations under the License.
   -->
 
-<menu
+<vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:height="24dp"
+    android:width="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
-    <item
-        android:id="@+id/action_refresh"
-        android:title="@string/refresh"
-        android:icon="@drawable/v_refresh_dark_x24"
-        app:showAsAction="always"/>
+    <path
+        android:pathData="@string/pd_undo"
+        android:fillColor="@color/primary_drawable_dark"/>
 
-    <item
-        android:id="@+id/action_add"
-        android:title="@string/add"
-        android:icon="@drawable/v_plus_dark_x24"
-        app:showAsAction="ifRoom"/>
-
-</menu>
+</vector>

@@ -74,6 +74,7 @@ import com.hippo.preference.IconListPreference;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.LogCat;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.IOUtils;
@@ -186,7 +187,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         replaceHeaderLayoutResId();
     }

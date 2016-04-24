@@ -1061,7 +1061,7 @@ public final class ListActivity extends AbsActivity
 
             reply.setFactory(this);
 
-            Drawable drawable = DrawableManager.getDrawable(ListActivity.this, R.drawable.v_comment_multiple_outline);
+            Drawable drawable = DrawableManager.getDrawable(ListActivity.this, R.drawable.v_comment_multiple_outline_x16);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             bottomText.setCompoundDrawables(drawable, null, null, null);
         }

@@ -54,6 +54,7 @@ import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LoadImageView;
 import com.hippo.ripple.Ripple;
+import com.hippo.util.DrawableManager;
 import com.hippo.widget.Snackbar;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
@@ -101,7 +102,7 @@ public final class RecordActivity extends TranslucentActivity
 
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         ToolbarActivityHelper.setContentView(this, R.layout.activity_record);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         View tip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);

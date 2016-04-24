@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,20 +15,19 @@
   ~ limitations under the License.
   -->
 
-<menu
+<vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
 
-    <item
-        android:id="@+id/action_refresh"
-        android:title="@string/refresh"
-        android:icon="@drawable/v_refresh_dark_x24"
-        app:showAsAction="always"/>
+    <path
+        android:pathData="M24,8C32.84,8,40,15.16,40,24S32.84,40,24,40S8,32.84,8,24S15.16,8,24,8Z"
+        android:fillColor="@android:color/white"/>
 
-    <item
-        android:id="@+id/action_add"
-        android:title="@string/add"
-        android:icon="@drawable/v_plus_dark_x24"
-        app:showAsAction="ifRoom"/>
+    <path
+        android:pathData="M24,4C13,4,4,13,4,24S13,44,24,44S44,35,44,24S35,4,24,4ZM24,40C15.2,40,8,32.8,8,24S15.2,8,24,8S40,15.2,40,24S32.8,40,24,40M16,18.98L19,16L32,29.02L29.03,32M16,29.02L29.02,16.02L32,18.97L18.98,31.97Z"
+        android:fillColor="@android:color/black"/>
 
-</menu>
+</vector>

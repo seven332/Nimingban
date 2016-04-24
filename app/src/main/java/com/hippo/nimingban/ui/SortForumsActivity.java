@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +67,6 @@ import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.util.DrawableManager;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -138,7 +138,7 @@ public class SortForumsActivity extends TranslucentActivity {
 
         setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         ToolbarActivityHelper.setContentView(this, R.layout.activity_forum_sort);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
@@ -263,6 +263,7 @@ public class SortForumsActivity extends TranslucentActivity {
                 }).show();
     }
 
+    @SuppressWarnings("WrongConstant")
     private void showRefreshGuide() {
         new GuideHelper.Builder(this)
                 .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
@@ -281,6 +282,7 @@ public class SortForumsActivity extends TranslucentActivity {
                 }).show();
     }
 
+    @SuppressWarnings("WrongConstant")
     private void showAddGuide() {
         new GuideHelper.Builder(this)
                 .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
@@ -491,7 +493,7 @@ public class SortForumsActivity extends TranslucentActivity {
     private class ForumHolder extends AbstractDraggableSwipeableItemViewHolder implements View.OnClickListener {
 
         public View swipeHandler;
-        public SimpleImageView visibility;
+        public ImageView visibility;
         public TextView forum;
         public View dragHandler;
 
@@ -499,7 +501,7 @@ public class SortForumsActivity extends TranslucentActivity {
             super(itemView);
 
             swipeHandler = itemView.findViewById(R.id.swipe_handler);
-            visibility = (SimpleImageView) itemView.findViewById(R.id.visibility);
+            visibility = (ImageView) itemView.findViewById(R.id.visibility);
             forum = (TextView) itemView.findViewById(R.id.forum);
             dragHandler = itemView.findViewById(R.id.drag_handler);
 
@@ -508,10 +510,10 @@ public class SortForumsActivity extends TranslucentActivity {
 
             StateListDrawable drawable = new StateListDrawable();
             drawable.addState(new int[]{android.R.attr.state_activated},
-                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye));
+                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_on_x24));
             drawable.addState(new int[]{},
-                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_off));
-            visibility.setDrawable(drawable);
+                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_off_x24));
+            visibility.setImageDrawable(drawable);
         }
 
         @Override
