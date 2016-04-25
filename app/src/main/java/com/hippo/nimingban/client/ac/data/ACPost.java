@@ -18,26 +18,19 @@ package com.hippo.nimingban.client.ac.data;
 
 import android.graphics.Color;
 import android.os.Parcel;
-import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.URLSpan;
 
-import com.hippo.nimingban.client.ReferenceSpan;
-import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.Site;
-import com.hippo.nimingban.util.Settings;
 import com.hippo.text.Html;
 import com.hippo.yorozuya.NumberUtils;
-import com.hippo.yorozuya.StringUtils;
 
-import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,12 +38,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 public class ACPost extends Post {
 
@@ -61,13 +48,6 @@ public class ACPost extends Post {
      */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault());
     private static final Object sDateFormatLock = new Object();
-
-    private static final Pattern REFERENCE_PATTERN = Pattern.compile(">>?(?:No.)?(\\d+)");
-    private static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
-    private static final Pattern AC_PATTERN = Pattern.compile("ac\\d+");
-
-    private static final String NO_TITLE = "无标题";
-    private static final String NO_NAME = "无名氏";
 
     static {
         // The website use GMT+08:00
@@ -86,7 +66,7 @@ public class ACPost extends Post {
     public String sage = "";
     public String admin = "";
     public String replyCount = "";
-    // Ingore when writeToParcel
+    // Ignore when writeToParcel
     public List<ACReply> replys;
 
     private Site mSite;
@@ -107,158 +87,6 @@ public class ACPost extends Post {
                 ", userid = " + userid + ", name = " + name + ", email = " + email +
                 ", title = " + title + ", content = " + content + ", admin = " + admin +
                 ", replyCount = " + replyCount + ", replys = " + replys;
-    }
-
-    public static CharSequence fixURLSpan(CharSequence content) {
-        if (!(content instanceof Spanned)) {
-            return content;
-        }
-
-        Spannable spannable;
-        if (content instanceof Spannable) {
-            spannable = (Spannable) content;
-        } else {
-            spannable = new SpannableString(content);
-        }
-
-        URLSpan[] urlSpans = spannable.getSpans(0, content.length(), URLSpan.class);
-        for (URLSpan urlSpan : urlSpans) {
-            int start = spannable.getSpanStart(urlSpan);
-            int end = spannable.getSpanEnd(urlSpan);
-            String url = urlSpan.getURL();
-            String newUrl;
-            if (url.startsWith("http")) {
-                newUrl = url;
-            } else if (url.startsWith("/")){
-                newUrl = ACUrl.HOST + url;
-            } else {
-                newUrl = ACUrl.HOST + '/' + url;
-            }
-
-            //noinspection StringEquality
-            if (newUrl != url) {
-                spannable.removeSpan(urlSpan);
-                spannable.setSpan(new URLSpan(newUrl), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-
-        return content;
-    }
-
-    public static CharSequence handleReference(CharSequence content) {
-        Matcher m = REFERENCE_PATTERN.matcher(content);
-
-        Spannable spannable = null;
-        while (m.find()) {
-            // Ensure spannable
-            if (spannable == null) {
-                if (content instanceof Spannable) {
-                    spannable = (Spannable) content;
-                } else {
-                    spannable = new SpannableString(content);
-                }
-            }
-
-            int start = m.start();
-            int end = m.end();
-
-            ReferenceSpan referenceSpan = new ReferenceSpan(ACSite.getInstance(), m.group(1));
-            spannable.setSpan(referenceSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return spannable == null ? content : spannable;
-    }
-
-    public static CharSequence handleTextUrl(CharSequence content) {
-        Matcher m = URL_PATTERN.matcher(content);
-
-        Spannable spannable = null;
-        while (m.find()) {
-            // Ensure spannable
-            if (spannable == null) {
-                if (content instanceof Spannable) {
-                    spannable = (Spannable) content;
-                } else {
-                    spannable = new SpannableString(content);
-                }
-            }
-
-            int start = m.start();
-            int end = m.end();
-
-            URLSpan[] links = spannable.getSpans(start, end, URLSpan.class);
-            if (links.length > 0) {
-                // There has been URLSpan already, leave it alone
-                continue;
-            }
-
-            URLSpan urlSpan = new URLSpan(m.group(0));
-            spannable.setSpan(urlSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return spannable == null ? content : spannable;
-    }
-
-    public static CharSequence handleAcUrl(CharSequence content) {
-        Matcher m = AC_PATTERN.matcher(content);
-
-        Spannable spannable = null;
-        while (m.find()) {
-            // Ensure spannable
-            if (spannable == null) {
-                if (content instanceof Spannable) {
-                    spannable = (Spannable) content;
-                } else {
-                    spannable = new SpannableString(content);
-                }
-            }
-
-            int start = m.start();
-            int end = m.end();
-
-            URLSpan[] links = spannable.getSpans(start, end, URLSpan.class);
-            if (links.length > 0) {
-                // There has been URLSpan already, leave it alone
-                continue;
-            }
-
-            URLSpan urlSpan = new URLSpan("http://www.acfun.tv/v/" + m.group(0));
-            spannable.setSpan(urlSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return spannable == null ? content : spannable;
-    }
-
-    public static CharSequence generateContent(String content) {
-        CharSequence charSequence;
-        charSequence = Html.fromHtml(content);
-        charSequence = fixURLSpan(charSequence);
-        charSequence = handleReference(charSequence);
-        charSequence = handleTextUrl(charSequence);
-        charSequence = handleAcUrl(charSequence);
-
-        return charSequence;
-    }
-
-    public static CharSequence generateContent(String content, String sage, String title, String name, String email) {
-        StringBuilder sb = new StringBuilder(44 + 11 + StringUtils.length(title) +
-                11 + StringUtils.length(name) + 11 + StringUtils.length(email) +
-                StringUtils.length(content));
-        if ("1".equals(sage)) {
-            sb.append("<font color=\"red\"><b>SAGE</b></font><br><br>");
-        }
-        if (!TextUtils.isEmpty(title) && !NO_TITLE.equals(title)) {
-            sb.append("<b>").append(title).append("</b><br>");
-        }
-        if (!TextUtils.isEmpty(name) && !NO_NAME.equals(name)) {
-            sb.append("<b>").append(name).append("</b><br>");
-        }
-        if (!TextUtils.isEmpty(email)) {
-            sb.append("<b>").append(email).append("</b><br>");
-        }
-        sb.append(content);
-
-        return generateContent(sb.toString());
     }
 
     private static String removeDayOfWeek(String time) {
@@ -294,91 +122,6 @@ public class ACPost extends Post {
         }
     }
 
-    private static final int COUNT_NUMBER = '9' - '0' + 1;
-    private static final int COUNT_UPPERCASE_LETTER = 'z' - 'a' + 1;
-    private static final int COUNT_LOWERCASE_LETTER = 'Z' - 'A' + 1;
-    private static final int COUNT_SUM = COUNT_NUMBER + COUNT_UPPERCASE_LETTER + COUNT_LOWERCASE_LETTER;
-
-    private static final byte[] IV = new byte[] {0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF};
-
-    private static char getReadableChar(byte b) {
-        int i = (b & 0xFF) % COUNT_SUM;
-        if (i < COUNT_NUMBER) {
-            return (char) ('0' + i);
-        } else if (i < COUNT_NUMBER + COUNT_UPPERCASE_LETTER) {
-            return (char) ('a' + i - COUNT_NUMBER);
-        } else if (i < COUNT_NUMBER + COUNT_UPPERCASE_LETTER + COUNT_LOWERCASE_LETTER) {
-            return (char) ('A' + i - COUNT_NUMBER - COUNT_UPPERCASE_LETTER);
-        } else {
-            return '?';
-        }
-    }
-
-    private static String toReadableString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length);
-        for (byte b: bytes) {
-            sb.append(getReadableChar(b));
-        }
-        return sb.toString();
-    }
-
-    private static boolean isSimpleUser(@Nullable String userID) {
-        if (null == userID) {
-            return false;
-        }
-
-        for (int i = 0, n = userID.length(); i < n; i++) {
-            char ch = userID.charAt(i);
-            if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'z') && !(ch >= 'A' && ch <= 'Z')) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static CharSequence handleUser(CharSequence user, String postId, String id) {
-        String key;
-
-        switch (Settings.getChaosLevel()) {
-            case 1: // Relatively chaotic
-                key = postId;
-                break;
-            case 2: // Absolutely chaotic
-                key = id;
-                break;
-            default:
-                return user;
-        }
-
-        String userStr = user.toString();
-
-        if (!isSimpleUser(userStr)) {
-            return user;
-        }
-
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            digest.update(key.getBytes("utf-8"));
-            byte[] keyBytes = digest.digest();
-            byte[] input = userStr.getBytes("utf-8");
-
-            IvParameterSpec ivSpec = new IvParameterSpec(IV);
-            SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, "AES");
-            Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
-            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivSpec);
-
-            byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
-            int ctLength = cipher.update(input, 0, input.length, cipherText, 0);
-            cipher.doFinal(cipherText, ctLength);
-
-            return toReadableString(cipherText);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return user;
-        }
-    }
-
     @Override
     public void generate(Site site) {
         mSite = site;
@@ -390,12 +133,12 @@ public class ACPost extends Post {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = ACPost.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
+            mUser = ACItemUtils.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
         }
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
-        mContent = generateContent(content, sage, title, name, email);
+        mContent = ACItemUtils.generateContent(content, sage, title, name, email);
 
         if (!TextUtils.isEmpty(img)) {
             String ext2 = ext;

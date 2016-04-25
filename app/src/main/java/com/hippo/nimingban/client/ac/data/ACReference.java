@@ -71,10 +71,10 @@ public class ACReference extends Reply {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userId.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = ACPost.handleUser(Html.fromHtml(userId), getNMBPostId(), getNMBId());
+            mUser = ACItemUtils.handleUser(Html.fromHtml(userId), getNMBPostId(), getNMBId());
         }
 
-        mContent = ACPost.generateContent(content, "", title, "", email);
+        mContent = ACItemUtils.generateContent(content, "", title, "", email);
 
         if (!TextUtils.isEmpty(thumb)) {
             mThumbUrl = thumb;

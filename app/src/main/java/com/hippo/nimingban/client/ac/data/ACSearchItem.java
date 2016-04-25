@@ -53,9 +53,9 @@ public class ACSearchItem extends Reply {
 
         mTime = ACPost.parseTime(now);
 
-        mUser = ACPost.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
+        mUser = ACItemUtils.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
 
-        mContent = ACPost.generateContent(content, sage, title, "", email);
+        mContent = ACItemUtils.generateContent(content, sage, title, "", email);
 
         if (!TextUtils.isEmpty(img)) {
             String ext2 = ext;

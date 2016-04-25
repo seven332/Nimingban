@@ -43,7 +43,6 @@ import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ImageWrapperHelper;
 import com.hippo.okhttp.CookieDBJar;
-import com.hippo.text.Html;
 import com.hippo.util.NetworkUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
@@ -104,7 +103,6 @@ public final class NMBApplication extends Application
         HttpCookieDB.initialize(this);
         ReadableTime.initialize(this);
         BitmapUtils.initialize(this);
-        Html.initialize(this);
         ResImageGetter.initialize(this);
         Emoji.initialize(this);
 

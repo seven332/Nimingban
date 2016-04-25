@@ -72,10 +72,10 @@ public class ACReply extends Reply {
             spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, userid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mUser = spannable;
         } else {
-            mUser = ACPost.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
+            mUser = ACItemUtils.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
         }
 
-        mContent = ACPost.generateContent(content, sage, title, name, email);
+        mContent = ACItemUtils.generateContent(content, sage, title, name, email);
 
         if (!TextUtils.isEmpty(img)) {
             String ext2 = ext;
