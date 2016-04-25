@@ -87,7 +87,7 @@ public class Html {
      */
     public interface TagHandler {
         /**
-         * This method will be called whenn the HTML parser encounters
+         * This method will be called when the HTML parser encounters
          * a tag.
          *
          * @return True if the tag was handled, false otherwise.
