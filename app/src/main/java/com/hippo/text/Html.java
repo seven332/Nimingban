@@ -16,7 +16,6 @@
 
 package com.hippo.text;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -24,7 +23,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.text.Editable;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -47,8 +45,6 @@ import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 
-import com.hippo.nimingban.R;
-
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.xml.sax.Attributes;
@@ -68,12 +64,6 @@ import java.util.Locale;
  * Not all HTML tags are supported.
  */
 public class Html {
-
-    static Resources sResources;
-
-    public static void initialize(Context context) {
-        sResources = context.getResources();
-    }
 
     /**
      * Retrieves images for HTML &lt;img&gt; tags.
@@ -98,10 +88,13 @@ public class Html {
     public interface TagHandler {
         /**
          * This method will be called whenn the HTML parser encounters
-         * a tag that it does not know how to interpret.
+         * a tag.
+         *
+         * @return True if the tag was handled, false otherwise.
          */
-        void handleTag(boolean opening, String tag,
-                Editable output, XMLReader xmlReader);
+        boolean handleTag(boolean opening, String tag,
+                SpannableStringBuilder output, XMLReader xmlReader,
+                Attributes attributes);
     }
 
     private Html() { }
@@ -136,15 +129,12 @@ public class Html {
      *
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
-    public static Spanned fromHtml(String source, ImageGetter imageGetter,
+    public static SpannableStringBuilder fromHtml(String source, ImageGetter imageGetter,
             TagHandler tagHandler) {
         Parser parser = new Parser();
         try {
             parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
-        } catch (org.xml.sax.SAXNotRecognizedException e) {
-            // Should not happen.
-            throw new RuntimeException(e);
-        } catch (org.xml.sax.SAXNotSupportedException e) {
+        } catch (org.xml.sax.SAXNotRecognizedException | org.xml.sax.SAXNotSupportedException e) {
             // Should not happen.
             throw new RuntimeException(e);
         }
@@ -462,16 +452,13 @@ class HtmlToSpannedConverter implements ContentHandler {
         mReader = parser;
     }
 
-    public Spanned convert() {
+    public SpannableStringBuilder convert() {
 
         mReader.setContentHandler(this);
         try {
             mReader.parse(new InputSource(new StringReader(mSource)));
-        } catch (IOException e) {
+        } catch (IOException | SAXException e) {
             // We are reading from a string. There should not be IO problems.
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            // TagSoup doesn't throw parse exceptions.
             throw new RuntimeException(e);
         }
 
@@ -500,118 +487,120 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private void handleStartTag(String tag, Attributes attributes) {
-        if (tag.equalsIgnoreCase("br")) {
-            // We don't need to handle this. TagSoup will ensure that there's a </br> for each <br>
-            // so we can safely emite the linebreaks when we handle the close tag.
-        } else if (tag.equalsIgnoreCase("p")) {
-            handleP(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("div")) {
-            handleP(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("strong")) {
-            start(mSpannableStringBuilder, new Bold());
-        } else if (tag.equalsIgnoreCase("b")) {
-            start(mSpannableStringBuilder, new Bold());
-        } else if (tag.equalsIgnoreCase("em")) {
-            start(mSpannableStringBuilder, new Italic());
-        } else if (tag.equalsIgnoreCase("cite")) {
-            start(mSpannableStringBuilder, new Italic());
-        } else if (tag.equalsIgnoreCase("dfn")) {
-            start(mSpannableStringBuilder, new Italic());
-        } else if (tag.equalsIgnoreCase("i")) {
-            start(mSpannableStringBuilder, new Italic());
-        } else if (tag.equalsIgnoreCase("big")) {
-            start(mSpannableStringBuilder, new Big());
-        } else if (tag.equalsIgnoreCase("small")) {
-            start(mSpannableStringBuilder, new Small());
-        } else if (tag.equalsIgnoreCase("font")) {
-            startFont(mSpannableStringBuilder, attributes);
-        } else if (tag.equalsIgnoreCase("blockquote")) {
-            handleP(mSpannableStringBuilder);
-            start(mSpannableStringBuilder, new Blockquote());
-        } else if (tag.equalsIgnoreCase("tt")) {
-            start(mSpannableStringBuilder, new Monospace());
-        } else if (tag.equalsIgnoreCase("a")) {
-            startA(mSpannableStringBuilder, attributes);
-        } else if (tag.equalsIgnoreCase("u")) {
-            start(mSpannableStringBuilder, new Underline());
-        } else if (tag.equalsIgnoreCase("ins")) {
-            start(mSpannableStringBuilder, new Underline());
-        } else if (tag.equalsIgnoreCase("strike")) {
-            start(mSpannableStringBuilder, new Strike());
-        } else if (tag.equalsIgnoreCase("s")) {
-            start(mSpannableStringBuilder, new Strike());
-        } else if (tag.equalsIgnoreCase("del")) {
-            start(mSpannableStringBuilder, new Strike());
-        } else if (tag.equalsIgnoreCase("sup")) {
-            start(mSpannableStringBuilder, new Super());
-        } else if (tag.equalsIgnoreCase("sub")) {
-            start(mSpannableStringBuilder, new Sub());
-        } else if (tag.length() == 2 &&
-                Character.toLowerCase(tag.charAt(0)) == 'h' &&
-                tag.charAt(1) >= '1' && tag.charAt(1) <= '6') {
-            handleP(mSpannableStringBuilder);
-            start(mSpannableStringBuilder, new Header(tag.charAt(1) - '1'));
-        } else if (tag.equalsIgnoreCase("img")) {
-            startImg(mSpannableStringBuilder, attributes, mImageGetter);
-        } else if (mTagHandler != null) {
-            mTagHandler.handleTag(true, tag, mSpannableStringBuilder, mReader);
+        if (mTagHandler == null || !mTagHandler.handleTag(true, tag,
+                mSpannableStringBuilder, mReader, attributes)) {
+            if (tag.equalsIgnoreCase("br")) {
+                // We don't need to handle this. TagSoup will ensure that there's a </br> for each <br>
+                // so we can safely emite the linebreaks when we handle the close tag.
+            } else if (tag.equalsIgnoreCase("p")) {
+                handleP(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("div")) {
+                handleP(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("strong")) {
+                start(mSpannableStringBuilder, new Bold());
+            } else if (tag.equalsIgnoreCase("b")) {
+                start(mSpannableStringBuilder, new Bold());
+            } else if (tag.equalsIgnoreCase("em")) {
+                start(mSpannableStringBuilder, new Italic());
+            } else if (tag.equalsIgnoreCase("cite")) {
+                start(mSpannableStringBuilder, new Italic());
+            } else if (tag.equalsIgnoreCase("dfn")) {
+                start(mSpannableStringBuilder, new Italic());
+            } else if (tag.equalsIgnoreCase("i")) {
+                start(mSpannableStringBuilder, new Italic());
+            } else if (tag.equalsIgnoreCase("big")) {
+                start(mSpannableStringBuilder, new Big());
+            } else if (tag.equalsIgnoreCase("small")) {
+                start(mSpannableStringBuilder, new Small());
+            } else if (tag.equalsIgnoreCase("font")) {
+                startFont(mSpannableStringBuilder, attributes);
+            } else if (tag.equalsIgnoreCase("blockquote")) {
+                handleP(mSpannableStringBuilder);
+                start(mSpannableStringBuilder, new Blockquote());
+            } else if (tag.equalsIgnoreCase("tt")) {
+                start(mSpannableStringBuilder, new Monospace());
+            } else if (tag.equalsIgnoreCase("a")) {
+                startA(mSpannableStringBuilder, attributes);
+            } else if (tag.equalsIgnoreCase("u")) {
+                start(mSpannableStringBuilder, new Underline());
+            } else if (tag.equalsIgnoreCase("ins")) {
+                start(mSpannableStringBuilder, new Underline());
+            } else if (tag.equalsIgnoreCase("strike")) {
+                start(mSpannableStringBuilder, new Strike());
+            } else if (tag.equalsIgnoreCase("s")) {
+                start(mSpannableStringBuilder, new Strike());
+            } else if (tag.equalsIgnoreCase("del")) {
+                start(mSpannableStringBuilder, new Strike());
+            } else if (tag.equalsIgnoreCase("sup")) {
+                start(mSpannableStringBuilder, new Super());
+            } else if (tag.equalsIgnoreCase("sub")) {
+                start(mSpannableStringBuilder, new Sub());
+            } else if (tag.length() == 2 &&
+                    Character.toLowerCase(tag.charAt(0)) == 'h' &&
+                    tag.charAt(1) >= '1' && tag.charAt(1) <= '6') {
+                handleP(mSpannableStringBuilder);
+                start(mSpannableStringBuilder, new Header(tag.charAt(1) - '1'));
+            } else if (tag.equalsIgnoreCase("img")) {
+                startImg(mSpannableStringBuilder, attributes, mImageGetter);
+            }
         }
     }
 
     private void handleEndTag(String tag) {
-        if (tag.equalsIgnoreCase("br")) {
-            handleBr(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("p")) {
-            handleP(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("div")) {
-            handleP(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("strong")) {
-            end(mSpannableStringBuilder, Bold.class, new StyleSpan(Typeface.BOLD));
-        } else if (tag.equalsIgnoreCase("b")) {
-            end(mSpannableStringBuilder, Bold.class, new StyleSpan(Typeface.BOLD));
-        } else if (tag.equalsIgnoreCase("em")) {
-            end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
-        } else if (tag.equalsIgnoreCase("cite")) {
-            end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
-        } else if (tag.equalsIgnoreCase("dfn")) {
-            end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
-        } else if (tag.equalsIgnoreCase("i")) {
-            end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
-        } else if (tag.equalsIgnoreCase("big")) {
-            end(mSpannableStringBuilder, Big.class, new RelativeSizeSpan(1.25f));
-        } else if (tag.equalsIgnoreCase("small")) {
-            end(mSpannableStringBuilder, Small.class, new RelativeSizeSpan(0.8f));
-        } else if (tag.equalsIgnoreCase("font")) {
-            endFont(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("blockquote")) {
-            handleP(mSpannableStringBuilder);
-            end(mSpannableStringBuilder, Blockquote.class, new QuoteSpan());
-        } else if (tag.equalsIgnoreCase("tt")) {
-            end(mSpannableStringBuilder, Monospace.class,
-                    new TypefaceSpan("monospace"));
-        } else if (tag.equalsIgnoreCase("a")) {
-            endA(mSpannableStringBuilder);
-        } else if (tag.equalsIgnoreCase("u")) {
-            end(mSpannableStringBuilder, Underline.class, new UnderlineSpan());
-        } else if (tag.equalsIgnoreCase("ins")) {
-            end(mSpannableStringBuilder, Underline.class, new UnderlineSpan());
-        } else if (tag.equalsIgnoreCase("strike")) {
-            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
-        } else if (tag.equalsIgnoreCase("s")) {
-            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
-        } else if (tag.equalsIgnoreCase("del")) {
-            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
-        } else if (tag.equalsIgnoreCase("sup")) {
-            end(mSpannableStringBuilder, Super.class, new SuperscriptSpan());
-        } else if (tag.equalsIgnoreCase("sub")) {
-            end(mSpannableStringBuilder, Sub.class, new SubscriptSpan());
-        } else if (tag.length() == 2 &&
-                Character.toLowerCase(tag.charAt(0)) == 'h' &&
-                tag.charAt(1) >= '1' && tag.charAt(1) <= '6') {
-            handleP(mSpannableStringBuilder);
-            endHeader(mSpannableStringBuilder);
-        } else if (mTagHandler != null) {
-            mTagHandler.handleTag(false, tag, mSpannableStringBuilder, mReader);
+        if (mTagHandler == null || !mTagHandler.handleTag(false, tag,
+                mSpannableStringBuilder, mReader, null)) {
+            if (tag.equalsIgnoreCase("br")) {
+                handleBr(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("p")) {
+                handleP(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("div")) {
+                handleP(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("strong")) {
+                end(mSpannableStringBuilder, Bold.class, new StyleSpan(Typeface.BOLD));
+            } else if (tag.equalsIgnoreCase("b")) {
+                end(mSpannableStringBuilder, Bold.class, new StyleSpan(Typeface.BOLD));
+            } else if (tag.equalsIgnoreCase("em")) {
+                end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
+            } else if (tag.equalsIgnoreCase("cite")) {
+                end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
+            } else if (tag.equalsIgnoreCase("dfn")) {
+                end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
+            } else if (tag.equalsIgnoreCase("i")) {
+                end(mSpannableStringBuilder, Italic.class, new StyleSpan(Typeface.ITALIC));
+            } else if (tag.equalsIgnoreCase("big")) {
+                end(mSpannableStringBuilder, Big.class, new RelativeSizeSpan(1.25f));
+            } else if (tag.equalsIgnoreCase("small")) {
+                end(mSpannableStringBuilder, Small.class, new RelativeSizeSpan(0.8f));
+            } else if (tag.equalsIgnoreCase("font")) {
+                endFont(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("blockquote")) {
+                handleP(mSpannableStringBuilder);
+                end(mSpannableStringBuilder, Blockquote.class, new QuoteSpan());
+            } else if (tag.equalsIgnoreCase("tt")) {
+                end(mSpannableStringBuilder, Monospace.class,
+                        new TypefaceSpan("monospace"));
+            } else if (tag.equalsIgnoreCase("a")) {
+                endA(mSpannableStringBuilder);
+            } else if (tag.equalsIgnoreCase("u")) {
+                end(mSpannableStringBuilder, Underline.class, new UnderlineSpan());
+            } else if (tag.equalsIgnoreCase("ins")) {
+                end(mSpannableStringBuilder, Underline.class, new UnderlineSpan());
+            } else if (tag.equalsIgnoreCase("strike")) {
+                end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
+            } else if (tag.equalsIgnoreCase("s")) {
+                end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
+            } else if (tag.equalsIgnoreCase("del")) {
+                end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
+            } else if (tag.equalsIgnoreCase("sup")) {
+                end(mSpannableStringBuilder, Super.class, new SuperscriptSpan());
+            } else if (tag.equalsIgnoreCase("sub")) {
+                end(mSpannableStringBuilder, Sub.class, new SubscriptSpan());
+            } else if (tag.length() == 2 &&
+                    Character.toLowerCase(tag.charAt(0)) == 'h' &&
+                    tag.charAt(1) >= '1' && tag.charAt(1) <= '6') {
+                handleP(mSpannableStringBuilder);
+                endHeader(mSpannableStringBuilder);
+            }
         }
     }
 
@@ -678,7 +667,8 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
 
         if (d == null) {
-            d = Html.sResources.getDrawable(R.drawable.unknown_image);
+            d = Resources.getSystem().
+                    getDrawable(android.R.drawable.ic_menu_gallery);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
         }
 
