@@ -18,6 +18,7 @@ package com.hippo.nimingban.ui;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 
@@ -29,8 +30,10 @@ import com.tendcloud.tenddata.TCAgent;
 
 public abstract class AbsPreferenceActivity extends AppCompatPreferenceActivity implements Messenger.Receiver {
 
+    @StyleRes
     protected abstract int getLightThemeResId();
 
+    @StyleRes
     protected abstract int getDarkThemeResId();
 
     private boolean mHasResume;
