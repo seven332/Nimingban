@@ -22,14 +22,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.support.customtabs.CustomTabsIntent;
 import android.text.TextUtils;
 
-import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.ac.NMBUriParser;
 import com.hippo.nimingban.ui.PostActivity;
 import com.hippo.nimingban.ui.WebViewActivity;
-import com.hippo.yorozuya.ResourcesUtils;
 
 public final class OpenUrlHelper {
 
@@ -56,19 +53,6 @@ public final class OpenUrlHelper {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 context.startActivity(intent);
-                return;
-            }
-        }
-
-        // CustomTabs
-        if (context instanceof Activity) {
-            String packageName = CustomTabsHelper.getPackageNameToUseFixed(context);
-            if (packageName != null) {
-                new CustomTabsIntent.Builder()
-                        .setToolbarColor(ResourcesUtils.getAttrColor(context, R.attr.colorPrimary))
-                        .setShowTitle(true)
-                        .build()
-                        .launchUrl((Activity) context, uri);
                 return;
             }
         }
