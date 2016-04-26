@@ -57,13 +57,11 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     LOCAL_SRC_FILES += \
     simd/jsimd_arm.c \
     simd/jsimd_arm_neon.S
-    LOCAL_SHARED_LIBRARIES += cpufeatures
 else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/../cpufeatures
     LOCAL_SRC_FILES += \
     simd/jsimd_arm64.c \
     simd/jsimd_arm64_neon.S
-    LOCAL_SHARED_LIBRARIES += cpufeatures
 else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_SRC_FILES += \
     simd/jsimd_i386.c \
@@ -88,6 +86,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     simd/jquant-sse.asm \
     simd/jccolor-sse2.asm \
     simd/jcgray-sse2.asm \
+    simd/jchuff-sse2.asm \
     simd/jcsample-sse2.asm \
     simd/jdcolor-sse2.asm \
     simd/jdmerge-sse2.asm \
@@ -107,6 +106,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86_64)
     simd/jfdctflt-sse-64.asm \
     simd/jccolor-sse2-64.asm \
     simd/jcgray-sse2-64.asm \
+    simd/jchuff-sse2-64.asm \
     simd/jcsample-sse2-64.asm \
     simd/jdcolor-sse2-64.asm \
     simd/jdmerge-sse2-64.asm \
@@ -120,6 +120,14 @@ else ifeq ($(TARGET_ARCH_ABI), x86_64)
     simd/jquantf-sse2-64.asm \
     simd/jquanti-sse2-64.asm
     LOCAL_ASMFLAGS := -D__x86_64__ -DELF -DPIC
+else ifeq ($(TARGET_ARCH_ABI), mips)
+    LOCAL_SRC_FILES += \
+    simd/jsimd_mips.c \
+    simd/jsimd_mips_dspr2.S
+else ifeq ($(TARGET_ARCH_ABI), mips64)
+    LOCAL_SRC_FILES += \
+    simd/jsimd_mips.c \
+    simd/jsimd_mips_dspr2.S
 else
     LOCAL_SRC_FILES += jsimd_none.c
 endif

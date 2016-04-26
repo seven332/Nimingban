@@ -13,11 +13,11 @@
 # limitations under the License.
 
 APP_ABI := all
-APP_PLATFORM := android-15
+APP_PLATFORM := android-14
 APP_OPTIM := release
 
 APP_CFLAGS += -ffunction-sections -fdata-sections -fPIC
 APP_CPPFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -fPIC
 APP_LDFLAGS += -Wl,--gc-sections -fPIC
 
-NDK_TOOLCHAIN_VERSION := 4.9
+NDK_TOOLCHAIN_VERSION := clang
