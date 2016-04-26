@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSON;
 import com.hippo.conaco.Conaco;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.client.NMBClient;
+import com.hippo.nimingban.client.NMBDns;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.data.ACSite;
@@ -319,6 +320,7 @@ public final class NMBApplication extends Application
                     .connectTimeout(15, TimeUnit.SECONDS)
                     .readTimeout(15, TimeUnit.SECONDS)
                     .writeTimeout(15, TimeUnit.SECONDS)
+                    .dns(new NMBDns())
                     .cookieJar(new CookieDBJar(getSimpleCookieStore(context)))
                     .build();
         }
