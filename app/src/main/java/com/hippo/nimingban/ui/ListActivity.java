@@ -651,31 +651,34 @@ public final class ListActivity extends AbsActivity
         mNMBClient.execute(request);
     }
 
+    // Update current forum and update UI
+    private void updateCurrentForum(Forum forum) {
+        mCurrentForum = forum;
+        mRightDrawer.setActivatedForum(forum);
+        updateTitleByForum(mCurrentForum);
+    }
+
     private void updateForums(boolean firstTime) {
         Forum currentForum = mCurrentForum;
         List<DisplayForum> forums = DB.getACForums(true); // TODO DB.getForums
         mRightDrawer.setForums(forums);
 
+        // Try to find the same forum
         if (currentForum != null) {
             for (DisplayForum forum : forums) {
                 if (currentForum.getNMBSite() == forum.getNMBSite() &&
                         currentForum.getNMBId().equals(forum.getNMBId())) {
-                    if (!currentForum.getNMBDisplayname().equals(forum.getNMBDisplayname())) {
-                        updateTitleByForum(forum);
-                    }
-                    mCurrentForum = forum;
+                    updateCurrentForum(forum);
                     return;
                 }
             }
         }
 
         if (forums.size() > 0) {
-            mCurrentForum = forums.get(0);
+            updateCurrentForum(forums.get(0));
         } else {
-            mCurrentForum = null;
+            updateCurrentForum(null);
         }
-
-        updateTitleByForum(mCurrentForum);
 
         if (firstTime) {
             mPostHelper.firstRefresh();
@@ -901,8 +904,7 @@ public final class ListActivity extends AbsActivity
         if (mCurrentForum == null ||
                 (mCurrentForum.getNMBSite() != forum.getNMBSite() ||
                         !mCurrentForum.getNMBId().equals(forum.getNMBId()))) {
-            mCurrentForum = forum;
-            updateTitleByForum(mCurrentForum);
+            updateCurrentForum(forum);
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }

@@ -48,6 +48,8 @@ public final class RightDrawer extends EasyRecyclerView
 
     private RightDrawerHelper mRightDrawerHelper;
 
+    private Forum mActivatedForum;
+
     private int mFitPaddingTop = 0;
     private int mActionBarHeight = 0;
 
@@ -87,6 +89,11 @@ public final class RightDrawer extends EasyRecyclerView
 
     public void setRightDrawerHelper(RightDrawerHelper listener) {
         mRightDrawerHelper = listener;
+    }
+
+    public void setActivatedForum(Forum forum) {
+        mActivatedForum = forum;
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -151,6 +158,7 @@ public final class RightDrawer extends EasyRecyclerView
             Object data = mForums.get(position);
             if (data instanceof Forum && getItemViewType(position) == TYPE_FORUM) {
                 ((TextView) holder.itemView).setText(((Forum) data).getNMBDisplayname());
+                holder.itemView.setActivated(data == mActivatedForum);
             }
         }
 

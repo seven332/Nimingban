@@ -23,9 +23,12 @@
         <attr name="colorDrawablePrimaryInverse" format="color"/>
         <attr name="colorPure" format="color"/>
         <attr name="colorPureInverse" format="color"/>
-        <attr name="preferenceHeaderTitleColor" format="color"/>
         <attr name="colorRoundSide" format="color"/>
         <attr name="colorKeyboardBackground" format="color"/>
+
+        <attr name="preferenceHeaderTitleColor" format="color"/>
+        <attr name="itemForumDrawerText" format="color"/>
+        <attr name="itemForumDrawerBackground" format="reference"/>
 
         <attr name="dark" format="boolean"/>
     </declare-styleable>

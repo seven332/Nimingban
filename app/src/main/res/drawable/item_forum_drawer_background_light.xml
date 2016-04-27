@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,16 +15,10 @@
   ~ limitations under the License.
   -->
 
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:singleLine="true"
-    android:ellipsize="end"
-    android:gravity="center_vertical"
-    android:minHeight="48dp"
-    android:textSize="@dimen/text_little_small"
-    android:textColor="?attr/itemForumDrawerText"
-    android:background="?attr/itemForumDrawerBackground"/>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_activated="true" android:drawable="@drawable/grey_200"/>
+    <item android:drawable="@drawable/transparent"/>
+
+</selector>

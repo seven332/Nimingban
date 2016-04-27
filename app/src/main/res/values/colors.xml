@@ -67,6 +67,8 @@
     <color name="deep_orange_400">#ffff7043</color>
     <color name="deep_orange_500">#ffff5722</color>
     <color name="deep_orange_700">#ffe64a19</color>
+    <color name="grey_200">#ffeeeeee</color>
+    <color name="grey_800">#ff424242</color>
 
     <color name="green_ntr">#ff789922</color>
 
