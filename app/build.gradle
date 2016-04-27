@@ -51,13 +51,11 @@ task copyNotice(type: Copy) {
     into './src/main/assets'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(AbstractCompile) {
     compileTask -> compileTask.dependsOn copyNotice
 }
 
 clean {
-    delete file('src/main/obj').absolutePath
-    delete file('src/main/libs').absolutePath
     delete file('src/main/assets/NOTICE').absolutePath
 }
 
