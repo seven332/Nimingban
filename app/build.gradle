@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 /*
  * Copyright 2015 Hippo Seven
  *
@@ -15,6 +13,8 @@ import org.apache.tools.ant.taskdefs.condition.Os
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: 'com.android.application'
 
@@ -51,64 +51,56 @@ android {
             jniLibs.srcDir 'src/main/libs'
         }
     }
+}
 
-    // noinspection GroovyAssignabilityCheck
-    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
-        def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
-        if (ndkDir == null) {
-            ndkDir = System.getenv('NDK_HOME')
-        }
-        assert ndkDir != null
-        def ndkBuilder
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            ndkBuilder = 'ndk-build.cmd'
-        } else {
-            ndkBuilder = 'ndk-build'
-        }
-        commandLine "$ndkDir/$ndkBuilder",
-                '-C', file('src/main/jni').absolutePath,
-                '-j', Runtime.runtime.availableProcessors()
+task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+    def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
+    if (ndkDir == null) {
+        ndkDir = System.getenv('NDK_HOME')
     }
-
-    //noinspection GroovyAssignabilityCheck
-    task renameGifSicle(type: Copy) {
-        from('./src/main/libs/arm64-v8a') {
-            include 'gifsicle'
-            into 'arm64-v8a'
-        }
-        from('./src/main/libs/armeabi') {
-            include 'gifsicle'
-            into 'armeabi'
-        }
-        from('./src/main/libs/armeabi-v7a') {
-            include 'gifsicle'
-            into 'armeabi-v7a'
-        }
-        from('./src/main/libs/mips') {
-            include 'gifsicle'
-            into 'mips'
-        }
-        from('./src/main/libs/mips64') {
-            include 'gifsicle'
-            into 'mips64'
-        }
-        from('./src/main/libs/x86') {
-            include 'gifsicle'
-            into 'x86'
-        }
-        from('./src/main/libs/x86_64') {
-            include 'gifsicle'
-            into 'x86_64'
-        }
-        into './src/main/libs'
-        rename 'gifsicle', 'libgifsicle-executable.so'
+    assert ndkDir != null
+    def ndkBuilder
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        ndkBuilder = 'ndk-build.cmd'
+    } else {
+        ndkBuilder = 'ndk-build'
     }
+    commandLine "$ndkDir/$ndkBuilder",
+            '-C', file('src/main/jni').absolutePath,
+            '-j', Runtime.runtime.availableProcessors()
+}
 
-    renameGifSicle.dependsOn ndkBuild
-
-    tasks.withType(JavaCompile) {
-        compileTask -> compileTask.dependsOn renameGifSicle
+task renameGifSicle(type: Copy) {
+    from('./src/main/libs/arm64-v8a') {
+        include 'gifsicle'
+        into 'arm64-v8a'
     }
+    from('./src/main/libs/armeabi') {
+        include 'gifsicle'
+        into 'armeabi'
+    }
+    from('./src/main/libs/armeabi-v7a') {
+        include 'gifsicle'
+        into 'armeabi-v7a'
+    }
+    from('./src/main/libs/mips') {
+        include 'gifsicle'
+        into 'mips'
+    }
+    from('./src/main/libs/mips64') {
+        include 'gifsicle'
+        into 'mips64'
+    }
+    from('./src/main/libs/x86') {
+        include 'gifsicle'
+        into 'x86'
+    }
+    from('./src/main/libs/x86_64') {
+        include 'gifsicle'
+        into 'x86_64'
+    }
+    into './src/main/libs'
+    rename 'gifsicle', 'libgifsicle-executable.so'
 }
 
 task copyNotice(type: Copy) {
@@ -116,9 +108,17 @@ task copyNotice(type: Copy) {
     into './src/main/assets'
 }
 
+renameGifSicle.dependsOn ndkBuild
+copyNotice.dependsOn renameGifSicle
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn copyNotice
+}
+
 clean {
     delete file('src/main/obj').absolutePath
     delete file('src/main/libs').absolutePath
+    delete file('src/main/assets/NOTICE').absolutePath
 }
 
 dependencies {
