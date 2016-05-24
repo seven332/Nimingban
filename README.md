@@ -21,7 +21,6 @@ Windows
     > git clone https://github.com/seven332/Nimingban
     > cd Nimingban
     > git submodule update --init
-    > gradlew daogenerator:executeDaoGenerator
     > gradlew app:assembleDebug
 
 Linux
@@ -29,7 +28,6 @@ Linux
     $ git clone https://github.com/seven332/Nimingban
     $ cd Nimingban
     $ git submodule update --init
-    $ ./gradlew daogenerator:executeDaoGenerator
     $ ./gradlew app:assembleDebug
 
 生成的 apk 文件在 app\build\outputs\apk 目录下

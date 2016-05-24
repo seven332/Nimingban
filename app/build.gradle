@@ -49,6 +49,7 @@ android {
 task copyNotice(type: Copy) {
     from '../NOTICE'
     into './src/main/assets'
+    finalizedBy ':daogenerator:executeDaoGenerator'
 }
 
 tasks.withType(AbstractCompile) {
