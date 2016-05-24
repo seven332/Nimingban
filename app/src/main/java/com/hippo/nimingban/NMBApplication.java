@@ -200,7 +200,7 @@ public final class NMBApplication extends Application
             Settings.putGuideListActivity(true);
         }
 
-        if (oldVersionCode < 20) {
+        if (oldVersionCode < 42) {
             Settings.putSetAnalysis(false);
             Settings.putAnalysis(false);
         }
