@@ -26,12 +26,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.nimingban.Constants;
-import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Utilities;
-import com.tendcloud.tenddata.TCAgent;
 
 public abstract class AbsActivity extends AppCompatActivity implements Messenger.Receiver {
 
@@ -41,7 +40,7 @@ public abstract class AbsActivity extends AppCompatActivity implements Messenger
     @StyleRes
     protected abstract int getDarkThemeResId();
 
-    private boolean mHasResume;
+    private boolean mTrackStarted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +59,22 @@ public abstract class AbsActivity extends AppCompatActivity implements Messenger
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
-        if (NMBApplication.hasInitTCAgent(this) && Settings.getAnalysis()) {
-            mHasResume = true;
-            TCAgent.onResume(this);
-        } else {
-            mHasResume = false;
+        if (Settings.getAnalysis()) {
+            EasyTracker.getInstance(this).activityStart(this);
+            mTrackStarted = true;
         }
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
 
-        if (mHasResume) {
-            TCAgent.onPause(this);
+        if (mTrackStarted) {
+            EasyTracker.getInstance(this).activityStop(this);
+            mTrackStarted = false;
         }
     }
 

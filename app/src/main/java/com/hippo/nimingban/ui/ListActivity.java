@@ -62,7 +62,6 @@ import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.easyrecyclerview.RawMarginItemDecoration;
-import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.GuideHelper;
 import com.hippo.nimingban.NMBApplication;
@@ -235,15 +234,9 @@ public final class ListActivity extends AbsActivity
             @Override
             public void onDrawerOpened(View view) {
                 if (mLeftDrawer == view) {
-                    // Analysis
-                    Analysis.action(ListActivity.this, "open_left_drawer");
-
                     super.onDrawerOpened(view);
                 }
                 if (mRightDrawer == view) {
-                    // Analysis
-                    Analysis.action(ListActivity.this, "open_right_drawer");
-
                     setMenuItemVisible(mRule, false);
                     setMenuItemVisible(mCreatePost, false);
                     setMenuItemVisible(mRefresh, false);
@@ -1324,9 +1317,6 @@ public final class ListActivity extends AbsActivity
 
         @Override
         public void onSuccess(List<Post> result) {
-            // Analysis
-            Analysis.getPostList(ListActivity.this, mForumId, mTaskPage, true);
-
             if (mNMBRequest == mRequest) {
                 // It is current request
 
@@ -1347,9 +1337,6 @@ public final class ListActivity extends AbsActivity
 
         @Override
         public void onFailure(Exception e) {
-            // Analysis
-            Analysis.getPostList(ListActivity.this, mForumId, mTaskPage, false);
-
             if (mNMBRequest == mRequest) {
                 // It is current request
 

@@ -50,7 +50,6 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.SimpleHandler;
-import com.tendcloud.tenddata.TCAgent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -121,14 +120,6 @@ public final class NMBApplication extends Application
             update();
         } catch (PackageManager.NameNotFoundException e) {
             // Ignore
-        }
-
-        // TCAgent
-        if (Settings.getAnalysis()) {
-            mHasInitTCAgent = true;
-            TCAgent.init(this);
-        } else {
-            mHasInitTCAgent = false;
         }
 
         if (LOG_NATIVE_MEMORY) {
@@ -248,10 +239,6 @@ public final class NMBApplication extends Application
                 mConaco.clearMemoryCache();
             }
         }
-    }
-
-    public static boolean hasInitTCAgent(Context context) {
-        return ((NMBApplication) context.getApplicationContext()).mHasInitTCAgent;
     }
 
     public static void updateNetworkState(Context context) {

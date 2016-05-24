@@ -51,7 +51,6 @@ import android.widget.Toast;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.effect.ViewTransition;
-import com.hippo.nimingban.Analysis;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
@@ -203,9 +202,6 @@ public class PostFragment extends BaseFragment
             getFragmentHost().finishFragment(this);
             return;
         }
-
-        // Analysis
-        Analysis.readPost(getContext(), mId);
     }
 
     @Nullable
