@@ -106,7 +106,7 @@ public class GalleryActivity2 extends SwipeActivity {
         } else if (ACTION_IMAGE_FILE.equals(action)) {
             Uri fileUri = intent.getParcelableExtra(KEY_UNI_FILE_URI);
             UniFile file = UniFile.fromUri(this, fileUri);
-            if (file != null && file.exists()) {
+            if (file != null) {
                 mGalleryAdapter = new ImageFileAdapter(file);
                 return true;
             }
