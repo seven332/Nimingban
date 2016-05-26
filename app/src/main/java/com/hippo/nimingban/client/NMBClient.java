@@ -352,7 +352,11 @@ public class NMBClient {
                         if (!mStop) {
                             mCall = call;
                             Response response = call.execute();
-                            return JSON.parseObject(response.body().string(), Notice.class);
+                            Notice notice = JSON.parseObject(response.body().string(), Notice.class);
+                            if (notice == null) {
+                                throw new Exception("No notice");
+                            }
+                            return notice;
                         } else {
                             throw new CancelledException();
                         }
