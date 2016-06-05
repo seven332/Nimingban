@@ -105,7 +105,7 @@ public class DaDiaoService extends Service {
                         .setContentTitle(getString(R.string.da_diao_service))
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setColor(getResources().getColor(R.color.purple_500))
+                        .setColor(getResources().getColor(R.color.colorPrimary))
                         .setPriority(NotificationCompat.PRIORITY_MIN)
                         .setCategory(NotificationCompat.CATEGORY_SERVICE)
                         .build();

@@ -260,7 +260,7 @@ public class PostFragment extends BaseFragment
         };
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
-        mOpColor = getResources().getColor(R.color.green_ntr);
+        mOpColor = getResources().getColor(R.color.colorAccent);
 
         // Refresh
         mReplyHelper.firstRefresh();

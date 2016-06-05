@@ -23,9 +23,9 @@
     </style>
 
     <style name="AppAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/green_ntr</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
         <item name="colorDrawablePrimaryInverse">@color/primary_drawable_dark</item>
@@ -46,9 +46,9 @@
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/green_ntr</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
         <item name="colorDrawablePrimaryInverse">@color/primary_drawable_dark</item>
@@ -119,9 +119,9 @@
 
 
     <style name="AppAlertDialogTheme.Dark" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/green_ntr</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorDivider">@color/divider_dark</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
         <item name="colorDrawablePrimaryInverse">@color/primary_drawable_light</item>
@@ -142,9 +142,9 @@
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/green_ntr</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorDivider">@color/divider_dark</item>
         <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
         <item name="colorDrawablePrimaryInverse">@color/primary_drawable_light</item>
