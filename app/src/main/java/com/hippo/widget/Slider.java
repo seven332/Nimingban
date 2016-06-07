@@ -433,7 +433,7 @@ public class Slider extends View {
                     startProgressAnimation(percent);
 
                     if (mListener != null) {
-                        mListener.onSetProgress(this, mProgress, progress, true, false);
+                        mListener.onSetProgress(this, progress, mProgress, true, false);
                     }
                 }
 
