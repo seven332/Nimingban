@@ -63,8 +63,7 @@
                 android:id="@+id/image"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:padding="12dp"
-                app:srcCompat="@drawable/v_image_dark_x24"/>
+                android:padding="12dp"/>
 
             <ImageView
                 android:id="@+id/undo"

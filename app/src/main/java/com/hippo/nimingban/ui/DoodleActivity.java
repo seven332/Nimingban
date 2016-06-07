@@ -61,7 +61,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
     private View mPalette;
     private View mThickness;
     private ImageView mDrawAction;
-    private View mImage;
+    private ImageView mImage;
     private ImageView mUndo;
     private ImageView mRedo;
     private View mClear;
@@ -104,7 +104,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         mPalette = findViewById(R.id.palette);
         mThickness = findViewById(R.id.thickness);
         mDrawAction = (ImageView) findViewById(R.id.draw_action);
-        mImage = findViewById(R.id.image);
+        mImage = (ImageView) findViewById(R.id.image);
         mUndo = (ImageView) findViewById(R.id.undo);
         mRedo = (ImageView) findViewById(R.id.redo);
         mClear = findViewById(R.id.clear);
@@ -133,6 +133,13 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         actionDrawable.addState(new int[]{},
                 DrawableManager.getDrawable(this, R.drawable.v_brush_dark_x24));
         mDrawAction.setImageDrawable(actionDrawable);
+
+        StateListDrawable imageDrawable = new StateListDrawable();
+        imageDrawable.addState(new int[]{android.R.attr.state_activated},
+                DrawableManager.getDrawable(this, R.drawable.v_image_off_dark_x24));
+        imageDrawable.addState(new int[]{},
+                DrawableManager.getDrawable(this, R.drawable.v_image_dark_x24));
+        mImage.setImageDrawable(imageDrawable);
 
         Ripple.addRipple(mPalette, true);
         Ripple.addRipple(mThickness, true);
@@ -219,6 +226,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
                         mDoodleView.getWidth(), mDoodleView.getHeight());
                 if (bitmap != null) {
                     mDoodleView.insertBitmap(bitmap);
+                    mImage.setActivated(true);
                 }
             } catch (OutOfMemoryError e) {
                 // Ignore
@@ -265,7 +273,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
 
     private class PickColorDialogHelper implements DialogInterface.OnClickListener {
 
-        private ColorPickerView mView;
+        private final ColorPickerView mView;
 
         public PickColorDialogHelper() {
             mView = new ColorPickerView(DoodleActivity.this);
@@ -295,9 +303,9 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
 
     private class ThicknessDialogHelper implements DialogInterface.OnClickListener, Slider.OnSetProgressListener {
 
-        private View mView;
-        private ThicknessPreviewView mTpv;
-        private Slider mSlider;
+        private final View mView;
+        private final ThicknessPreviewView mTpv;
+        private final Slider mSlider;
 
         @SuppressLint("InflateParams")
         public ThicknessDialogHelper() {
@@ -368,11 +376,16 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
             mDrawAction.setActivated(newActivated);
             mDoodleView.setEraser(newActivated);
         } else if (mImage == v) {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-                    getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
+            if (mDoodleView.hasInsertBitmap()) {
+                mDoodleView.insertBitmap(null);
+                mImage.setActivated(false);
+            } else {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,
+                        getString(R.string.select_picture)), REQUEST_CODE_SELECT_IMAGE);
+            }
         } else if (mUndo == v) {
             mDoodleView.undo();
         } else if (mRedo == v) {

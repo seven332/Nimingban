@@ -44,11 +44,18 @@ public class DoodleView extends View {
 
     private static final float TOUCH_TOLERANCE = 4;
 
+    @Nullable
     private Bitmap mBitmap;
+    @Nullable
     private Canvas mCanvas;
     private Paint mBitmapPaint;
     private Path mPath;
     private Paint mPaint;
+
+    @Nullable
+    private Bitmap mInsertBitmap;
+    private int mOffsetX;
+    private int mOffsetY;
 
     private int mBgColor;
 
@@ -61,13 +68,14 @@ public class DoodleView extends View {
 
     private boolean mEraser = false;
 
-    private Rect mSrc = new Rect();
-    private Rect mDst = new Rect();
+    private final Rect mDst = new Rect();
 
     private Recycler mRecycler;
 
+    @Nullable
     private Helper mHelper;
 
+    @Nullable
     private SaveTask mSaveTask;
 
     public DoodleView(Context context) {
@@ -86,7 +94,7 @@ public class DoodleView extends View {
     }
 
     private void init(Context context) {
-        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+        mBitmapPaint = new Paint(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 
         mBgColor = ResourcesUtils.getAttrColor(context, R.attr.colorPure);
 
@@ -125,21 +133,70 @@ public class DoodleView extends View {
         mEraser = eraser;
     }
 
-    public void setHelper(Helper helper) {
+    public void setHelper(@Nullable Helper helper) {
         mHelper = helper;
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+
+        onResize(w, h);
+    }
+
+    private void onResize(int width, int height) {
+        clearStore();
+
+        if (mBitmap != null) {
+            mBitmap.recycle();
+        }
+
+        int bitmapWidth;
+        int bitmapHeight;
+        if (mInsertBitmap == null) {
+            bitmapWidth = width;
+            bitmapHeight = height;
+            mOffsetX = 0;
+            mOffsetY = 0;
+        } else {
+            int insertWidth = mInsertBitmap.getWidth();
+            int insertHeight = mInsertBitmap.getHeight();
+            float insertScale = (float) insertWidth / (float) insertHeight;
+            float scale = (float) width / (float) height;
+            if (insertScale > scale) {
+                bitmapWidth = width;
+                bitmapHeight = (int) (bitmapWidth / insertScale);
+            } else {
+                bitmapHeight = height;
+                bitmapWidth = (int) (bitmapHeight * insertScale);
+            }
+            mOffsetX = (width - bitmapWidth) / 2;
+            mOffsetY = (height - bitmapHeight) / 2;
+        }
+
+        mBitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
-        mCanvas.drawColor(mBgColor);
+
+        if (mInsertBitmap == null) {
+            mCanvas.drawColor(mBgColor);
+        } else {
+            mDst.set(0, 0, bitmapWidth, bitmapHeight);
+            mCanvas.drawBitmap(mInsertBitmap, null, mDst, mBitmapPaint);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+        if (mBitmap == null) {
+            return;
+        }
+
+        canvas.drawBitmap(mBitmap, mOffsetX, mOffsetY, mBitmapPaint);
+
+        int saved = canvas.save();
+
+        canvas.translate(mOffsetX, mOffsetY);
+        canvas.clipRect(0, 0, mBitmap.getWidth(), mBitmap.getHeight());
 
         drawStore(canvas, mPaint);
 
@@ -150,6 +207,8 @@ public class DoodleView extends View {
         } else {
             canvas.drawPath(mPath, mPaint);
         }
+
+        canvas.restoreToCount(saved);
     }
 
     private boolean isLocked() {
@@ -203,8 +262,8 @@ public class DoodleView extends View {
             return true;
         }
 
-        float x = event.getX();
-        float y = event.getY();
+        float x = event.getX() - mOffsetX;
+        float y = event.getY() - mOffsetY;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -224,54 +283,33 @@ public class DoodleView extends View {
     }
 
     public void clear() {
-        if (isLocked()) {
+        if (isLocked() || mCanvas == null || mBitmap == null) {
             return;
         }
 
-        mCanvas.drawColor(mBgColor);
+        if (mInsertBitmap == null) {
+            mCanvas.drawColor(mBgColor);
+        } else {
+            mDst.set(0, 0, mBitmap.getWidth(), mBitmap.getHeight());
+            mCanvas.drawBitmap(mInsertBitmap, null, mDst, mBitmapPaint);
+        }
+
         mPath.reset();
         clearStore();
         invalidate();
     }
 
-    public void insertBitmap(@NonNull Bitmap bitmap) {
-        flush();
-
-        int bitmapWidth = bitmap.getWidth();
-        int bitmapHeight = bitmap.getHeight();
-        int width = getWidth();
-        int height = getHeight();
-        float bitmapScale = (float) bitmapWidth / (float) bitmapHeight;
-        float scale = (float) width / (float) height;
-        int outWidth;
-        int outHeight;
-        if (bitmapScale > scale) {
-            outWidth = width;
-            outHeight = (int) (outWidth / bitmapScale);
-        } else {
-            outHeight = height;
-            outWidth = (int) (outHeight * bitmapScale);
-        }
-
-        mSrc.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        mDst.set(0, 0, outWidth, outHeight);
-        mCanvas.drawBitmap(bitmap, mSrc, mDst, null);
-
-        invalidate();
+    public boolean hasInsertBitmap() {
+        return mInsertBitmap != null;
     }
 
-    public void flush() {
-        drawStore(mCanvas, mPaint);
-
-        mPaint.setColor(mEraser ? mBgColor : mColor);
-        mPaint.setStrokeWidth(mWidth);
-        if (mIsDot) {
-            mCanvas.drawPoint(mX, mY, mPaint);
-        } else {
-            mCanvas.drawPath(mPath, mPaint);
+    public void insertBitmap(@Nullable Bitmap bitmap) {
+        if (mInsertBitmap != null) {
+            mInsertBitmap.recycle();
         }
-
-        clearStore();
+        mInsertBitmap = bitmap;
+        onResize(getWidth(), getHeight());
+        invalidate();
     }
 
     public void save(@NonNull File file) {
@@ -287,7 +325,7 @@ public class DoodleView extends View {
 
     private int mStop = 0;
     private int mSize = 0;
-    private DrawInfo[] mData = new DrawInfo[CAPACITY];
+    private final DrawInfo[] mData = new DrawInfo[CAPACITY];
 
     public boolean canUndo() {
         return mStop > 0;
@@ -389,7 +427,7 @@ public class DoodleView extends View {
     private static class DrawInfo {
         private int mColor;
         private float mWidth;
-        private Path mPath;
+        private final Path mPath;
         private float mStartX;
         private float mStartY;
         private boolean mIsDot;
@@ -422,7 +460,7 @@ public class DoodleView extends View {
 
         private int mSize = 0;
 
-        private Stack<DrawInfo> mStack = new Stack<>();
+        private final Stack<DrawInfo> mStack = new Stack<>();
 
         @Nullable
         private DrawInfo obtain() {
@@ -455,7 +493,7 @@ public class DoodleView extends View {
 
     private class SaveTask extends AsyncTask<Void, Void, Boolean> {
 
-        private File mFile;
+        private final File mFile;
 
         public SaveTask(File file) {
             mFile = file;
@@ -469,9 +507,17 @@ public class DoodleView extends View {
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            if (mBitmap == null) {
+                return false;
+            }
+
             OutputStream os = null;
             try {
                 os = new FileOutputStream(mFile);
+
+
+
+
                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
                 return true;
             } catch (FileNotFoundException e) {
