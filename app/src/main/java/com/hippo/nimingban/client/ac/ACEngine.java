@@ -45,6 +45,7 @@ import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.util.BitmapUtils;
+import com.hippo.util.Gifsicle;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
@@ -62,7 +63,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -73,7 +73,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ACEngine {
+public final class ACEngine {
+    private ACEngine() {}
 
     private static final String TAG = ACEngine.class.getSimpleName();
 
@@ -616,26 +617,11 @@ public class ACEngine {
     private static final long MAX_IMAGE_SIZE = 2000 * 1024;
 
     private static boolean compressGifSicle(File input, File output) throws IOException {
-        File gifsicle = new File(NMBAppConfig.getNativeLibDir(), "libgifsicle-executable.so");
-        if (!gifsicle.canExecute()) {
-            return false;
-        }
-
         float scale = (float) Math.sqrt((float) MAX_IMAGE_SIZE / (float) input.length());
         for (int i = 0; i < 5 && scale > 0.0001; i++) {
-            String cmd = String.format(Locale.US, "%s --scale %f --output %s %s",
-                    gifsicle.getPath(), scale, output.getPath(), input.getPath());
-            Process process = Runtime.getRuntime().exec(cmd);
-            try {
-                if (process.waitFor() != 0) {
-                    return false;
-                }
-                if (output.length() < MAX_IMAGE_SIZE) {
-                    return true;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                return false;
+            Gifsicle.main("--scale", Float.toString(scale), "--output", output.getPath(), input.getPath());
+            if (output.length() < MAX_IMAGE_SIZE) {
+                return true;
             }
             scale -= 0.05;
         }
