@@ -83,8 +83,6 @@ public final class NMBApplication extends Application
 
     private boolean mConnectedWifi;
 
-    private boolean mHasInitTCAgent;
-
     @Override
     public void onCreate() {
         super.onCreate();
