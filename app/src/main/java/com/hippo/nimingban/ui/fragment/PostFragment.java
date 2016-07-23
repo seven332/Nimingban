@@ -872,7 +872,9 @@ public class PostFragment extends BaseFragment
             }
 
             holder.content.setTextSize(Settings.getFontSize());
-            holder.content.setLineSpacing(LayoutUtils.dp2pix(getContext(), Settings.getLineSpacing()), 1.0f);
+            // NOTE getContext() may return null
+            holder.content.setLineSpacing(LayoutUtils.dp2pix(holder.content.getContext(),
+                    Settings.getLineSpacing()), 1.0f);
             if (Settings.getFixEmojiDisplay()) {
                 holder.content.useCustomTypeface();
             } else {
