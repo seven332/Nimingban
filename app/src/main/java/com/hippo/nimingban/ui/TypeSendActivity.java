@@ -80,7 +80,7 @@ public final class TypeSendActivity extends TranslucentActivity
                 fragment.setCallback(this);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.add(R.id.fragment_container, fragment, TAG_FRAGMENT_TYPE_SEND);
-                transaction.commit();
+                transaction.commitAllowingStateLoss();
             } else {
                 TypeSendFragment fragment = (TypeSendFragment) getSupportFragmentManager()
                         .findFragmentByTag(TAG_FRAGMENT_TYPE_SEND);

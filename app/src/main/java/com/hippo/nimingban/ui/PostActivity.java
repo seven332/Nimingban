@@ -93,7 +93,7 @@ public final class PostActivity extends SwipeActivity
                 postFragment.setCallback(this);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.add(R.id.fragment_container, postFragment, TAG_FRAGMENT_POST);
-                transaction.commit();
+                transaction.commitAllowingStateLoss();
             } else {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 PostFragment postFragment = (PostFragment) fragmentManager.findFragmentByTag(TAG_FRAGMENT_POST);
@@ -168,7 +168,7 @@ public final class PostActivity extends SwipeActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
             transaction.add(R.id.fragment_container, typeSendFragment, TAG_FRAGMENT_TYPE_SEND);
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
 
             setSwipeBackEnable(false);
         }
@@ -192,7 +192,7 @@ public final class PostActivity extends SwipeActivity
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
             transaction.remove(fragment);
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
 
             setSwipeBackEnable(true);
 
