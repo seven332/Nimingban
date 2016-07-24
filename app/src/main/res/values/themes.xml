@@ -68,6 +68,7 @@
         <item name="android:textColorPrimary">@color/primary_text_light</item>
         <item name="android:textColorSecondary">@color/secondary_text_light</item>
         <item name="android:textColorTertiary">@color/secondary_text_light</item>
+        <item name="android:windowBackground">@color/background_light</item>
     </style>
 
     <style name="AppTheme.Transparent">
@@ -164,6 +165,7 @@
         <item name="android:textColorPrimary">@color/primary_text_dark</item>
         <item name="android:textColorSecondary">@color/secondary_text_dark</item>
         <item name="android:textColorTertiary">@color/secondary_text_dark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
     </style>
 
     <style name="AppTheme.Dark.Transparent">
