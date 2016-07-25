@@ -64,7 +64,7 @@ import java.util.Locale;
  * This class processes HTML strings into displayable styled text.
  * Not all HTML tags are supported.
  */
-public class Html {
+public final class Html {
 
     /**
      * Retrieves images for HTML &lt;img&gt; tags.
@@ -117,7 +117,7 @@ public class Html {
      * a) be preloaded by the zygote, or b) not loaded until absolutely
      * necessary.
      */
-    private static class HtmlParser {
+    private static final class HtmlParser {
         private static final HTMLSchema schema = new HTMLSchema();
     }
 
@@ -439,11 +439,11 @@ class HtmlToSpannedConverter implements ContentHandler {
             1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
     };
 
-    private String mSource;
-    private XMLReader mReader;
-    private SpannableStringBuilder mSpannableStringBuilder;
-    private Html.ImageGetter mImageGetter;
-    private Html.TagHandler mTagHandler;
+    private final String mSource;
+    private final XMLReader mReader;
+    private final SpannableStringBuilder mSpannableStringBuilder;
+    private final Html.ImageGetter mImageGetter;
+    private final Html.TagHandler mTagHandler;
 
     public HtmlToSpannedConverter(
             String source, Html.ImageGetter imageGetter, Html.TagHandler tagHandler,
@@ -903,28 +903,29 @@ class HtmlToSpannedConverter implements ContentHandler {
     @ColorInt
     public static int getHtmlColor(@NonNull String colorString) {
         colorString = colorString.trim();
+        try {
+            return getHtmlColorInternal(colorString);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Unknown color: " + colorString);
+            return -1;
+        }
+    }
+
+    private static int getHtmlColorInternal(@NonNull String colorString) {
         if (colorString.charAt(0) == '#') {
             // Use a long to avoid rollovers on #ffXXXXXX
             long color = Long.parseLong(colorString.substring(1), 16);
-            if (colorString.length() == 7) {
-                // Set the alpha value
-                color |= 0x00000000ff000000;
-            } else if (colorString.length() != 9) {
-                throw new IllegalArgumentException("Unknown color: " + colorString);
-            }
+            color |= 0x00000000ff000000;
             return (int)color;
         } else if (colorString.startsWith("rgb(") && colorString.endsWith(")")) {
             String str = colorString.substring(4, colorString.length() - 1);
             String[] colors = str.split("[\\s]*,[\\s]*");
             if (colors.length == 3) {
-                try {
-                    return Color.argb(0xff, Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Unknown color: " + colorString);
-                }
+                return Color.argb(0xff, Integer.valueOf(colors[0]),
+                        Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
             }
         } else {
-            Integer color = sColorNameMap.get(colorString.toLowerCase(Locale.ROOT));
+            Integer color = sColorNameMap.get(colorString.toLowerCase(Locale.US));
             if (color != null) {
                 return color;
             }
