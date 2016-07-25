@@ -44,6 +44,7 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
@@ -431,6 +432,8 @@ public class Html {
 }
 
 class HtmlToSpannedConverter implements ContentHandler {
+
+    private static final String TAG = HtmlToSpannedConverter.class.getSimpleName();
 
     private static final float[] HEADER_SIZES = {
             1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
@@ -891,8 +894,7 @@ class HtmlToSpannedConverter implements ContentHandler {
 
     /**
      * Parse the color string, and return the corresponding color-int.
-     * If the string cannot be parsed, throws an IllegalArgumentException
-     * exception. Supported formats are:
+     * If the string cannot be parsed, return -1. Supported formats are:
      * #RRGGBB
      * #AARRGGBB
      * rgb(255, 255, 255)
@@ -900,6 +902,7 @@ class HtmlToSpannedConverter implements ContentHandler {
      */
     @ColorInt
     public static int getHtmlColor(@NonNull String colorString) {
+        colorString = colorString.trim();
         if (colorString.charAt(0) == '#') {
             // Use a long to avoid rollovers on #ffXXXXXX
             long color = Long.parseLong(colorString.substring(1), 16);
@@ -926,7 +929,8 @@ class HtmlToSpannedConverter implements ContentHandler {
                 return color;
             }
         }
-        throw new IllegalArgumentException("Unknown color: " + colorString);
+        Log.e(TAG, "Unknown color: " + colorString);
+        return -1;
     }
 
     private static final HashMap<String, Integer> sColorNameMap;
