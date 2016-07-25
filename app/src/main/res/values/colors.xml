@@ -94,7 +94,7 @@
     <color name="round_side_light">#ffececec</color>
     <color name="round_side_dark">#ff3e3e3e</color>
 
-    <color name="background_light">#ffeeeeee</color>
+    <color name="background_light">#fffafafa</color>
     <color name="background_dark">#ff303030</color>
 
     <color name="keyboard_background_light">#ffeceff1</color>
