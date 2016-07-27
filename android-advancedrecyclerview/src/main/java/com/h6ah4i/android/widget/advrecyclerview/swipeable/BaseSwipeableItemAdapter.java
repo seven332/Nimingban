@@ -61,4 +61,6 @@ public interface BaseSwipeableItemAdapter<T extends RecyclerView.ViewHolder> {
      *          {@link SwipeableItemConstants#DRAWABLE_SWIPE_DOWN_BACKGROUND}.
      */
     void onSetSwipeBackground(T holder, int position, @SwipeableItemDrawableTypes int type);
+
+    void onSwipeItemStarted(T holder, int position);
 }

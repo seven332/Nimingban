@@ -249,7 +249,7 @@ class SwipeableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     }
 
     // NOTE: This method is called from RecyclerViewSwipeManager
-    /*package*/ void onSwipeItemStarted(RecyclerViewSwipeManager manager, RecyclerView.ViewHolder holder, long id) {
+    /*package*/ void onSwipeItemStarted(RecyclerViewSwipeManager manager, RecyclerView.ViewHolder holder, int position, long id) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onSwipeItemStarted(holder = " + holder + ", id = " + id + ")");
         }
@@ -257,6 +257,8 @@ class SwipeableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
         mSwipingItemId = id;
 
         notifyDataSetChanged();
+
+        mSwipeableItemAdapter.onSwipeItemStarted(holder, position);
     }
 
     // NOTE: This method is called from RecyclerViewSwipeManager

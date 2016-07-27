@@ -615,6 +615,11 @@ public class SortForumsActivity extends TranslucentActivity {
         }
 
         @Override
+        public boolean onCheckCanDrop(int draggingPosition, int dropPosition) {
+            return true;
+        }
+
+        @Override
         public int onGetSwipeReactionType(ForumHolder holder, int position, int x, int y) {
             return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
         }
