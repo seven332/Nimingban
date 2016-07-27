@@ -127,10 +127,6 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
      * @param rv The {@link android.support.v7.widget.RecyclerView} instance
      */
     public void attachRecyclerView(@NonNull RecyclerView rv) {
-        if (rv == null) {
-            throw new IllegalArgumentException("RecyclerView cannot be null");
-        }
-
         if (isReleased()) {
             throw new IllegalStateException("Accessing released object");
         }
@@ -167,6 +163,10 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
      */
     @SuppressWarnings("unchecked")
     public RecyclerView.Adapter createWrappedAdapter(@NonNull RecyclerView.Adapter adapter) {
+        if (!adapter.hasStableIds()) {
+            throw new IllegalArgumentException("The passed adapter does not support stable IDs");
+        }
+
         if (mAdapter != null) {
             throw new IllegalStateException("already have a wrapped adapter");
         }
@@ -839,6 +839,48 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
     }
 
     /**
+     * <p>Notify any registered observers that the group item reflected at
+     * <code>fromGroupPosition</code> has been moved to <code>toGroupPosition</code>.</p>
+     * <p>This is a structural change event. Representations of other existing items in the data set are
+     * still considered up to date and will not be rebound, though their positions may be altered.</p>
+     *
+     * @param fromGroupPosition Previous position of the group item.
+     * @param toGroupPosition New position of the group item.
+     */
+    public void notifyGroupItemMoved(int fromGroupPosition, int toGroupPosition) {
+        mAdapter.notifyGroupItemMoved(fromGroupPosition, toGroupPosition);
+    }
+
+    /**
+     * <p>Notify any registered observers that the child item reflected at
+     * <code>groupPosition, fromChildPosition</code> has been moved to <code>groupPosition, toChildPosition</code>.</p>
+     * <p>This is a structural change event. Representations of other existing items in the data set are
+     * still considered up to date and will not be rebound, though their positions may be altered.</p>
+     *
+     * @param groupPosition Group position of the child item.
+     * @param fromChildPosition Previous child position of the child item.
+     * @param toChildPosition New child position of the child item.
+     */
+    public void notifyChildItemMoved(int groupPosition, int fromChildPosition, int toChildPosition) {
+        mAdapter.notifyChildItemMoved(groupPosition, fromChildPosition, toChildPosition);
+    }
+
+    /**
+     * <p>Notify any registered observers that the child item reflected at
+     * <code>fromGroupPosition, fromChildPosition</code> has been moved to <code>toGroupPosition, toChildPosition</code>.</p>
+     * <p>This is a structural change event. Representations of other existing items in the data set are
+     * still considered up to date and will not be rebound, though their positions may be altered.</p>
+     * 
+     * @param fromGroupPosition Previous group position of the child item.
+     * @param fromChildPosition Previous child position of the child item.
+     * @param toGroupPosition New group position of the child item.
+     * @param toChildPosition New child position of the child item.
+     */
+    public void notifyChildItemMoved(int fromGroupPosition, int fromChildPosition, int toGroupPosition, int toChildPosition) {
+        mAdapter.notifyChildItemMoved(fromGroupPosition, fromChildPosition, toGroupPosition, toChildPosition);
+    }
+
+    /**
      * Gets the number of groups.
      *
      * @return the number of groups
@@ -888,6 +930,7 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
      * @param topMargin           Top margin
      * @param bottomMargin        Bottom margin
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     public void scrollToGroupWithTotalChildrenHeight(int groupPosition, int totalChildrenHeight, int topMargin, int bottomMargin) {
         long packedPosition = RecyclerViewExpandableItemManager.getPackedPositionForGroup(groupPosition);
         int flatPosition = getFlatPosition(packedPosition);
@@ -907,8 +950,9 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
 
         int parentHeight = mRecyclerView.getHeight();
 
-        int topRoom = groupItemTop;
-        int bottomRoom = parentHeight - groupItemBottom;
+        //noinspection UnnecessaryLocalVariable
+        final int topRoom = groupItemTop;
+        final int bottomRoom = parentHeight - groupItemBottom;
 
         if (topRoom <= topMargin) {
             // scroll down
@@ -930,6 +974,42 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
         }
     }
 
+    /**
+     * Gets the number of expanded groups.
+     *
+     * @return the number of expanded groups
+     */
+    public int getExpandedGroupsCount() {
+        return mAdapter.getExpandedGroupsCount();
+    }
+
+    /**
+     * Gets the number of collapsed groups.
+     *
+     * @return the number of collapsed groups
+     */
+    public int getCollapsedGroupsCount() {
+        return mAdapter.getCollapsedGroupsCount();
+    }
+
+    /**
+     * Whether the all groups are expanded.
+     *
+     * @return True if there is at least 1 group exists and every groups are expanded, otherwise false.
+     */
+    public boolean isAllGroupsExpanded() {
+        return mAdapter.isAllGroupsExpanded();
+    }
+
+    /**
+     * Whether the all groups are expanded.
+     *
+     * @return True if no group exists or every groups are collapsed, otherwise false.
+     */
+    public boolean isAllGroupsCollapsed() {
+        return mAdapter.isAllGroupsCollapsed();
+    }
+
     public static class SavedState implements Parcelable {
         final int[] adapterSavedState;
 
@@ -947,7 +1027,7 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
             dest.writeIntArray(this.adapterSavedState);
         }
 
-        private SavedState(Parcel in) {
+        SavedState(Parcel in) {
             this.adapterSavedState = in.createIntArray();
         }
 

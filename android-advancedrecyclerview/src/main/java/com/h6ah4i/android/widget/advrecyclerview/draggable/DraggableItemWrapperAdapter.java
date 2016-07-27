@@ -27,6 +27,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemInternal
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionDefault;
 import com.h6ah4i.android.widget.advrecyclerview.utils.BaseWrapperAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.utils.CustomRecyclerViewUtils;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.util.List;
@@ -51,6 +52,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     private ItemDraggableRange mDraggableRange;
     private int mDraggingItemInitialPosition = RecyclerView.NO_POSITION;
     private int mDraggingItemCurrentPosition = RecyclerView.NO_POSITION;
+    private int mItemMoveMode;
 
     public DraggableItemWrapperAdapter(RecyclerViewDragDropManager manager, RecyclerView.Adapter<VH> adapter) {
         super(adapter);
@@ -93,18 +95,19 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
             final long itemId = holder.getItemId();
 
             final int origPosition = convertToOriginalPosition(
-                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition);
+                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition, mItemMoveMode);
 
             if (itemId == draggingItemId && holder != mDraggingItemViewHolder) {
-                if (mDraggingItemViewHolder == null) {
-                    if (LOCAL_LOGI) {
-                        Log.i(TAG, "a new view holder object for the currently dragging item is assigned");
-                    }
-                    mDraggingItemViewHolder = holder;
-                    mDragDropManager.onNewDraggingItemViewBound(holder);
-                } else {
-                    Log.e(TAG, "an another view holder object for the currently dragging item is assigned");
+                if (mDraggingItemViewHolder != null) {
+                    onDraggingItemRecycled();
                 }
+
+                if (LOCAL_LOGI) {
+                    Log.i(TAG, "a new view holder object for the currently dragging item is assigned");
+                }
+
+                mDraggingItemViewHolder = holder;
+                mDragDropManager.onNewDraggingItemViewBound(holder);
             }
 
             int flags = Constants.STATE_FLAG_DRAGGING;
@@ -128,7 +131,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     public long getItemId(int position) {
         if (isDragging()) {
             final int origPosition = convertToOriginalPosition(
-                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition);
+                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition, mItemMoveMode);
             return super.getItemId(origPosition);
         } else {
             return super.getItemId(position);
@@ -139,18 +142,18 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     public int getItemViewType(int position) {
         if (isDragging()) {
             final int origPosition = convertToOriginalPosition(
-                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition);
+                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition, mItemMoveMode);
             return super.getItemViewType(origPosition);
         } else {
             return super.getItemViewType(position);
         }
     }
 
-    protected static int convertToOriginalPosition(int position, int dragInitial, int dragCurrent) {
+    protected static int convertToOriginalPosition(int position, int dragInitial, int dragCurrent, int itemMoveMode) {
         if (dragInitial < 0 || dragCurrent < 0) {
             // not dragging
             return position;
-        } else {
+        } else if (itemMoveMode == RecyclerViewDragDropManager.ITEM_MOVE_MODE_DEFAULT) {
             if ((dragInitial == dragCurrent) ||
                     ((position < dragInitial) && (position < dragCurrent)) ||
                     (position > dragInitial) && (position > dragCurrent)) {
@@ -168,6 +171,16 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
                     return position + 1;
                 }
             }
+        } else if (itemMoveMode == RecyclerViewDragDropManager.ITEM_MOVE_MODE_SWAP) {
+            if (position == dragCurrent) {
+                return dragInitial;
+            } else if (position == dragInitial) {
+                return dragCurrent;
+            } else {
+                return position;
+            }
+        } else {
+            throw new IllegalStateException("unexpected state");
         }
     }
 
@@ -231,7 +244,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     }
 
     // NOTE: This method is called from RecyclerViewDragDropManager
-    /*package*/ void onDragItemStarted(DraggingItemInfo draggingItemInfo, RecyclerView.ViewHolder holder, ItemDraggableRange range) {
+    /*package*/ void onDragItemStarted(DraggingItemInfo draggingItemInfo, RecyclerView.ViewHolder holder, ItemDraggableRange range, int itemMoveMode) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onDragItemStarted(holder = " + holder + ")");
         }
@@ -248,6 +261,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
         mDraggingItemInfo = draggingItemInfo;
         mDraggingItemViewHolder = holder;
         mDraggableRange = range;
+        mItemMoveMode = itemMoveMode;
 
         notifyDataSetChanged();
     }
@@ -282,15 +296,19 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     public void onViewRecycled(VH holder) {
         if (isDragging()) {
             if (holder == mDraggingItemViewHolder) {
-                if (LOCAL_LOGI) {
-                    Log.i(TAG, "a view holder object which is bound to currently dragging item is recycled");
-                }
-                mDraggingItemViewHolder = null;
-                mDragDropManager.onDraggingItemViewRecycled();
+                onDraggingItemRecycled();
             }
         }
 
         super.onViewRecycled(holder);
+    }
+
+    private void onDraggingItemRecycled() {
+        if (LOCAL_LOGI) {
+            Log.i(TAG, "a view holder object which is bound to currently dragging item is recycled");
+        }
+        mDraggingItemViewHolder = null;
+        mDragDropManager.onDraggingItemViewRecycled();
     }
 
     // NOTE: This method is called from RecyclerViewDragDropManager
@@ -306,6 +324,16 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     // NOTE: This method is called from RecyclerViewDragDropManager
     /*package*/
     @SuppressWarnings("unchecked")
+    boolean canDropItems(int draggingPosition, int dropPosition) {
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "canDropItems(draggingPosition = " + draggingPosition + ", dropPosition = " + dropPosition + ")");
+        }
+        return mDraggableItemAdapter.onCheckCanDrop(draggingPosition, dropPosition);
+    }
+
+    // NOTE: This method is called from RecyclerViewDragDropManager
+    /*package*/
+    @SuppressWarnings("unchecked")
     ItemDraggableRange getItemDraggableRange(RecyclerView.ViewHolder holder, int position) {
         if (LOCAL_LOGV) {
             Log.v(TAG, "getItemDraggableRange(holder = " + holder + ", position = " + position + ")");
@@ -314,7 +342,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
     }
 
     // NOTE: This method is called from RecyclerViewDragDropManager
-    /*package*/ void moveItem(int fromPosition, int toPosition) {
+    /*package*/ void moveItem(int fromPosition, int toPosition, int layoutType) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onMoveItem(fromPosition = " + fromPosition + ", toPosition = " + toPosition + ")");
         }
@@ -325,7 +353,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
         }
 
         final int origFromPosition = convertToOriginalPosition(
-                fromPosition, mDraggingItemInitialPosition, mDraggingItemCurrentPosition);
+                fromPosition, mDraggingItemInitialPosition, mDraggingItemCurrentPosition, mItemMoveMode);
 
         if (origFromPosition != mDraggingItemInitialPosition) {
             throw new IllegalStateException(
@@ -343,7 +371,11 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
         // Don't move items in wrapped adapter here.
 
         // notify to observers
-        notifyItemMoved(fromPosition, toPosition);
+        if (mItemMoveMode == RecyclerViewDragDropManager.ITEM_MOVE_MODE_DEFAULT && CustomRecyclerViewUtils.isLinearLayout(layoutType)) {
+            notifyItemMoved(fromPosition, toPosition);
+        } else {
+            notifyDataSetChanged();
+        }
     }
 
     protected boolean isDragging() {
@@ -385,7 +417,7 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
 
         if (isDragging()) {
             correctedPosition = convertToOriginalPosition(
-                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition);
+                    position, mDraggingItemInitialPosition, mDraggingItemCurrentPosition, mItemMoveMode);
         } else {
             correctedPosition = position;
         }
@@ -421,11 +453,6 @@ class DraggableItemWrapperAdapter<VH extends RecyclerView.ViewHolder> extends Ba
 
         BaseSwipeableItemAdapter<VH> swipeableItemAdapter = (BaseSwipeableItemAdapter<VH>) adapter;
         swipeableItemAdapter.onSetSwipeBackground(holder, correctedPosition, type);
-    }
-
-    @Override
-    public void onSwipeItemStarted(VH holder, int position) {
-        // Empty
     }
 
     @SuppressWarnings("unchecked")

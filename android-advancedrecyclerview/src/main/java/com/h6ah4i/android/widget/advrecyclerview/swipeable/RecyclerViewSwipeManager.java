@@ -67,7 +67,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
 
     // ---
 
-    private static final int MIN_DISTANCE_TOUCH_SLOP_MUL = 10;
+    private static final int MIN_DISTANCE_TOUCH_SLOP_MUL = 5;
     private static final int SLIDE_ITEM_IMMEDIATELY_SET_TRANSLATION_THRESHOLD_DP = 8;
 
     private static final boolean LOCAL_LOGV = false;
@@ -82,6 +82,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
     private int mTouchSlop;
     private int mMinFlingVelocity; // [pixels per second]
     private int mMaxFlingVelocity; // [pixels per second]
+    private int mSwipeThresholdDistance; // [pixels]
     private int mInitialTouchX;
     private int mInitialTouchY;
     private long mCheckingTouchSlop = RecyclerView.NO_ID;
@@ -92,7 +93,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
     private RecyclerView.ViewHolder mSwipingItem;
     private int mSwipingItemPosition = RecyclerView.NO_POSITION;
     private long mSwipingItemId = RecyclerView.NO_ID;
-    private Rect mSwipingItemMargins = new Rect();
+    private final Rect mSwipingItemMargins = new Rect();
     private int mTouchedItemOffsetX;
     private int mTouchedItemOffsetY;
     private int mLastTouchX;
@@ -136,6 +137,10 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
      */
     @SuppressWarnings("unchecked")
     public RecyclerView.Adapter createWrappedAdapter(@NonNull RecyclerView.Adapter adapter) {
+        if (!adapter.hasStableIds()) {
+            throw new IllegalArgumentException("The passed adapter does not support stable IDs");
+        }
+
         if (mAdapter != null) {
             throw new IllegalStateException("already have a wrapped adapter");
         }
@@ -163,10 +168,6 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
      * @param rv The {@link android.support.v7.widget.RecyclerView} instance
      */
     public void attachRecyclerView(@NonNull RecyclerView rv) {
-        if (rv == null) {
-            throw new IllegalArgumentException("RecyclerView cannot be null");
-        }
-
         if (isReleased()) {
             throw new IllegalStateException("Accessing released object");
         }
@@ -192,6 +193,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
         mTouchSlop = vc.getScaledTouchSlop();
         mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
         mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+        mSwipeThresholdDistance = (int) (mTouchSlop * MIN_DISTANCE_TOUCH_SLOP_MUL);
 
         mItemSlideAnimator = new ItemSlidingAnimator(mAdapter);
         mItemSlideAnimator.setImmediatelySetTranslationThreshold(
@@ -248,6 +250,24 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
      */
     public void setLongPressTimeout(int longPressTimeout) {
         mLongPressTimeout = longPressTimeout;
+    }
+
+    /**
+     * Sets swipe threshold distance.
+     *
+     * @param distanceInPixels Integer specifies threshold distance in pixels.
+     */
+    public void setSwipeThresholdDistance(int distanceInPixels) {
+        mSwipeThresholdDistance = Math.max(distanceInPixels, mTouchSlop);
+    }
+
+    /**
+     * Gets swipe threshold distance.
+     *
+     * @return Threshold distance in pixels.
+     */
+    public int getSwipeThresholdDistance() {
+        return mSwipeThresholdDistance;
     }
 
     /*package*/ boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
@@ -387,7 +407,9 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
     }
 
     private void handleActionUpOrCancelWhileNotSwiping() {
-        mHandler.cancelLongPressDetection();
+        if (mHandler != null) {
+            mHandler.cancelLongPressDetection();
+        }
 
         mCheckingTouchSlop = RecyclerView.NO_ID;
         mSwipingItemReactionType = 0;
@@ -408,7 +430,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
             final float velocity = (horizontal) ? mVelocityTracker.getXVelocity() : mVelocityTracker.getYVelocity();
             final float absVelocity = Math.abs(velocity);
 
-            if ((absDistance > (mTouchSlop * MIN_DISTANCE_TOUCH_SLOP_MUL)) &&
+            if ((absDistance > mSwipeThresholdDistance) &&
                     ((distance * velocity) > 0.0f) &&
                     (absVelocity <= mMaxFlingVelocity) &&
                     ((absDistance > (viewSize / 2)) || (absVelocity >= mMinFlingVelocity))) {
@@ -426,7 +448,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
         }
 
         if (LOCAL_LOGD) {
-            Log.d(TAG, "swping finished  --- result = " + result);
+            Log.d(TAG, "swiping finished  --- result = " + result);
         }
 
         finishSwiping(result);
@@ -500,9 +522,9 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
 
         final int swipeDistanceX = mLastTouchX - mTouchedItemOffsetX;
         final int swipeDistanceY = mLastTouchY - mTouchedItemOffsetY;
-        mSwipingItemPosition = getItemPosition(mAdapter, mSwipingItemId, mSwipingItemPosition);
+        final int swipingItemPosition = getSwipingItemPosition();
 
-        mSwipingItemOperator.update(mSwipingItemPosition, swipeDistanceX, swipeDistanceY);
+        mSwipingItemOperator.update(swipingItemPosition, swipeDistanceX, swipeDistanceY);
     }
 
     private boolean checkConditionAndStartSwiping(MotionEvent e, RecyclerView.ViewHolder holder) {
@@ -548,7 +570,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
         }
 
         // raise onSwipeItemStarted() event
-        mAdapter.onSwipeItemStarted(this, holder, itemPosition, mSwipingItemId);
+        mAdapter.onSwipeItemStarted(this, holder, mSwipingItemId);
     }
 
     private void finishSwiping(int result) {
@@ -567,7 +589,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
             mRecyclerView.getParent().requestDisallowInterceptTouchEvent(false);
         }
 
-        final int itemPosition = getItemPosition(mAdapter, mSwipingItemId, mSwipingItemPosition);
+        final int itemPosition = getSwipingItemPosition();
 
         mVelocityTracker.clear();
 
@@ -602,6 +624,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
 
         verifyAfterReaction(result, afterReaction);
 
+        //noinspection UnusedAssignment
         boolean slideAnimated = false;
 
         switch (afterReaction) {
@@ -664,7 +687,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
                 case RESULT_SWIPED_DOWN:
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected after reaction has been requested: result = " + result +", afterReaction = " + afterReaction);
+                    throw new IllegalStateException("Unexpected after reaction has been requested: result = " + result + ", afterReaction = " + afterReaction);
             }
         }
     }
@@ -685,7 +708,8 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
         }
     }
 
-    private static int getItemPosition(@Nullable RecyclerView.Adapter adapter, long itemId, int itemPositionGuess) {
+    /*package*/
+    static int getItemPosition(@Nullable RecyclerView.Adapter adapter, long itemId, int itemPositionGuess) {
         if (adapter == null)
             return RecyclerView.NO_POSITION;
 
@@ -695,7 +719,7 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
                 return itemPositionGuess;
         }
 
-        for (int i=0; i < itemCount; i++) {
+        for (int i = 0; i < itemCount; i++) {
             if (adapter.getItemId(i) == itemId)
                 return i;
         }
@@ -780,7 +804,8 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
      *
      * @return The listener object
      */
-    public @Nullable OnItemSwipeEventListener getOnItemSwipeEventListener() {
+    @Nullable
+    public OnItemSwipeEventListener getOnItemSwipeEventListener() {
         return mItemSwipeEventListener;
     }
 
@@ -861,11 +886,24 @@ public class RecyclerViewSwipeManager implements SwipeableItemConstants {
         return mItemSlideAnimator.getSwipeContainerViewTranslationY(holder);
     }
 
-    private void handleOnLongPress(MotionEvent e) {
+    /*package*/ void handleOnLongPress(MotionEvent e) {
         RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForItemId(mCheckingTouchSlop);
         if (holder != null) {
             checkConditionAndStartSwiping(e, holder);
         }
+    }
+
+    /*package*/ int getSwipingItemPosition() {
+        return mSwipingItemPosition;
+    }
+
+    /*package*/ int syncSwipingItemPosition() {
+        return syncSwipingItemPosition(mSwipingItemPosition);
+    }
+
+    /*package*/ int syncSwipingItemPosition(int positionGuess) {
+        mSwipingItemPosition = getItemPosition(mAdapter, mSwipingItemId, positionGuess);
+        return mSwipingItemPosition;
     }
 
     private static boolean supportsViewPropertyAnimator() {
