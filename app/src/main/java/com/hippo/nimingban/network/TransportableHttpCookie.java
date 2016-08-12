@@ -50,6 +50,7 @@ public class TransportableHttpCookie {
             thc.discard = cookie.getDiscard();
             thc.domain = cookie.getDomain();
             thc.maxAge = cookie.getMaxAge();
+            thc.path = cookie.getPath();
             thc.portList = cookie.getPortlist();
             thc.secure = cookie.getSecure();
             thc.version = cookie.getVersion();

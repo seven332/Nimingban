@@ -17,6 +17,7 @@
 package com.hippo.nimingban.network;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.hippo.yorozuya.ObjectUtils;
 
@@ -303,5 +304,18 @@ public class SimpleCookieStore {
             result.addAll(TransportableHttpCookie.from(url, list));
         }
         return result;
+    }
+
+    public void fixLostCookiePath() {
+        for (URL url : map.keySet()) {
+            List<HttpCookieWithId> list = map.get(url);
+            for (HttpCookieWithId hcwi : list) {
+                HttpCookie cookie = hcwi.httpCookie;
+                if (TextUtils.isEmpty(cookie.getPath())) {
+                    cookie.setPath("/");
+                    HttpCookieDB.updateCookie(hcwi, url);
+                }
+            }
+        }
     }
 }

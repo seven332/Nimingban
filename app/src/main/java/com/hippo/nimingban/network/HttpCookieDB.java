@@ -164,6 +164,31 @@ public final class HttpCookieDB {
         return dao.insert(raw);
     }
 
+    public static void updateCookie(HttpCookieWithId hcw, URL url) {
+        HttpCookieDao dao = sDaoSession.getHttpCookieDao();
+
+        HttpCookieRaw raw = dao.load(hcw.id);
+        if (raw == null) {
+            return;
+        }
+        HttpCookie cookie = hcw.httpCookie;
+        raw.setName(cookie.getName());
+        raw.setValue(cookie.getValue());
+        raw.setComment(cookie.getComment());
+        raw.setCommentURL(cookie.getCommentURL());
+        raw.setDiscard(cookie.getDiscard());
+        raw.setDomain(cookie.getDomain());
+        raw.setMaxAge(cookie.getMaxAge());
+        raw.setPath(cookie.getPath());
+        raw.setPortList(cookie.getPortlist());
+        raw.setSecure(cookie.getSecure());
+        raw.setVersion(cookie.getVersion());
+        raw.setUrl(url.toString());
+        raw.setWhenCreated(System.currentTimeMillis());
+
+        dao.update(raw);
+    }
+
     public static void removeCookie(long id) {
         sDaoSession.getHttpCookieDao().deleteByKey(id);
     }

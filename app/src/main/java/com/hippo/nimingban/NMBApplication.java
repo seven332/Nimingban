@@ -202,6 +202,11 @@ public final class NMBApplication extends Application
             Settings.putSetAnalysis(false);
             Settings.putAnalysis(false);
         }
+
+        // Fix cookie lost when save to file in 1.2.29 and below
+        if (oldVersionCode < 44) {
+            NMBApplication.getSimpleCookieStore(this).fixLostCookiePath();
+        }
     }
 
     public static void updateCookies(Context context) {

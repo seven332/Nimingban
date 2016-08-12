@@ -710,6 +710,10 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getActivity());
                     cookieStore.removeAll();
                     for (TransportableHttpCookie thc : list) {
+                        // Fix for lost path bug
+                        if (TextUtils.isEmpty(thc.path)) {
+                            thc.path = "/";
+                        }
                         URL url;
                         try {
                             url = new URL(thc.url);
