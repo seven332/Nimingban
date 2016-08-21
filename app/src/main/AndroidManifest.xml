@@ -189,6 +189,10 @@
         <meta-data android:name="TD_APP_ID" android:value="B8168DD03CD9EF62B476CEDFBC3FB52D"/>
         <meta-data android:name="TD_CHANNEL_ID" android:value="nimingban"/>
 
+        <meta-data android:name="com.samsung.android.sdk.multiwindow.enable" android:value="true" />
+        <meta-data android:name="com.samsung.android.sdk.multiwindow.multiinstance.enable" android:value="true" />
+        <meta-data android:name="com.samsung.android.sdk.multiwindow.penwindow.enable" android:value="true" />
+
     </application>
 
 </manifest>
