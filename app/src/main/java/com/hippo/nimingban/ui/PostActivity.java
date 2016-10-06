@@ -37,7 +37,7 @@ import com.hippo.nimingban.widget.PostLayout;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
-public final class PostActivity extends SwipeActivity
+public final class PostActivity extends SwipeBackActivity
         implements FragmentHost, PostFragment.Callback, TypeSendFragment.Callback {
 
     public static final String ACTION_POST = "com.hippo.nimingban.ui.PostActivity.action.POST";
@@ -170,7 +170,7 @@ public final class PostActivity extends SwipeActivity
             transaction.add(R.id.fragment_container, typeSendFragment, TAG_FRAGMENT_TYPE_SEND);
             transaction.commitAllowingStateLoss();
 
-            setSwipeBackEnable(false);
+            getSwipeBackLayout().setSwipeEnabled(false);
         }
     }
 
@@ -194,7 +194,7 @@ public final class PostActivity extends SwipeActivity
             transaction.remove(fragment);
             transaction.commitAllowingStateLoss();
 
-            setSwipeBackEnable(true);
+            getSwipeBackLayout().setSwipeEnabled(true);
 
             mPostLayout.onRemoveTypeSend();
         }

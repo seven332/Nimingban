@@ -22,11 +22,17 @@
     <style name="SwipeActivity" parent="AppTheme.NoActionBar.Transparent">
     </style>
 
+    <style name="SwipeActivity.NoStatus" parent="AppTheme.NoActionBar.Transparent">
+    </style>
+
 
     <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar">
     </style>
 
     <style name="SwipeActivity.Dark" parent="AppTheme.Dark.NoActionBar.Transparent">
+    </style>
+
+    <style name="SwipeActivity.Dark.NoStatus" parent="AppTheme.Dark.NoActionBar.Transparent">
     </style>
 
 </resources>

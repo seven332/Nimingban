@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include ':app', ':daogenerator', ':swipebacklayout', ':photoview', 'yorozuya', 'conaco', 'beerbelly', 'easyrecyclerview'
+include ':app', ':daogenerator', ':photoview', 'yorozuya', 'conaco', 'beerbelly', 'easyrecyclerview'

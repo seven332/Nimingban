@@ -64,7 +64,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 // TODO show all image in post
-public class GalleryActivity2 extends SwipeActivity {
+public class GalleryActivity2 extends SwipeBackActivity {
 
     public static final String[] IMAGE_EXTENSIONS = {
             "jpg",
