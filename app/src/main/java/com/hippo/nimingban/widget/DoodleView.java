@@ -62,9 +62,9 @@ public class DoodleView extends View {
     private int mColor;
     private int mWidth;
 
-    private float mX, mY;
-
     private boolean mIsDot;
+    private boolean mPathDone;
+    private float mX, mY;
 
     private boolean mEraser = false;
 
@@ -215,28 +215,88 @@ public class DoodleView extends View {
         return mSaveTask != null;
     }
 
-    private void touch_start(float x, float y) {
-        mIsDot = true;
-
-        mPath.reset();
-        mPath.moveTo(x, y);
-        mX = x;
-        mY = y;
-    }
-
-    private void touch_move(float x, float y) {
-        float dx = Math.abs(x - mX);
-        float dy = Math.abs(y - mY);
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            mIsDot = false;
-            mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-            mX = x;
-            mY = y;
+    private void motionToPath(MotionEvent event, Path path) {
+        switch (event.getPointerCount()) {
+            case 2: {
+                final float x0 = event.getX(0) - mOffsetX;
+                final float y0 = event.getY(0) - mOffsetY;
+                final float x1 = event.getX(1) - mOffsetX;
+                final float y1 = event.getY(1) - mOffsetY;
+                path.reset();
+                path.moveTo(x0, y0);
+                path.lineTo(x1, y1);
+                break;
+            }
+            case 3: {
+                final float x0 = event.getX(0) - mOffsetX;
+                final float y0 = event.getY(0) - mOffsetY;
+                final float x1 = event.getX(1) - mOffsetX;
+                final float y1 = event.getY(1) - mOffsetY;
+                final float x2 = event.getX(2) - mOffsetX;
+                final float y2 = event.getY(2) - mOffsetY;
+                path.reset();
+                path.moveTo(x0, y0);
+                path.quadTo(x2, y2, x1, y1);
+                break;
+            }
+            case 4: {
+                final float x0 = event.getX(0) - mOffsetX;
+                final float y0 = event.getY(0) - mOffsetY;
+                final float x1 = event.getX(1) - mOffsetX;
+                final float y1 = event.getY(1) - mOffsetY;
+                final float x2 = event.getX(2) - mOffsetX;
+                final float y2 = event.getY(2) - mOffsetY;
+                final float x3 = event.getX(3) - mOffsetX;
+                final float y3 = event.getY(3) - mOffsetY;
+                path.reset();
+                path.moveTo(x0, y0);
+                path.cubicTo(x2, y2, x3, y3, x1, y1);
+                break;
+            }
         }
     }
 
-    private void touch_up() {
-        mPath.lineTo(mX, mY);
+    private void touch_down(MotionEvent event) {
+        if (event.getPointerCount() == 1) {
+            mIsDot = true;
+            final float x = event.getX() - mOffsetX;
+            final float y = event.getY() - mOffsetY;
+            mPath.reset();
+            mPath.moveTo(x, y);
+            mX = x;
+            mY = y;
+        } else {
+            mIsDot = false;
+            motionToPath(event, mPath);
+        }
+    }
+
+    private void touch_move(MotionEvent event) {
+        if (event.getPointerCount() == 1) {
+            final float x = event.getX() - mOffsetX;
+            final float y = event.getY() - mOffsetY;
+            // Check mIsDot
+            if (mIsDot) {
+                final float dx = Math.abs(x - mX);
+                final float dy = Math.abs(y - mY);
+                mIsDot = dx < TOUCH_TOLERANCE && dy < TOUCH_TOLERANCE;
+            }
+            if (!mIsDot) {
+                mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+                mX = x;
+                mY = y;
+            }
+        } else {
+            mIsDot = false;
+            motionToPath(event, mPath);
+        }
+    }
+
+    private void touch_up(MotionEvent event) {
+        // End mPath for single finger
+        if (event.getPointerCount() == 1) {
+            mPath.lineTo(mX, mY);
+        }
 
         DrawInfo drawInfo = mRecycler.obtain();
         if (drawInfo == null) {
@@ -262,20 +322,28 @@ public class DoodleView extends View {
             return true;
         }
 
-        float x = event.getX() - mOffsetX;
-        float y = event.getY() - mOffsetY;
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mPathDone = false;
+        }
+        if (mPathDone) {
+            return true;
+        }
 
-        switch (event.getAction()) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                touch_start(x, y);
+            case MotionEvent.ACTION_POINTER_DOWN:
+                touch_down(event);
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                touch_move(x, y);
+                touch_move(event);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touch_up();
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_POINTER_UP:
+                mPathDone = true;
+                touch_up(event);
                 invalidate();
                 break;
         }
