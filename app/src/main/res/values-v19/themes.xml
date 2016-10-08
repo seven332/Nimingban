@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,35 +17,11 @@
 
 <resources>
 
-    <style name="AppTheme.NoActionBar.Translucent">
+    <!-- ========= -->
+    <!-- App Theme -->
+    <!-- ========= -->
+    <style name="AppTheme.Forum" parent="AppTheme.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Translucent.Status">
-        <item name="android:windowTranslucentNavigation">false</item>
-    </style>
-
-    <style name="NormalActivity" parent="AppTheme.NoActionBar.Translucent.Status">
-    </style>
-
-    <style name="SwipeActivity" parent="AppTheme.NoActionBar.Translucent.Status.Transparent">
-    </style>
-
-
-    <style name="AppTheme.Dark.NoActionBar.Translucent">
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar.Translucent.Status">
-        <item name="android:windowTranslucentNavigation">false</item>
-    </style>
-
-    <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status">
-    </style>
-
-    <style name="SwipeActivity.Dark" parent="AppTheme.Dark.NoActionBar.Translucent.Status.Transparent">
     </style>
 
 </resources>

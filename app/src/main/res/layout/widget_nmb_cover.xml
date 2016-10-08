@@ -15,16 +15,22 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <color name="purple_500">#ff9c27b0</color>
-    <color name="purple_700">#ff7b1fa2</color>
-    <color name="green_a200">#ff69f0ae</color>
+    <com.hippo.gukize.GukizeView
+        android:id="@+id/cover1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:gkz_showFadeAnimation="false"
+        app:gkz_actualScaleType="centerCrop"/>
 
-    <color name="colorPrimary">@color/purple_500</color>
-    <color name="colorPrimaryDark">@color/purple_700</color>
-    <color name="colorAccent">@color/green_a200</color>
+    <com.hippo.gukize.GukizeView
+        android:id="@+id/cover2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:gkz_showFadeAnimation="false"
+        app:gkz_actualScaleType="centerCrop"/>
 
-    <color name="shadow">#38000000</color>
-
-</resources>
+</merge>

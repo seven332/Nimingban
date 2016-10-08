@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,181 +19,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hippo.nimingban">
 
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
-        android:name="com.hippo.nimingban.NMBApplication"
+        android:name=".NMBApplication"
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.hippo.nimingban.ui.ListActivity"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"
-            android:launchMode="singleTop"
-            android:enabled="true">
+            android:name=".ui.ForumActivity"
+            android:theme="@style/AppTheme.Forum">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-
         </activity>
-
-        <activity-alias
-            android:name="com.hippo.nimingban.ui.ListActivity-ibuki"
-            android:targetActivity="com.hippo.nimingban.ui.ListActivity"
-            android:icon="@mipmap/ic_launcher_ibuki"
-            android:enabled="false">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-
-        </activity-alias>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.PostActivity"
-            android:theme="@style/SwipeActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified">
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <data android:host="h.nimingban.com"/>
-                <data android:host="h.acfun.tv"/>
-                <data android:host="hacfun.tv"/>
-                <data android:pathPrefix="/t/"/>
-                <data android:pathPrefix="/m/t/"/>
-            </intent-filter>
-
-        </activity>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.GalleryActivity2"
-            android:label="@string/gallery"
-            android:theme="@style/SwipeActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.TypeSendActivity"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"
-            android:windowSoftInputMode="stateVisible|adjustResize">
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="image/*"/>
-            </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="text/plain"/>
-            </intent-filter>
-
-        </activity>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.DoodleActivity"
-            android:label="@string/doodle"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.DraftActivity"
-            android:label="@string/draft"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.FeedActivity"
-            android:label="@string/feed"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.SettingsActivity"
-            android:label="@string/settings"
-            android:theme="@style/AppTheme"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.DirPickerActivity"
-            android:label="@string/dir_picker"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.SortForumsActivity"
-            android:label="@string/sort_forums"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.SearchActivity"
-            android:label="@string/search"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.RecordActivity"
-            android:label="@string/record"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <activity
-            android:name="com.hippo.nimingban.ui.WebViewActivity"
-            android:theme="@style/NormalActivity"
-            android:configChanges="screenSize|uiMode|orientation"
-            android:screenOrientation="unspecified"/>
-
-        <receiver
-            android:name="com.hippo.nimingban.receiver.NetworkReceiver"
-            android:label="@string/network_receiver">
-
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-
-        </receiver>
-
-        <service
-            android:name="com.hippo.nimingban.service.DaDiaoService"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/da_diao_service"/>
-
-        <meta-data android:name="TD_APP_ID" android:value="B8168DD03CD9EF62B476CEDFBC3FB52D"/>
-        <meta-data android:name="TD_CHANNEL_ID" android:value="nimingban"/>
-
-        <meta-data android:name="com.samsung.android.sdk.multiwindow.enable" android:value="true" />
-        <meta-data android:name="com.samsung.android.sdk.multiwindow.multiinstance.enable" android:value="true" />
-        <meta-data android:name="com.samsung.android.sdk.multiwindow.penwindow.enable" android:value="true" />
-
     </application>
-
 </manifest>

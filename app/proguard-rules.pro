@@ -15,12 +15,3 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
-
-# For bug report
--keepattributes SourceFile,LineNumberTable
-
--keepclassmembers class com.hippo.nimingban.client.ac.data.** {
-    public <fields>;
-}
-
--dontwarn android.app.Notification

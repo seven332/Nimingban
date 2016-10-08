@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,65 +17,13 @@
 
 <resources>
 
-    <style name="Theme.Dialog.DoNotDim" parent="android:Theme.Dialog">
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-    </style>
-
-    <style name="AppAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorDivider">@color/divider_light</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
-        <item name="colorDrawablePrimaryInverse">@color/primary_drawable_dark</item>
-        <item name="colorPure">@color/pure_light</item>
-        <item name="colorPureInverse">@color/pure_inverse_light</item>
-        <item name="colorRoundSide">@color/round_side_light</item>
-        <item name="colorKeyboardBackground">@color/keyboard_background_light</item>
-
-        <item name="preferenceHeaderTitleColor">@color/preference_header_title_light</item>
-        <item name="itemForumDrawerText">@color/item_forum_drawer_text_light</item>
-        <item name="itemForumDrawerBackground">@drawable/item_forum_drawer_background_light</item>
-
-        <item name="dark">false</item>
-
-        <item name="android:textColorPrimary">@color/primary_text_light</item>
-        <item name="android:textColorSecondary">@color/secondary_text_light</item>
-        <item name="android:textColorTertiary">@color/secondary_text_light</item>
-    </style>
-
+    <!-- ========== -->
+    <!-- Base Theme -->
+    <!-- ========== -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorDivider">@color/divider_light</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
-        <item name="colorDrawablePrimaryInverse">@color/primary_drawable_dark</item>
-        <item name="colorPure">@color/pure_light</item>
-        <item name="colorPureInverse">@color/pure_inverse_light</item>
-        <item name="colorRoundSide">@color/round_side_light</item>
-        <item name="colorKeyboardBackground">@color/keyboard_background_light</item>
-
-        <item name="preferenceHeaderTitleColor">@color/preference_header_title_light</item>
-        <item name="itemForumDrawerText">@color/item_forum_drawer_text_light</item>
-        <item name="itemForumDrawerBackground">@drawable/item_forum_drawer_background_light</item>
-
-        <item name="dark">false</item>
-
-        <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
-
-        <item name="android:textColorPrimary">@color/primary_text_light</item>
-        <item name="android:textColorSecondary">@color/secondary_text_light</item>
-        <item name="android:textColorTertiary">@color/secondary_text_light</item>
-        <item name="android:windowBackground">@color/background_light</item>
-    </style>
-
-    <style name="AppTheme.Transparent">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -82,137 +31,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.Transparent">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
 
-    <style name="AppTheme.NoActionBar.Translucent">
-    </style>
-
-    <style name="AppTheme.NoActionBar.Translucent.Status">
-    </style>
-
-    <style name="AppTheme.NoActionBar.Translucent.Status.Transparent">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Translucent.Transparent">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
-
-    <style name="NormalActivity" parent="AppTheme.NoActionBar">
-    </style>
-
-    <style name="NormalActivity.NoStatus" parent="AppTheme.NoActionBar">
-    </style>
-
-    <style name="SwipeActivity" parent="AppTheme.NoActionBar.Transparent">
-    </style>
-
-    <style name="SwipeActivity.NoStatus" parent="AppTheme.NoActionBar.Transparent">
-    </style>
-
-
-    <style name="AppAlertDialogTheme.Dark" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
-        <item name="colorDrawablePrimaryInverse">@color/primary_drawable_light</item>
-        <item name="colorPure">@color/pure_dark</item>
-        <item name="colorPureInverse">@color/pure_inverse_dark</item>
-        <item name="colorRoundSide">@color/round_side_dark</item>
-        <item name="colorKeyboardBackground">@color/keyboard_background_dark</item>
-
-        <item name="preferenceHeaderTitleColor">@color/preference_header_title_dark</item>
-        <item name="itemForumDrawerText">@color/item_forum_drawer_text_dark</item>
-        <item name="itemForumDrawerBackground">@drawable/item_forum_drawer_background_dark</item>
-
-        <item name="dark">true</item>
-
-        <item name="android:textColorPrimary">@color/primary_text_dark</item>
-        <item name="android:textColorSecondary">@color/secondary_text_dark</item>
-        <item name="android:textColorTertiary">@color/secondary_text_dark</item>
-    </style>
-
-    <style name="AppTheme.Dark" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
-        <item name="colorDrawablePrimaryInverse">@color/primary_drawable_light</item>
-        <item name="colorPure">@color/pure_dark</item>
-        <item name="colorPureInverse">@color/pure_inverse_dark</item>
-        <item name="colorRoundSide">@color/round_side_dark</item>
-        <item name="colorKeyboardBackground">@color/keyboard_background_dark</item>
-
-        <item name="preferenceHeaderTitleColor">@color/preference_header_title_dark</item>
-        <item name="itemForumDrawerText">@color/item_forum_drawer_text_dark</item>
-        <item name="itemForumDrawerBackground">@drawable/item_forum_drawer_background_dark</item>
-
-        <item name="dark">true</item>
-
-        <item name="alertDialogTheme">@style/AppAlertDialogTheme.Dark</item>
-
-        <item name="android:textColorPrimary">@color/primary_text_dark</item>
-        <item name="android:textColorSecondary">@color/secondary_text_dark</item>
-        <item name="android:textColorTertiary">@color/secondary_text_dark</item>
-        <item name="android:windowBackground">@color/background_dark</item>
-    </style>
-
-    <style name="AppTheme.Dark.Transparent">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar.Transparent">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar.Translucent">
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar.Translucent.Status">
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar.Translucent.Status.Transparent">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-
-    <style name="AppTheme.Dark.NoActionBar.Translucent.Transparent">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-
-    <style name="NormalActivity.Dark" parent="AppTheme.Dark.NoActionBar">
-    </style>
-
-    <style name="NormalActivity.Dark.NoStatus" parent="AppTheme.Dark.NoActionBar">
-    </style>
-
-    <style name="SwipeActivity.Dark" parent="AppTheme.Dark.NoActionBar.Transparent">
-    </style>
-
-    <style name="SwipeActivity.Dark.NoStatus" parent="AppTheme.Dark.NoActionBar.Transparent">
+    <!-- ========= -->
+    <!-- App Theme -->
+    <!-- ========= -->
+    <style name="AppTheme.Forum" parent="AppTheme.NoActionBar">
     </style>
 
 </resources>

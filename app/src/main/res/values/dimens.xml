@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,43 +17,7 @@
 
 <resources>
 
-    <!-- Keyline -->
-    <dimen name="keyline_margin_horizontal">16dp</dimen>
-    <dimen name="keyline_margin_vertical">16dp</dimen>
-
-    <dimen name="card_interval">8dp</dimen>
-    <dimen name="single_item_padding_horizontal">16dp</dimen>
-
-    <!-- Text size -->
-    <dimen name="text_super_large">24sp</dimen>
-    <dimen name="text_large">22sp</dimen>
-    <dimen name="text_little_large">20sp</dimen>
-    <dimen name="text_medium">18sp</dimen>
-    <dimen name="text_little_small">16sp</dimen>
-    <dimen name="text_small">14sp</dimen>
-    <dimen name="text_super_small">12sp</dimen>
-
-    <!-- SnackBar -->
-    <dimen name="design_snackbar_action_inline_max_width">128dp</dimen>
-    <dimen name="design_snackbar_elevation">6dp</dimen>
-    <dimen name="design_snackbar_extra_spacing_horizontal">0dp</dimen>
-    <dimen name="design_snackbar_max_width">-1px</dimen>
-    <dimen name="design_snackbar_min_width">-1px</dimen>
-    <dimen name="design_snackbar_padding_horizontal">12dp</dimen>
-    <dimen name="design_snackbar_padding_vertical">14dp</dimen>
-    <dimen name="design_snackbar_padding_vertical_2lines">24dp</dimen>
-    <dimen name="design_snackbar_text_size">14sp</dimen>
-
-    <!-- Slider -->
-    <dimen name="slider_bubble_width">26dp</dimen>
-    <dimen name="slider_bubble_height">32dp</dimen>
-
-    <!-- DrawerList -->
-    <dimen name="drawer_list_drawable_size">24dp</dimen>
-
-    <dimen name="list_thumb_height">80dp</dimen>
-    <dimen name="list_thumb_width">80dp</dimen>
-
-    <dimen name="divider_height">1dp</dimen>
+    <dimen name="left_drawer_max_width">256dp</dimen>
+    <dimen name="right_drawer_max_width">192dp</dimen>
 
 </resources>

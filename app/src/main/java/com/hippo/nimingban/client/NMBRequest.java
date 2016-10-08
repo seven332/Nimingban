@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo Seven
+ * Copyright 2016 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,46 +16,10 @@
 
 package com.hippo.nimingban.client;
 
-import com.hippo.nimingban.client.data.Site;
+/*
+ * Created by Hippo on 10/7/2016.
+ */
 
 public class NMBRequest {
-
-    int method;
-    Site site;
-    Object[] args;
-    NMBClient.Callback callback;
-
-    NMBClient.Task task;
-
-    private boolean mCancel = false;
-
-    public void setMethod(int method) {
-        this.method = method;
-    }
-
-    public void setSite(Site site) {
-        this.site = site;
-    }
-
-    public void setArgs(Object... args) {
-        this.args = args;
-    }
-
-    public void setCallback(NMBClient.Callback callback) {
-        this.callback = callback;
-    }
-
-    public void cancel() {
-        if (!mCancel) {
-            mCancel = true;
-            if (task != null) {
-                task.stop();
-                task = null;
-            }
-        }
-    }
-
-    public boolean isCancelled() {
-        return mCancel;
-    }
+    // TODO
 }

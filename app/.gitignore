@@ -1,15 +1,1 @@
-/src/main/assets/NOTICE
 /build
-/src/main/java-gen
-manifest-merger-release-report.txt
-/src/main/libs
-/src/main/obj
-
-# Intellij
-*.iml
-
-# flyme icon
-/src/main/res/mipmap-hdpi/ic_launcher_flyme.png
-/src/main/res/mipmap-xhdpi/ic_launcher_flyme.png
-/src/main/res/mipmap-xxhdpi/ic_launcher_flyme.png
-/src/main/res/mipmap-xxxhdpi/ic_launcher_flyme.png

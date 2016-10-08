@@ -14,9 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.ui.fragment;
+package com.hippo.nimingban.widget;
 
-public interface FragmentHost {
+/*
+ * Created by Hippo on 10/7/2016.
+ */
 
-    void finishFragment(BaseFragment fragment);
+import android.content.Context;
+import android.util.AttributeSet;
+
+public class NMBNavigationView extends ScrimNavigationView {
+
+    public NMBNavigationView(Context context) {
+        super(context);
+    }
+
+    public NMBNavigationView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public NMBNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
 }
