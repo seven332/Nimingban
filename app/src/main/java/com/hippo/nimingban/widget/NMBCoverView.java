@@ -23,8 +23,6 @@ package com.hippo.nimingban.widget;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +30,9 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.hippo.conaco.DataContainer;
-import com.hippo.conaco.ProgressNotifier;
 import com.hippo.gukize.GukizeView;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.utils.FileDataContainer;
-import com.hippo.nimingban.utils.FileInputStreamPipe;
-import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 
@@ -47,8 +42,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.locks.ReentrantLock;
 
+// TODO auto save cover
 public class NMBCoverView extends FrameLayout implements View.OnClickListener, View.OnLongClickListener {
 
     private static final String URL_COVER = "http://cover.acfunwiki.org/cover.php";
@@ -59,8 +54,9 @@ public class NMBCoverView extends FrameLayout implements View.OnClickListener, V
     private File mCoverFile;
     private File mCoverTempFile;
     private DataContainer mCoverTempContainer;
-    private final ReentrantLock mCoverFileLock = new ReentrantLock();
-    private final ReentrantLock mCoverTempFileLock = new ReentrantLock();
+    private SaveTask mSaveTask;
+    private boolean mLoadLocalDone;
+    private boolean mPendingLoadNewCover;
 
     public NMBCoverView(Context context) {
         super(context);
@@ -83,7 +79,7 @@ public class NMBCoverView extends FrameLayout implements View.OnClickListener, V
         mBackupCover = (GukizeView) findViewById(R.id.cover2);
         mCoverFile = new File(context.getFilesDir(), "cover");
         mCoverTempFile = new File(context.getFilesDir(), "cover.temp");
-        mCoverTempContainer = new CoverContainer(mCoverTempFile, mCoverTempFileLock);
+        mCoverTempContainer = new FileDataContainer(mCoverTempFile);
 
         setOnClickListener(this);
         setOnLongClickListener(this);
@@ -98,10 +94,23 @@ public class NMBCoverView extends FrameLayout implements View.OnClickListener, V
         mCurrentCover.setCustomDrawable(new ColorDrawable(ResourcesUtils.getAttrColor(context, R.attr.colorAccent)));
 
         // Load cover file
-        mBackupCover.load(null, null, new CoverContainer(mCoverFile, mCoverFileLock));
+        mBackupCover.load(null, null, new FileDataContainer(mCoverFile));
     }
 
     public void loadNewCover() {
+        if (!mLoadLocalDone) {
+            // Loading local cover now.
+            // Load new cover after local done.
+            mPendingLoadNewCover = true;
+        } else if (mBackupCover.isLoading() || mSaveTask != null || mPendingLoadNewCover) {
+            // Loading new cover now or will load new cover.
+            // Do nothing.
+        } else {
+            loadNewCoverInternal();
+        }
+    }
+
+    public void loadNewCoverInternal() {
         mBackupCover.load(null, URL_COVER, mCoverTempContainer);
     }
 
@@ -124,18 +133,36 @@ public class NMBCoverView extends FrameLayout implements View.OnClickListener, V
     }
 
     private class CoverViewListener implements GukizeView.Listener {
+
         @Override
         public void onLoad() {}
+
         @Override
         public void onProgress(long l, long l1, long l2) {}
+
         @Override
-        public void onFailure() {}
+        public void onFailure() {
+            mLoadLocalDone = true;
+
+            if (mPendingLoadNewCover) {
+                mPendingLoadNewCover = false;
+                loadNewCoverInternal();
+            }
+        }
+
         @Override
-        public void onCancel() {}
+        public void onCancel() {
+            // Should not set mLoadLocalDone true here
+            // NMBCoverView will not cancel local cover loading
+        }
+
         @Override
         public void onRetry() {}
+
         @Override
         public void onSuccess() {
+            mLoadLocalDone = true;
+
             // Exchange mCurrentCover and mBackupCover
             final GukizeView temp = mCurrentCover;
             mCurrentCover = mBackupCover;
@@ -153,10 +180,14 @@ public class NMBCoverView extends FrameLayout implements View.OnClickListener, V
 
     // Task to copy mCoverTempFile to mCoverFile
     private class SaveTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            mSaveTask = this;
+        }
+
         @Override
         protected Boolean doInBackground(Void... params) {
-            mCoverFileLock.lock();
-            mCoverTempFileLock.lock();
             InputStream is = null;
             OutputStream os = null;
             try {
@@ -170,52 +201,16 @@ public class NMBCoverView extends FrameLayout implements View.OnClickListener, V
                 IOUtils.closeQuietly(is);
                 IOUtils.closeQuietly(os);
                 mCoverTempFile.delete();
-                mCoverFileLock.unlock();
-                mCoverTempFileLock.unlock();
             }
         }
-    }
 
-    //////////
-    // Class to make cover file safe
-    //////////
-    private static class CoverContainer extends FileDataContainer {
-        private final ReentrantLock mLock;
-        public CoverContainer(@NonNull File file, ReentrantLock lock) {
-            super(file);
-            mLock = lock;
-        }
-        @Nullable
         @Override
-        public InputStreamPipe get() {
-            return new SafeInputStreamPipe(getFile(), mLock);
-        }
-        @Override
-        public boolean save(InputStream is, long length,
-                @Nullable String mediaType, @Nullable ProgressNotifier notify) {
-            mLock.lock();
-            final boolean ret = super.save(is, length, mediaType, notify);
-            mLock.unlock();
-            return ret;
-        }
-    }
-
-    private static class SafeInputStreamPipe extends FileInputStreamPipe {
-        private final ReentrantLock mLock;
-        public SafeInputStreamPipe(@NonNull File file, ReentrantLock lock) {
-            super(file);
-            mLock = lock;
-        }
-        @NonNull
-        @Override
-        public InputStream open() throws IOException {
-            mLock.lock();
-            return super.open();
-        }
-        @Override
-        public void close() {
-            super.close();
-            mLock.unlock();
+        protected void onPostExecute(Boolean aBoolean) {
+            mSaveTask = null;
+            if (mPendingLoadNewCover) {
+                mPendingLoadNewCover = false;
+                loadNewCoverInternal();
+            }
         }
     }
 }
