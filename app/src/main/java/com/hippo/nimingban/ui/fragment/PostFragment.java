@@ -713,9 +713,12 @@ public class PostFragment extends BaseFragment
                     break;
                 case 1:
                     // Copy
-                    ClipboardManager cbm = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                    cbm.setPrimaryClip(ClipData.newPlainText(null, mReply.getNMBDisplayContent()));
-                    Toast.makeText(getContext(), R.string.comment_copied_clipboard, Toast.LENGTH_SHORT).show();
+                    Context context = getContext();
+                    if (context != null) {
+                        ClipboardManager cbm = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        cbm.setPrimaryClip(ClipData.newPlainText(null, mReply.getNMBDisplayContent()));
+                        Toast.makeText(getContext(), R.string.comment_copied_clipboard, Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case 2:
                     // Send
@@ -834,7 +837,7 @@ public class PostFragment extends BaseFragment
 
         @Override
         public ReplyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ReplyHolder holder = new ReplyHolder(getActivity().getLayoutInflater().inflate(R.layout.item_post, parent, false));
+            ReplyHolder holder = new ReplyHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false));
             mHolderList.add(new WeakReference<>(holder));
             return holder;
         }
@@ -854,7 +857,8 @@ public class PostFragment extends BaseFragment
             boolean loadFromNetwork;
             int ils = Settings.getImageLoadingStrategy();
             if (ils == Settings.IMAGE_LOADING_STRATEGY_ALL ||
-                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI && NMBApplication.isConnectedWifi(getContext()))) {
+                    (ils == Settings.IMAGE_LOADING_STRATEGY_WIFI &&
+                            getContext() != null && NMBApplication.isConnectedWifi(getContext()))) {
                 showImage = true;
                 loadFromNetwork = true;
             } else {
