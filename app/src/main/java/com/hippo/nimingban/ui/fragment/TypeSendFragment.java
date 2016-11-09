@@ -80,7 +80,7 @@ import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.nimingban.widget.FontEditText;
+import com.hippo.nimingban.widget.NMBEditText;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.ripple.Ripple;
 import com.hippo.util.DrawableManager;
@@ -151,7 +151,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
     private NMBClient mNMBClient;
 
-    private FontEditText mEditText;
+    private NMBEditText mEditText;
     private SimpleImageView mEmoji;
     private View mImage;
     private View mDraw;
@@ -299,7 +299,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
             }
         });
 
-        mEditText = (FontEditText) contentView.findViewById(R.id.edit_text);
+        mEditText = (NMBEditText) contentView.findViewById(R.id.edit_text);
         mEmoji = (SimpleImageView) contentView.findViewById(R.id.emoji);
         mImage = contentView.findViewById(R.id.image);
         mDraw = contentView.findViewById(R.id.draw);

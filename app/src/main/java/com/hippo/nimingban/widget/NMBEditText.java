@@ -16,28 +16,30 @@
 
 package com.hippo.nimingban.widget;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 import com.hippo.nimingban.util.Settings;
 
-public class FontEditText extends EditText {
+public class NMBEditText extends AppCompatEditText {
 
     private Typeface mOriginalTypeface;
 
-    public FontEditText(Context context) {
+    public NMBEditText(Context context) {
         super(context);
         init(context);
     }
 
-    public FontEditText(Context context, AttributeSet attrs) {
+    public NMBEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public FontEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public NMBEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -63,5 +65,21 @@ public class FontEditText extends EditText {
 
     public void useOriginalTypeface() {
         setTypeface(mOriginalTypeface);
+    }
+
+    @Override
+    public boolean onTextContextMenuItem(int id) {
+        // Get text in clipboard
+        ClipboardManager cbm = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cbm.hasPrimaryClip()) {
+            ClipData clipData = cbm.getPrimaryClip();
+            if (clipData.getItemCount() > 0) {
+                // Convert to plain text
+                CharSequence text = clipData.getItemAt(0).getText();
+                cbm.setPrimaryClip(ClipData.newPlainText(null, text.toString()));
+            }
+        }
+
+        return super.onTextContextMenuItem(id);
     }
 }
