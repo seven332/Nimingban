@@ -51,11 +51,13 @@
                 android:ellipsize="end"
                 android:textSize="@dimen/text_little_small"/>
 
-            <View
+            <ImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/drag_handler"
                 android:layout_width="48dp"
-                android:layout_height="match_parent"
-                android:background="?attr/colorAccent"/>
+                android:layout_height="48dp"
+                android:padding="12dp"
+                app:srcCompat="@drawable/v_reorder_x24"/>
 
         </LinearLayout>
 
