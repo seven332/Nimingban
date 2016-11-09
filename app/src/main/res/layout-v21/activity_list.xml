@@ -28,13 +28,12 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/toolbar"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
         <com.hippo.nimingban.widget.ContentLayout
             android:id="@+id/content_layout"
