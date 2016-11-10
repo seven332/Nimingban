@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.ui;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,6 +48,7 @@ import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.content.ImageProvider;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.Settings;
@@ -241,7 +244,13 @@ public class GalleryActivity2 extends SwipeBackActivity {
                 }
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                // For n or not file uri, don't use origin uri
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ||
+                        !ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+                    intent.putExtra(Intent.EXTRA_STREAM, ImageProvider.buildUri(uri.getLastPathSegment()));
+                } else {
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                }
                 intent.setType(mimeType);
                 startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
             }
