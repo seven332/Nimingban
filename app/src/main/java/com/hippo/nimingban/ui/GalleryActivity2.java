@@ -41,11 +41,13 @@ import com.hippo.conaco.ProgressNotify;
 import com.hippo.drawable.ImageDrawable;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.io.UniFileInputStreamPipe;
+import com.hippo.nimingban.ImageSearch;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.util.BitmapUtils;
+import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.GalleryPage;
 import com.hippo.unifile.UniFile;
@@ -166,12 +168,19 @@ public class GalleryActivity2 extends SwipeBackActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_gallery_2, menu);
+
+        if (mGalleryAdapter instanceof ImageFileAdapter) {
+            menu.removeItem(R.id.action_refresh);
+            menu.removeItem(R.id.action_search);
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        final int id = item.getItemId();
+        switch (id) {
             case android.R.id.home:
                 finish();
                 return true;
@@ -188,6 +197,20 @@ public class GalleryActivity2 extends SwipeBackActivity {
             case R.id.action_refresh:
                 if (mSaveTask == null) {
                     mGalleryAdapter.reloadCurrentImage();
+                }
+                return true;
+            case R.id.action_search_google:
+            case R.id.action_search_baidu:
+            case R.id.action_search_sogou:
+            case R.id.action_search_tineye:
+            case R.id.action_search_whatanime:
+            case R.id.action_search_saucenao:
+                String urlPrefix = ImageSearch.getImageSearchUrlPrefix(id);
+                if (urlPrefix != null && mGalleryAdapter instanceof SingleImageAdapter) {
+                    String imageUrl = ((SingleImageAdapter) mGalleryAdapter).getCurrentImageUrl();
+                    if (imageUrl != null) {
+                        OpenUrlHelper.openUrl(this, urlPrefix + imageUrl, false);
+                    }
                 }
                 return true;
             default:
@@ -347,6 +370,10 @@ public class GalleryActivity2 extends SwipeBackActivity {
         @Override
         public int getCount() {
             return 1;
+        }
+
+        public String getCurrentImageUrl() {
+            return mImage;
         }
 
         @Override

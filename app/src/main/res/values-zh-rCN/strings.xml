@@ -125,6 +125,7 @@
     <string name="select_picture">选择图片</string>
 
     <string name="gallery">图片欣赏</string>
+    <string name="image_search">搜图</string>
 
     <string name="no_cookies">没有 Cookies</string>
     <string name="no_cookies_ac">似乎你没有饼干。尝试获取饼干？</string>
@@ -340,5 +341,12 @@
     <string name="network_receiver">网络监视器</string>
 
     <string name="ideographic_space">全角空格</string>
+
+    <string name="image_search_google">谷歌</string>
+    <string name="image_search_baidu">百度</string>
+    <string name="image_search_sogou">搜狗</string>
+    <string name="image_search_tineye">TinEye</string>
+    <string name="image_search_whatanime">What Anime</string>
+    <string name="image_search_saucenao">SauceNAO</string>
 
 </resources>

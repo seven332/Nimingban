@@ -125,6 +125,7 @@
     <string name="select_picture">Select picture</string>
 
     <string name="gallery">Gallery</string>
+    <string name="image_search">Image Search</string>
 
     <string name="no_cookies">No cookies</string>
     <string name="no_cookies_ac">Seems that you don\'t have cookie of AC Nimingban. Get cookie now?</string>
@@ -348,5 +349,12 @@
     <string name="network_receiver">Network receiver</string>
 
     <string name="ideographic_space">Full-width space</string>
+
+    <string name="image_search_google">Google</string>
+    <string name="image_search_baidu">Baidu</string>
+    <string name="image_search_sogou">Sogou</string>
+    <string name="image_search_tineye">TinEye</string>
+    <string name="image_search_whatanime">What Anime</string>
+    <string name="image_search_saucenao">SauceNAO</string>
 
 </resources>

@@ -27,7 +27,7 @@
 
     <item
         android:id="@+id/action_share"
-        android:title="@string/save"
+        android:title="@string/share"
         android:icon="@drawable/v_share_dark_x24"
         app:showAsAction="ifRoom"/>
 
@@ -36,5 +36,40 @@
         android:title="@string/refresh"
         android:icon="@drawable/v_refresh_dark_x24"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_search"
+        android:title="@string/image_search"
+        android:icon="@drawable/v_magnify_dark_x24"
+        app:showAsAction="ifRoom">
+
+        <menu>
+
+            <item
+                android:id="@+id/action_search_google"
+                android:title="@string/image_search_google"/>
+
+            <item
+                android:id="@+id/action_search_baidu"
+                android:title="@string/image_search_baidu"/>
+
+            <item
+                android:id="@+id/action_search_sogou"
+                android:title="@string/image_search_sogou"/>
+
+            <item
+                android:id="@+id/action_search_tineye"
+                android:title="@string/image_search_tineye"/>
+
+            <item
+                android:id="@+id/action_search_whatanime"
+                android:title="@string/image_search_whatanime"/>
+
+            <item
+                android:id="@+id/action_search_saucenao"
+                android:title="@string/image_search_saucenao"/>
+
+        </menu>
+    </item>
 
 </menu>
