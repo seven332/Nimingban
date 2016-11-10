@@ -171,16 +171,6 @@
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
 
-        <receiver
-            android:name="com.hippo.nimingban.receiver.NetworkReceiver"
-            android:label="@string/network_receiver">
-
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-
-        </receiver>
-
         <provider
             android:name="com.hippo.nimingban.content.ImageProvider"
             android:authorities="com.hippo.nimingban.image"

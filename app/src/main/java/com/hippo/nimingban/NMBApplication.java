@@ -18,9 +18,13 @@ package com.hippo.nimingban;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -107,7 +111,14 @@ public final class NMBApplication extends Application
         // Remove temp file
         FileUtils.deleteContent(NMBAppConfig.getTempDir());
 
+        // Check network state
         updateNetworkState(this);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateNetworkState(context);
+            }
+        }, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         // Theme
         setTheme(Settings.getDarkTheme() ? R.style.AppTheme_Dark : R.style.AppTheme);
