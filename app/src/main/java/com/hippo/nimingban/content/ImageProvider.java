@@ -75,8 +75,13 @@ public class ImageProvider extends ContentProvider {
                 cols[i] = OpenableColumns.SIZE;
                 values[i++] = file.length();
             } else if (MediaStore.MediaColumns.DATA.equals(col)) {
-                cols[i] = MediaStore.MediaColumns.DATA;
-                values[i++] = file.getUri();
+                Uri originUri = file.getUri();
+                if (ContentResolver.SCHEME_FILE.equals(originUri.getScheme())) {
+                    cols[i] = MediaStore.MediaColumns.DATA;
+                    values[i++] = file.getUri().getPath();
+                } else {
+                    // TODO handle document tree url
+                }
             }
         }
 
