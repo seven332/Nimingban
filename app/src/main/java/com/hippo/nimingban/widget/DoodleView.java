@@ -64,6 +64,7 @@ public class DoodleView extends View {
 
     private boolean mIsDot;
     private boolean mPathDone;
+    private int mPointCount;
     private float mX, mY;
 
     private boolean mEraser = false;
@@ -292,9 +293,14 @@ public class DoodleView extends View {
         }
     }
 
-    private void touch_up(MotionEvent event) {
+    private void touch_up(int pointCount) {
+        // Skip empty path
+        if (mPath.isEmpty()) {
+            return;
+        }
+
         // End mPath for single finger
-        if (event.getPointerCount() == 1) {
+        if (pointCount == 1) {
             mPath.lineTo(mX, mY);
         }
 
@@ -322,14 +328,29 @@ public class DoodleView extends View {
             return true;
         }
 
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+        int pointCount = event.getPointerCount();
+        final int actionMasked = event.getActionMasked();
+        if (actionMasked == MotionEvent.ACTION_UP ||
+                actionMasked == MotionEvent.ACTION_CANCEL ||
+                actionMasked == MotionEvent.ACTION_POINTER_UP) {
+            --pointCount;
+        }
+        final int oldPointCount = mPointCount;
+        if (pointCount > oldPointCount ||
+                event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mPathDone = false;
         }
+        mPointCount = pointCount;
         if (mPathDone) {
             return true;
         }
 
-        switch (event.getActionMasked()) {
+        // If the user has drawn with finger before, not dot, save it now
+        if (oldPointCount == 1 && pointCount > 1 && !mIsDot) {
+            touch_up(1);
+        }
+
+        switch (actionMasked) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
                 touch_down(event);
@@ -343,7 +364,7 @@ public class DoodleView extends View {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_POINTER_UP:
                 mPathDone = true;
-                touch_up(event);
+                touch_up(event.getPointerCount());
                 invalidate();
                 break;
         }
