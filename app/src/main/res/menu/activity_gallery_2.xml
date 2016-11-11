@@ -69,6 +69,14 @@
                 android:id="@+id/action_search_saucenao"
                 android:title="@string/image_search_saucenao"/>
 
+            <item
+                android:id="@+id/action_search_iqdb"
+                android:title="@string/image_search_iqdb"/>
+
+            <item
+                android:id="@+id/action_search_iqdb_3d"
+                android:title="@string/image_search_iqdb_3d"/>
+
         </menu>
     </item>
 

@@ -208,6 +208,8 @@ public class GalleryActivity2 extends SwipeBackActivity {
             case R.id.action_search_tineye:
             case R.id.action_search_whatanime:
             case R.id.action_search_saucenao:
+            case R.id.action_search_iqdb:
+            case R.id.action_search_iqdb_3d:
                 if (mGalleryAdapter instanceof SingleImageAdapter) {
                     String url = ImageSearch.getImageSearchUrl(id,
                             ((SingleImageAdapter) mGalleryAdapter).getCurrentImageUrl());

@@ -34,6 +34,8 @@ public final class ImageSearch {
     private static final String IMAGE_SEARCH_URL_TINEYE = "http://tineye.com/search/?url=";
     private static final String IMAGE_SEARCH_URL_WHATANIME = "https://whatanime.ga/?url=";
     private static final String IMAGE_SEARCH_URL_SAUCENAO = "http://saucenao.com/search.php?db=999&url=";
+    private static final String IMAGE_SEARCH_URL_IQDB = "http://www.iqdb.org/?url=";
+    private static final String IMAGE_SEARCH_URL_IQDB_3D = "http://3d.iqdb.org/?url=";
 
     private static final SparseArray<String> mMap = new SparseArray<>();
 
@@ -44,6 +46,8 @@ public final class ImageSearch {
         mMap.put(R.id.action_search_tineye, IMAGE_SEARCH_URL_TINEYE);
         mMap.put(R.id.action_search_whatanime, IMAGE_SEARCH_URL_WHATANIME);
         mMap.put(R.id.action_search_saucenao, IMAGE_SEARCH_URL_SAUCENAO);
+        mMap.put(R.id.action_search_iqdb, IMAGE_SEARCH_URL_IQDB);
+        mMap.put(R.id.action_search_iqdb_3d, IMAGE_SEARCH_URL_IQDB_3D);
     }
 
     public static String getImageSearchUrl(int id, String url) {
