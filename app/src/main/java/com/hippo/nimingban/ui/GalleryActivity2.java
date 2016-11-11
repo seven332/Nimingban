@@ -208,11 +208,11 @@ public class GalleryActivity2 extends SwipeBackActivity {
             case R.id.action_search_tineye:
             case R.id.action_search_whatanime:
             case R.id.action_search_saucenao:
-                String urlPrefix = ImageSearch.getImageSearchUrlPrefix(id);
-                if (urlPrefix != null && mGalleryAdapter instanceof SingleImageAdapter) {
-                    String imageUrl = ((SingleImageAdapter) mGalleryAdapter).getCurrentImageUrl();
-                    if (imageUrl != null) {
-                        OpenUrlHelper.openUrl(this, urlPrefix + imageUrl, false);
+                if (mGalleryAdapter instanceof SingleImageAdapter) {
+                    String url = ImageSearch.getImageSearchUrl(id,
+                            ((SingleImageAdapter) mGalleryAdapter).getCurrentImageUrl());
+                    if (url != null) {
+                        OpenUrlHelper.openUrl(this, url, false);
                     }
                 }
                 return true;

@@ -22,6 +22,9 @@ package com.hippo.nimingban;
 
 import android.util.SparseArray;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public final class ImageSearch {
     private ImageSearch() {}
 
@@ -43,7 +46,15 @@ public final class ImageSearch {
         mMap.put(R.id.action_search_saucenao, IMAGE_SEARCH_URL_SAUCENAO);
     }
 
-    public static String getImageSearchUrlPrefix(int id) {
-        return mMap.get(id);
+    public static String getImageSearchUrl(int id, String url) {
+        String prefix = mMap.get(id);
+        if (prefix == null) {
+            return null;
+        }
+        try {
+            return prefix + URLEncoder.encode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 }
