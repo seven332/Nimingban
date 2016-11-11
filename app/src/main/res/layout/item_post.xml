@@ -25,28 +25,40 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
 
-    <TextView
-        android:id="@+id/left_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/center_text"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/right_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
+        <TextView
+            android:id="@+id/left_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left|top"/>
+
+        <TextView
+            android:id="@+id/center_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|top"/>
+
+        <TextView
+            android:id="@+id/right_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right|top"/>
+
+    </LinearLayout>
 
     <com.hippo.nimingban.widget.LinkifyTextView
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/left_text"
+        android:layout_below="@id/header"
         android:layout_marginTop="8dp"
         android:textSize="@dimen/text_little_small"
         android:textColor="?android:attr/textColorPrimary"
