@@ -626,6 +626,7 @@ public class PostFragment extends BaseFragment
         @Override
         public void onFailure(Exception e) {
             mLeftText.setVisibility(View.GONE);
+            mCenterText.setVisibility(View.GONE);
             mRightText.setVisibility(View.GONE);
             mContent.setText(R.string.cant_get_the_reference);
             mThumb.setVisibility(View.GONE);
