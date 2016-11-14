@@ -18,6 +18,7 @@ package com.hippo.nimingban.client.ac;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -45,7 +46,6 @@ import com.hippo.nimingban.client.data.DumpSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.util.BitmapUtils;
-import com.hippo.util.Gifsicle;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
@@ -55,14 +55,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -353,45 +352,49 @@ public final class ACEngine {
                     Headers.of("Content-Disposition", "form-data; name=\"water\""),
                     RequestBody.create(null, "true"));
         }
-        InputStreamPipe isPipe = struct.image;
 
-        if (isPipe != null) {
-            String filename;
-            MediaType mediaType;
-            byte[] bytes;
-            File file = compressBitmap(isPipe, struct.imageType);
+        if (struct.image != null) {
+            final byte[] bytes;
+            File file = compressBitmap(struct.image, struct.imageType);
+
+            final String imageType;
+            final InputStreamPipe imagePipe;
             if (file == null) {
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
-                if (TextUtils.isEmpty(extension)) {
-                    extension = "jpg";
-                }
-                filename = "a." + extension;
-
-                mediaType = MediaType.parse(struct.imageType);
-                if (mediaType == null) {
-                    mediaType = MEDIA_TYPE_IMAGE_ALL;
-                }
-
-                try {
-                    isPipe.obtain();
-                    bytes = IOUtils.getAllByte(isPipe.open());
-                } finally {
-                    isPipe.close();
-                    isPipe.release();
-                }
+                // Origin image
+                imageType = struct.imageType;
+                imagePipe = struct.image;
             } else {
-                filename = "a.jpg";
-                mediaType = MEDIA_TYPE_IMAGE_JPEG;
-
-                InputStream is = null;
-                try {
-                    is = new FileInputStream(file);
-                    bytes = IOUtils.getAllByte(is);
-                } finally {
-                    IOUtils.closeQuietly(is);
-                    file.delete();
-                }
+                // Compressed image
+                // gif or jpeg
+                imageType = "image/gif".equals(struct.imageType) ? "image/gif" : "image/jpeg";
+                imagePipe = new FileInputStreamPipe(file);
             }
+
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType);
+            if (TextUtils.isEmpty(extension)) {
+                extension = "jpg";
+            }
+            final String filename = "a." + extension;
+
+            MediaType mediaType = MediaType.parse(imageType);
+            if (mediaType == null) {
+                mediaType = MEDIA_TYPE_IMAGE_ALL;
+            }
+
+            try {
+                imagePipe.obtain();
+                bytes = IOUtils.getAllByte(imagePipe.open());
+
+                // Test gif compatibility
+                if ("image/gif".equals(imageType) &&
+                        bytes.length > 0 && bytes[bytes.length - 1] == 0x3B) {
+                    bytes[bytes.length - 1] = 0x2C;
+                }
+            } finally {
+                imagePipe.close();
+                imagePipe.release();
+            }
+
             builder.addPart(
                     Headers.of("Content-Disposition", "form-data; name=\"image\"; filename=\"" + filename + "\""),
                     RequestBody.create(mediaType, bytes));
@@ -536,45 +539,49 @@ public final class ACEngine {
                     Headers.of("Content-Disposition", "form-data; name=\"water\""),
                     RequestBody.create(null, "true"));
         }
-        InputStreamPipe isPipe = struct.image;
 
-        if (isPipe != null) {
-            String filename;
-            MediaType mediaType;
-            byte[] bytes;
-            File file = compressBitmap(isPipe, struct.imageType);
+        if (struct.image != null) {
+            final byte[] bytes;
+            File file = compressBitmap(struct.image, struct.imageType);
+
+            final String imageType;
+            final InputStreamPipe imagePipe;
             if (file == null) {
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(struct.imageType);
-                if (TextUtils.isEmpty(extension)) {
-                    extension = "jpg";
-                }
-                filename = "a." + extension;
-
-                mediaType = MediaType.parse(struct.imageType);
-                if (mediaType == null) {
-                    mediaType = MEDIA_TYPE_IMAGE_ALL;
-                }
-
-                try {
-                    isPipe.obtain();
-                    bytes = IOUtils.getAllByte(isPipe.open());
-                } finally {
-                    isPipe.close();
-                    isPipe.release();
-                }
+                // Origin image
+                imageType = struct.imageType;
+                imagePipe = struct.image;
             } else {
-                filename = "a.jpg";
-                mediaType = MEDIA_TYPE_IMAGE_JPEG;
-
-                InputStream is = null;
-                try {
-                    is = new FileInputStream(file);
-                    bytes = IOUtils.getAllByte(is);
-                } finally {
-                    IOUtils.closeQuietly(is);
-                    file.delete();
-                }
+                // Compressed image
+                // gif or jpeg
+                imageType = "image/gif".equals(struct.imageType) ? "image/gif" : "image/jpeg";
+                imagePipe = new FileInputStreamPipe(file);
             }
+
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType);
+            if (TextUtils.isEmpty(extension)) {
+                extension = "jpg";
+            }
+            final String filename = "a." + extension;
+
+            MediaType mediaType = MediaType.parse(imageType);
+            if (mediaType == null) {
+                mediaType = MEDIA_TYPE_IMAGE_ALL;
+            }
+
+            try {
+                imagePipe.obtain();
+                bytes = IOUtils.getAllByte(imagePipe.open());
+
+                // Test gif compatibility
+                if ("image/gif".equals(imageType) &&
+                        bytes.length > 0 && bytes[bytes.length - 1] == 0x3B) {
+                    bytes[bytes.length - 1] = 0x2C;
+                }
+            } finally {
+                imagePipe.close();
+                imagePipe.release();
+            }
+
             builder.addPart(
                     Headers.of("Content-Disposition", "form-data; name=\"image\"; filename=\"" + filename + "\""),
                     RequestBody.create(mediaType, bytes));
@@ -616,12 +623,35 @@ public final class ACEngine {
 
     private static final long MAX_IMAGE_SIZE = 2000 * 1024;
 
-    private static boolean compressGifSicle(File input, File output) throws IOException {
+    private static boolean compressGifsicle(File input, File output) throws IOException {
+        final String gifsicleFilename;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            gifsicleFilename = "libgifsicle_executable.so";
+        } else {
+            gifsicleFilename = "libgifsicle_executable_legacy.so";
+        }
+
+        final File gifsicle = new File(NMBAppConfig.getNativeLibDir(), gifsicleFilename);
+        if (!gifsicle.canExecute()) {
+            return false;
+        }
+
         float scale = (float) Math.sqrt((float) MAX_IMAGE_SIZE / (float) input.length());
         for (int i = 0; i < 5 && scale > 0.0001; i++) {
-            Gifsicle.main("--scale", Float.toString(scale), "--output", output.getPath(), input.getPath());
-            if (output.length() < MAX_IMAGE_SIZE) {
-                return true;
+            String cmd = String.format(Locale.US, "%s --scale %f --output %s %s",
+                    gifsicle.getPath(), scale, output.getPath(), input.getPath());
+            String[] envp = { "LD_LIBRARY_PATH=" + NMBAppConfig.getNativeLibDir() };
+            Process process = Runtime.getRuntime().exec(cmd, envp);
+            try {
+                if (process.waitFor() != 0) {
+                    return false;
+                }
+                if (output.length() < MAX_IMAGE_SIZE) {
+                    return true;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
             }
             scale -= 0.05;
         }
@@ -658,8 +688,7 @@ public final class ACEngine {
                     throw new NMBException(DumpSite.getInstance(), "Can't create temp file");
                 }
 
-                if (compressGifSicle(temp, output)) {
-                    Log.d("TAG", "compressGifSicle ok");
+                if (compressGifsicle(temp, output)) {
                     return output;
                 } else {
                     throw new NMBException(DumpSite.getInstance(), "Can't compress gif");
