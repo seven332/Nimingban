@@ -177,6 +177,12 @@
             android:grantUriPermissions="true"
             android:exported="false"/>
 
+        <provider
+            android:name="com.hippo.nimingban.content.UpdateApkProvider"
+            android:authorities="com.hippo.nimingban.updateapk"
+            android:grantUriPermissions="true"
+            android:exported="true"/>
+
         <service
             android:name="com.hippo.nimingban.service.DaDiaoService"
             android:icon="@mipmap/ic_launcher"

@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.data.DiscUrl;
 import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.nimingban.content.UpdateApkProvider;
 import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.text.Html;
@@ -124,7 +126,6 @@ public final class UpdateHelper {
         public DownloadApkTask(Context context, DownloadRequest request, Uri uri, String failedUrl) {
             mContext = context;
             mRequest = request;
-            mUri = uri;
             mFailedUrl = failedUrl;
             mListener = new DownloadApkListener();
             mRequest.setListener(mListener);
@@ -142,6 +143,14 @@ public final class UpdateHelper {
 
             mDownloadTimer = new DownloadTimer(2000);
             mDownloadTimer.start();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                // Only use content uri for Android N and above
+                mUri = UpdateApkProvider.UPDATE_APK_URI;
+                UpdateApkProvider.setUpdateApkFile(uri);
+            } else {
+                mUri = uri;
+            }
         }
 
         @Override
