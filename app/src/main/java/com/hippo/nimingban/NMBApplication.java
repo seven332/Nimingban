@@ -37,6 +37,7 @@ import com.hippo.nimingban.client.NMBDns;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.client.data.NMBInterceptor;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
@@ -323,6 +324,7 @@ public final class NMBApplication extends Application
                     .writeTimeout(15, TimeUnit.SECONDS)
                     .dns(new NMBDns())
                     .cookieJar(new CookieDBJar(getSimpleCookieStore(context)))
+                    .addInterceptor(new NMBInterceptor())
                     .build();
         }
         return application.mOkHttpClient;

@@ -17,6 +17,7 @@
 package com.hippo.nimingban.client.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACUrl;
@@ -29,7 +30,10 @@ import com.hippo.yorozuya.MathUtils;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.HttpUrl;
 
 public class ACSite extends Site {
 
@@ -41,6 +45,9 @@ public class ACSite extends Site {
 
     private List<ACCdnPath> mCdnPathList;
     private float mRateSum;
+
+    private boolean mCdnHostsDirty;
+    private String[] mCdnHosts;
 
     private static ACSite sInstance;
 
@@ -129,6 +136,9 @@ public class ACSite extends Site {
             // Bad !
             mCdnPathList = null;
         }
+
+        // Set cdn hosts dirty
+        mCdnHostsDirty = true;
     }
 
     private ACCdnPath getCdnPath() {
@@ -144,6 +154,25 @@ public class ACSite extends Site {
             }
         }
         return cdnPath;
+    }
+
+    @NonNull
+    public String[] getCdnHosts() {
+        if (mCdnHostsDirty || mCdnHosts == null) {
+            if (mCdnPathList == null) {
+                mCdnHosts = new String[0];
+            } else {
+                List<String> hosts = new ArrayList<>();
+                for (ACCdnPath cdn : mCdnPathList) {
+                    HttpUrl url = HttpUrl.parse(cdn.url);
+                    if (url != null) {
+                        hosts.add(url.host());
+                    }
+                }
+                mCdnHosts = hosts.toArray(new String[hosts.size()]);
+            }
+        }
+        return mCdnHosts;
     }
 
     public synchronized String getPictureUrl(String key) {

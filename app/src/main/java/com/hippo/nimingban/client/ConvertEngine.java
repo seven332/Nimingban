@@ -19,7 +19,6 @@ package com.hippo.nimingban.client;
 import android.util.Log;
 
 import com.hippo.network.ResponseCodeException;
-import com.hippo.okhttp.ChromeRequestBuilder;
 
 import java.io.IOException;
 
@@ -43,7 +42,7 @@ public class ConvertEngine {
                 .build();
         String url = URL;
         Log.d(TAG, url);
-        Request request = new ChromeRequestBuilder(url).post(formBody).build();
+        Request request = new Request.Builder().url(url).post(formBody).build();
         return okHttpClient.newCall(request);
     }
 

@@ -122,7 +122,7 @@ public final class ACEngine {
     public static Call prepareGetCookie(OkHttpClient okHttpClient) {
         String url = ACUrl.API_GET_COOKIE;
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -146,7 +146,7 @@ public final class ACEngine {
     public static Call prepareGetCdnPath(OkHttpClient okHttpClient) {
         String url = ACUrl.API_GET_CDN_PATH;
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -165,7 +165,7 @@ public final class ACEngine {
     public static Call prepareGetCommonPosts(OkHttpClient okHttpClient) {
         String url = ACUrl.API_COMMON_POSTS;
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -189,7 +189,7 @@ public final class ACEngine {
     public static Call prepareGetForumList(OkHttpClient okHttpClient) {
         String url = ACUrl.API_GET_FORUM_LIST;
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -213,7 +213,7 @@ public final class ACEngine {
     public static Call prepareGetPostList(OkHttpClient okHttpClient, String id, int page) {
         String url = ACUrl.getPostListUrl(id, page);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -245,7 +245,7 @@ public final class ACEngine {
     public static Call prepareGetPost(OkHttpClient okHttpClient, String id, int page) {
         String url = ACUrl.getPostUrl(id, page);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -269,7 +269,7 @@ public final class ACEngine {
     public static Call prepareGetReference(OkHttpClient okHttpClient, String id) {
         String url = ACUrl.getReferenceUrl(id);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -402,7 +402,8 @@ public final class ACEngine {
 
         String url = ACUrl.API_REPLY;
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url)
+        Request request = new Request.Builder()
+                .url(url)
                 .post(builder.build())
                 .build();
         return okHttpClient.newCall(request);
@@ -437,7 +438,7 @@ public final class ACEngine {
     public static Call prepareGetFeed(OkHttpClient okHttpClient, String uuid, int page) {
         String url = ACUrl.getFeedUrl(uuid, page);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -471,7 +472,7 @@ public final class ACEngine {
     public static Call prepareAddFeed(OkHttpClient okHttpClient, String uuid, String tid) {
         String url = ACUrl.getAddFeedUrl(uuid, tid);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -495,7 +496,7 @@ public final class ACEngine {
     public static Call prepareDelFeed(OkHttpClient okHttpClient, String uuid, String tid) {
         String url = ACUrl.getDelFeedUrl(uuid, tid);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
@@ -589,7 +590,8 @@ public final class ACEngine {
 
         String url = ACUrl.API_CREATE_POST;
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url)
+        Request request = new Request.Builder()
+                .url(url)
                 .post(builder.build())
                 .build();
         return okHttpClient.newCall(request);
@@ -741,7 +743,7 @@ public final class ACEngine {
     public static Call prepareSearch(OkHttpClient okHttpClient, String keyword, int page) throws UnsupportedEncodingException {
         String url = ACUrl.getSearchUrl(keyword, page);
         Log.d(TAG, url);
-        Request request = new ACRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 

@@ -20,7 +20,6 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.hippo.nimingban.client.data.UpdateStatus;
-import com.hippo.okhttp.ChromeRequestBuilder;
 
 import java.io.IOException;
 
@@ -38,7 +37,7 @@ public final class UpdateEngine {
     public static Call prepareUpdate(OkHttpClient okHttpClient) {
         String url = UPDATE_URL;
         Log.d(TAG, url);
-        Request request = new ChromeRequestBuilder(url).build();
+        Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
     }
 
