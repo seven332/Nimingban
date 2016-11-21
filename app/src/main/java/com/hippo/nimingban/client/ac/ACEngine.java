@@ -55,8 +55,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -625,6 +628,21 @@ public final class ACEngine {
 
     private static final long MAX_IMAGE_SIZE = 2000 * 1024;
 
+    private static int getBitmapWidth(File file) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(is, null, options);
+            return options.outWidth;
+        } catch (FileNotFoundException e) {
+            return 0;
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
     private static boolean compressGifsicle(File input, File output) throws IOException {
         final String gifsicleFilename;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -639,9 +657,15 @@ public final class ACEngine {
         }
 
         float scale = (float) Math.sqrt((float) MAX_IMAGE_SIZE / (float) input.length());
-        for (int i = 0; i < 5 && scale > 0.0001; i++) {
-            String cmd = String.format(Locale.US, "%s --scale %f --output %s %s",
-                    gifsicle.getPath(), scale, output.getPath(), input.getPath());
+        int width = (int) (getBitmapWidth(input) * scale);
+        if (width <= 0) {
+            return false;
+        }
+        width = (width < 250 && width > 5) ? (width / 5 * 5) : width;
+
+        for (int i = 0; i < 5 && width > 0; i++, width -= 5) {
+            String cmd = String.format(Locale.US, "%s --resize-width %d --output %s %s",
+                    gifsicle.getPath(), width, output.getPath(), input.getPath());
             String[] envp = { "LD_LIBRARY_PATH=" + NMBAppConfig.getNativeLibDir() };
             Process process = Runtime.getRuntime().exec(cmd, envp);
             try {
@@ -655,7 +679,6 @@ public final class ACEngine {
                 e.printStackTrace();
                 return false;
             }
-            scale -= 0.05;
         }
         return false;
     }
