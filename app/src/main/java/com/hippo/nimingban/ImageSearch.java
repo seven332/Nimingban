@@ -29,7 +29,7 @@ public final class ImageSearch {
     private ImageSearch() {}
 
     private static final String IMAGE_SEARCH_URL_GOOGLE = "https://www.google.com/searchbyimage?image_url=";
-    private static final String IMAGE_SEARCH_URL_BAIDU = "http://image.baidu.com/n/pc_search?queryImageUrl=";
+    private static final String IMAGE_SEARCH_URL_BAIDU = "https://image.baidu.com/wiseshitu?queryImageUrl=";
     private static final String IMAGE_SEARCH_URL_SOGOU = "http://pic.sogou.com/ris?query=";
     private static final String IMAGE_SEARCH_URL_TINEYE = "http://tineye.com/search/?url=";
     private static final String IMAGE_SEARCH_URL_WHATANIME = "https://whatanime.ga/?url=";
