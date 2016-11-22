@@ -179,7 +179,7 @@ public class ACSite extends Site {
         String url;
         ACCdnPath cdnPath;
 
-        if (mCdnPathList != null && (cdnPath = getCdnPath()) != null && !Settings.getFixImageURLs()) {
+        if (mCdnPathList != null && (cdnPath = getCdnPath()) != null) {
             url = cdnPath.url + key;
         } else {
             url = DEFAULT_PICTURE_PREFIX + key;

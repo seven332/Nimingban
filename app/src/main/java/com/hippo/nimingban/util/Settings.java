@@ -160,9 +160,6 @@ public final class Settings {
     public static final String KEY_ANALYSIS = "analysis";
     public static final boolean DEFAULT_ANALYSIS = false;
 
-    public static final String KEY_FIX_IMAGE_URLS = "fix_image_urls";
-    public static final boolean DEFAULT_FIX_IMAGE_URLS = false;
-
     public static boolean getDarkTheme() {
         return getBoolean(KEY_DARK_THEME, DEFAULT_DARK_THEME);
     }
@@ -361,10 +358,6 @@ public final class Settings {
 
     public static void putAnalysis(boolean value) {
         putBoolean(KEY_ANALYSIS, value);
-    }
-
-    public static boolean getFixImageURLs() {
-        return getBoolean(KEY_FIX_IMAGE_URLS, DEFAULT_FIX_IMAGE_URLS);
     }
 
     private static final String KEY_VERSION_CODE = "version_code";

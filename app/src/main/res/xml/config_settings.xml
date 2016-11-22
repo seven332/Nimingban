@@ -80,15 +80,6 @@
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
-        android:key="fix_image_urls"
-        android:title="@string/main_fix_image_urls"
-        app:summaryOn="@string/main_fix_image_urls_summary_on"
-        app:summaryOff="@string/main_fix_image_urls_summary_off"
-        android:defaultValue="false"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
-
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
         android:key="analysis"
         android:title="@string/main_analysis"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
