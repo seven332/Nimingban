@@ -23,8 +23,8 @@ android {
         applicationId "com.hippo.nimingban"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 44
-        versionName "1.2.30"
+        versionCode 45
+        versionName "1.2.31"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN"
         ndk {
