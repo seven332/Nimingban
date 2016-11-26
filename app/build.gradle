@@ -73,7 +73,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.0.1'
     compile 'com.github.seven332:advrecyclerview:0.10.0'
     compile 'com.github.seven332:drawerLayout:0.1.0'
-    compile 'com.github.seven332:image:0.1.12'
+    compile 'com.github.seven332:image:877cb27e729db592f7f238838583ca74202baa67'
     compile 'com.github.seven332:okhttp:3.4.2'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.1'
