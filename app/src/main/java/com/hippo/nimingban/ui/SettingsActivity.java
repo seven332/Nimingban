@@ -619,6 +619,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private class SaveCookieTask extends AsyncTask<Void, Void, String> {
 
+            private final Context mContext;
+
+            public SaveCookieTask(Context context) {
+                mContext = context.getApplicationContext();
+            }
+
             @Override
             protected String doInBackground(Void... params) {
                 File dir = NMBAppConfig.getCookiesDir();
@@ -626,7 +632,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     return null;
                 }
 
-                SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getActivity());
+                SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(mContext);
                 List<TransportableHttpCookie> list = cookieStore.getTransportableCookies();
 
                 boolean ok;
@@ -664,9 +670,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             @Override
             protected void onPostExecute(String path) {
                 mSaveCookies.setEnabled(true);
-                Context context = getActivity();
-                Toast.makeText(getActivity(), path == null ? context.getString(R.string.save_cookies_failed) :
-                        context.getString(R.string.save_cookies_to, path), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, path == null ? mContext.getString(R.string.save_cookies_failed) :
+                        mContext.getString(R.string.save_cookies_to, path), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -897,7 +902,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 return true;
             } else if (KEY_SAVE_COOKIES.equals(key)) {
                 mSaveCookies.setEnabled(false);
-                new SaveCookieTask().execute();
+                new SaveCookieTask(getActivity()).execute();
                 return true;
             } else if (KEY_RESTORE_COOKIES.equals(key)) {
                 RestoreCookieDialogHelper helper = new RestoreCookieDialogHelper();
