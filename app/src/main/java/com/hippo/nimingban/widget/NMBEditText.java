@@ -76,7 +76,9 @@ public class NMBEditText extends AppCompatEditText {
             if (clipData.getItemCount() > 0) {
                 // Convert to plain text
                 CharSequence text = clipData.getItemAt(0).getText();
-                cbm.setPrimaryClip(ClipData.newPlainText(null, text.toString()));
+                if (text != null) {
+                    cbm.setPrimaryClip(ClipData.newPlainText(null, text.toString()));
+                }
             }
         }
 
