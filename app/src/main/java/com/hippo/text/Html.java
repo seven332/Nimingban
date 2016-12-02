@@ -57,6 +57,7 @@ import org.xml.sax.XMLReader;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -710,11 +711,13 @@ class HtmlToSpannedConverter implements ContentHandler {
                             where, len,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
-                    int c = getHtmlColor(f.mColor);
-                    if (c != -1) {
+                    try {
+                        int c = getHtmlColor(f.mColor);
                         text.setSpan(new ForegroundColorSpan(c | 0xFF000000),
                                 where, len,
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } catch (ParseException e) {
+                        // Ignore
                     }
                 }
             }
@@ -901,17 +904,18 @@ class HtmlToSpannedConverter implements ContentHandler {
      * or color name
      */
     @ColorInt
-    public static int getHtmlColor(@NonNull String colorString) {
+    public static int getHtmlColor(@NonNull String colorString) throws ParseException {
         colorString = colorString.trim();
         try {
             return getHtmlColorInternal(colorString);
         } catch (NumberFormatException e) {
             Log.e(TAG, "Unknown color: " + colorString);
-            return -1;
+            throw new ParseException("Unknown color: " + colorString, 0);
         }
     }
 
-    private static int getHtmlColorInternal(@NonNull String colorString) {
+    private static int getHtmlColorInternal(@NonNull String colorString)
+            throws NumberFormatException, ParseException {
         if (colorString.charAt(0) == '#') {
             // Use a long to avoid rollovers on #ffXXXXXX
             long color = Long.parseLong(colorString.substring(1), 16);
@@ -931,7 +935,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             }
         }
         Log.e(TAG, "Unknown color: " + colorString);
-        return -1;
+        throw new ParseException("Unknown color: " + colorString, 0);
     }
 
     private static final HashMap<String, Integer> sColorNameMap;
