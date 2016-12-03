@@ -387,12 +387,6 @@ public final class ACEngine {
             try {
                 imagePipe.obtain();
                 bytes = IOUtils.getAllByte(imagePipe.open());
-
-                // Test gif compatibility
-                if ("image/gif".equals(imageType) &&
-                        bytes.length > 0 && bytes[bytes.length - 1] == 0x3B) {
-                    bytes[bytes.length - 1] = 0x2C;
-                }
             } finally {
                 imagePipe.close();
                 imagePipe.release();
@@ -575,12 +569,6 @@ public final class ACEngine {
             try {
                 imagePipe.obtain();
                 bytes = IOUtils.getAllByte(imagePipe.open());
-
-                // Test gif compatibility
-                if ("image/gif".equals(imageType) &&
-                        bytes.length > 0 && bytes[bytes.length - 1] == 0x3B) {
-                    bytes[bytes.length - 1] = 0x2C;
-                }
             } finally {
                 imagePipe.close();
                 imagePipe.release();
@@ -661,9 +649,9 @@ public final class ACEngine {
         if (width <= 0) {
             return false;
         }
-        width = (width < 250 && width > 5) ? (width / 5 * 5) : width;
 
-        for (int i = 0; i < 5 && width > 0; i++, width -= 5) {
+        final int offset = width / 5;
+        for (int i = 0; i < 5 && width > 0; i++, width -= offset) {
             String cmd = String.format(Locale.US, "%s --resize-width %d --output %s %s",
                     gifsicle.getPath(), width, output.getPath(), input.getPath());
             String[] envp = { "LD_LIBRARY_PATH=" + NMBAppConfig.getNativeLibDir() };
@@ -702,7 +690,7 @@ public final class ACEngine {
             os.close();
 
             long size = temp.length();
-            if (size < MAX_IMAGE_SIZE && !"image/jpeg".equals(imageType) && !"image/jpg".equals(imageType)) {
+            if (size < MAX_IMAGE_SIZE) {
                 temp.delete();
                 return null;
             }
