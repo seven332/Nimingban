@@ -26,7 +26,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -52,10 +51,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.drawerlayout.DrawerLayout;
@@ -90,6 +87,7 @@ import com.hippo.nimingban.widget.ContentLayout;
 import com.hippo.nimingban.widget.FontTextView;
 import com.hippo.nimingban.widget.LeftDrawer;
 import com.hippo.nimingban.widget.LoadImageView;
+import com.hippo.nimingban.widget.MarqueeReplyView;
 import com.hippo.nimingban.widget.RightDrawer;
 import com.hippo.ripple.Ripple;
 import com.hippo.text.Html;
@@ -107,7 +105,6 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
-import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -394,7 +391,6 @@ public final class ListActivity extends AbsActivity
             if (holder != null) {
                 // Only resume attached view holder
                 if (holder.itemView.getParent() != null) {
-                    holder.resumeReplies();
                     holder.thumb.start();
                 }
             } else {
@@ -414,7 +410,6 @@ public final class ListActivity extends AbsActivity
         while (iterator.hasNext()) {
             ListHolder holder = iterator.next().get();
             if (holder != null) {
-                holder.pauseReplies();
                 holder.thumb.stop();
             } else {
                 iterator.remove();
@@ -460,7 +455,6 @@ public final class ListActivity extends AbsActivity
         for (WeakReference<ListHolder> ref : mListHolderList) {
             ListHolder holder = ref.get();
             if (holder != null) {
-                holder.clearReplies();
                 holder.thumb.unload();
             }
         }
@@ -1019,10 +1013,7 @@ public final class ListActivity extends AbsActivity
         }
     }
 
-    private class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            ViewSwitcher.ViewFactory, Runnable {
-
-        private Handler mHandler;
+    private class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView leftText;
         public TextView centerText;
@@ -1031,17 +1022,10 @@ public final class ListActivity extends AbsActivity
         public TextView bottomText;
         public LoadImageView thumb;
         public View bottom;
-        public TextSwitcher reply;
-
-        private int mShowIndex;
-        private Reply[] mReplies;
-
-        private boolean mRunning = false;
+        public MarqueeReplyView reply;
 
         public ListHolder(View itemView) {
             super(itemView);
-
-            mHandler = SimpleHandler.getInstance();
 
             leftText = (TextView) itemView.findViewById(R.id.left_text);
             centerText = (TextView) itemView.findViewById(R.id.center_text);
@@ -1049,12 +1033,10 @@ public final class ListActivity extends AbsActivity
             content = (FontTextView) itemView.findViewById(R.id.content);
             bottomText = (TextView) itemView.findViewById(R.id.bottom_text);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
-            reply = (TextSwitcher) itemView.findViewById(R.id.reply);
+            reply = (MarqueeReplyView) itemView.findViewById(R.id.reply);
             bottom = itemView.findViewById(R.id.bottom);
 
             thumb.setOnClickListener(this);
-
-            reply.setFactory(this);
 
             Drawable drawable = DrawableManager.getDrawable(ListActivity.this, R.drawable.v_comment_multiple_outline_x16);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -1080,69 +1062,14 @@ public final class ListActivity extends AbsActivity
             }
         }
 
-        public long getReplyInterval() {
-            return MathUtils.random(3000, 5001);
-        }
-
         public boolean setReplies(Reply[] replies) {
-            mHandler.removeCallbacks(this);
-            mRunning = false;
-
             if (replies == null || replies.length == 0) {
-                mReplies = null;
                 reply.setVisibility(View.INVISIBLE);
                 return false;
             } else {
-                mReplies = replies;
-                mShowIndex = MathUtils.random(replies.length);
                 reply.setVisibility(View.VISIBLE);
-                reply.setCurrentText(replies[mShowIndex].getNMBDisplayContent());
-
-                if (replies.length > 1 && !mRunning) {
-                    mRunning = true;
-                    mHandler.postDelayed(this, getReplyInterval());
-                }
-
+                reply.setReplies(replies);
                 return true;
-            }
-        }
-
-        public void resumeReplies() {
-            if (mReplies != null && mReplies.length > 1 && !mRunning) {
-                mRunning = true;
-                mHandler.postDelayed(this, getReplyInterval());
-            }
-        }
-
-        public void pauseReplies() {
-            if (mReplies != null && mReplies.length > 1) {
-                mRunning = false;
-                mHandler.removeCallbacks(this);
-            }
-        }
-
-        public void clearReplies() {
-            mRunning = false;
-            mHandler.removeCallbacks(this);
-            mReplies = null;
-        }
-
-        @Override
-        public View makeView() {
-            return getLayoutInflater().inflate(R.layout.item_list_reply, reply, false);
-        }
-
-        @Override
-        public void run() {
-            if (mReplies == null) {
-                return;
-            }
-
-            mShowIndex = (mShowIndex + 1) % mReplies.length;
-            reply.setText(mReplies[mShowIndex].getNMBDisplayContent());
-
-            if (mRunning) {
-                mHandler.postDelayed(this, getReplyInterval());
             }
         }
     }
@@ -1234,13 +1161,11 @@ public final class ListActivity extends AbsActivity
 
         @Override
         public void onViewAttachedToWindow(ListHolder holder) {
-            holder.resumeReplies();
             holder.thumb.start();
         }
 
         @Override
         public void onViewDetachedFromWindow(ListHolder holder) {
-            holder.pauseReplies();
             holder.thumb.stop();
         }
     }
