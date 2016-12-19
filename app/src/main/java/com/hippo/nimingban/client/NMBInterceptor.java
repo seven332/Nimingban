@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.client.data;
+package com.hippo.nimingban.client;
 
 /*
  * Created by Hippo on 11/21/2016.
  */
 
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.yorozuya.Utilities;
 
 import java.io.IOException;

@@ -37,7 +37,7 @@ import com.hippo.nimingban.client.NMBDns;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.data.ACSite;
-import com.hippo.nimingban.client.data.NMBInterceptor;
+import com.hippo.nimingban.client.NMBInterceptor;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
