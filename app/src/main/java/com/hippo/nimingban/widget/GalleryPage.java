@@ -34,7 +34,6 @@ import com.hippo.drawable.ImageWrapper;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.widget.ProgressView;
-import com.hippo.yorozuya.MathUtils;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -94,19 +93,30 @@ public final class GalleryPage extends FrameLayout implements Unikery<ImageWrapp
         if (drawable != null && drawable.getIntrinsicHeight() > 0) {
             int drawableWidth = drawable.getIntrinsicWidth();
             int drawableHeight = drawable.getIntrinsicHeight();
+            int width = getWidth();
             int height = getHeight();
-            int width = getHeight();
-            float scaleX = 3.0f;
-            float scaleY = 3.0f;
+            float scaleX = 1.0f;
+            float scaleY = 1.0f;
 
             if (drawableWidth > 0 && width > 0) {
-                scaleX = ((float) drawableWidth / (float) width) * 3f;
+                scaleX = ((float) width / (float) drawableWidth);
             }
             if (drawableHeight > 0 && height > 0) {
-                scaleY = ((float) drawableHeight / (float) height) * 3f;
+                scaleY = ((float) height / (float) drawableHeight);
             }
 
-            mPhotoView.setMaximumScale(MathUtils.max(3.0f, scaleX, scaleY));
+            float midScale;
+            float maxScale;
+            if (scaleX > scaleY) {
+                midScale = scaleX / scaleY;
+            } else if (scaleX == scaleY) {
+                midScale = 1.75f;
+            } else {
+                midScale = scaleY / scaleX;
+            }
+
+            maxScale = midScale * 3;
+            mPhotoView.setScaleLevels(1.0f, midScale, maxScale);
         }
     }
 
