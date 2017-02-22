@@ -82,6 +82,17 @@ public class ACPost extends Post {
     private Reply[] mReplies;
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof ACPost)) {
+            return false;
+        }
+        return ((ACPost) obj).getNMBPostId().equals(this.id);
+    }
+
+    @Override
     public String toString() {
         return "id = " + id + ", img = " + img + ", ext = " + ext + ", now = " + now +
                 ", userid = " + userid + ", name = " + name + ", email = " + email +
