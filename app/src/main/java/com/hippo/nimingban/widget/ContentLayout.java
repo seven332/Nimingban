@@ -33,7 +33,7 @@ import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
-import com.hippo.nimingban.client.data.Post;
+import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.ProgressView;
@@ -447,11 +447,11 @@ public class ContentLayout extends FrameLayout {
                         dataSize = data.size();
                         int oldDataSize = mData.size();
 
-                        if (data.get(0) instanceof Post) {
+                        if (data.get(0) instanceof ACPost) {
                             //remove repeat ACPost
                             Iterator iterator = data.iterator();
                             while (iterator.hasNext()) {
-                                Post post = (Post) iterator.next();
+                                Object post = iterator.next();
                                 if (mData.contains(post)) {
                                     dataSize--;
                                 }else {
