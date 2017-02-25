@@ -33,6 +33,7 @@ import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.client.ac.data.ACPost;
 import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.ProgressView;
@@ -43,6 +44,7 @@ import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.Say;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ContentLayout extends FrameLayout {
@@ -184,7 +186,7 @@ public class ContentLayout extends FrameLayout {
 
         /**
          * Store the page divider index
-         *
+         * <p>
          * For example, the data contain page 3, page 4, page 5,
          * page 3 size is 7, page 4 size is 8, page 5 size is 9,
          * so <code>mPageDivider</code> contain 7, 15, 24.
@@ -297,7 +299,7 @@ public class ContentLayout extends FrameLayout {
          * Call {@link #onGetPageData(int, List)} when get data
          *
          * @param taskId task id
-         * @param page the page to get
+         * @param page   the page to get
          */
         protected abstract void getPageData(int taskId, int type, int page);
 
@@ -327,8 +329,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         /**
-         * @throws IndexOutOfBoundsException
-         *                if {@code location < 0 || location >= size()}
+         * @throws IndexOutOfBoundsException if {@code location < 0 || location >= size()}
          */
         public E getDataAt(int location) {
             return mData.get(location);
@@ -445,7 +446,22 @@ public class ContentLayout extends FrameLayout {
                     case TYPE_NEXT_PAGE_KEEP_POS:
                         dataSize = data.size();
                         int oldDataSize = mData.size();
-                        mData.addAll(data);
+
+                        if (data.get(0) instanceof ACPost) {
+                            //remove repeat ACPost
+                            Iterator iterator = data.iterator();
+                            while (iterator.hasNext()) {
+                                Object post = iterator.next();
+                                if (mData.contains(post)) {
+                                    dataSize--;
+                                }else {
+                                    mData.add((E) post);
+                                }
+                            }
+                        } else {
+                            mData.addAll(data);
+                        }
+
                         notifyItemRangeInserted(oldDataSize, dataSize);
 
                         mPageDivider.add(oldDataSize + dataSize);
