@@ -172,6 +172,12 @@
             android:screenOrientation="unspecified"/>
 
         <provider
+          android:name="com.hippo.nimingban.content.UniversalProvider"
+          android:authorities="com.hippo.nimingban.universal"
+          android:grantUriPermissions="true"
+          android:exported="false"/>
+
+        <provider
             android:name="com.hippo.nimingban.content.ImageProvider"
             android:authorities="com.hippo.nimingban.image"
             android:grantUriPermissions="true"

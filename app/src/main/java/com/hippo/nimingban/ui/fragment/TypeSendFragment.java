@@ -71,6 +71,7 @@ import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.DisplayForum;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.content.UniversalProvider;
 import com.hippo.nimingban.drawable.RoundSideDrawable;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.ui.DoodleActivity;
@@ -822,7 +823,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
                         File temp = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".jpg");
                         mCameraImageUri = Uri.fromFile(temp);
                         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraImageUri);
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, UniversalProvider.buildUri(temp.getPath()));
                         startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
                         break;
                 }
