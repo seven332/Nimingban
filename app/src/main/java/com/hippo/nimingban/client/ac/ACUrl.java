@@ -29,6 +29,8 @@ public class ACUrl {
 
     public static final String API_POST_LIST = HOST + "/Api/showf?appid=" + APP_ID;
 
+    public static final String API_TIME_LINE = HOST + "/Api/timeline?appid=" + APP_ID;
+
     public static final String API_POST = HOST + "/Api/thread?appid=" + APP_ID;
 
     public static final String API_REFERENCE = HOST + "/Home/Forum/ref?appid=" + APP_ID;
@@ -54,8 +56,18 @@ public class ACUrl {
 
     public static final String API_SEARCH = HOST + "/Api/search?appid=" + APP_ID;
 
+    public static final String FORUM_ID_TIME_LINE = "-1";
+
     public static String getPostListUrl(String forum, int page) {
-        return API_POST_LIST + "&id=" + forum + "&page=" + (page + 1);
+        if (FORUM_ID_TIME_LINE.equals(forum)) {
+            return getTimeLineUrl(page);
+        } else {
+            return API_POST_LIST + "&id=" + forum + "&page=" + (page + 1);
+        }
+    }
+
+    public static String getTimeLineUrl(int page) {
+        return API_TIME_LINE + "&page=" + (page + 1);
     }
 
     public static String getPostUrl(String id, int page) {
