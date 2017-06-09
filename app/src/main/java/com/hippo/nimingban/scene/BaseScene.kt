@@ -62,7 +62,7 @@ abstract class BaseScene<P: ScenePresenter<P, V>, V: SceneView<V, P>> : Scene() 
     presenter.view = view
 
     view.restoring = true
-    presenter.restore(view)
+    presenter.onCreateView(view)
     view.restoring = false
 
     return view.view!!
@@ -101,6 +101,7 @@ abstract class BaseScene<P: ScenePresenter<P, V>, V: SceneView<V, P>> : Scene() 
   override fun onDestroyView(view: View) {
     super.onDestroyView(view)
     this.view!!.destroy()
+    this.presenter!!.onDestroyView(this.view!!)
     this.view = null
     this.presenter!!.view = null
   }

@@ -94,6 +94,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    */
   fun destroy() {
     onDestroy()
+    presenter = null
   }
 
   /**

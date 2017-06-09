@@ -138,6 +138,7 @@ class ContentDataTest {
   )
 
   class TestView : ContentContract.View {
+    override var presenter: ContentContract.Presenter? = null
     val viewState = ViewState()
     var data: ContentData<Int>? = null
 

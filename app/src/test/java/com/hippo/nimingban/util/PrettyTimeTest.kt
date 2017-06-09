@@ -16,23 +16,23 @@
 
 package com.hippo.nimingban.util
 
-import android.graphics.RectF
-import com.hippo.html.Html
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/9/2017.
  */
 
-const val INVALID_ID = -1
+@RunWith(RobolectricTestRunner::class)
+@Config(manifest = Config.NONE)
+class PrettyTimeTest {
 
-fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
-
-inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
-  var result = false
-  for (element in this) {
-    result = action(element) || result
+  @Test
+  fun testPrettyTime() {
+    assertEquals("7.8", 1466995612728L.prettyTime(RuntimeEnvironment.application))
   }
-  return result
 }
-
-fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!

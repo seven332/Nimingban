@@ -15,22 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="64dp"
+  android:height="64dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
 
-  <declare-styleable name="Theme">
-    <attr name="drawableColorPrimary" format="color"/>
-    <attr name="drawableColorSecondary" format="color"/>
+  <path
+    android:fillColor="?attr/drawableColorPrimary"
+    android:pathData="@string/pd_emoticon_sad"/>
 
-    <attr name="backgroundColorStatusBar" format="color"/>
-    <attr name="backgroundColorAppBar" format="color"/>
-    <attr name="backgroundColorWindow" format="color"/>
-    <attr name="backgroundColorContent" format="color"/>
-  </declare-styleable>
-
-  <declare-styleable name="ProgressView">
-    <attr name="color" format="color"/>
-    <attr name="indeterminate" format="boolean"/>
-    <attr name="progress" format="integer"/>
-  </declare-styleable>
-
-</resources>
+</vector>

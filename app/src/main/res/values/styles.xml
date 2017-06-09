@@ -34,4 +34,12 @@
     <item name="android:minHeight">76dp</item>
   </style>
 
+
+  <style name="Nmb"/>
+
+  <style name="Nmb.Thumb">
+    <item name="placeholderImage">?attr/backgroundColorAppBar</item>
+    <item name="actualImageScaleType">centerInside</item>
+  </style>
+
 </resources>

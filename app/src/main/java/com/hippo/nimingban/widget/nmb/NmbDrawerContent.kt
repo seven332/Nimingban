@@ -25,25 +25,57 @@ import com.hippo.stage.StageLayout
  * Created by Hippo on 6/4/2017.
  */
 
-class NmbDrawerContent : StageLayout, DrawerLayoutChild {
+class NmbDrawerContent @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : StageLayout(context, attrs, defStyleAttr), DrawerLayoutChild {
 
-  constructor(context: Context) : super(context)
-
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+  private var windowPaddingTop: Int = 0
+  private var windowPaddingBottom: Int = 0
+  private val listeners = mutableListOf<OnGetWindowPaddingTopListener>()
 
   override fun onGetWindowPadding(top: Int, bottom: Int) {
-    //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    windowPaddingTop = top
+    windowPaddingBottom = bottom
+
+    for (listener in listeners.toList()) {
+      listener.onGetWindowPaddingTop(top)
+    }
   }
 
   override fun getAdditionalBottomMargin(): Int {
-    //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     return 0
   }
 
   override fun getAdditionalTopMargin(): Int {
-    //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    return 0
+    return windowPaddingBottom
+  }
+
+  /**
+   * Register a [OnGetWindowPaddingTopListener].
+   * The [OnGetWindowPaddingTopListener.onGetWindowPaddingTop] will be called at once.
+   */
+  fun addOnGetWindowPaddingTopListener(listener: OnGetWindowPaddingTopListener?) {
+    if (listener != null) {
+      listener.onGetWindowPaddingTop(windowPaddingTop)
+      listeners.add(listener)
+    }
+  }
+
+  /**
+   * Remove a [OnGetWindowPaddingTopListener].
+   */
+  fun removeOnGetWindowPaddingTopListener(listener: OnGetWindowPaddingTopListener?) {
+    if (listener != null) {
+      listeners.remove(listener)
+    }
+  }
+
+  /**
+   * The callback to get window padding top.
+   */
+  interface OnGetWindowPaddingTopListener {
+    fun onGetWindowPaddingTop(top: Int)
   }
 }

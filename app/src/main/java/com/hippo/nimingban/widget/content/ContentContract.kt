@@ -89,6 +89,10 @@ interface ContentContract {
 
   abstract class AbsPresenter<out T> : DataPresenter<T>, View {
 
+    override var presenter: ContentContract.Presenter?
+      get() = error("Never touch ContentContract.AbsPresenter's presenter")
+      set(value) { error("Never touch ContentContract.AbsPresenter's presenter") }
+
     abstract val state: State
 
     override fun showContent() {

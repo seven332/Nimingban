@@ -29,6 +29,6 @@ class ThreadsScene: NmbScene<ThreadsPresenter, ThreadsView>() {
   }
 
   override fun createView(): ThreadsView {
-    return ThreadsView()
+    return ThreadsView(activity!!, context!!)
   }
 }

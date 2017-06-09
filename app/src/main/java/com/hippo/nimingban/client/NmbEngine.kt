@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.client
 
+import com.hippo.nimingban.client.data.Thread
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Url

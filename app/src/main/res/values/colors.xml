@@ -17,9 +17,29 @@
 
 <resources>
 
-  <color name="colorPrimary">#3F51B5</color>
-  <color name="colorPrimaryDark">#303F9F</color>
-  <color name="colorAccent">#FF4081</color>
+  <color name="green_ntr">#ff789922</color>
+
+  <!-- 54% black -->
+  <color name="primary_drawable_light">#8a000000</color>
+  <!-- 38% black -->
+  <color name="secondary_drawable_light">#61000000</color>
+  <!-- 100% white -->
+  <color name="primary_drawable_dark">#ffffffff</color>
+  <!-- 50% white -->
+  <color name="secondary_drawable_dark">#80ffffff</color>
+
+  <color name="background_status_bar_light">#ffe0e0e0</color>
+  <color name="background_app_bar_light">#fff5f5f5</color>
+  <color name="background_window_light">#fffafafa</color>
+  <color name="background_content_light">#ffffffff</color>
+
+  <color name="background_status_bar_dark">#ff000000</color>
+  <color name="background_app_bar_dark">#ff212121</color>
+  <color name="background_window_dark">#ff303030</color>
+  <color name="background_content_dark">#ff424242</color>
+
+  <!-- 22% black -->
+  <color name="strip_shadow">#38000000</color>
 
   <color name="color_scheme_1">@color/red_500</color>
   <color name="color_scheme_2">@color/orange_500</color>

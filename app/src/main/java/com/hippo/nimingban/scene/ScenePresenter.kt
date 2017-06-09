@@ -38,13 +38,6 @@ abstract class ScenePresenter<P: ScenePresenter<P, V>, V: SceneView<V, P>> : Pre
   }
 
   /**
-   * Restores this presenter.
-   */
-  fun restore(view: V) {
-    onRestore(view)
-  }
-
-  /**
    * Destroys this presenter.
    */
   fun destroy() {
@@ -55,17 +48,15 @@ abstract class ScenePresenter<P: ScenePresenter<P, V>, V: SceneView<V, P>> : Pre
    * Called when the presenter created.
    */
   @CallSuper
-  protected fun onCreate() {}
-
-  /**
-   * Called when the presenter restored.
-   */
-  @CallSuper
-  protected fun onRestore(view: V) {}
+  protected open fun onCreate() {}
 
   /**
    * Called when the presenter destroyed.
    */
   @CallSuper
-  protected fun onDestroy() {}
+  protected open fun onDestroy() {}
+
+  open fun onCreateView(view: V) {}
+
+  open fun onDestroyView(view: V) {}
 }

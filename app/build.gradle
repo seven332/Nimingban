@@ -27,6 +27,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -62,6 +63,9 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.8.1'
 
+    // Html
+    implementation 'com.github.seven332:android-html:0.1.1'
+
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
@@ -74,6 +78,12 @@ dependencies {
 
     // Animator
     implementation 'com.github.seven332:android-animator:0.1.1'
+
+    // Fresco
+    implementation "com.github.seven332.fresco:fresco:$FRESCO_LIBRARY_VERSION"
+    implementation "com.github.seven332.fresco:fresco-large:$FRESCO_LIBRARY_VERSION"
+    implementation "com.github.seven332.fresco:imagepipeline-okhttp3:$FRESCO_LIBRARY_VERSION"
+    implementation "com.github.seven332.fresco:animated-gif:$FRESCO_LIBRARY_VERSION"
 
     // Widgets
     implementation 'com.github.seven332.easyrecyclerview:easyrecyclerview:1.2.1'

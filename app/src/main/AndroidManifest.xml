@@ -30,7 +30,9 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
 
-    <activity android:name=".activity.NmbActivity">
+    <activity
+      android:name=".activity.NmbActivity"
+      android:theme="@style/AppTheme.Nmb">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>

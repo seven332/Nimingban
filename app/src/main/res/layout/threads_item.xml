@@ -15,22 +15,10 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
 
-  <declare-styleable name="Theme">
-    <attr name="drawableColorPrimary" format="color"/>
-    <attr name="drawableColorSecondary" format="color"/>
-
-    <attr name="backgroundColorStatusBar" format="color"/>
-    <attr name="backgroundColorAppBar" format="color"/>
-    <attr name="backgroundColorWindow" format="color"/>
-    <attr name="backgroundColorContent" format="color"/>
-  </declare-styleable>
-
-  <declare-styleable name="ProgressView">
-    <attr name="color" format="color"/>
-    <attr name="indeterminate" format="boolean"/>
-    <attr name="progress" format="integer"/>
-  </declare-styleable>
-
-</resources>
+</LinearLayout>

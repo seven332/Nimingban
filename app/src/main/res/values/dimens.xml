@@ -17,20 +17,20 @@
 
 <resources>
 
-  <declare-styleable name="Theme">
-    <attr name="drawableColorPrimary" format="color"/>
-    <attr name="drawableColorSecondary" format="color"/>
+  <dimen name="key_margin">16dp</dimen>
 
-    <attr name="backgroundColorStatusBar" format="color"/>
-    <attr name="backgroundColorAppBar" format="color"/>
-    <attr name="backgroundColorWindow" format="color"/>
-    <attr name="backgroundColorContent" format="color"/>
-  </declare-styleable>
+  <dimen name="strip_shadow">4dp</dimen>
 
-  <declare-styleable name="ProgressView">
-    <attr name="color" format="color"/>
-    <attr name="indeterminate" format="boolean"/>
-    <attr name="progress" format="integer"/>
-  </declare-styleable>
+  <!-- Text size -->
+  <dimen name="text_super_large">24sp</dimen>
+  <dimen name="text_large">22sp</dimen>
+  <dimen name="text_little_large">20sp</dimen>
+  <dimen name="text_medium">18sp</dimen>
+  <dimen name="text_little_small">16sp</dimen>
+  <dimen name="text_small">14sp</dimen>
+  <dimen name="text_super_small">12sp</dimen>
+
+  <dimen name="thumb_height">80dp</dimen>
+  <dimen name="thumb_width">80dp</dimen>
 
 </resources>

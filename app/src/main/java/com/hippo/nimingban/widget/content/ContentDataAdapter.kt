@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.util
+package com.hippo.nimingban.widget.content
 
-import android.graphics.RectF
-import com.hippo.html.Html
+import android.support.v7.widget.RecyclerView
+import com.hippo.easyrecyclerview.EasyAdapter
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/8/2017.
  */
 
-const val INVALID_ID = -1
+abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : EasyAdapter<VH>() {
 
-fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
+  var data: ContentData<T>? = null
 
-inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
-  var result = false
-  for (element in this) {
-    result = action(element) || result
-  }
-  return result
+  override fun getItemCount(): Int = data?.size() ?: error("No data")
+
+  fun get(index: Int): T = data?.get(index) ?: error("No data")
 }
-
-fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!

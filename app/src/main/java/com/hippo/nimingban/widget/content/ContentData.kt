@@ -42,10 +42,15 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
   override var view: ContentContract.View? = null
     get() = field
     set(value) {
-      field = value
+      val _field = field
+      if (_field != null) {
+        _field.presenter = null
+      }
       if (value != null) {
+        value.presenter = this
         state.restore(value)
       }
+      field = value
     }
 
   override val state: ContentContract.State = ContentState()
@@ -102,7 +107,7 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
    * the page is in range.
    */
   override fun switchTo(page: Int) {
-    if (page in beginPage..(endPage - 1)) {
+    if (page in beginPage until endPage) {
       val beginIndex = if (page == beginPage) 0 else dataDivider[page - beginPage - 1]
       scrollToPosition(beginIndex)
     } else if (page == endPage) {
@@ -240,7 +245,7 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
    *
    * @see .setRemoveDuplicates
    */
-  protected fun isDuplicate(t1: T, t2: T) = t1 == t2
+  open fun isDuplicate(t1: T, t2: T) = t1 == t2
 
   /**
    * Got data. Return {@code true} if it affects this {@code ContentData}.

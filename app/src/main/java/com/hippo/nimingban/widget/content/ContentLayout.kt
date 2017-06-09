@@ -17,13 +17,15 @@
 package com.hippo.nimingban.widget.content
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import com.hippo.nimingban.R
+import com.hippo.nimingban.util.dp2pix
+import com.hippo.nimingban.util.explain
+import com.hippo.nimingban.util.explainVividly
 import com.hippo.refreshlayout.RefreshLayout
 import kotlinx.android.synthetic.main.widget_content_layout.view.*
 
@@ -31,20 +33,25 @@ import kotlinx.android.synthetic.main.widget_content_layout.view.*
  * Created by Hippo on 6/5/2017.
  */
 
-class ContentLayout : FrameLayout, ContentContract.View {
+class ContentLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr), ContentContract.View {
 
   override var presenter: ContentContract.Presenter? = null
   var extension: Extension? = null
 
-  constructor(context: Context) : super(context) { init(context) }
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) { init(context) }
-  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) { init(context) }
+  val refreshLayout by lazy { refresh_layout!! }
+  val recyclerView by lazy { recycler_view!! }
+  val tipView by lazy { tip_view!! }
+  val progressView by lazy { progress_view!! }
 
-  private fun init(context: Context) {
+  val aLittleDistance: Int
+
+
+  init {
     LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this)
-
-    val refreshLayout = refresh_layout
-    val recyclerView = recycler_view
 
     refreshLayout.setHeaderColorSchemeResources(
         R.color.color_scheme_1,
@@ -69,88 +76,92 @@ class ContentLayout : FrameLayout, ContentContract.View {
 
     recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
       override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        val presenter = this@ContentLayout.presenter ?: return
         if (!refreshLayout.isRefreshing && refreshLayout.isAlmostBottom &&
-            presenter?.isMaxReached() ?: false) {
+            !presenter.isMaxReached()) {
           refreshLayout.isFooterRefreshing = true
-          presenter?.onRefreshFooter()
+          presenter.onRefreshFooter()
         }
       }
     })
+
+    // TODO throttleFirst
+    tipView.setOnClickListener { presenter?.onClickTip() }
+
+    aLittleDistance = 48.dp2pix(context)
   }
 
   override fun showContent() {
-    refresh_layout.visibility = View.GONE
-    tip.visibility = View.GONE
-
-
-
+    refreshLayout.visibility = View.VISIBLE
+    tipView.visibility = View.GONE
+    progressView.visibility = View.GONE
   }
 
   override fun showTip(t: Throwable) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    refreshLayout.visibility = View.GONE
+    tipView.visibility = View.VISIBLE
+    progressView.visibility = View.GONE
+
+    val drawable = explainVividly(context, t)
+    drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+    tipView.setCompoundDrawables(null, drawable, null, null)
+    tipView.text = explain(context, t)
   }
 
   override fun showProgressBar() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    refreshLayout.visibility = View.GONE
+    tipView.visibility = View.GONE
+    progressView.visibility = View.VISIBLE
   }
 
   override fun showMessage(t: Throwable) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    extension?.run { showMessage(explain(context, t)) }
   }
 
   override fun stopRefreshing() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    refreshLayout.isHeaderRefreshing = false
+    refreshLayout.isFooterRefreshing = false
   }
 
   override fun setHeaderRefreshing() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    refreshLayout.isHeaderRefreshing = true
   }
 
   override fun setFooterRefreshing() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    refreshLayout.isFooterRefreshing = true
   }
 
   override fun scrollToPosition(position: Int) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    recyclerView.scrollToPosition(position)
   }
 
   override fun scrollDownALittle() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    if (refreshLayout.isAlmostBottom) {
+      recyclerView.smoothScrollBy(0, aLittleDistance)
+    }
   }
 
   override fun notifyDataSetChanged() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    recyclerView.adapter?.notifyDataSetChanged()
   }
 
   override fun notifyItemRangeInserted(positionStart: Int, itemCount: Int) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    recyclerView.adapter?.notifyItemRangeInserted(positionStart, itemCount)
   }
 
   override fun notifyItemRangeRemoved(positionStart: Int, itemCount: Int) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    recyclerView.adapter?.notifyItemRangeRemoved(positionStart, itemCount)
   }
 
   override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    recyclerView.adapter?.notifyItemRangeChanged(positionStart, itemCount)
   }
 
-  /**
-   * Stores tip icon and tip text.
-   */
-  data class TipInfo(val icon: Drawable?, val text: String?)
 
   /**
    * `ContentLayout` can't do all UI jobs. It needs a `Extension` to give a hand.
    */
   interface Extension {
-    /**
-     * Gets tip to represent the `Throwable`.
-     *
-     * [ContentData.NOT_FOUND_EXCEPTION] for no data.
-     *
-     * [ContentData.TAP_TO_LOAD_EXCEPTION] for no data but can continue loading.
-     */
-    fun getTipFromThrowable(e: Throwable): TipInfo
 
     /**
      * Show a non-interrupting message. Toast? SnackBar? OK.

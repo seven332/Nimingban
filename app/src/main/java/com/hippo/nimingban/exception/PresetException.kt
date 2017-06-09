@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.util
-
-import android.graphics.RectF
-import com.hippo.html.Html
+package com.hippo.nimingban.exception
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/7/2017.
  */
 
-const val INVALID_ID = -1
-
-fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
-
-inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
-  var result = false
-  for (element in this) {
-    result = action(element) || result
-  }
-  return result
-}
-
-fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!
+class PresetException(message: String, val text: Int, val icon: Int) : Exception(message)

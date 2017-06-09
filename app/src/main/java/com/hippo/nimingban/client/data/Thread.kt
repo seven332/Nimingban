@@ -16,8 +16,10 @@
 
 package com.hippo.nimingban.client.data
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.hippo.nimingban.client.toNmbDate
+import com.hippo.nimingban.util.fromHtml
 
 /*
  * Created by Hippo on 6/4/2017.
@@ -25,44 +27,28 @@ import com.hippo.nimingban.client.toNmbDate
 
 // Thread should extend Reply, but data class can't be open
 data class Thread(
-    @SerializedName("id")
-    val _id: String?,
-    @SerializedName("img")
-    val _img: String?,
-    @SerializedName("ext")
-    val _ext: String?,
-    @SerializedName("now")
-    val _now: String?,
-    @SerializedName("userid")
-    val _user: String?,
-    @SerializedName("name")
-    val _name: String?,
-    @SerializedName("email")
-    val _email: String?,
-    @SerializedName("title")
-    val _title: String?,
-    @SerializedName("content")
-    val _content: String?,
-    @SerializedName("sage")
-    val _sage: String?,
-    @SerializedName("admin")
-    val _admin: String?,
-    @SerializedName("replyCount")
-    val _replyCount: String?,
-    @SerializedName("replys")
-    val _replies: List<Reply>?
+    @Expose @SerializedName("id") val _id: String?,
+    @Expose @SerializedName("img") val _img: String?,
+    @Expose @SerializedName("ext") val _ext: String?,
+    @Expose @SerializedName("now") val _now: String?,
+    @Expose @SerializedName("userid") val _user: String?,
+    @Expose @SerializedName("name") val _name: String?,
+    @Expose @SerializedName("email") val _email: String?,
+    @Expose @SerializedName("title") val _title: String?,
+    @Expose @SerializedName("content") val _content: String?,
+    @Expose @SerializedName("sage") val _sage: String?,
+    @Expose @SerializedName("admin") val _admin: String?,
+    @Expose @SerializedName("replyCount") val _replyCount: String?,
+    @Expose @SerializedName("replys") val _replies: List<Reply>?
 ) {
   val id by lazy { _id }
-  // TODO get image url prefix
-  val thumb by lazy { if (_img.isNullOrEmpty().not() && _ext.isNullOrEmpty().not()) _img + _ext else null }
-  // TODO get image url prefix
   val image by lazy { if (_img.isNullOrEmpty().not() && _ext.isNullOrEmpty().not()) _img + _ext else null }
   val date by lazy { _now.toNmbDate() }
   val user by lazy { _user }
   val name by lazy { _name }
   val email by lazy { _email }
   val title by lazy { _title }
-  val content by lazy { _content }
+  val content by lazy { _content?.fromHtml() }
   val sage by lazy { _sage == "1" }
   val admin by lazy { _admin == "1" }
   val replyCount by lazy { _replyCount?.toInt() ?: 0 }
