@@ -17,17 +17,11 @@
 package com.hippo.nimingban
 
 import android.app.Application
-import com.facebook.drawee.backends.pipeline.DraweeConfig
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.imageformat.DefaultImageFormats
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
-import com.facebook.imagepipeline.decoder.ImageDecoderConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.InstanceCreator
 import com.hippo.fresco.large.FrescoLarge
-import com.hippo.fresco.large.FrescoLargeConfig
-import com.hippo.fresco.large.decoder.SkiaImageRegionDecoderFactory
 import com.hippo.nimingban.client.NMB_HOST
 import com.hippo.nimingban.client.NmbClient
 import com.hippo.nimingban.client.NmbEngine
@@ -40,8 +34,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-
-
 
 /*
  * Created by Hippo on 6/4/2017.
@@ -88,30 +80,12 @@ val REF_WATCHER: RefWatcher by lazy { _REF_WATCHER!! }
 
 class NmbApp : Application() {
 
-  companion object {
-    private const val LARGE_IMAGE_SIZE = 1024
-  }
-
   override fun onCreate() {
     _NMB_APP = this
     super.onCreate()
     _REF_WATCHER = LeakCanary.install(this)
 
-    val builder = FrescoLargeConfig.newBuilder()
-    builder.setThresholdSize(LARGE_IMAGE_SIZE, LARGE_IMAGE_SIZE)
-    val decoderFactory = SkiaImageRegionDecoderFactory()
-    builder.addDecoder(DefaultImageFormats.JPEG, decoderFactory)
-    builder.addDecoder(DefaultImageFormats.PNG, decoderFactory)
-
-    val decoderConfigBuilder = ImageDecoderConfig.newBuilder()
-    val draweeConfigBuilder = DraweeConfig.newBuilder()
-    FrescoLarge.config(this, decoderConfigBuilder, draweeConfigBuilder, builder.build())
-
-    val imagePipelineConfig = OkHttpImagePipelineConfigFactory
-        .newBuilder(this, OK_HTTP_CLIENT)
-        .setImageDecoderConfig(decoderConfigBuilder.build())
-        .build()
-
-    Fresco.initialize(this, imagePipelineConfig, draweeConfigBuilder.build())
+    val imagePipelineConfigBuilder = OkHttpImagePipelineConfigFactory.newBuilder(this, OK_HTTP_CLIENT)
+    FrescoLarge.initialize(this, null, null, imagePipelineConfigBuilder)
   }
 }
