@@ -147,10 +147,10 @@ class ThreadsView(activity: NmbActivity, context: Context) :
 
     override fun onBindViewHolder(holder: ThreadHolder, position: Int) {
       val thread = get(position)
-      holder.user.text = thread.user
-      holder.id.text = thread.id
+      holder.user.text = thread.displayUser
+      holder.id.text = thread.displayId
       holder.date.text = thread.date.prettyTime(inflater.context)
-      holder.content.text = thread.content
+      holder.content.text = thread.displayContent
       holder.thumb.loadThumb(thread.image)
       holder.replies.replies = thread.replies
       holder.replyCount.text = thread.replyCount.toString()

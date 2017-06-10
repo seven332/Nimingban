@@ -18,14 +18,37 @@ package com.hippo.nimingban.client.data
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.hippo.nimingban.client.toNmbDate
-import com.hippo.nimingban.util.fromHtml
 
 /*
  * Created by Hippo on 6/4/2017.
  */
 
+internal interface ThreadInterface : ReplyInterface {
+  val replyCount: Int
+  val replies: List<Reply>
+}
+
+internal class ThreadImpl(
+    _id: String?,
+    _img: String?,
+    _ext: String?,
+    _now: String?,
+    _user: String?,
+    _name: String?,
+    _email: String?,
+    _title: String?,
+    _content: String?,
+    _sage: String?,
+    _admin: String?,
+    _replyCount: String?,
+    _replies: List<Reply>?
+) : ReplyImpl(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin), ThreadInterface {
+  override val replyCount = _replyCount?.toInt() ?: 0
+  override val replies = _replies ?: emptyList()
+}
+
 // Thread should extend Reply, but data class can't be open
+// I hope a property can be class delegation, but it can't
 data class Thread(
     @Expose @SerializedName("id") val _id: String?,
     @Expose @SerializedName("img") val _img: String?,
@@ -40,17 +63,23 @@ data class Thread(
     @Expose @SerializedName("admin") val _admin: String?,
     @Expose @SerializedName("replyCount") val _replyCount: String?,
     @Expose @SerializedName("replys") val _replies: List<Reply>?
-) {
-  val id by lazy { _id }
-  val image by lazy { if (_img.isNullOrEmpty().not() && _ext.isNullOrEmpty().not()) _img + _ext else null }
-  val date by lazy { _now.toNmbDate() }
-  val user by lazy { _user }
-  val name by lazy { _name }
-  val email by lazy { _email }
-  val title by lazy { _title }
-  val content by lazy { _content?.fromHtml() }
-  val sage by lazy { _sage == "1" }
-  val admin by lazy { _admin == "1" }
-  val replyCount by lazy { _replyCount?.toInt() ?: 0 }
-  val replies by lazy { _replies ?: emptyList() }
+) : ThreadInterface {
+  private val actuality by lazy { ThreadImpl(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin, _replyCount, _replies) }
+
+  override val id get() = actuality.id
+  override val image get() = actuality.image
+  override val date get() = actuality.date
+  override val user get() = actuality.user
+  override val name get() = actuality.name
+  override val email get() = actuality.email
+  override val title get() = actuality.title
+  override val content get() = actuality.content
+  override val sage get() = actuality.sage
+  override val admin get() = actuality.admin
+  override val replyCount get() = actuality.replyCount
+  override val replies get() = actuality.replies
+
+  override val displayId get() = actuality.displayId
+  override val displayUser get() = actuality.displayUser
+  override val displayContent get() = actuality.displayContent
 }

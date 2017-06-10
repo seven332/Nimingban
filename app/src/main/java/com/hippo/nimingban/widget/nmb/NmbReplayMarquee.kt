@@ -71,7 +71,7 @@ class NmbReplayMarquee @JvmOverloads constructor(
       setText(null)
     } else {
       index = (++index).let { if (it >= replies.size) 0 else it }.let { if (it < 0) 0 else it}
-      setText(replies[index].content)
+      setText(replies[index].displayContent)
 
       if (started) {
         postDelayed(this, getMarqueeInterval())

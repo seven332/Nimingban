@@ -39,7 +39,7 @@
 
   <style name="Nmb.Thumb">
     <item name="placeholderImage">?attr/backgroundColorAppBar</item>
-    <item name="actualImageScaleType">centerInside</item>
+    <item name="actualImageScaleType">fitCenter</item>
   </style>
 
 </resources>
