@@ -24,6 +24,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.hippo.nimingban.R
 import com.hippo.nimingban.drawable.ProgressDrawable
+import com.hippo.nimingban.util.getSuitableSize
 
 /*
  * Created by Hippo on 6/7/2017.
@@ -83,6 +84,11 @@ class ProgressView @JvmOverloads constructor(
   override fun onSizeChanged(w: Int, h: Int, oldW: Int, oldH: Int) {
     super.onSizeChanged(w, h, oldW, oldH)
     drawable.setBounds(paddingLeft, paddingTop, w - paddingRight, h - paddingBottom)
+  }
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    setMeasuredDimension(getSuitableSize(suggestedMinimumWidth, widthMeasureSpec),
+        getSuitableSize(suggestedMinimumHeight, heightMeasureSpec))
   }
 
   override fun draw(canvas: Canvas) {

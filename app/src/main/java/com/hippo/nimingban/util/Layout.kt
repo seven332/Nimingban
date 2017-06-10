@@ -17,9 +17,36 @@
 package com.hippo.nimingban.util
 
 import android.content.Context
+import android.view.View
+
+
 
 /*
  * Created by Hippo on 6/7/2017.
  */
 
 fun Int.dp2pix(context: Context) = (this * context.resources.displayMetrics.density + 0.5f).toInt()
+
+/**
+ * Utility to return a default size. Uses the supplied size if the
+ * MeasureSpec imposed no constraints. Will get suitable if allowed
+ * by the MeasureSpec.
+
+ * @param size Default size for this view
+ * *
+ * @param spec Constraints imposed by the parent
+ * *
+ * @return The size this view should be.
+ */
+fun getSuitableSize(size: Int, spec: Int): Int {
+  var result = size
+  val specMode = View.MeasureSpec.getMode(spec)
+  val specSize = View.MeasureSpec.getSize(spec)
+
+  when (specMode) {
+    View.MeasureSpec.UNSPECIFIED -> result = size
+    View.MeasureSpec.EXACTLY -> result = specSize
+    View.MeasureSpec.AT_MOST -> result = if (size == 0) specSize else Math.min(size, specSize)
+  }
+  return result
+}
