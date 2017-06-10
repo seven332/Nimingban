@@ -173,19 +173,6 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
     requireType = type
     requireId = nextId()
 
-    // Clear all data if it's goto and the data isn't from restoring
-    if ((requireType == TYPE_GOTO && !restored) || requireType == TYPE_RESTORE) {
-      if (!data.isEmpty()) {
-        data.clear()
-        notifyDataSetChanged()
-      }
-      dataDivider.clear()
-      minPage = 0
-      maxPage = 0
-      beginPage = 0
-      endPage = 0
-    }
-
     if (data.isEmpty()) {
       showProgressBar()
     } else {

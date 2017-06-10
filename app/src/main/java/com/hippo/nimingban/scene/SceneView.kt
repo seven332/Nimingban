@@ -39,6 +39,13 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
   var restoring: Boolean = false
     internal set
 
+  var isAttached = false
+    private set
+  var isStarted = false
+    private set
+  var isResumed = false
+    private set
+
   /**
    * Creates the view.
    */
@@ -51,6 +58,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    * Attaches this view.
    */
   fun attach() {
+    isAttached = true
     onAttach()
   }
 
@@ -58,6 +66,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    * Starts this view.
    */
   fun start() {
+    isStarted = true
     onStart()
   }
 
@@ -65,6 +74,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    * Resumes this view.
    */
   fun resume() {
+    isResumed = true
     onResume()
   }
 
@@ -72,6 +82,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    * Pauses this view.
    */
   fun pause() {
+    isResumed = false
     onPause()
   }
 
@@ -79,6 +90,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    * Stops this view.
    */
   fun stop() {
+    isStarted = false
     onStop()
   }
 
@@ -86,6 +98,7 @@ abstract class SceneView<V: SceneView<V, P>, P: ScenePresenter<P, V>> : ViewInte
    * Detaches this view.
    */
   fun detach() {
+    isAttached = false
     onDetach()
   }
 

@@ -16,8 +16,8 @@
 
 package com.hippo.nimingban.scene
 
-import android.app.Activity
 import android.content.Context
+import com.hippo.nimingban.activity.NmbActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
  * Created by Hippo on 6/7/2017.
  */
 
-abstract class NmbView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(val activity: Activity, val context: Context) :
+abstract class NmbView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(val activity: NmbActivity, val context: Context) :
     SceneView<V, P>() {
 
   private val worker = AndroidSchedulers.mainThread().createWorker()

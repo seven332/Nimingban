@@ -16,7 +16,6 @@
 
 package com.hippo.nimingban.scene
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
@@ -25,15 +24,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.hippo.android.resource.AttrResources
 import com.hippo.nimingban.R
+import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.widget.nmb.NmbDrawerContent
-
-
 
 /*
  * Created by Hippo on 6/8/2017.
  */
 
-abstract class StatusBarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity: Activity, context: Context) :
+abstract class StatusBarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity: NmbActivity, context: Context) :
     NmbView<V, P>(activity, context), NmbDrawerContent.OnGetWindowPaddingTopListener {
 
   private var drawerContent: NmbDrawerContent? = null

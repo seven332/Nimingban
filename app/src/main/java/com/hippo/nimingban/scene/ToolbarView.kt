@@ -16,19 +16,19 @@
 
 package com.hippo.nimingban.scene
 
-import android.app.Activity
 import android.content.Context
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hippo.nimingban.R
+import com.hippo.nimingban.activity.NmbActivity
 
 /*
  * Created by Hippo on 6/8/2017.
  */
 
-abstract class ToolbarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity: Activity, context: Context) :
+abstract class ToolbarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity: NmbActivity, context: Context) :
     StatusBarView<V, P>(activity, context) {
 
   var toolbar: Toolbar? = null
@@ -40,7 +40,7 @@ abstract class ToolbarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity
 
     val container = view.findViewById(R.id.toolbar_content_container) as ViewGroup
     val content = onCreateToolbarContent(inflater, container)
-    container.addView(content)
+    container.addView(content, 0)
 
     return view
   }

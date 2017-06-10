@@ -106,7 +106,6 @@ interface ContentContract {
     }
 
     override fun showProgressBar() {
-      val view = view
       view?.showProgressBar()
       state.showProgressBar()
     }

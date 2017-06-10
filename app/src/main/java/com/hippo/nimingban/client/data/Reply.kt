@@ -19,6 +19,7 @@ package com.hippo.nimingban.client.data
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.hippo.nimingban.client.toNmbDate
+import com.hippo.nimingban.util.fromHtml
 
 /*
  * Created by Hippo on 6/4/2017.
@@ -44,7 +45,7 @@ data class Reply(
   val name by lazy { _name }
   val email by lazy { _email }
   val title by lazy { _title }
-  val content by lazy { _content }
+  val content by lazy { _content?.fromHtml() }
   val sage by lazy { _sage == "1" }
   val admin by lazy { _admin == "1" }
 }

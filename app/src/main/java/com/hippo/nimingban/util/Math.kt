@@ -16,9 +16,16 @@
 
 package com.hippo.nimingban.util
 
+import java.util.Random
+
 /*
  * Created by Hippo on 6/7/2017.
  */
+
+/**
+ * Returns the absolute value.
+ */
+inline fun Long.abs() = Math.abs(this)
 
 /**
  * Clamped the `Int` to the range &#91;bound1, bound2&#93; if bound2 &gt;= bound1,
@@ -72,4 +79,58 @@ fun Float.clamp(bound1: Float, bound2: Float): Float {
 /**
  * Calculates a linear interpolation between two inputs.
  */
-fun Float.lerp(from: Float, to: Float) = from + this * (to - from)
+inline fun Float.lerp(from: Float, to: Float) = from + this * (to - from)
+
+
+private val random = Random()
+
+/**
+ * Returns a pseudo-random uniformly distributed `int`
+ * in the half-open range [0, howbig).
+
+ * @param howbig the upper bound (exclusive), must be positive
+ * *
+ * @return a random `int`
+ * *
+ * @throws IllegalArgumentException if howbig &lt;= 0
+ */
+@Throws(IllegalArgumentException::class)
+fun random(howbig: Int): Int {
+  return random.nextInt(howbig)
+}
+
+/**
+ * Returns a pseudo-random uniformly distributed `int`
+ * in the half-open range [howsmall, howbig).
+ *
+ * @param howsmall the lower bound (inclusive)
+ * @param howbig the upper bound (exclusive)
+ *
+ * @return a random `int`
+ *
+ * @throws IllegalArgumentException if howbig &lt;= howsmall
+ */
+@Throws(IllegalArgumentException::class)
+fun random(howsmall: Int, howbig: Int): Int {
+  if (howsmall >= howbig) {
+    throw IllegalArgumentException("howsmall >= howbig: $howsmall >= $howbig")
+  }
+  var r = random.nextInt()
+  val n = howbig - howsmall
+  val m = n - 1
+  if (n and m == 0)
+    r = (r and m) + howsmall
+  else if (n > 0) {
+    var u = r.ushr(1)
+    r = u % n
+    while (u + m - r < 0) {
+      u = random.nextInt().ushr(1)
+      r = u % n
+    }
+    r += howsmall
+  } else {
+    while (r < howsmall || r >= howbig)
+      r = random.nextInt()
+  }
+  return r
+}

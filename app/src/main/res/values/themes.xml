@@ -29,6 +29,8 @@
     <item name="backgroundColorAppBar">@color/background_app_bar_light</item>
     <item name="backgroundColorWindow">@color/background_window_light</item>
     <item name="backgroundColorContent">@color/background_content_light</item>
+
+    <item name="android:windowBackground">?attr/backgroundColorWindow</item>
   </style>
 
   <style name="AppTheme.NoActionBar">

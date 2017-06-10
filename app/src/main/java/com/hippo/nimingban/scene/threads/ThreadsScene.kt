@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.scene.threads
 
+import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.scene.NmbScene
 
 /*
@@ -29,6 +30,6 @@ class ThreadsScene: NmbScene<ThreadsPresenter, ThreadsView>() {
   }
 
   override fun createView(): ThreadsView {
-    return ThreadsView(activity!!, context!!)
+    return ThreadsView(activity as NmbActivity, context!!)
   }
 }

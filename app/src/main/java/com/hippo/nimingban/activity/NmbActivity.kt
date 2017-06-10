@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.activity
 
+import android.support.design.widget.Snackbar
 import android.view.ViewGroup
 import com.hippo.nimingban.R
 import com.hippo.nimingban.scene.threads.ThreadsScene
@@ -28,15 +29,24 @@ import kotlinx.android.synthetic.main.activity_nmb.*
 
 class NmbActivity : StageActivity() {
 
+  private val coordinatorLayout by lazy { coordinator_layout!! }
+  private val drawerContent by lazy { drawer_content!! }
+
   override fun onSetContentView() {
     setContentView(R.layout.activity_nmb)
   }
 
   override fun onGetStageLayout(): ViewGroup {
-    return drawer_content
+    return drawerContent
   }
 
   override fun onCreateRootScene(): Scene {
     return ThreadsScene()
+  }
+
+  fun snack(message: CharSequence?) {
+    if (message != null && message.isNotEmpty()) {
+      Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT)
+    }
   }
 }

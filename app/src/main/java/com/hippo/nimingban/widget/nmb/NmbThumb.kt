@@ -21,6 +21,9 @@ import android.util.AttributeSet
 import android.view.View
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.GenericDraweeView
+import com.hippo.android.resource.AttrResources
+import com.hippo.nimingban.R
+import com.hippo.nimingban.drawable.TextDrawable
 
 /*
  * Created by Hippo on 6/9/2017.
@@ -31,6 +34,14 @@ class NmbThumb @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : GenericDraweeView(context, attrs, defStyleAttr) {
+
+  init {
+    val failure = TextDrawable("(;´Д`)", 0.8f)
+    failure.backgroundColor = AttrResources.getAttrColor(context, R.attr.backgroundColorAppBar)
+    failure.textColor = AttrResources.getAttrColor(context, android.R.attr.textColorTertiary)
+    hierarchy.setFailureImage(failure)
+    hierarchy.setRetryImage(failure.constantState.newDrawable())
+  }
 
   // TODO get image url from api
   fun loadThumb(thumb: String?) =
