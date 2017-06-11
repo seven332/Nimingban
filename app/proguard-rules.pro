@@ -24,4 +24,33 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class org.ocpsoft.prettytime.i18n.**
+
+# Keep our interfaces so they can be used by other ProGuard rules.
+# See http://sourceforge.net/p/proguard/bugs/466/
+-keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
+-keep,allowobfuscation @interface android.support.annotation.Keep
+
+# Do not strip any method/class that is annotated with @DoNotStrip
+-keep @com.facebook.common.internal.DoNotStrip class *
+-keepclassmembers class * {
+    @com.facebook.common.internal.DoNotStrip *;
+}
+
+# Do not strip any method/class that is annotated with @Keep
+-keep @android.support.annotation.Keep class *
+-keepclassmembers class * {
+    @android.support.annotation.Keep *;
+}
+
+
+# Keep native methods
+-keepclassmembers class * {
+    native <methods>;
+}
+
+
+-dontwarn java.nio.file.**
+-dontwarn java.lang.invoke.**
+-dontwarn javax.annotation.**
+-dontwarn com.facebook.infer.**
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
