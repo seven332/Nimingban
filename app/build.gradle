@@ -91,6 +91,7 @@ dependencies {
 
     // Widgets
     implementation 'com.github.seven332.easyrecyclerview:easyrecyclerview:1.2.1'
+    implementation 'com.github.seven332.easyrecyclerview:recyclerview-addons:1.2.1'
     implementation 'com.github.seven332:drawerlayout:0.2.2'
     implementation 'com.github.seven332:refreshlayout:0.2.1'
 

@@ -51,7 +51,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_below="@id/header"
-    android:layout_marginTop="@dimen/threads_item_item_margin"
+    android:layout_marginTop="@dimen/threads_item_content_item_margin"
     android:textSize="@dimen/text_little_small"
     android:textColor="?android:attr/textColorPrimary"
     android:lineSpacingExtra="2dp"
@@ -63,7 +63,7 @@
     android:layout_width="@dimen/thumb_width"
     android:layout_height="@dimen/thumb_height"
     android:layout_below="@id/content"
-    android:layout_marginTop="@dimen/threads_item_item_margin"
+    android:layout_marginTop="@dimen/threads_item_content_item_margin"
     style="@style/Nmb.Thumb"/>
 
   <LinearLayout
@@ -71,7 +71,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@id/thumb"
-    android:layout_marginTop="@dimen/threads_item_item_margin"
+    android:layout_marginTop="@dimen/threads_item_content_item_margin"
     android:orientation="horizontal">
 
     <com.hippo.nimingban.widget.nmb.NmbReplayMarquee
@@ -86,9 +86,9 @@
       android:id="@+id/reply_count"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginLeft="@dimen/threads_item_item_margin"
+      android:layout_marginLeft="@dimen/threads_item_content_item_margin"
       android:gravity="center"
-      android:drawablePadding="@dimen/threads_item_item_margin"/>
+      android:drawablePadding="@dimen/threads_item_content_item_margin"/>
 
   </LinearLayout>
 </merge>

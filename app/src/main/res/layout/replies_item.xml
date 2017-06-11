@@ -19,7 +19,11 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:padding="@dimen/key_margin">
+  android:paddingLeft="@dimen/replies_item_margin_left"
+  android:paddingRight="@dimen/replies_item_margin_right"
+  android:paddingTop="@dimen/replies_item_margin_top"
+  android:paddingBottom="@dimen/replies_item_margin_bottom"
+  android:background="?attr/itemBackground">
 
   <LinearLayout
     android:id="@+id/header"
@@ -55,7 +59,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_below="@id/header"
-    android:layout_marginTop="@dimen/threads_item_item_margin"
+    android:layout_marginTop="@dimen/replies_item_item_margin"
     android:textSize="@dimen/text_little_small"
     android:textColor="?android:attr/textColorPrimary"
     android:lineSpacingExtra="2dp"
@@ -67,7 +71,7 @@
     android:layout_width="@dimen/thumb_width"
     android:layout_height="@dimen/thumb_height"
     android:layout_below="@id/content"
-    android:layout_marginTop="@dimen/threads_item_item_margin"
+    android:layout_marginTop="@dimen/replies_item_item_margin"
     style="@style/Nmb.Thumb"/>
 
 </RelativeLayout>

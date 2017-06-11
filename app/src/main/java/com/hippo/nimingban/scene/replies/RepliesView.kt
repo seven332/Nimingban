@@ -23,15 +23,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.hippo.android.resource.AttrResources
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.scene.NmbScene
 import com.hippo.nimingban.scene.ToolbarView
+import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.nimingban.widget.nmb.NmbThumb
+import com.hippo.recyclerview.addons.LinearDividerItemDecoration
 
 /*
  * Created by Hippo on 6/11/2017.
@@ -56,6 +59,13 @@ class RepliesView(
     val recyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
     recyclerView.adapter = adapter
     recyclerView.layoutManager = LinearLayoutManager(inflater.context)
+
+    val itemDecoration = LinearDividerItemDecoration(
+        LinearDividerItemDecoration.VERTICAL,
+        AttrResources.getAttrColor(context, R.attr.dividerColor),
+        1.dp2pix(context))
+    itemDecoration.setShowLastDivider(true)
+    recyclerView.addItemDecoration(itemDecoration)
 
     val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
     contentLayout.extension = this

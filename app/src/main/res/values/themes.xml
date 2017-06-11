@@ -27,6 +27,8 @@
     <item name="drawableColorPrimary">@color/primary_drawable_light</item>
     <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
 
+    <item name="dividerColor">@color/divider_light</item>
+
     <item name="backgroundColorStatusBar">@color/background_status_bar_light</item>
     <item name="backgroundColorAppBar">@color/background_app_bar_light</item>
     <item name="backgroundColorWindow">@color/background_window_light</item>

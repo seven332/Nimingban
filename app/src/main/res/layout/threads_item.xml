@@ -31,7 +31,10 @@
   <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="@dimen/key_margin"
+    android:paddingLeft="@dimen/threads_item_content_margin_left"
+    android:paddingRight="@dimen/threads_item_content_margin_right"
+    android:paddingTop="@dimen/threads_item_content_margin_top"
+    android:paddingBottom="@dimen/threads_item_content_margin_bottom"
     android:background="?attr/contentBackground">
 
     <include
