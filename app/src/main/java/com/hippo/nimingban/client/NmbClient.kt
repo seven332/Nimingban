@@ -22,16 +22,27 @@ package com.hippo.nimingban.client
 
 class NmbClient(private val engine: NmbEngine) {
 
-  fun threads(forum: String, page: Int) = engine.threads(threadsUrl(forum, page))
+  fun threads(forum: String, page: Int) =
+      engine.threads(threadsUrl(forum, page))
+          .map {
+            // Init all threads
+            it.forEach { it.init }
+            // Return it self
+            it
+          } !!
 
   fun replies(id: String, page: Int) =
       engine.replies(repliesUrl(id, page))
-          .map({
+          .map {
+            // Init the thread
+            it.init
+            // The reply list
             val replies = it.replies.toMutableList()
             if (page == 0) {
               // It's the first, add thread itself to the header
               replies.add(0, it.toReply())
             }
+            // Pack thread and reply list
             Pair(it, replies)
-          })!!
+          } !!
 }

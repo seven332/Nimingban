@@ -20,74 +20,91 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.hippo.nimingban.client.toNmbContent
+import com.hippo.nimingban.client.toNmbDate
+import com.hippo.nimingban.client.toNmbUser
 import com.hippo.nimingban.util.readTypedList
 
 /*
  * Created by Hippo on 6/4/2017.
  */
 
-internal interface ThreadInterface : ReplyInterface {
-  val replyCount: Int
-  val replies: List<Reply>
-}
-
-internal class ThreadImpl(
-    _id: String?,
-    _img: String?,
-    _ext: String?,
-    _now: String?,
-    _user: String?,
-    _name: String?,
-    _email: String?,
-    _title: String?,
-    _content: String?,
-    _sage: String?,
-    _admin: String?,
-    _replyCount: String?,
-    _replies: List<Reply>?
-) : ReplyImpl(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin), ThreadInterface {
-  override val replyCount = _replyCount?.toInt() ?: 0
-  override val replies = _replies ?: emptyList()
-}
-
 // Thread should extend Reply, but data class can't be open
 // I hope a property can be class delegation, but it can't
 data class Thread(
-    @Expose @SerializedName("id") val _id: String?,
-    @Expose @SerializedName("img") val _img: String?,
-    @Expose @SerializedName("ext") val _ext: String?,
-    @Expose @SerializedName("now") val _now: String?,
-    @Expose @SerializedName("userid") val _user: String?,
-    @Expose @SerializedName("name") val _name: String?,
-    @Expose @SerializedName("email") val _email: String?,
-    @Expose @SerializedName("title") val _title: String?,
-    @Expose @SerializedName("content") val _content: String?,
-    @Expose @SerializedName("sage") val _sage: String?,
-    @Expose @SerializedName("admin") val _admin: String?,
-    @Expose @SerializedName("replyCount") val _replyCount: String?,
-    @Expose @SerializedName("replys") val _replies: List<Reply>?
-) : ThreadInterface, Parcelable {
-  private val actuality by lazy { ThreadImpl(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin, _replyCount, _replies) }
+    @Expose @SerializedName("id") private val _id: String?,
+    @Expose @SerializedName("img") private val _img: String?,
+    @Expose @SerializedName("ext") private val _ext: String?,
+    @Expose @SerializedName("now") private val _now: String?,
+    @Expose @SerializedName("userid") private val _user: String?,
+    @Expose @SerializedName("name") private val _name: String?,
+    @Expose @SerializedName("email") private val _email: String?,
+    @Expose @SerializedName("title") private val _title: String?,
+    @Expose @SerializedName("content") private val _content: String?,
+    @Expose @SerializedName("sage") private val _sage: String?,
+    @Expose @SerializedName("admin") private val _admin: String?,
+    @Expose @SerializedName("replyCount") private val _replyCount: String?,
+    @Expose @SerializedName("replys") private val _replies: List<Reply>?
+) : Parcelable {
 
-  override val id get() = actuality.id
-  override val image get() = actuality.image
-  override val date get() = actuality.date
-  override val user get() = actuality.user
-  override val name get() = actuality.name
-  override val email get() = actuality.email
-  override val title get() = actuality.title
-  override val content get() = actuality.content
-  override val sage get() = actuality.sage
-  override val admin get() = actuality.admin
-  override val replyCount get() = actuality.replyCount
-  override val replies get() = actuality.replies
+  val init by lazy {
+    id = _id
+    image = if (_img.isNullOrEmpty().not() && _ext.isNullOrEmpty().not()) _img + _ext else null
+    date = _now.toNmbDate()
+    user = _user
+    name = _name
+    email = _email
+    title = _title
+    content = _content
+    sage = _sage == "1"
+    admin = _admin == "1"
+    replyCount = _replyCount?.toInt() ?: 0
+    replies = _replies ?: emptyList()
+    replies.forEach { it.init }
 
-  override val displayId get() = actuality.displayId
-  override val displayUser get() = actuality.displayUser
-  override val displayContent get() = actuality.displayContent
+    displayId = "No." + (_id ?: "0")
+    displayUser = _user.toNmbUser(admin)
+    displayContent = _content.toNmbContent(sage, _title, _name, _email)
+  }
+
+  var id: String? = null
+    private set
+  var image: String? = null
+    private set
+  var date: Long = 0
+    private set
+  var user: String? = null
+    private set
+  var name: String? = null
+    private set
+  var email: String? = null
+    private set
+  var title: String? = null
+    private set
+  var content: String? = null
+    private set
+  var sage: Boolean = false
+    private set
+  var admin: Boolean = false
+    private set
+  var replyCount: Int = 0
+    private set
+  var replies: List<Reply> = emptyList()
+    private set
+
+  var displayId: CharSequence = ""
+    private set
+  var displayUser: CharSequence = ""
+    private set
+  var displayContent: CharSequence = ""
+    private set
 
 
-  fun toReply() = Reply(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin)
+  fun toReply(): Reply {
+    val replay = Reply(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin)
+    replay.init
+    return replay
+  }
 
 
   override fun describeContents() = 0
