@@ -342,7 +342,7 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
     val from = Math.max(0, start)
     val to = Math.min(data.size, end)
     val control = data.subList(from, to)
-    return list.filter { !control.contains(it) }
+    return list.filter { it1 -> control.all { it2 -> !isDuplicate(it1, it2) } }
   }
 
   private fun onPrevPage(_list: List<T>, min: Int, max: Int, adjustPosition: Boolean) {
