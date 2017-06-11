@@ -26,74 +26,17 @@ import org.junit.Test
 class ContentDataTest {
 
   @Test
-  fun testRestore() {
+  fun testRemoveDuplicates() {
     val data = TestData()
-    val view = TestView()
-    val dataState = DataState()
-    val viewState = ViewState()
-
-    data.view = view
-    view.data = data
-
-    data.restore()
-    dataState.onRestoreData++
-    data.assertState(dataState, 0)
-    viewState.showProgressBar++
-    view.assertState(viewState)
-
-    data.setData(data.id, listOf(0, 1, 2, 3), 0, 10)
-    dataState.onRequireData++
-    data.assertState(dataState, 4)
-    viewState.stopRefreshing++
-    viewState.showContent++
-    viewState.notifyDataSetChanged++
-    viewState.scrollToPosition++
-    viewState.showContent++
-    viewState.setHeaderRefreshing++
-    view.assertState(viewState)
-  }
-
-  @Test
-  fun testGoTo() {
-    val data = TestData()
-    val view = TestView()
-    val dataState = DataState()
-    val viewState = ViewState()
-
-    data.view = view
-    view.data = data
 
     data.goTo(0)
-    dataState.onRequireData++
-    data.assertState(dataState, 0)
-    viewState.showProgressBar++
-    view.assertState(viewState)
+    data.setData(data.id, (0 until 20).toList(), Int.MAX_VALUE)
+    assertEquals(20, data.size())
 
-    data.setData(data.id, listOf(0, 1, 2, 3), 0, 10)
-    dataState.onBackupData++
-    data.assertState(dataState, 4)
-    viewState.stopRefreshing++
-    viewState.showContent++
-    viewState.notifyDataSetChanged++
-    viewState.scrollToPosition++
-    view.assertState(viewState)
-
-    data.goTo(100)
-    dataState.onRequireData++
-    data.assertState(dataState, 0)
-    viewState.notifyDataSetChanged++
-    viewState.showProgressBar++
-    view.assertState(viewState)
-
-    data.setError(data.id, Exception())
-    data.assertState(dataState, 0)
-    viewState.stopRefreshing++
-    viewState.showTip++
-    view.assertState(viewState)
-  }
-
-  fun testOnRefreshFooter() {
-
+    data.nextPage(false)
+    val list = (19 until 39).toList().toMutableList()
+    data.setData(data.id, list, Int.MAX_VALUE)
+    assertEquals(39, data.size())
   }
 
   data class DataState(
@@ -103,6 +46,7 @@ class ContentDataTest {
   )
 
   class TestData : ContentData<Int>() {
+
     val dataState = DataState()
     var id = 0
     var page = 0

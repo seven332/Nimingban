@@ -119,13 +119,13 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
     }
   }
 
-  private fun prevPage(adjustPosition: Boolean) =
+  internal fun prevPage(adjustPosition: Boolean) =
       requireData(beginPage - 1, if (adjustPosition) TYPE_PREV_PAGE_ADJUST_POSITION else TYPE_PREV_PAGE)
 
-  private fun nextPage(adjustPosition: Boolean) =
+  internal fun nextPage(adjustPosition: Boolean) =
       requireData(endPage, if (adjustPosition) TYPE_NEXT_PAGE_ADJUST_POSITION else TYPE_NEXT_PAGE)
 
-  private fun refreshPage(page: Int) = requireData(page, TYPE_REFRESH_PAGE)
+  internal fun refreshPage(page: Int) = requireData(page, TYPE_REFRESH_PAGE)
 
   override fun onRefreshHeader() {
     if (isMinReached()) {
