@@ -37,6 +37,7 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
 
     @JvmField val NOT_FOUND_EXCEPTION = Exception("Not Found")
     @JvmField val TAP_TO_LOAD_EXCEPTION = Exception("Tap to Load")
+    @JvmField val FAILED_TO_RESTORE_EXCEPTION = Exception("Failed to Restore")
   }
 
   override var view: ContentContract.View? = null

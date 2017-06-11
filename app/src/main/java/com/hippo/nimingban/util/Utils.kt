@@ -17,6 +17,8 @@
 package com.hippo.nimingban.util
 
 import android.graphics.RectF
+import android.os.Parcel
+import android.os.Parcelable
 import com.hippo.html.Html
 
 /*
@@ -24,6 +26,10 @@ import com.hippo.html.Html
  */
 
 const val INVALID_ID = -1
+
+inline fun <T> T?.select(nonNullAction: (T) -> Unit, nullAction: () -> Unit) {
+  if (this != null) nonNullAction(this) else nullAction()
+}
 
 fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
 
@@ -36,3 +42,9 @@ inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
 }
 
 fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!
+
+fun <T> Parcel.readTypedList(creator: Parcelable.Creator<T>): MutableList<T> {
+  val list = mutableListOf<T>()
+  readTypedList(list, creator)
+  return list
+}

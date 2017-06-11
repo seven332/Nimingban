@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.client.data
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.hippo.nimingban.client.toNmbContent
@@ -42,6 +44,7 @@ internal interface ReplyInterface {
   val displayUser: CharSequence
   val displayContent: CharSequence
 }
+
 
 internal open class ReplyImpl(
     _id: String?,
@@ -72,6 +75,7 @@ internal open class ReplyImpl(
   final override val displayContent = _content.toNmbContent(sage, _title, _name, _email)
 }
 
+
 data class Reply(
     @Expose @SerializedName("id") val _id: String?,
     @Expose @SerializedName("img") val _img: String?,
@@ -84,7 +88,7 @@ data class Reply(
     @Expose @SerializedName("content") val _content: String?,
     @Expose @SerializedName("sage") val _sage: String?,
     @Expose @SerializedName("admin") val _admin: String?
-) : ReplyInterface {
+) : ReplyInterface, Parcelable {
   private val actuality by lazy { ReplyImpl(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin) }
 
   override val id get() = actuality.id
@@ -101,4 +105,46 @@ data class Reply(
   override val displayId get() = actuality.displayId
   override val displayUser get() = actuality.displayUser
   override val displayContent get() = actuality.displayContent
+
+
+  override fun describeContents() = 0
+
+  override fun writeToParcel(dest: Parcel, flags: Int) {
+    dest.writeString(_id)
+    dest.writeString(_img)
+    dest.writeString(_ext)
+    dest.writeString(_now)
+    dest.writeString(_user)
+    dest.writeString(_name)
+    dest.writeString(_email)
+    dest.writeString(_title)
+    dest.writeString(_content)
+    dest.writeString(_sage)
+    dest.writeString(_admin)
+  }
+
+  constructor(source: Parcel) : this(
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString(),
+      source.readString())
+
+  companion object {
+    @JvmField val CREATOR: Parcelable.Creator<Reply> = object : Parcelable.Creator<Reply> {
+      override fun createFromParcel(source: Parcel): Reply {
+        return Reply(source)
+      }
+
+      override fun newArray(size: Int): Array<Reply?> {
+        return arrayOfNulls(size)
+      }
+    }
+  }
 }

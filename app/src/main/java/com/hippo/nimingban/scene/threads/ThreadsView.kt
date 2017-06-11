@@ -25,10 +25,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.scene.NmbScene
 import com.hippo.nimingban.scene.ToolbarView
+import com.hippo.nimingban.scene.replies.newRepliesScene
 import com.hippo.nimingban.util.debug
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentDataAdapter
@@ -40,8 +43,11 @@ import com.hippo.nimingban.widget.nmb.NmbThumb
  * Created by Hippo on 6/5/2017.
  */
 
-class ThreadsView(activity: NmbActivity, context: Context) :
-    ToolbarView<ThreadsView, ThreadsPresenter>(activity, context),
+class ThreadsView(
+    scene: NmbScene<ThreadsPresenter, ThreadsView>,
+    activity: NmbActivity,
+    context: Context
+) : ToolbarView<ThreadsView, ThreadsPresenter>(scene, activity, context),
     ThreadsContract.View, ContentLayout.Extension {
 
   internal var contentLayout: ContentLayout? = null
@@ -53,9 +59,12 @@ class ThreadsView(activity: NmbActivity, context: Context) :
 
     val adapter = ThreadAdapter(inflater)
 
-    val recyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
+    val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
     recyclerView.adapter = adapter
     recyclerView.layoutManager = LinearLayoutManager(inflater.context)
+    recyclerView.setOnItemClickListener { _, holder ->
+      pushScene(newRepliesScene(this@ThreadsView.adapter!!.get(holder.adapterPosition)))
+    }
 
     val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
     contentLayout.extension = this
@@ -142,7 +151,7 @@ class ThreadsView(activity: NmbActivity, context: Context) :
     private var isResumed = false
     private val holderList = mutableListOf<ThreadHolder>()
 
-    override fun onCreateViewHolder2(parent: ViewGroup, viewType: Int): ThreadHolder =
+    override fun onCreateViewHolder2(parent: ViewGroup, viewType: Int) =
         ThreadHolder(inflater.inflate(R.layout.threads_item, parent, false))
 
     override fun onBindViewHolder(holder: ThreadHolder, position: Int) {

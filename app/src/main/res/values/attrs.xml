@@ -26,6 +26,7 @@
     <attr name="backgroundColorWindow" format="color"/>
     <attr name="backgroundColorContent" format="color"/>
 
+    <attr name="itemBackground" format="reference"/>
     <attr name="contentBackground" format="reference"/>
   </declare-styleable>
 

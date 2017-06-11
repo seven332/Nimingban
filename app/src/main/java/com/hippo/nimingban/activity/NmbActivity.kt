@@ -46,7 +46,7 @@ class NmbActivity : StageActivity() {
 
   fun snack(message: CharSequence?) {
     if (message != null && message.isNotEmpty()) {
-      Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT)
+      Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT).show()
     }
   }
 }

@@ -22,6 +22,8 @@
     <item name="colorPrimaryDark">@color/purple_700</item>
     <item name="colorAccent">@color/green_ntr</item>
 
+    <item name="colorControlHighlight">@color/ripple_light</item>
+
     <item name="drawableColorPrimary">@color/primary_drawable_light</item>
     <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
 
@@ -30,6 +32,7 @@
     <item name="backgroundColorWindow">@color/background_window_light</item>
     <item name="backgroundColorContent">@color/background_content_light</item>
 
+    <item name="itemBackground">@drawable/item_background_light</item>
     <item name="contentBackground">@drawable/content_background_light</item>
 
     <item name="android:windowBackground">?attr/backgroundColorWindow</item>

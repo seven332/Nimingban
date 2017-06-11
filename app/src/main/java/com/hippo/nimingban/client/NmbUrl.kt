@@ -34,6 +34,8 @@ val NMB_API_TIMELINE = NMB_HOST + "/Api/timeline?appid=" + NMB_APP_ID
 
 val NMB_API_THREADS = NMB_HOST + "/Api/showf?appid=" + NMB_APP_ID
 
+val NMB_API_REPLIES = NMB_HOST + "/Api/thread?appid=" + NMB_APP_ID
+
 fun timelineUrl(page: Int) =  NMB_API_TIMELINE + "&page=" + (page + 1)
 
 fun threadsUrl(forum: String, page: Int): String {
@@ -42,6 +44,8 @@ fun threadsUrl(forum: String, page: Int): String {
     else -> NMB_API_THREADS + "&id=" + forum + "&page=" + (page + 1)
   }
 }
+
+fun repliesUrl(id: String, page: Int) = NMB_API_REPLIES + "&id=" + id + "&page=" + (page + 1)
 
 // TODO check NMB_DOMAIN, and image host
 fun isNmbUrl(url: HttpUrl): Boolean = true

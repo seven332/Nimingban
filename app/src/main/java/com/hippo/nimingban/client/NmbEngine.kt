@@ -31,4 +31,9 @@ interface NmbEngine {
   fun threads(
       @Url url: String
   ): Single<List<Thread>>
+
+  @GET()
+  fun replies(
+      @Url url: String
+  ): Single<Thread>
 }

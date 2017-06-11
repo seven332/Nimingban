@@ -15,17 +15,7 @@
   ~ limitations under the License.
   -->
 
-<layer-list
-  xmlns:android="http://schemas.android.com/apk/res/android">
-
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:drawable="@color/background_content_light"/>
-
-  <item>
-    <selector>
-      <item android:state_focused="true" android:drawable="@color/ripple_light"/>
-      <item android:state_pressed="true" android:drawable="@color/ripple_light"/>
-      <item android:drawable="@android:color/transparent"/>
-    </selector>
-  </item>
-
+  <item android:drawable="@drawable/item_background_light"/>
 </layer-list>

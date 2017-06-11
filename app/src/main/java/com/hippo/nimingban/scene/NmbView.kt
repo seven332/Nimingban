@@ -26,8 +26,11 @@ import java.util.concurrent.TimeUnit
  * Created by Hippo on 6/7/2017.
  */
 
-abstract class NmbView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(val activity: NmbActivity, val context: Context) :
-    SceneView<V, P>() {
+abstract class NmbView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(
+    val scene: NmbScene<P, V>,
+    val activity: NmbActivity,
+    val context: Context
+) : SceneView<V, P>() {
 
   private val worker = AndroidSchedulers.mainThread().createWorker()
 
@@ -53,5 +56,12 @@ abstract class NmbView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(val activity
    */
   fun schedule(action: () -> Unit, delayMillis: Long): Disposable {
     return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS)
+  }
+
+  /**
+   * Push a scene.
+   */
+  fun pushScene(scene: NmbScene<*, *>) {
+    this.scene.stage?.pushScene(scene)
   }
 }

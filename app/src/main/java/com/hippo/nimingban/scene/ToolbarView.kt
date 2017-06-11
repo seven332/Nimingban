@@ -28,8 +28,11 @@ import com.hippo.nimingban.activity.NmbActivity
  * Created by Hippo on 6/8/2017.
  */
 
-abstract class ToolbarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity: NmbActivity, context: Context) :
-    StatusBarView<V, P>(activity, context) {
+abstract class ToolbarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(
+    scene: NmbScene<P, V>,
+    activity: NmbActivity,
+    context: Context
+) : StatusBarView<V, P>(scene, activity, context) {
 
   var toolbar: Toolbar? = null
 

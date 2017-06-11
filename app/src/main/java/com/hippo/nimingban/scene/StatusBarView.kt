@@ -31,8 +31,11 @@ import com.hippo.nimingban.widget.nmb.NmbDrawerContent
  * Created by Hippo on 6/8/2017.
  */
 
-abstract class StatusBarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(activity: NmbActivity, context: Context) :
-    NmbView<V, P>(activity, context), NmbDrawerContent.OnGetWindowPaddingTopListener {
+abstract class StatusBarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(
+    scene: NmbScene<P, V>,
+    activity: NmbActivity,
+    context: Context
+) : NmbView<V, P>(scene, activity, context), NmbDrawerContent.OnGetWindowPaddingTopListener {
 
   private var drawerContent: NmbDrawerContent? = null
   private var statusBar: View? = null

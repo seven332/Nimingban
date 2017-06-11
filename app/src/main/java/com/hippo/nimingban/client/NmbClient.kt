@@ -23,4 +23,15 @@ package com.hippo.nimingban.client
 class NmbClient(private val engine: NmbEngine) {
 
   fun threads(forum: String, page: Int) = engine.threads(threadsUrl(forum, page))
+
+  fun replies(id: String, page: Int) =
+      engine.replies(repliesUrl(id, page))
+          .map({
+            val replies = it.replies.toMutableList()
+            if (page == 0) {
+              // It's the first, add thread itself to the header
+              replies.add(0, it.toReply())
+            }
+            Pair(it, replies)
+          })!!
 }

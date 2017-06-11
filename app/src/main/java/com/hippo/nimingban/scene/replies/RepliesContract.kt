@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.threads
-
-import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.scene.NmbScene
+package com.hippo.nimingban.scene.replies
 
 /*
- * Created by Hippo on 6/4/2017.
+ * Created by Hippo on 6/11/2017.
  */
 
-class ThreadsScene: NmbScene<ThreadsPresenter, ThreadsView>() {
+interface RepliesContract {
 
-  override fun createPresenter(): ThreadsPresenter {
-    return ThreadsPresenter()
-  }
+  interface Presenter
 
-  override fun createView(): ThreadsView {
-    return ThreadsView(this, activity as NmbActivity, context!!)
-  }
+  interface View
 }

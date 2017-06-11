@@ -15,15 +15,8 @@
   ~ limitations under the License.
   -->
 
-<layer-list
-  xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <item android:drawable="?attr/backgroundColorContent"/>
-
-  <item>
-    <ripple android:color="?attr/colorControlHighlight">
-      <item android:id="@android:id/mask" android:drawable="@android:color/white"/>
-    </ripple>
-  </item>
-
-</layer-list>
+<ripple
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:color="?attr/colorControlHighlight">
+  <item android:id="@android:id/mask" android:drawable="@android:color/white"/>
+</ripple>
