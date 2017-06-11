@@ -25,6 +25,8 @@
     <attr name="backgroundColorAppBar" format="color"/>
     <attr name="backgroundColorWindow" format="color"/>
     <attr name="backgroundColorContent" format="color"/>
+
+    <attr name="contentBackground" format="reference"/>
   </declare-styleable>
 
   <declare-styleable name="ProgressView">

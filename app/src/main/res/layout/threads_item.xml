@@ -32,7 +32,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="@dimen/key_margin"
-    android:background="?attr/backgroundColorContent">
+    android:background="?attr/contentBackground">
 
     <include
       layout="@layout/threads_item_content"/>

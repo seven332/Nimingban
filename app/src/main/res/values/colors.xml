@@ -41,6 +41,9 @@
   <!-- 22% black -->
   <color name="strip_shadow">#38000000</color>
 
+  <color name="ripple_light">#1f000000</color>
+  <color name="ripple_dark">#33ffffff</color>
+
   <color name="color_scheme_1">@color/red_500</color>
   <color name="color_scheme_2">@color/orange_500</color>
   <color name="color_scheme_3">@color/green_500</color>
