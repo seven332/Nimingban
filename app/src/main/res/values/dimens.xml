@@ -41,12 +41,12 @@
   <dimen name="threads_item_content_margin_right">@dimen/key_margin</dimen>
   <dimen name="threads_item_content_margin_top">12dp</dimen>
   <dimen name="threads_item_content_margin_bottom">@dimen/key_margin</dimen>
-  <dimen name="threads_item_content_item_margin">10dp</dimen>
+  <dimen name="threads_item_content_item_margin">8dp</dimen>
 
   <dimen name="replies_item_margin_left">@dimen/key_margin</dimen>
   <dimen name="replies_item_margin_right">@dimen/key_margin</dimen>
   <dimen name="replies_item_margin_top">8dp</dimen>
   <dimen name="replies_item_margin_bottom">8dp</dimen>
-  <dimen name="replies_item_item_margin">10dp</dimen>
+  <dimen name="replies_item_item_margin">8dp</dimen>
 
 </resources>
