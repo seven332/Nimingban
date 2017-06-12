@@ -120,7 +120,9 @@ data class Reply(
   companion object {
     @JvmField val CREATOR: Parcelable.Creator<Reply> = object : Parcelable.Creator<Reply> {
       override fun createFromParcel(source: Parcel): Reply {
-        return Reply(source)
+        val reply = Reply(source)
+        reply.init
+        return reply
       }
 
       override fun newArray(size: Int): Array<Reply?> {

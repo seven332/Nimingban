@@ -143,7 +143,9 @@ data class Thread(
   companion object {
     @JvmField val CREATOR: Parcelable.Creator<Thread> = object : Parcelable.Creator<Thread> {
       override fun createFromParcel(source: Parcel): Thread {
-        return Thread(source)
+        val thread = Thread(source)
+        thread.init
+        return thread
       }
 
       override fun newArray(size: Int): Array<Thread?> {
