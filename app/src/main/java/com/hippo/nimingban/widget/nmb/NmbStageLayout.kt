@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.replies
+package com.hippo.nimingban.widget.nmb
+
+import android.content.Context
+import android.util.AttributeSet
+import com.hippo.stage.StageLayout
 
 /*
- * Created by Hippo on 6/11/2017.
+ * Created by Hippo on 6/12/2017.
  */
 
-interface RepliesContract {
-
-  interface Presenter
-
-  interface View
+class NmbStageLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : StageLayout(context, attrs, defStyleAttr) {
 }

@@ -76,8 +76,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     // Stage
-    implementation 'com.github.seven332.stage:stage:0.1.2'
-    implementation 'com.github.seven332.stage:stage-dialog:0.1.2'
+    implementation "com.github.seven332.stage:stage:$STAGE_LIBRARY_VERSION"
+    implementation "com.github.seven332.stage:stage-dialog:$STAGE_LIBRARY_VERSION"
+    implementation "com.github.seven332.stage:stage-rxjava2:$STAGE_LIBRARY_VERSION"
     implementation 'com.github.seven332.android-dialog:base:0.1.0'
 
     // Animator

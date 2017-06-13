@@ -19,7 +19,6 @@ package com.hippo.nimingban.scene.threads
 import android.content.Context
 import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,68 +28,60 @@ import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Thread
-import com.hippo.nimingban.scene.NmbScene
-import com.hippo.nimingban.scene.ToolbarView
+import com.hippo.nimingban.component.AlertAdapter
+import com.hippo.nimingban.component.AlertHolder
+import com.hippo.nimingban.scene.ToolbarUi
 import com.hippo.nimingban.scene.replies.newRepliesScene
-import com.hippo.nimingban.util.debug
 import com.hippo.nimingban.util.prettyTime
-import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.nimingban.widget.nmb.NmbReplayMarquee
 import com.hippo.nimingban.widget.nmb.NmbThumb
+import io.reactivex.Observable
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/12/2017.
  */
 
-class ThreadsView(
-    scene: NmbScene<ThreadsPresenter, ThreadsView>,
+class ThreadsUi(
+    scene: ThreadsScene,
     activity: NmbActivity,
     context: Context
-) : ToolbarView<ThreadsView, ThreadsPresenter>(scene, activity, context),
-    ThreadsContract.View, ContentLayout.Extension {
+) : ToolbarUi<ThreadsUi, ThreadsScene>(scene, activity, context), ContentLayout.Extension {
 
-  internal var contentLayout: ContentLayout? = null
-  internal var recyclerView: RecyclerView? = null
+  internal var recyclerView: EasyRecyclerView? = null
   internal var adapter: ThreadAdapter? = null
 
+
   override fun onCreateToolbarContent(inflater: LayoutInflater, parent: ViewGroup): View {
-    val view = inflater.inflate(R.layout.scene_threads, parent, false)!!
+    val view = inflater.inflate(R.layout.ui_threads, parent, false)
 
-    val adapter = ThreadAdapter(inflater)
-
-    val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
-    recyclerView.adapter = adapter
-    recyclerView.layoutManager = LinearLayoutManager(inflater.context)
-    recyclerView.setOnItemClickListener { _, holder ->
-      pushScene(newRepliesScene(this@ThreadsView.adapter!!.get(holder.adapterPosition)))
-    }
+    val adapter = ThreadAdapter(inflater, scene.lifecycle)
+    adapter.data = scene.data
 
     val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
     contentLayout.extension = this
+    scene.data.view = contentLayout
 
-    this.contentLayout = contentLayout
-    this.recyclerView = recyclerView
+    val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
+    recyclerView.adapter = adapter
+    recyclerView.layoutManager = LinearLayoutManager(context)
+    recyclerView.setOnItemClickListener { _, holder ->
+      pushScene(newRepliesScene(this@ThreadsUi.adapter!!.get(holder.adapterPosition)))
+    }
+
     this.adapter = adapter
+    this.recyclerView = recyclerView
 
     return view
   }
 
-  override fun onResume() {
-    super.onResume()
-    adapter?.resume()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    adapter?.pause()
-  }
-
   override fun onDestroy() {
     super.onDestroy()
+    adapter?.data = null
+    scene.data.view = null
     recyclerView?.adapter = null
     recyclerView?.layoutManager = null
-    adapter?.destroy()
+    recyclerView?.setOnItemClickListener(null)
   }
 
   override fun showMessage(message: String) {
@@ -98,7 +89,7 @@ class ThreadsView(
   }
 
 
-  class ThreadHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class ThreadHolder(itemView: View) : AlertHolder(itemView) {
     val user = itemView.findViewById(R.id.user) as TextView
     val id = itemView.findViewById(R.id.id) as TextView
     val date = itemView.findViewById(R.id.date) as TextView
@@ -114,42 +105,20 @@ class ThreadsView(
       replyCount.setCompoundDrawables(drawable, null, null, null)
     }
 
-    var isAttached = false
-      set(value) {
-        if (field == value) return
-        field = value
-        if (value && isResumed) onResume() else onPause()
-      }
-
-    var isResumed = false
-      set(value) {
-        if (field == value) return
-        field = value
-        if (value && isAttached) onResume() else onPause()
-      }
-
-    private var hasResumed = false
-
-    fun onResume() {
-      if (!hasResumed) {
-        hasResumed = true
-        replies.start()
-      }
+    override fun onResume() {
+      super.onResume()
+      replies.start()
     }
 
-    fun onPause() {
-      if (hasResumed) {
-        hasResumed = false
-        replies.stop()
-      }
+    override fun onPause() {
+      super.onPause()
+      replies.stop()
     }
   }
 
 
-  class ThreadAdapter(val inflater: LayoutInflater) : ContentDataAdapter<Thread, ThreadHolder>() {
-
-    private var isResumed = false
-    private val holderList = mutableListOf<ThreadHolder>()
+  class ThreadAdapter(val inflater: LayoutInflater, lifecycle: Observable<Int>)
+    : AlertAdapter<Thread, ThreadHolder>(lifecycle) {
 
     override fun onCreateViewHolder2(parent: ViewGroup, viewType: Int) =
         ThreadHolder(inflater.inflate(R.layout.threads_item, parent, false))
@@ -181,42 +150,7 @@ class ThreadsView(
         holder.bottom.requestLayout()
       }
 
-      if (isResumed) {
-        holder.isResumed = true
-      }
-      holderList.add(holder)
-    }
-
-    override fun onViewAttachedToWindow(holder: ThreadHolder?) {
-      super.onViewAttachedToWindow(holder)
-      holder?.isAttached = true
-    }
-
-    override fun onViewDetachedFromWindow(holder: ThreadHolder?) {
-      super.onViewDetachedFromWindow(holder)
-      holder?.isAttached = false
-    }
-
-    override fun onViewRecycled(holder: ThreadHolder) {
-      super.onViewRecycled(holder)
-      holderList.remove(holder)
-      holder.isAttached = false
-      holder.isResumed = false
-    }
-
-    fun resume() {
-      isResumed = true
-      holderList.forEach { it.isResumed = true }
-    }
-
-    fun pause() {
-      isResumed = false
-      holderList.forEach { it.isResumed = false }
-    }
-
-    fun destroy() {
-      debug(holderList.isEmpty(), { "All ViewHolders should be removed in onViewRecycled()" })
-      holderList.clear()
+      super.onBindViewHolder(holder, position)
     }
   }
 }

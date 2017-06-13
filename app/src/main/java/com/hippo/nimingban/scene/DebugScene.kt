@@ -23,16 +23,15 @@ import com.hippo.nimingban.REF_WATCHER
  * Created by Hippo on 6/5/2017.
  */
 
-abstract class DebugScene<P: ScenePresenter<P, V>, V: SceneView<V, P>> : BaseScene<P, V>() {
+abstract class DebugScene<U: Ui> : UiScene<U>() {
 
   override fun onDestroyView(view: View) {
-    REF_WATCHER.watch(this.view)
+    REF_WATCHER.watch(this.ui)
     super.onDestroyView(view)
     REF_WATCHER.watch(view)
   }
 
   override fun onDestroy() {
-    REF_WATCHER.watch(this.presenter)
     super.onDestroy()
     REF_WATCHER.watch(this)
   }

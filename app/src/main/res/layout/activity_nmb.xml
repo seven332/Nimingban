@@ -21,16 +21,9 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <com.hippo.drawerlayout.DrawerLayout
-    android:id="@+id/draw_layout"
+  <com.hippo.nimingban.widget.nmb.NmbStageLayout
+    android:id="@+id/stage_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent"/>
 
-    <com.hippo.nimingban.widget.nmb.NmbDrawerContent
-      android:id="@+id/drawer_content"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
-
-  </com.hippo.drawerlayout.DrawerLayout>
 </com.hippo.nimingban.widget.SafeCoordinatorLayout>

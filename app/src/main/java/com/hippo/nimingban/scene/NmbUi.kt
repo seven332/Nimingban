@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.threads
+package com.hippo.nimingban.scene
+
+import android.content.Context
+import com.hippo.nimingban.activity.NmbActivity
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/12/2017.
  */
 
-interface ThreadsContract {
+abstract class NmbUi<U: NmbUi<U, S>, S: NmbScene<S, U>>(
+    internal val scene: S,
+    internal val activity: NmbActivity,
+    internal val context: Context
+) : Ui() {
 
-  interface Presenter
-
-  interface View
+  fun pushScene(scene: NmbScene<*, *>) {
+    this.scene.stage?.pushScene(scene)
+  }
 }

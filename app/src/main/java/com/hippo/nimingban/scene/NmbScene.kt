@@ -16,8 +16,42 @@
 
 package com.hippo.nimingban.scene
 
+import com.hippo.stage.rxjava2.SceneLifecycle
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import java.util.concurrent.TimeUnit
+
 /*
  * Created by Hippo on 6/5/2017.
  */
 
-abstract class NmbScene<P: ScenePresenter<P, V>, V: SceneView<V, P>> : DebugScene<P, V>()
+abstract class NmbScene<S: NmbScene<S, U>, U: NmbUi<U, S>> : DebugScene<U>() {
+
+  val lifecycle by lazy { SceneLifecycle.create(this) }
+
+  private val worker = AndroidSchedulers.mainThread().createWorker()
+
+  override fun onDestroy() {
+    super.onDestroy()
+    worker.dispose()
+  }
+
+  /**
+   * Schedules an action for execution in UI thread.
+   * The action will be cancelled after the view destroyed.
+   * Returns `Disposables.disposed()` if the view is already destroyed.
+   */
+  fun schedule(action: () -> Unit): Disposable {
+    return worker.schedule(action)
+  }
+
+  /**
+   * Schedules an action for execution at some point in the future
+   * and in UI thread.
+   * The action will be cancelled after the view detached.
+   * Returns `Disposables.disposed()` if the view is already destroyed.
+   */
+  fun schedule(action: () -> Unit, delayMillis: Long): Disposable {
+    return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS)
+  }
+}

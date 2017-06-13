@@ -24,11 +24,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.hippo.android.resource.AttrResources
+import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
-import com.hippo.nimingban.scene.NmbScene
-import com.hippo.nimingban.scene.ToolbarView
+import com.hippo.nimingban.scene.ToolbarUi
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentDataAdapter
@@ -37,29 +37,32 @@ import com.hippo.nimingban.widget.nmb.NmbThumb
 import com.hippo.recyclerview.addons.LinearDividerItemDecoration
 
 /*
- * Created by Hippo on 6/11/2017.
+ * Created by Hippo on 6/13/2017.
  */
 
-class RepliesView(
-    scene: NmbScene<RepliesPresenter, RepliesView>,
+class RepliesUi(
+    scene: RepliesScene,
     activity: NmbActivity,
     context: Context
-) : ToolbarView<RepliesView, RepliesPresenter>(scene, activity, context),
-    RepliesContract.View, ContentLayout.Extension {
+) : ToolbarUi<RepliesUi, RepliesScene>(scene, activity, context), ContentLayout.Extension {
 
-  internal var contentLayout: ContentLayout? = null
-  internal var recyclerView: RecyclerView? = null
+  internal var recyclerView: EasyRecyclerView? = null
   internal var adapter: RepliesAdapter? = null
+
 
   override fun onCreateToolbarContent(inflater: LayoutInflater, parent: ViewGroup): View {
     val view = inflater.inflate(R.layout.scene_replies, parent, false)!!
 
     val adapter = RepliesAdapter(inflater)
+    adapter.data = scene.data
 
-    val recyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
+    val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
+    contentLayout.extension = this
+    scene.data.view = contentLayout
+
+    val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
     recyclerView.adapter = adapter
-    recyclerView.layoutManager = LinearLayoutManager(inflater.context)
-
+    recyclerView.layoutManager = LinearLayoutManager(context)
     val itemDecoration = LinearDividerItemDecoration(
         LinearDividerItemDecoration.VERTICAL,
         AttrResources.getAttrColor(context, R.attr.dividerColor),
@@ -67,18 +70,16 @@ class RepliesView(
     itemDecoration.setShowLastDivider(true)
     recyclerView.addItemDecoration(itemDecoration)
 
-    val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
-    contentLayout.extension = this
-
-    this.contentLayout = contentLayout
-    this.recyclerView = recyclerView
     this.adapter = adapter
+    this.recyclerView = recyclerView
 
     return view
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    adapter?.data = null
+    scene.data.view = null
     recyclerView?.adapter = null
     recyclerView?.layoutManager = null
   }

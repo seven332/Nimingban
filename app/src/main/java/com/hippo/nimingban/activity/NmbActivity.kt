@@ -30,14 +30,14 @@ import kotlinx.android.synthetic.main.activity_nmb.*
 class NmbActivity : StageActivity() {
 
   private val coordinatorLayout by lazy { coordinator_layout!! }
-  private val drawerContent by lazy { drawer_content!! }
+  private val stageLayout by lazy { stage_layout!! }
 
   override fun onSetContentView() {
     setContentView(R.layout.activity_nmb)
   }
 
   override fun onGetStageLayout(): ViewGroup {
-    return drawerContent
+    return stageLayout
   }
 
   override fun onCreateRootScene(): Scene {

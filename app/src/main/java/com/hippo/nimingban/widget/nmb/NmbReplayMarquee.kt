@@ -40,7 +40,7 @@ class NmbReplayMarquee @JvmOverloads constructor(
     set(value) {
       field = value
       index = -1
-      nextReply()
+      nextReply(false)
     }
 
 
@@ -63,7 +63,7 @@ class NmbReplayMarquee @JvmOverloads constructor(
     }
   }
 
-  private fun nextReply() {
+  private fun nextReply(animation: Boolean) {
     removeCallbacks(this)
 
     val replies = this.replies
@@ -71,7 +71,12 @@ class NmbReplayMarquee @JvmOverloads constructor(
       setText(null)
     } else {
       index = (++index).let { if (it >= replies.size) 0 else it }.let { if (it < 0) 0 else it}
-      setText(replies[index].displayContent)
+      val text = replies[index].displayContent
+      if (animation) {
+        setText(text)
+      } else {
+        setCurrentText(text)
+      }
 
       if (started) {
         postDelayed(this, getMarqueeInterval())
@@ -82,6 +87,6 @@ class NmbReplayMarquee @JvmOverloads constructor(
   private fun getMarqueeInterval() = random(3000, 5001).toLong()
 
   override fun run() {
-    nextReply()
+    nextReply(true)
   }
 }

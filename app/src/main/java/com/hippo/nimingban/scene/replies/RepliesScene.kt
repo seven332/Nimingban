@@ -17,15 +17,20 @@
 package com.hippo.nimingban.scene.replies
 
 import android.os.Bundle
+import com.hippo.nimingban.NMB_CLIENT
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.widget.content.ContentData
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /*
  * Created by Hippo on 6/11/2017.
  */
 
-class RepliesScene: NmbScene<RepliesPresenter, RepliesView>() {
+class RepliesScene: NmbScene<RepliesScene, RepliesUi>() {
 
   companion object {
     const val KEY_ID = "RepliesScene:id"
@@ -33,24 +38,61 @@ class RepliesScene: NmbScene<RepliesPresenter, RepliesView>() {
   }
 
 
-  override fun createPresenter(): RepliesPresenter {
-    val args = this.args
-    val id: String?
-    val thread: Thread?
+  val data = RepliesData()
+
+  private var id: String? = null
+  private var thread: Thread? = null
+
+
+  override fun createUi(): RepliesUi {
+    return RepliesUi(this, activity as NmbActivity, context!!)
+  }
+
+  override fun onCreate(args: Bundle?) {
+    super.onCreate(args)
 
     if (args != null) {
       id = args.getString(KEY_ID)
       thread = args.getParcelable(KEY_THREAD)
-    } else {
-      id = null
-      thread = null
     }
 
-    return RepliesPresenter(id, thread)
+    data.restore()
   }
 
-  override fun createView(): RepliesView {
-    return RepliesView(this, activity as NmbActivity, context!!)
+
+  inner class RepliesData : ContentData<Reply>() {
+
+    private val threadId get() = id ?: thread?.id
+
+    override fun onRequireData(id: Int, page: Int) {
+      val threadId = this.threadId
+      if (threadId != null) {
+        NMB_CLIENT.replies(threadId, page)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe( {
+              if (thread == null) thread = it.first
+              // TODO need a better way to get max page
+              setData(id, it.second, Int.MAX_VALUE)
+            }, {
+              setError(id, it)
+            })
+      } else {
+        // TODO i18n
+        schedule { setError(id, Exception("No thread id")) }
+      }
+    }
+
+    override fun onRestoreData(id: Int) {
+      val thread = this@RepliesScene.thread
+      if (thread != null) {
+        setData(id, listOf(thread.toReply()), 1)
+      } else {
+        setError(id, ContentData.FAILED_TO_RESTORE_EXCEPTION)
+      }
+    }
+
+    override fun onBackupData(data: List<Reply>) {}
   }
 }
 

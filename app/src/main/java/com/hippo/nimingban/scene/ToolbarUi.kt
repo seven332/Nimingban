@@ -25,25 +25,25 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 6/12/2017.
  */
 
-abstract class ToolbarView<V: SceneView<V, P>, P: ScenePresenter<P, V>>(
-    scene: NmbScene<P, V>,
+abstract class ToolbarUi<U: NmbUi<U, S>, S: NmbScene<S, U>>(
+    scene: S,
     activity: NmbActivity,
     context: Context
-) : StatusBarView<V, P>(scene, activity, context) {
+) : NmbUi<U, S>(scene, activity, context) {
 
-  var toolbar: Toolbar? = null
+  internal var toolbar: Toolbar? = null
 
-  override fun onCreateStatusBarContent(inflater: LayoutInflater, parent: ViewGroup): View {
-    val view = inflater.inflate(R.layout.scene_toolbar, parent, false)
+  override final fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
+    val view = inflater.inflate(R.layout.ui_toolbar, container, false)
 
     toolbar = view.findViewById(R.id.toolbar) as Toolbar
 
-    val container = view.findViewById(R.id.toolbar_content_container) as ViewGroup
-    val content = onCreateToolbarContent(inflater, container)
-    container.addView(content, 0)
+    val toolbarContainer = view.findViewById(R.id.toolbar_content_container) as ViewGroup
+    val content = onCreateToolbarContent(inflater, toolbarContainer)
+    toolbarContainer.addView(content, 0)
 
     return view
   }

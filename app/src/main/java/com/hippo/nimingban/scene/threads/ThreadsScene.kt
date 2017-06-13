@@ -16,20 +16,78 @@
 
 package com.hippo.nimingban.scene.threads
 
+import android.os.Bundle
+import com.hippo.nimingban.NMB_CLIENT
+import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.widget.content.ContentData
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /*
  * Created by Hippo on 6/4/2017.
  */
 
-class ThreadsScene: NmbScene<ThreadsPresenter, ThreadsView>() {
+class ThreadsScene: NmbScene<ThreadsScene, ThreadsUi>() {
 
-  override fun createPresenter(): ThreadsPresenter {
-    return ThreadsPresenter()
+  companion object {
+    private const val INIT_FORUM = "ThreadsData:init_forum"
+    /** Assigning it to [forum] means no forum available **/
+    const val NO_FORUM = "ThreadsData:no_forum"
   }
 
-  override fun createView(): ThreadsView {
-    return ThreadsView(this, activity as NmbActivity, context!!)
+
+  internal val data = ThreadsData()
+
+
+  /** Forum id, null for no forum **/
+  var forum: String = INIT_FORUM
+    set(value) {
+      if (field != value) {
+        field = value
+        data.goTo(0)
+      }
+    }
+
+
+  override fun createUi(): ThreadsUi {
+    return ThreadsUi(this, activity as NmbActivity, context!!)
+  }
+
+  override fun onCreate(args: Bundle?) {
+    super.onCreate(args)
+
+    // TODO get forum list
+    forum = "4"
+  }
+
+
+  inner class ThreadsData : ContentData<Thread>() {
+
+    override fun onRequireData(id: Int, page: Int) {
+      if (forum === NO_FORUM) {
+        schedule { setError(id, PresetException("No forum", R.string.error_no_forum, R.drawable.emoticon_sad_primary_x64)) }
+      } else {
+        NMB_CLIENT.threads(forum, page)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ setData(id, it, Int.MAX_VALUE) }, { setError(id, it) })
+      }
+    }
+
+    override fun onRestoreData(id: Int) {
+      // TODO("not implemented")
+    }
+
+    override fun onBackupData(data: List<Thread>) {
+      // TODO("not implemented")
+    }
+
+    override fun isDuplicate(t1: Thread, t2: Thread): Boolean {
+      return t1.id == t2.id
+    }
   }
 }
