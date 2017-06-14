@@ -19,6 +19,11 @@
 
   <string name="app_name">Nimingban</string>
 
+  <string name="navigation_search">Search</string>
+  <string name="navigation_subscriptions">Subscriptions</string>
+  <string name="navigation_history">History</string>
+  <string name="navigation_settings">Settings</string>
+
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>
 

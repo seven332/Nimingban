@@ -16,6 +16,9 @@
 
 package com.hippo.nimingban.scene
 
+import android.os.Bundle
+import com.hippo.stage.Director
+import com.hippo.stage.Scene
 import com.hippo.stage.rxjava2.SceneLifecycle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -27,7 +30,13 @@ import java.util.concurrent.TimeUnit
 
 abstract class NmbScene<S: NmbScene<S, U>, U: NmbUi<U, S>> : DebugScene<U>() {
 
+  companion object {
+    private const val KEY_PARENT_ID = "NmbScene:parent_id"
+  }
+
   val lifecycle by lazy { SceneLifecycle.create(this) }
+
+  var parent: Scene? = null
 
   private val worker = AndroidSchedulers.mainThread().createWorker()
 
@@ -53,5 +62,18 @@ abstract class NmbScene<S: NmbScene<S, U>, U: NmbUi<U, S>> : DebugScene<U>() {
    */
   fun schedule(action: () -> Unit, delayMillis: Long): Disposable {
     return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS)
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putInt(KEY_PARENT_ID, parent?.id ?: INVALID_ID)
+  }
+
+  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+    super.onRestoreInstanceState(savedInstanceState)
+    val parentId = savedInstanceState.getInt(KEY_PARENT_ID, INVALID_ID)
+    if (parent != null && parentId != INVALID_ID) {
+      parent = Director.hire(activity!!, null).findSceneById(parentId)
+    }
   }
 }

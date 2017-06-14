@@ -51,7 +51,7 @@ class RepliesUi(
 
 
   override fun onCreateToolbarContent(inflater: LayoutInflater, parent: ViewGroup): View {
-    val view = inflater.inflate(R.layout.scene_replies, parent, false)!!
+    val view = inflater.inflate(R.layout.ui_replies, parent, false)!!
 
     val adapter = RepliesAdapter(inflater)
     adapter.data = scene.data

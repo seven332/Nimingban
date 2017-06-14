@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene
+package com.hippo.nimingban.scene.navigation
 
-import android.content.Context
 import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.stage.Scene
+import com.hippo.nimingban.scene.NmbScene
 
 /*
- * Created by Hippo on 6/12/2017.
+ * Created by Hippo on 6/14/2017.
  */
 
-abstract class NmbUi<U: NmbUi<U, S>, S: NmbScene<S, U>>(
-    internal val scene: S,
-    internal val activity: NmbActivity,
-    internal val context: Context
-) : Ui() {
+class NavigationScene : NmbScene<NavigationScene, NavigationUi>() {
 
-  // TODO pushScene and pushSceneToParent are bad designs, need a way to figure which stage to push to
-
-  fun pushScene(scene: Scene) {
-    this.scene.stage?.pushScene(scene)
-  }
-
-  fun pushSceneToParent(scene: Scene) {
-    this.scene.parent?.stage?.pushScene(scene)
+  override fun createUi(): NavigationUi {
+    return NavigationUi(this, activity as NmbActivity, context!!)
   }
 }

@@ -66,7 +66,7 @@ class ThreadsUi(
     recyclerView.adapter = adapter
     recyclerView.layoutManager = LinearLayoutManager(context)
     recyclerView.setOnItemClickListener { _, holder ->
-      pushScene(newRepliesScene(this@ThreadsUi.adapter!!.get(holder.adapterPosition)))
+      pushSceneToParent(newRepliesScene(this@ThreadsUi.adapter!!.get(holder.adapterPosition)))
     }
 
     this.adapter = adapter
