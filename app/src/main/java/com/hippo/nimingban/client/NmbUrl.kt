@@ -22,19 +22,24 @@ import okhttp3.HttpUrl
  * Created by Hippo on 6/4/2017.
  */
 
-val NMB_APP_ID = "nimingban"
+const val NMB_APP_ID = "nimingban"
 
-val NMB_DOMAIN = "h.nimingban.com"
+const val NMB_DOMAIN = "h.nimingban.com"
 
-val NMB_HOST = "https://" + NMB_DOMAIN
+const val NMB_HOST = "https://" + NMB_DOMAIN
 
-val NMB_FORUM_TIMELINE = "-1"
+const val NMB_FORUM_TIMELINE = "-1"
 
-val NMB_API_TIMELINE = NMB_HOST + "/Api/timeline?appid=" + NMB_APP_ID
+const val NMB_API_FORUMS = NMB_HOST + "/Api/getForumList?appid=" + NMB_APP_ID
 
-val NMB_API_THREADS = NMB_HOST + "/Api/showf?appid=" + NMB_APP_ID
+const val NMB_API_TIMELINE = NMB_HOST + "/Api/timeline?appid=" + NMB_APP_ID
 
-val NMB_API_REPLIES = NMB_HOST + "/Api/thread?appid=" + NMB_APP_ID
+const val NMB_API_THREADS = NMB_HOST + "/Api/showf?appid=" + NMB_APP_ID
+
+const val NMB_API_REPLIES = NMB_HOST + "/Api/thread?appid=" + NMB_APP_ID
+
+
+fun forumsUrl() = NMB_API_FORUMS
 
 fun timelineUrl(page: Int) =  NMB_API_TIMELINE + "&page=" + (page + 1)
 

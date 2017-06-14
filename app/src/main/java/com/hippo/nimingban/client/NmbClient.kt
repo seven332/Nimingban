@@ -22,6 +22,15 @@ package com.hippo.nimingban.client
 
 class NmbClient(private val engine: NmbEngine) {
 
+  fun forums() =
+      engine.forums()
+          .map {
+            // Init all forums
+            it.forEach { it.init }
+            // Return it self
+            it
+          } !!
+
   fun threads(forum: String, page: Int) =
       engine.threads(threadsUrl(forum, page))
           .map {

@@ -26,6 +26,8 @@ import com.hippo.nimingban.client.NMB_HOST
 import com.hippo.nimingban.client.NmbClient
 import com.hippo.nimingban.client.NmbEngine
 import com.hippo.nimingban.client.NmbInterceptor
+import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.squareup.leakcanary.LeakCanary
@@ -64,6 +66,12 @@ val OK_HTTP_CLIENT: OkHttpClient by lazy {
 val GSON: Gson by lazy {
   GsonBuilder()
       .excludeFieldsWithoutExposeAnnotation()
+      .registerTypeAdapter(Forum::class.java, InstanceCreator {
+        Forum(null, null, null, null, null, null, null, null, null, null)
+      })
+      .registerTypeAdapter(Forum::class.java, InstanceCreator {
+        ForumGroup(null, null, null, null, null)
+      })
       .registerTypeAdapter(Reply::class.java, InstanceCreator {
         Reply(null, null, null, null, null, null, null, null, null, null, null)
       })

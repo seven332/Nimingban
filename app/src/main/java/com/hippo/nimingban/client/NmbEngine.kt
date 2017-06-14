@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.client
 
+import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Thread
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -26,6 +27,9 @@ import retrofit2.http.Url
  */
 
 interface NmbEngine {
+
+  @GET(NMB_API_FORUMS)
+  fun forums(): Single<List<ForumGroup>>
 
   @GET()
   fun threads(
