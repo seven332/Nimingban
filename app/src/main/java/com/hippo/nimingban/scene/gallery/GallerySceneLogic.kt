@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.threads
+package com.hippo.nimingban.scene.gallery
 
-import com.hippo.nimingban.scene.ui.NavigationLogic
-import com.hippo.nimingban.scene.ui.ThreadsLogic
+import com.hippo.nimingban.scene.ui.GalleryLogic
+import com.hippo.nimingban.scene.ui.SwipeBackLogic
 import com.hippo.nimingban.scene.ui.ToolbarLogic
 
 /*
  * Created by Hippo on 6/15/2017.
  */
 
-interface MainSceneLogic : ThreadsLogic, ToolbarLogic, NavigationLogic
+interface GallerySceneLogic : GalleryLogic, ToolbarLogic, SwipeBackLogic

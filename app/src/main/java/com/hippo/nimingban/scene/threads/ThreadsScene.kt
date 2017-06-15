@@ -20,9 +20,11 @@ import android.os.Bundle
 import com.hippo.nimingban.NMB_CLIENT
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.scene.gallery.galleryScene
 import com.hippo.nimingban.scene.replies.repliesScene
 import com.hippo.nimingban.scene.ui.SceneUi
 import com.hippo.nimingban.widget.content.ContentData
@@ -35,7 +37,7 @@ import io.reactivex.schedulers.Schedulers
  * Created by Hippo on 6/14/2017.
  */
 
-class MainScene : NmbScene(), MainSceneLogic {
+class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   companion object {
     private const val INIT_FORUM = "ThreadsData:init_forum"
@@ -61,7 +63,7 @@ class MainScene : NmbScene(), MainSceneLogic {
   }
 
   override fun createUi(): SceneUi {
-    return MainSceneUi(this, context!!, activity as NmbActivity)
+    return ThreadsSceneUi(this, context!!, activity as NmbActivity)
   }
 
   override fun initializeAdapter(adapter: ContentDataAdapter<Thread, *>) { adapter.data = data }
@@ -72,9 +74,9 @@ class MainScene : NmbScene(), MainSceneLogic {
 
   override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
 
-  override fun onClickThread(thread: Thread) {
-    stage?.pushScene(thread.repliesScene())
-  }
+  override fun onClickThread(thread: Thread) { stage?.pushScene(thread.repliesScene()) }
+
+  override fun onClickThumb(reply: Reply) { stage?.pushScene(reply.galleryScene()) }
 
   inner class ThreadsData : ContentData<Thread>() {
 
@@ -97,8 +99,6 @@ class MainScene : NmbScene(), MainSceneLogic {
       // TODO("not implemented")
     }
 
-    override fun isDuplicate(t1: Thread, t2: Thread): Boolean {
-      return t1.id == t2.id
-    }
+    override fun isDuplicate(t1: Thread, t2: Thread) = t1.id == t2.id
   }
 }

@@ -31,14 +31,14 @@ import com.hippo.nimingban.scene.ui.wrapInToolbar
  * Created by Hippo on 6/14/2017.
  */
 
-class MainSceneUi(
-    val logic: MainSceneLogic,
+class ThreadsSceneUi(
+    val logic: ThreadsSceneLogic,
     context: Context,
     activity: NmbActivity
 ) : GroupUi(context, activity) {
 
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
-    val view = inflater.inflate(R.layout.ui_main, container, false)
+    val view = inflater.inflate(R.layout.ui_threads_scene, container, false)
 
     val drawerContentContainer = view.findViewById(R.id.drawer_content) as ViewGroup
     val drawerContentUi = ThreadsUi(logic, context, activity).wrapInToolbar(logic)

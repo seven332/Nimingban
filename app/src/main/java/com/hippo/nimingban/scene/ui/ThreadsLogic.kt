@@ -17,6 +17,7 @@
 package com.hippo.nimingban.scene.ui
 
 import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
@@ -41,4 +42,7 @@ interface ThreadsLogic : Logic {
 
   /** Called when user click a thread **/
   fun onClickThread(thread: Thread)
+
+  /** Called when user click a thread **/
+  fun onClickThumb(reply: Reply)
 }

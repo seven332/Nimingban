@@ -42,6 +42,10 @@
     <item name="actualImageScaleType">fitCenter</item>
   </style>
 
+  <style name="Nmb.Image">
+    <item name="actualImageScaleType">fitCenter</item>
+  </style>
+
   <style name="Nmb.Cover">
     <item name="placeholderImage">?attr/backgroundColorAppBar</item>
     <item name="viewAspectRatio">1</item>

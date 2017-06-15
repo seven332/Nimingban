@@ -63,7 +63,6 @@
     android:textSize="@dimen/text_little_small"
     android:textColor="?android:attr/textColorPrimary"
     android:lineSpacingExtra="2dp"
-    android:maxLines="8"
     android:ellipsize="end"/>
 
   <com.hippo.nimingban.widget.nmb.NmbThumb

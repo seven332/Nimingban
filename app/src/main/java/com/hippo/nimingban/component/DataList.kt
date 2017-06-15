@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.widget.content
-
-import android.support.v7.widget.RecyclerView
-import com.hippo.easyrecyclerview.EasyAdapter
-import com.hippo.nimingban.component.DataList
+package com.hippo.nimingban.component
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 6/15/2017.
  */
 
-abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : EasyAdapter<VH>(), DataList<T> {
+/**
+ * An immutable list interface.
+ */
+interface DataList<out T> {
 
-  var data: ContentData<T>? = null
+  fun get(index: Int): T
 
-  override fun getItemCount(): Int = data?.size() ?: error("No data")
-
-  override fun get(index: Int): T = data?.get(index) ?: error("No data")
-
-  override fun size() = data?.size() ?: error("No data")
+  fun size(): Int
 }

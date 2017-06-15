@@ -16,28 +16,35 @@
 
 package com.hippo.nimingban.scene.ui
 
-import com.hippo.nimingban.architecture.Logic
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.R
+import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
-import com.hippo.nimingban.widget.content.ContentDataAdapter
-import com.hippo.nimingban.widget.content.ContentLayout
+import com.hippo.nimingban.widget.nmb.NmbImage
 
 /*
  * Created by Hippo on 6/15/2017.
  */
 
-interface RepliesLogic : Logic {
+class GalleryUi(
+    val reply: Reply?,
+    val logic: GalleryLogic,
+    context: android.content.Context,
+    activity: NmbActivity
+) : NmbUi(context, activity) {
 
-  /** Set data for adapter **/
-  fun initializeAdapter(adapter: ContentDataAdapter<Reply, *>)
+  private var image: NmbImage? = null
 
-  /** Unset data for adapter **/
-  fun terminateAdapter(adapter: ContentDataAdapter<Reply, *>)
+  override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
+    val view = inflater.inflate(R.layout.ui_gallery, container, false)
 
-  /** Set presenter for ContentLayout **/
-  fun initializeContentLayout(contentLayout: ContentLayout)
+    val image = view.findViewById(R.id.image) as NmbImage
+    image.loadImage(reply?.image)
 
-  /** Unset presenter for ContentLayout **/
-  fun terminateContentLayout(contentLayout: ContentLayout)
+    this.image = image
 
-  fun onClickThumb(reply: Reply)
+    return view
+  }
 }

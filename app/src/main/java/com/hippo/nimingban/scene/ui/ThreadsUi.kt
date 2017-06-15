@@ -16,20 +16,26 @@
 
 package com.hippo.nimingban.scene.ui
 
+import android.support.v7.content.res.AppCompatResources
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
+import com.hippo.nimingban.R.id.replies
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.AlertAdapter
 import com.hippo.nimingban.component.AlertHolder
+import com.hippo.nimingban.component.DataList
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.nimingban.widget.nmb.NmbReplayMarquee
 import com.hippo.nimingban.widget.nmb.NmbThumb
+import io.reactivex.Observable
 
 /*
  * Created by Hippo on 6/12/2017.
@@ -48,7 +54,7 @@ class ThreadsUi(
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): android.view.View {
     val view = inflater.inflate(R.layout.ui_threads, container, false)
 
-    val adapter = ThreadAdapter(inflater, lifecycle)
+    val adapter = ThreadAdapter(inflater, logic, lifecycle)
     logic.initializeAdapter(adapter)
 
     val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
@@ -58,9 +64,6 @@ class ThreadsUi(
     val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
     recyclerView.adapter = adapter
     recyclerView.layoutManager = android.support.v7.widget.LinearLayoutManager(context)
-    recyclerView.setOnItemClickListener { _, holder ->
-      logic.onClickThread(this@ThreadsUi.adapter!!.get(holder.adapterPosition))
-    }
 
     this.adapter = adapter
     this.contentLayout = contentLayout
@@ -82,8 +85,11 @@ class ThreadsUi(
     activity.snack(message)
   }
 
-
-  class ThreadHolder(itemView: android.view.View) : AlertHolder(itemView) {
+  class ThreadHolder(
+      itemView: View,
+      val list: DataList<Thread>,
+      val logic: ThreadsLogic
+  ) : AlertHolder(itemView) {
     val user = itemView.findViewById(R.id.user) as TextView
     val id = itemView.findViewById(R.id.id) as TextView
     val date = itemView.findViewById(R.id.date) as TextView
@@ -93,10 +99,15 @@ class ThreadsUi(
     val replyCount = itemView.findViewById(R.id.reply_count) as TextView
     val bottom = itemView.findViewById(R.id.bottom)!!
 
+    val item: Thread? get() = adapterPosition.takeIf { it in 0 until list.size() }?.run { list.get(this) }
+
     init {
-      val drawable = android.support.v7.content.res.AppCompatResources.getDrawable(itemView.context, R.drawable.comment_multiple_outline_secondary_x16)!!
+      val drawable = AppCompatResources.getDrawable(itemView.context, R.drawable.comment_multiple_outline_secondary_x16)!!
       drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
       replyCount.setCompoundDrawables(drawable, null, null, null)
+
+      itemView.setOnClickListener { item?.run { logic.onClickThread(this) } }
+      thumb.setOnClickListener { item?.run { logic.onClickThumb(this.toReply()) } }
     }
 
     override fun onResume() {
@@ -110,12 +121,14 @@ class ThreadsUi(
     }
   }
 
-
-  class ThreadAdapter(val inflater: android.view.LayoutInflater, lifecycle: io.reactivex.Observable<Int>)
-    : AlertAdapter<Thread, ThreadHolder>(lifecycle) {
+  class ThreadAdapter(
+      val inflater: android.view.LayoutInflater,
+      val logic: ThreadsLogic,
+      lifecycle: Observable<Int>
+  ) : AlertAdapter<Thread, ThreadHolder>(lifecycle) {
 
     override fun onCreateViewHolder2(parent: android.view.ViewGroup, viewType: Int) =
-        ThreadHolder(inflater.inflate(R.layout.threads_item, parent, false))
+        ThreadHolder(inflater.inflate(R.layout.threads_item, parent, false), this, logic)
 
     override fun onBindViewHolder(holder: ThreadHolder, position: Int) {
       val thread = get(position)

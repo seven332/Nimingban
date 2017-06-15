@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.widget.content
+package com.hippo.nimingban.scene.threads
 
-import android.support.v7.widget.RecyclerView
-import com.hippo.easyrecyclerview.EasyAdapter
-import com.hippo.nimingban.component.DataList
+import com.hippo.nimingban.scene.ui.NavigationLogic
+import com.hippo.nimingban.scene.ui.ThreadsLogic
+import com.hippo.nimingban.scene.ui.ToolbarLogic
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 6/15/2017.
  */
 
-abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : EasyAdapter<VH>(), DataList<T> {
-
-  var data: ContentData<T>? = null
-
-  override fun getItemCount(): Int = data?.size() ?: error("No data")
-
-  override fun get(index: Int): T = data?.get(index) ?: error("No data")
-
-  override fun size() = data?.size() ?: error("No data")
-}
+interface ThreadsSceneLogic : ThreadsLogic, ToolbarLogic, NavigationLogic

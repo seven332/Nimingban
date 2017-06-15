@@ -28,6 +28,8 @@ import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.component.DataList
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentDataAdapter
@@ -52,7 +54,7 @@ class RepliesUi(
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
     val view = inflater.inflate(R.layout.ui_replies, container, false)
 
-    val adapter = RepliesAdapter(inflater)
+    val adapter = RepliesAdapter(inflater, logic)
     logic.initializeAdapter(adapter)
 
     val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
@@ -88,20 +90,31 @@ class RepliesUi(
     activity.snack(message)
   }
 
-
-  class RepliesHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class RepliesHolder(
+      itemView: View,
+      val list: DataList<Reply>,
+      val logic: RepliesLogic
+  ) : RecyclerView.ViewHolder(itemView) {
     val user = itemView.findViewById(R.id.user) as TextView
     val id = itemView.findViewById(R.id.id) as TextView
     val date = itemView.findViewById(R.id.date) as TextView
     val content = itemView.findViewById(R.id.content) as TextView
     val thumb = itemView.findViewById(R.id.thumb) as NmbThumb
+
+    val item: Reply? get() = adapterPosition.takeIf { it in 0 until list.size() }?.run { list.get(this) }
+
+    init {
+      thumb.setOnClickListener { item?.run { logic.onClickThumb(this) } }
+    }
   }
 
-
-  class RepliesAdapter(val inflater: LayoutInflater) : ContentDataAdapter<Reply, RepliesHolder>() {
+  class RepliesAdapter(
+      val inflater: LayoutInflater,
+      val logic: RepliesLogic
+  ) : ContentDataAdapter<Reply, RepliesHolder>() {
 
     override fun onCreateViewHolder2(parent: ViewGroup?, viewType: Int) =
-        RepliesHolder(inflater.inflate(R.layout.replies_item, parent, false))
+        RepliesHolder(inflater.inflate(R.layout.replies_item, parent, false), this, logic)
 
     override fun onBindViewHolder(holder: RepliesHolder, position: Int) {
       val thread = get(position)

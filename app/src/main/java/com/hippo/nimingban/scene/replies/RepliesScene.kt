@@ -22,6 +22,7 @@ import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.scene.gallery.galleryScene
 import com.hippo.nimingban.scene.ui.RepliesUi
 import com.hippo.nimingban.scene.ui.SceneUi
 import com.hippo.nimingban.scene.ui.wrapInSwipeBack
@@ -74,6 +75,10 @@ class RepliesScene: NmbScene(), RepliesSceneLogic {
   override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
 
   override fun onFinishUi() { pop() }
+
+  override fun onClickThumb(reply: Reply) {
+    stage?.pushScene(reply.galleryScene())
+  }
 
   inner class RepliesData : ContentData<Reply>() {
 
