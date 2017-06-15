@@ -19,7 +19,7 @@ package com.hippo.nimingban.activity
 import android.support.design.widget.Snackbar
 import android.view.ViewGroup
 import com.hippo.nimingban.R
-import com.hippo.nimingban.scene.main.MainScene
+import com.hippo.nimingban.scene.threads.MainScene
 import com.hippo.stage.Scene
 import kotlinx.android.synthetic.main.activity_nmb.*
 

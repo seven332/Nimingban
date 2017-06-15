@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene
+package com.hippo.nimingban.scene.ui
 
 import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.stage.Scene
+import com.hippo.nimingban.scene.ui.NmbUi
 
 /*
- * Created by Hippo on 6/12/2017.
+ * Created by Hippo on 6/14/2017.
  */
 
-abstract class NmbUi<U: NmbUi<U, S>, S: NmbScene<S, U>>(
-    internal val scene: S,
-    internal val activity: NmbActivity,
-    internal val context: Context
-) : Ui() {
+class NavigationUi(
+    val logic: NavigationLogic,
+    context: Context,
+    activity: NmbActivity
+) : NmbUi(context, activity) {
 
-  // TODO pushScene and pushSceneToParent are bad designs, need a way to figure which stage to push to
-
-  fun pushScene(scene: Scene) {
-    this.scene.stage?.pushScene(scene)
-  }
-
-  fun pushSceneToParent(scene: Scene) {
-    this.scene.parent?.stage?.pushScene(scene)
-  }
+  override fun onCreate(inflater: LayoutInflater, container: ViewGroup) =
+      inflater.inflate(R.layout.ui_navigation, container, false)!!
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene
+package com.hippo.nimingban.scene.ui
 
 import android.content.Context
 import android.support.v7.widget.Toolbar
@@ -25,28 +25,38 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 
 /*
- * Created by Hippo on 6/12/2017.
+ * Created by Hippo on 6/14/2017.
  */
 
-abstract class ToolbarUi<U: NmbUi<U, S>, S: NmbScene<S, U>>(
-    scene: S,
-    activity: NmbActivity,
-    context: Context
-) : NmbUi<U, S>(scene, activity, context) {
+class ToolbarUi(
+    val child: SceneUi,
+    val logic: ToolbarLogic,
+    context: Context,
+    activity: NmbActivity
+) : GroupUi(context, activity) {
 
-  internal var toolbar: Toolbar? = null
+  private var toolbar: Toolbar? = null
 
-  override final fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
+  override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
     val view = inflater.inflate(R.layout.ui_toolbar, container, false)
-
     toolbar = view.findViewById(R.id.toolbar) as Toolbar
 
-    val toolbarContainer = view.findViewById(R.id.toolbar_content_container) as ViewGroup
-    val content = onCreateToolbarContent(inflater, toolbarContainer)
-    toolbarContainer.addView(content, 0)
+    val childContainer = view.findViewById(R.id.toolbar_content_container) as ViewGroup
+    val childView = child.create(inflater, childContainer)
+    childContainer.addView(childView, 0)
+    addChild(child)
 
     return view
   }
 
-  abstract fun onCreateToolbarContent(inflater: LayoutInflater, parent: ViewGroup): View
+  fun setTitle(title: CharSequence) {
+    toolbar?.title = title
+  }
 }
+
+/** Wrap a ui in a ToolbarUi **/
+fun SceneUi.wrapInToolbar(logic: ToolbarLogic, context: Context, activity: NmbActivity) =
+    ToolbarUi(this, logic, context, activity)
+
+/** Wrap a ui in a ToolbarUi **/
+fun NmbUi.wrapInToolbar(logic: ToolbarLogic) = ToolbarUi(this, logic, this.context, this.activity)

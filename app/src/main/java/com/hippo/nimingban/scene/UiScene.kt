@@ -19,17 +19,18 @@ package com.hippo.nimingban.scene
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hippo.nimingban.scene.ui.SceneUi
 import com.hippo.stage.Scene
 
 /*
  * Created by Hippo on 6/12/2017.
  */
 
-abstract class UiScene<U: Ui> : Scene() {
+abstract class UiScene : Scene() {
 
-  internal var ui: U? = null
+  internal var ui: SceneUi? = null
 
-  abstract fun createUi(): U
+  abstract fun createUi(): SceneUi
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
     val ui = createUi()

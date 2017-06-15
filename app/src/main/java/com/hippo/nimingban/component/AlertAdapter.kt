@@ -17,9 +17,9 @@
 package com.hippo.nimingban.component
 
 import android.support.annotation.CallSuper
+import com.hippo.nimingban.scene.ui.SceneUi
 import com.hippo.nimingban.util.debug
 import com.hippo.nimingban.widget.content.ContentDataAdapter
-import com.hippo.stage.rxjava2.SceneLifecycle
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
@@ -43,9 +43,9 @@ abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : Co
   init {
     disposable = lifecycle.subscribe {
       when (it) {
-        SceneLifecycle.RESUME -> isResumed = true
-        SceneLifecycle.PAUSE -> isResumed = false
-        SceneLifecycle.DESTROY_VIEW -> {
+        SceneUi.RESUME -> isResumed = true
+        SceneUi.PAUSE -> isResumed = false
+        SceneUi.DESTROY -> {
           debug(holderList.isEmpty(), { "All ViewHolders should be removed in onViewRecycled()" })
           holderList.clear()
           disposable?.dispose()

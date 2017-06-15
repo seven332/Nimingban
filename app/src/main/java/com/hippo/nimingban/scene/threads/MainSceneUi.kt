@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.main
+package com.hippo.nimingban.scene.threads
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -22,38 +22,35 @@ import android.view.View
 import android.view.ViewGroup
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.scene.NmbUi
-import com.hippo.nimingban.scene.navigation.NavigationScene
-import com.hippo.nimingban.scene.threads.ThreadsScene
+import com.hippo.nimingban.scene.ui.GroupUi
+import com.hippo.nimingban.scene.ui.NavigationUi
+import com.hippo.nimingban.scene.ui.ThreadsUi
+import com.hippo.nimingban.scene.ui.wrapInToolbar
 
 /*
  * Created by Hippo on 6/14/2017.
  */
 
-class MainUi(
-    scene: MainScene,
-    activity: NmbActivity,
-    context: Context
-) : NmbUi<MainUi, MainScene>(scene, activity, context) {
+class MainSceneUi(
+    val logic: MainSceneLogic,
+    context: Context,
+    activity: NmbActivity
+) : GroupUi(context, activity) {
 
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
     val view = inflater.inflate(R.layout.ui_main, container, false)
 
-    val director = scene.hireChildDirector()
+    val drawerContentContainer = view.findViewById(R.id.drawer_content) as ViewGroup
+    val drawerContentUi = ThreadsUi(logic, context, activity).wrapInToolbar(logic)
+    val drawerContentView = drawerContentUi.create(inflater, drawerContentContainer)
+    drawerContentContainer.addView(drawerContentView)
+    addChild(drawerContentUi)
 
-    val content = director.direct(view.findViewById(R.id.drawer_content) as ViewGroup)
-    if (content.sceneCount == 0) {
-      val threadsScene = ThreadsScene()
-      threadsScene.parent = scene
-      content.pushScene(threadsScene)
-    }
-
-    val leftDrawer = director.direct(view.findViewById(R.id.left_drawer) as ViewGroup)
-    if (leftDrawer.sceneCount == 0) {
-      val navigationScene = NavigationScene()
-      navigationScene.parent = scene
-      leftDrawer.pushScene(navigationScene)
-    }
+    val leftDrawerContainer = view.findViewById(R.id.left_drawer) as ViewGroup
+    val leftDrawerUi = NavigationUi(logic, context, activity)
+    val leftDrawerView = leftDrawerUi.create(inflater, leftDrawerContainer)
+    leftDrawerContainer.addView(leftDrawerView)
+    addChild(leftDrawerUi)
 
     return view
   }

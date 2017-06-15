@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.navigation
+package com.hippo.nimingban.scene.ui
 
-import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.architecture.Logic
 
 /*
- * Created by Hippo on 6/14/2017.
+ * Created by Hippo on 6/15/2017.
  */
 
-class NavigationScene : NmbScene<NavigationScene, NavigationUi>() {
-
-  override fun createUi(): NavigationUi {
-    return NavigationUi(this, activity as NmbActivity, context!!)
-  }
-}
+interface ToolbarLogic : Logic

@@ -23,28 +23,30 @@ import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.scene.replies.repliesScene
+import com.hippo.nimingban.scene.ui.SceneUi
 import com.hippo.nimingban.widget.content.ContentData
+import com.hippo.nimingban.widget.content.ContentDataAdapter
+import com.hippo.nimingban.widget.content.ContentLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /*
- * Created by Hippo on 6/4/2017.
+ * Created by Hippo on 6/14/2017.
  */
 
-class ThreadsScene: NmbScene<ThreadsScene, ThreadsUi>() {
+class MainScene : NmbScene(), MainSceneLogic {
 
   companion object {
     private const val INIT_FORUM = "ThreadsData:init_forum"
     /** Assigning it to [forum] means no forum available **/
-    const val NO_FORUM = "ThreadsData:no_forum"
+    private const val NO_FORUM = "ThreadsData:no_forum"
   }
 
-
-  internal val data = ThreadsData()
-
+  private val data = ThreadsData()
 
   /** Forum id, null for no forum **/
-  var forum: String = INIT_FORUM
+  private var forum: String = INIT_FORUM
     set(value) {
       if (field != value) {
         field = value
@@ -52,18 +54,27 @@ class ThreadsScene: NmbScene<ThreadsScene, ThreadsUi>() {
       }
     }
 
-
-  override fun createUi(): ThreadsUi {
-    return ThreadsUi(this, activity as NmbActivity, context!!)
-  }
-
   override fun onCreate(args: Bundle?) {
     super.onCreate(args)
 
-    // TODO get forum list
     forum = "4"
   }
 
+  override fun createUi(): SceneUi {
+    return MainSceneUi(this, context!!, activity as NmbActivity)
+  }
+
+  override fun initializeAdapter(adapter: ContentDataAdapter<Thread, *>) { adapter.data = data }
+
+  override fun terminateAdapter(adapter: ContentDataAdapter<Thread, *>) { adapter.data = null }
+
+  override fun initializeContentLayout(contentLayout: ContentLayout) { data.view = contentLayout }
+
+  override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
+
+  override fun onClickThread(thread: Thread) {
+    stage?.pushScene(thread.repliesScene())
+  }
 
   inner class ThreadsData : ContentData<Thread>() {
 

@@ -19,10 +19,16 @@ package com.hippo.nimingban.scene.replies
 import android.os.Bundle
 import com.hippo.nimingban.NMB_CLIENT
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.architecture.Ui
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.scene.ui.RepliesUi
+import com.hippo.nimingban.scene.ui.SceneUi
+import com.hippo.nimingban.scene.ui.wrapInToolbar
 import com.hippo.nimingban.widget.content.ContentData
+import com.hippo.nimingban.widget.content.ContentDataAdapter
+import com.hippo.nimingban.widget.content.ContentLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -30,22 +36,20 @@ import io.reactivex.schedulers.Schedulers
  * Created by Hippo on 6/11/2017.
  */
 
-class RepliesScene: NmbScene<RepliesScene, RepliesUi>() {
+class RepliesScene: NmbScene(), RepliesSceneLogic {
 
   companion object {
     const val KEY_ID = "RepliesScene:id"
     const val KEY_THREAD = "RepliesScene:thread"
   }
 
-
-  val data = RepliesData()
-
   private var id: String? = null
   private var thread: Thread? = null
 
+  private val data = RepliesData()
 
-  override fun createUi(): RepliesUi {
-    return RepliesUi(this, activity as NmbActivity, context!!)
+  override fun createUi(): SceneUi {
+    return RepliesUi(this, context!!, activity as NmbActivity).wrapInToolbar(this)
   }
 
   override fun onCreate(args: Bundle?) {
@@ -59,6 +63,13 @@ class RepliesScene: NmbScene<RepliesScene, RepliesUi>() {
     data.restore()
   }
 
+  override fun initializeAdapter(adapter: ContentDataAdapter<Reply, *>) { adapter.data = data }
+
+  override fun terminateAdapter(adapter: ContentDataAdapter<Reply, *>) { adapter.data = null }
+
+  override fun initializeContentLayout(contentLayout: ContentLayout) { data.view = contentLayout }
+
+  override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
 
   inner class RepliesData : ContentData<Reply>() {
 
@@ -96,10 +107,9 @@ class RepliesScene: NmbScene<RepliesScene, RepliesUi>() {
   }
 }
 
-
-fun newRepliesScene(thread: Thread): RepliesScene {
+fun Thread.repliesScene(): RepliesScene {
   val args = Bundle()
-  args.putParcelable(RepliesScene.KEY_THREAD, thread)
+  args.putParcelable(RepliesScene.KEY_THREAD, this)
   val scene = RepliesScene()
   scene.args = args
   return scene

@@ -14,28 +14,13 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.navigation
-
-import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.hippo.nimingban.R
-import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.scene.NmbUi
+package com.hippo.nimingban.architecture
 
 /*
  * Created by Hippo on 6/14/2017.
  */
 
-class NavigationUi(
-    scene: NavigationScene,
-    activity: NmbActivity,
-    context: Context
-) : NmbUi<NavigationUi, NavigationScene>(scene, activity, context) {
-
-  override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
-    val view = inflater.inflate(R.layout.ui_navigation, container, false)
-    return view
-  }
-}
+/**
+ * The logic behind user interface.
+ */
+interface Logic

@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.main
+package com.hippo.nimingban.scene.replies
 
-import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.scene.NmbScene
+import com.hippo.nimingban.scene.ui.RepliesLogic
+import com.hippo.nimingban.scene.ui.ToolbarLogic
 
 /*
- * Created by Hippo on 6/14/2017.
+ * Created by Hippo on 6/15/2017.
  */
 
-class MainScene : NmbScene<MainScene, MainUi>() {
-
-  override fun createUi(): MainUi {
-    return MainUi(this, activity as NmbActivity, context!!)
-  }
-}
+interface RepliesSceneLogic : RepliesLogic, ToolbarLogic

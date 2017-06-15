@@ -78,7 +78,6 @@ dependencies {
     // Stage
     compile "com.github.seven332.stage:stage:$STAGE_LIBRARY_VERSION"
     compile "com.github.seven332.stage:stage-dialog:$STAGE_LIBRARY_VERSION"
-    compile "com.github.seven332.stage:stage-rxjava2:$STAGE_LIBRARY_VERSION"
     compile 'com.github.seven332.android-dialog:base:0.1.0'
 
     // Animator

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.replies
+package com.hippo.nimingban.scene.ui
 
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
@@ -28,7 +28,6 @@ import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
-import com.hippo.nimingban.scene.ToolbarUi
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentDataAdapter
@@ -41,24 +40,24 @@ import com.hippo.recyclerview.addons.LinearDividerItemDecoration
  */
 
 class RepliesUi(
-    scene: RepliesScene,
-    activity: NmbActivity,
-    context: Context
-) : ToolbarUi<RepliesUi, RepliesScene>(scene, activity, context), ContentLayout.Extension {
+    val logic: RepliesLogic,
+    context: Context,
+    activity: NmbActivity
+) : NmbUi(context, activity), ContentLayout.Extension {
 
-  internal var recyclerView: EasyRecyclerView? = null
-  internal var adapter: RepliesAdapter? = null
+  private var adapter: RepliesAdapter? = null
+  private var contentLayout: ContentLayout? = null
+  private var recyclerView: EasyRecyclerView? = null
 
-
-  override fun onCreateToolbarContent(inflater: LayoutInflater, parent: ViewGroup): View {
-    val view = inflater.inflate(R.layout.ui_replies, parent, false)!!
+  override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
+    val view = inflater.inflate(R.layout.ui_replies, container, false)
 
     val adapter = RepliesAdapter(inflater)
-    adapter.data = scene.data
+    logic.initializeAdapter(adapter)
 
     val contentLayout = view.findViewById(R.id.content_layout) as ContentLayout
     contentLayout.extension = this
-    scene.data.view = contentLayout
+    logic.initializeContentLayout(contentLayout)
 
     val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
     recyclerView.adapter = adapter
@@ -71,6 +70,7 @@ class RepliesUi(
     recyclerView.addItemDecoration(itemDecoration)
 
     this.adapter = adapter
+    this.contentLayout = contentLayout
     this.recyclerView = recyclerView
 
     return view
@@ -78,8 +78,8 @@ class RepliesUi(
 
   override fun onDestroy() {
     super.onDestroy()
-    adapter?.data = null
-    scene.data.view = null
+    adapter?.run { logic.terminateAdapter(this) }
+    contentLayout?.run { logic.terminateContentLayout(this) }
     recyclerView?.adapter = null
     recyclerView?.layoutManager = null
   }
