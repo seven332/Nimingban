@@ -19,12 +19,12 @@ package com.hippo.nimingban.scene.replies
 import android.os.Bundle
 import com.hippo.nimingban.NMB_CLIENT
 import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.architecture.Ui
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.scene.NmbScene
 import com.hippo.nimingban.scene.ui.RepliesUi
 import com.hippo.nimingban.scene.ui.SceneUi
+import com.hippo.nimingban.scene.ui.wrapInSwipeBack
 import com.hippo.nimingban.scene.ui.wrapInToolbar
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
@@ -49,11 +49,13 @@ class RepliesScene: NmbScene(), RepliesSceneLogic {
   private val data = RepliesData()
 
   override fun createUi(): SceneUi {
-    return RepliesUi(this, context!!, activity as NmbActivity).wrapInToolbar(this)
+    return RepliesUi(this, context!!, activity as NmbActivity).wrapInToolbar(this).wrapInSwipeBack(this)
   }
 
   override fun onCreate(args: Bundle?) {
     super.onCreate(args)
+
+    opacity = TRANSLUCENT
 
     if (args != null) {
       id = args.getString(KEY_ID)
@@ -70,6 +72,8 @@ class RepliesScene: NmbScene(), RepliesSceneLogic {
   override fun initializeContentLayout(contentLayout: ContentLayout) { data.view = contentLayout }
 
   override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
+
+  override fun onFinishUi() { pop() }
 
   inner class RepliesData : ContentData<Reply>() {
 

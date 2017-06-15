@@ -18,6 +18,9 @@ package com.hippo.nimingban.scene.ui
 
 import android.content.Context
 import com.hippo.nimingban.activity.NmbActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import java.util.concurrent.TimeUnit
 
 /*
  * Created by Hippo on 6/12/2017.
@@ -26,4 +29,31 @@ import com.hippo.nimingban.activity.NmbActivity
 abstract class NmbUi(
     val context: Context,
     val activity: NmbActivity
-) : SceneUi()
+) : SceneUi() {
+
+  private val worker = AndroidSchedulers.mainThread().createWorker()
+
+  override fun onDestroy() {
+    super.onDestroy()
+    worker.dispose()
+  }
+
+  /**
+   * Schedules an action for execution in UI thread.
+   * The action will be cancelled after the view destroyed.
+   * Returns `Disposables.disposed()` if the view is already destroyed.
+   */
+  fun schedule(action: () -> Unit): Disposable {
+    return worker.schedule(action)
+  }
+
+  /**
+   * Schedules an action for execution at some point in the future
+   * and in UI thread.
+   * The action will be cancelled after the view detached.
+   * Returns `Disposables.disposed()` if the view is already destroyed.
+   */
+  fun schedule(action: () -> Unit, delayMillis: Long): Disposable {
+    return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS)
+  }
+}

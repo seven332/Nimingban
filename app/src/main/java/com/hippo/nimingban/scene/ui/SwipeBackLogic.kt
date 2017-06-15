@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene.replies
+package com.hippo.nimingban.scene.ui
 
-import com.hippo.nimingban.scene.ui.RepliesLogic
-import com.hippo.nimingban.scene.ui.SwipeBackLogic
-import com.hippo.nimingban.scene.ui.ToolbarLogic
+import com.hippo.nimingban.architecture.Logic
 
 /*
  * Created by Hippo on 6/15/2017.
  */
 
-interface RepliesSceneLogic : RepliesLogic, ToolbarLogic, SwipeBackLogic
+interface SwipeBackLogic : Logic {
+
+  /** Called when user swipes the ui to finish it **/
+  fun onFinishUi()
+}
