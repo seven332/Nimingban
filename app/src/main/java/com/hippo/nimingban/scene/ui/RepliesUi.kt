@@ -24,11 +24,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.hippo.android.resource.AttrResources
-import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
-import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.DataList
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.prettyTime
@@ -49,7 +47,7 @@ class RepliesUi(
 
   private var adapter: RepliesAdapter? = null
   private var contentLayout: ContentLayout? = null
-  private var recyclerView: EasyRecyclerView? = null
+  private var recyclerView: RecyclerView? = null
 
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
     val view = inflater.inflate(R.layout.ui_replies, container, false)
@@ -61,7 +59,7 @@ class RepliesUi(
     contentLayout.extension = this
     logic.initializeContentLayout(contentLayout)
 
-    val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
+    val recyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
     recyclerView.adapter = adapter
     recyclerView.layoutManager = LinearLayoutManager(context)
     val itemDecoration = LinearDividerItemDecoration(
@@ -113,7 +111,7 @@ class RepliesUi(
       val logic: RepliesLogic
   ) : ContentDataAdapter<Reply, RepliesHolder>() {
 
-    override fun onCreateViewHolder2(parent: ViewGroup?, viewType: Int) =
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
         RepliesHolder(inflater.inflate(R.layout.replies_item, parent, false), this, logic)
 
     override fun onBindViewHolder(holder: RepliesHolder, position: Int) {

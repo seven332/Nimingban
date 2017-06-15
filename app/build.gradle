@@ -90,7 +90,6 @@ dependencies {
     compile "com.github.seven332.fresco:animated-gif:$FRESCO_LIBRARY_VERSION"
 
     // Widgets
-    compile 'com.github.seven332.easyrecyclerview:easyrecyclerview:1.2.1'
     compile 'com.github.seven332.easyrecyclerview:recyclerview-addons:1.2.1'
     compile 'com.github.seven332:drawerlayout:0.2.2'
     compile 'com.github.seven332:refreshlayout:0.2.1'

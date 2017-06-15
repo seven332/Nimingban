@@ -17,14 +17,13 @@
 package com.hippo.nimingban.widget.content
 
 import android.support.v7.widget.RecyclerView
-import com.hippo.easyrecyclerview.EasyAdapter
 import com.hippo.nimingban.component.DataList
 
 /*
  * Created by Hippo on 6/8/2017.
  */
 
-abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : EasyAdapter<VH>(), DataList<T> {
+abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>(), DataList<T> {
 
   var data: ContentData<T>? = null
 

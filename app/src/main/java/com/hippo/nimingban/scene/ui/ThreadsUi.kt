@@ -17,16 +17,14 @@
 package com.hippo.nimingban.scene.ui
 
 import android.support.v7.content.res.AppCompatResources
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.hippo.easyrecyclerview.EasyRecyclerView
 import com.hippo.nimingban.R
-import com.hippo.nimingban.R.id.replies
 import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.AlertAdapter
 import com.hippo.nimingban.component.AlertHolder
@@ -49,7 +47,7 @@ class ThreadsUi(
 
   private var adapter: ThreadAdapter? = null
   private var contentLayout: ContentLayout? = null
-  private var recyclerView: EasyRecyclerView? = null
+  private var recyclerView: RecyclerView? = null
 
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): android.view.View {
     val view = inflater.inflate(R.layout.ui_threads, container, false)
@@ -61,7 +59,7 @@ class ThreadsUi(
     contentLayout.extension = this
     logic.initializeContentLayout(contentLayout)
 
-    val recyclerView = view.findViewById(R.id.recycler_view) as EasyRecyclerView
+    val recyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
     recyclerView.adapter = adapter
     recyclerView.layoutManager = android.support.v7.widget.LinearLayoutManager(context)
 
@@ -78,7 +76,6 @@ class ThreadsUi(
     contentLayout?.run { logic.terminateContentLayout(this) }
     recyclerView?.adapter = null
     recyclerView?.layoutManager = null
-    recyclerView?.setOnItemClickListener(null)
   }
 
   override fun showMessage(message: String) {
@@ -127,7 +124,7 @@ class ThreadsUi(
       lifecycle: Observable<Int>
   ) : AlertAdapter<Thread, ThreadHolder>(lifecycle) {
 
-    override fun onCreateViewHolder2(parent: android.view.ViewGroup, viewType: Int) =
+    override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int) =
         ThreadHolder(inflater.inflate(R.layout.threads_item, parent, false), this, logic)
 
     override fun onBindViewHolder(holder: ThreadHolder, position: Int) {
