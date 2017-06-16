@@ -72,8 +72,8 @@ class ThreadsUi(
 
   override fun onDestroy() {
     super.onDestroy()
-    adapter?.run { logic.terminateAdapter(this) }
-    contentLayout?.run { logic.terminateContentLayout(this) }
+    adapter?.let { logic.terminateAdapter(it) }
+    contentLayout?.let { logic.terminateContentLayout(it) }
     recyclerView?.adapter = null
     recyclerView?.layoutManager = null
   }

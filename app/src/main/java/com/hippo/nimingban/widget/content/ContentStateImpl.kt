@@ -20,9 +20,9 @@ package com.hippo.nimingban.widget.content
  * Created by Hippo on 6/5/2017.
  */
 
-internal class ContentState : ContentContract.State() {
+class ContentStateImpl : ContentState {
 
-  override var presenter: ContentContract.Presenter? = null
+  override var logic: ContentLogic? = null
 
   private var showContent: Boolean = false
   private var showProgressBar: Boolean = false
@@ -30,19 +30,19 @@ internal class ContentState : ContentContract.State() {
   private var headerRefreshing: Boolean = false
   private var footerRefreshing: Boolean = false
 
-  override fun restore(view: ContentContract.View) {
+  override fun restore(ui: ContentUi) {
     if (showContent) {
-      view.showContent()
+      ui.showContent()
     } else if (throwable != null) {
-      view.showTip(throwable!!)
+      ui.showTip(throwable!!)
     } else if (showProgressBar) {
-      view.showProgressBar()
+      ui.showProgressBar()
     }
 
     if (headerRefreshing) {
-      view.setHeaderRefreshing()
+      ui.setHeaderRefreshing()
     } else if (footerRefreshing) {
-      view.setFooterRefreshing()
+      ui.setFooterRefreshing()
     }
   }
 

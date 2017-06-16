@@ -70,9 +70,9 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   override fun terminateAdapter(adapter: ContentDataAdapter<Thread, *>) { adapter.data = null }
 
-  override fun initializeContentLayout(contentLayout: ContentLayout) { data.view = contentLayout }
+  override fun initializeContentLayout(contentLayout: ContentLayout) { data.ui = contentLayout }
 
-  override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
+  override fun terminateContentLayout(contentLayout: ContentLayout) { data.ui = null }
 
   override fun onClickThread(thread: Thread) { stage?.pushScene(thread.repliesScene()) }
 

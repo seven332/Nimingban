@@ -20,144 +20,136 @@ package com.hippo.nimingban.widget.content
  * Created by Hippo on 2/10/2017.
  */
 
-import com.hippo.nimingban.architecture.PresenterInterface
-import com.hippo.nimingban.architecture.ViewInterface
+import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.architecture.Ui
 
-interface ContentContract {
+interface ContentLogic : Logic {
 
-  /**
-   * `Presenter` of ContentLayout.
-   */
-  interface Presenter : PresenterInterface<Presenter, View> {
+  fun onRefreshHeader()
 
-    fun onRefreshHeader()
+  fun onRefreshFooter()
 
-    fun onRefreshFooter()
+  fun onClickTip()
 
-    fun onClickTip()
+  fun goTo(page: Int)
 
-    fun goTo(page: Int)
+  fun switchTo(page: Int)
 
-    fun switchTo(page: Int)
+  fun size(): Int
 
-    fun size(): Int
+  fun isMaxReached(): Boolean
+}
 
-    fun isMaxReached(): Boolean
+interface ContentUi : Ui {
+
+  var logic: ContentLogic?
+
+  fun showContent()
+
+  fun showTip(t: Throwable)
+
+  fun showProgressBar()
+
+  fun showMessage(t: Throwable)
+
+  fun stopRefreshing()
+
+  fun setHeaderRefreshing()
+
+  fun setFooterRefreshing()
+
+  fun scrollToPosition(position: Int)
+
+  fun scrollDownALittle()
+
+  fun notifyDataSetChanged()
+
+  fun notifyItemRangeInserted(positionStart: Int, itemCount: Int)
+
+  fun notifyItemRangeRemoved(positionStart: Int, itemCount: Int)
+
+  fun notifyItemRangeChanged(positionStart: Int, itemCount: Int)
+}
+
+interface ContentDataLogic<out T> : ContentLogic {
+
+  fun get(index: Int): T
+}
+
+interface ContentState : ContentUi {
+
+  fun restore(ui: ContentUi)
+}
+
+abstract class AbsContentData<out T> : ContentDataLogic<T>, ContentUi {
+
+  override var logic: ContentLogic? = null
+
+  abstract var ui: ContentUi?
+  abstract val state: ContentState
+
+  override fun showContent() {
+    ui?.showContent()
+    state.showContent()
   }
 
-  /**
-   * `View` of ContentLayout.
-   */
-  interface View : ViewInterface<View, Presenter> {
-
-    fun showContent()
-
-    fun showTip(t: Throwable)
-
-    fun showProgressBar()
-
-    fun showMessage(t: Throwable)
-
-    fun stopRefreshing()
-
-    fun setHeaderRefreshing()
-
-    fun setFooterRefreshing()
-
-    fun scrollToPosition(position: Int)
-
-    fun scrollDownALittle()
-
-    fun notifyDataSetChanged()
-
-    fun notifyItemRangeInserted(positionStart: Int, itemCount: Int)
-
-    fun notifyItemRangeRemoved(positionStart: Int, itemCount: Int)
-
-    fun notifyItemRangeChanged(positionStart: Int, itemCount: Int)
+  override fun showTip(t: Throwable) {
+    ui?.showTip(t)
+    state.showTip(t)
   }
 
-  interface DataPresenter<out T> : Presenter {
-
-    fun get(index: Int): T
+  override fun showProgressBar() {
+    ui?.showProgressBar()
+    state.showProgressBar()
   }
 
-  abstract class State : View {
-
-    abstract fun restore(view: View)
+  override fun showMessage(t: Throwable) {
+    ui?.showMessage(t)
+    state.showMessage(t)
   }
 
-  abstract class AbsPresenter<out T> : DataPresenter<T>, View {
+  override fun stopRefreshing() {
+    ui?.stopRefreshing()
+    state.stopRefreshing()
+  }
 
-    override var presenter: ContentContract.Presenter?
-      get() = error("Never touch ContentContract.AbsPresenter's presenter")
-      set(value) { error("Never touch ContentContract.AbsPresenter's presenter") }
+  override fun setHeaderRefreshing() {
+    ui?.setHeaderRefreshing()
+    state.setHeaderRefreshing()
+  }
 
-    abstract val state: State
+  override fun setFooterRefreshing() {
+    ui?.setFooterRefreshing()
+    state.setFooterRefreshing()
+  }
 
-    override fun showContent() {
-      view?.showContent()
-      state.showContent()
-    }
+  override fun scrollToPosition(position: Int) {
+    ui?.scrollToPosition(position)
+    state.scrollToPosition(position)
+  }
 
-    override fun showTip(t: Throwable) {
-      view?.showTip(t)
-      state.showTip(t)
-    }
+  override fun scrollDownALittle() {
+    ui?.scrollDownALittle()
+    state.scrollDownALittle()
+  }
 
-    override fun showProgressBar() {
-      view?.showProgressBar()
-      state.showProgressBar()
-    }
+  override fun notifyDataSetChanged() {
+    ui?.notifyDataSetChanged()
+    state.notifyDataSetChanged()
+  }
 
-    override fun showMessage(t: Throwable) {
-      view?.showMessage(t)
-      state.showMessage(t)
-    }
+  override fun notifyItemRangeInserted(positionStart: Int, itemCount: Int) {
+    ui?.notifyItemRangeInserted(positionStart, itemCount)
+    state.notifyItemRangeInserted(positionStart, itemCount)
+  }
 
-    override fun stopRefreshing() {
-      view?.stopRefreshing()
-      state.stopRefreshing()
-    }
+  override fun notifyItemRangeRemoved(positionStart: Int, itemCount: Int) {
+    ui?.notifyItemRangeRemoved(positionStart, itemCount)
+    state.notifyItemRangeRemoved(positionStart, itemCount)
+  }
 
-    override fun setHeaderRefreshing() {
-      view?.setHeaderRefreshing()
-      state.setHeaderRefreshing()
-    }
-
-    override fun setFooterRefreshing() {
-      view?.setFooterRefreshing()
-      state.setFooterRefreshing()
-    }
-
-    override fun scrollToPosition(position: Int) {
-      view?.scrollToPosition(position)
-      state.scrollToPosition(position)
-    }
-
-    override fun scrollDownALittle() {
-      view?.scrollDownALittle()
-      state.scrollDownALittle()
-    }
-
-    override fun notifyDataSetChanged() {
-      view?.notifyDataSetChanged()
-      state.notifyDataSetChanged()
-    }
-
-    override fun notifyItemRangeInserted(positionStart: Int, itemCount: Int) {
-      view?.notifyItemRangeInserted(positionStart, itemCount)
-      state.notifyItemRangeInserted(positionStart, itemCount)
-    }
-
-    override fun notifyItemRangeRemoved(positionStart: Int, itemCount: Int) {
-      view?.notifyItemRangeRemoved(positionStart, itemCount)
-      state.notifyItemRangeRemoved(positionStart, itemCount)
-    }
-
-    override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int) {
-      view?.notifyItemRangeChanged(positionStart, itemCount)
-      state.notifyItemRangeChanged(positionStart, itemCount)
-    }
+  override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int) {
+    ui?.notifyItemRangeChanged(positionStart, itemCount)
+    state.notifyItemRangeChanged(positionStart, itemCount)
   }
 }

@@ -70,9 +70,9 @@ class RepliesScene: NmbScene(), RepliesSceneLogic {
 
   override fun terminateAdapter(adapter: ContentDataAdapter<Reply, *>) { adapter.data = null }
 
-  override fun initializeContentLayout(contentLayout: ContentLayout) { data.view = contentLayout }
+  override fun initializeContentLayout(contentLayout: ContentLayout) { data.ui = contentLayout }
 
-  override fun terminateContentLayout(contentLayout: ContentLayout) { data.view = null }
+  override fun terminateContentLayout(contentLayout: ContentLayout) { data.ui = null }
 
   override fun onFinishUi() { pop() }
 

@@ -37,9 +37,9 @@ class ContentLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), ContentContract.View {
+) : FrameLayout(context, attrs, defStyleAttr), ContentUi {
 
-  override var presenter: ContentContract.Presenter? = null
+  override var logic: ContentLogic? = null
   var extension: Extension? = null
 
   val refreshLayout by lazy { refresh_layout!! }
@@ -48,7 +48,6 @@ class ContentLayout @JvmOverloads constructor(
   val progressView by lazy { progress_view!! }
 
   val aLittleDistance: Int
-
 
   init {
     LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this)
@@ -70,23 +69,23 @@ class ContentLayout @JvmOverloads constructor(
         R.color.color_scheme_6
     )
     refreshLayout.setOnRefreshListener(object : RefreshLayout.OnRefreshListener {
-      override fun onHeaderRefresh() { presenter?.onRefreshHeader() }
-      override fun onFooterRefresh() { presenter?.onRefreshFooter() }
+      override fun onHeaderRefresh() { logic?.onRefreshHeader() }
+      override fun onFooterRefresh() { logic?.onRefreshFooter() }
     })
 
     recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
       override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-        val presenter = this@ContentLayout.presenter ?: return
+        val logic = this@ContentLayout.logic ?: return
         if (!refreshLayout.isRefreshing && refreshLayout.isAlmostBottom &&
-            !presenter.isMaxReached()) {
+            !logic.isMaxReached()) {
           refreshLayout.isFooterRefreshing = true
-          presenter.onRefreshFooter()
+          logic.onRefreshFooter()
         }
       }
     })
 
     // TODO throttleFirst
-    tipView.setOnClickListener { presenter?.onClickTip() }
+    tipView.setOnClickListener { logic?.onClickTip() }
 
     aLittleDistance = 48.dp2pix(context)
   }
@@ -156,7 +155,6 @@ class ContentLayout @JvmOverloads constructor(
   override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int) {
     recyclerView.adapter?.notifyItemRangeChanged(positionStart, itemCount)
   }
-
 
   /**
    * `ContentLayout` can't do all UI jobs. It needs a `Extension` to give a hand.

@@ -22,7 +22,7 @@ import com.hippo.nimingban.util.INVALID_ID
  * Created by Hippo on 6/5/2017.
  */
 
-abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
+abstract class ContentData<T> : AbsContentData<T>() {
 
   companion object {
     @JvmField val TYPE_RESTORE = 0
@@ -40,21 +40,21 @@ abstract class ContentData<T> : ContentContract.AbsPresenter<T>() {
     @JvmField val FAILED_TO_RESTORE_EXCEPTION = Exception("Failed to Restore")
   }
 
-  override var view: ContentContract.View? = null
+  override var ui: ContentUi? = null
     get() = field
     set(value) {
-      val _field = field
-      if (_field != null) {
-        _field.presenter = null
+      val oldValue = field
+      if (oldValue != null) {
+        oldValue.logic = null
       }
       if (value != null) {
-        value.presenter = this
+        value.logic = this
         state.restore(value)
       }
       field = value
     }
 
-  override val state: ContentContract.State = ContentState()
+  override val state = ContentStateImpl()
 
   private var idGenerator = INVALID_ID
 
