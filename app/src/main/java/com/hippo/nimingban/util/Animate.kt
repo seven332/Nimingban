@@ -43,7 +43,7 @@ abstract class Animate {
   var repeat: Long = 1
     set(value) { check(value > 0L || value == INFINITE, { "Repeat must be greater than 0, or INFINITE" }).run { field = value } }
 
-  private var startTime: Long = 0L
+  private var startTime: Long = NO_ANIMATION
   private var runCount: Long = 0L
 
   /**
