@@ -55,6 +55,10 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
 
+    // Anko
+    compile "org.jetbrains.anko:anko-commons:$ANKO_LIBRARY_VERSION"
+    compile "org.jetbrains.anko:anko-sqlite:$ANKO_LIBRARY_VERSION"
+
     // RxJava
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'

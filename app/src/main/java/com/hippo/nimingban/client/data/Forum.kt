@@ -27,16 +27,16 @@ import com.hippo.nimingban.util.fromHtml
  */
 
 data class Forum(
-    @Expose @SerializedName("id") private val _id: String?,
-    @Expose @SerializedName("fgroup") private val _fgroup: String?,
-    @Expose @SerializedName("sort") private val _sort: String?,
-    @Expose @SerializedName("name") private val _name: String?,
-    @Expose @SerializedName("showName") private val _showName: String?,
-    @Expose @SerializedName("msg") private val _msg: String?,
-    @Expose @SerializedName("interval") private val _interval: String?,
-    @Expose @SerializedName("createdAt") private val _createdAt: String?,
-    @Expose @SerializedName("updateAt") private val _updateAt: String?,
-    @Expose @SerializedName("status") private val _status: String?
+    @Expose @SerializedName(ID) private val _id: String?,
+    @Expose @SerializedName(FGROUP) private val _fgroup: String?,
+    @Expose @SerializedName(SORT) private val _sort: String?,
+    @Expose @SerializedName(NAME) private val _name: String?,
+    @Expose @SerializedName(SHOW_NAME) private val _showName: String?,
+    @Expose @SerializedName(MSG) private val _msg: String?,
+    @Expose @SerializedName(INTERVAL) private val _interval: String?,
+    @Expose @SerializedName(CREATED_AT) private val _createdAt: String?,
+    @Expose @SerializedName(UPDATE_AT) private val _updateAt: String?,
+    @Expose @SerializedName(STATUS) private val _status: String?
 ) : Parcelable {
 
   val init by lazy {
@@ -81,6 +81,17 @@ data class Forum(
       source.readString())
 
   companion object {
+
+    const val ID = "id"
+    const val FGROUP = "fgroup"
+    const val SORT = "sort"
+    const val NAME = "name"
+    const val SHOW_NAME = "showName"
+    const val MSG = "msg"
+    const val INTERVAL = "interval"
+    const val CREATED_AT = "createdAt"
+    const val UPDATE_AT = "updateAt"
+    const val STATUS = "status"
 
     private const val DEFAULT_FORUM = "板块丁"
     private const val DEFAULT_MESSAGE = "略"
