@@ -23,7 +23,6 @@ import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.support.v4.view.animation.PathInterpolatorCompat
 import android.view.animation.Interpolator
@@ -37,7 +36,7 @@ import com.hippo.nimingban.util.lerp
  * Created by Hippo on 6/6/2017.
  */
 
-class ProgressDrawable : Drawable(), Animatable {
+class ProgressDrawable : Drawable() {
 
   companion object {
     private val TRIM_START_INTERPOLATOR: Interpolator
@@ -58,18 +57,18 @@ class ProgressDrawable : Drawable(), Animatable {
       TRIM_END_INTERPOLATOR = PathInterpolatorCompat.create(trimEndPath)
     }
 
-    private class ProgressAnimate : Animate {
-      private val from: Float
-      private val to: Float
-      private val block: (Float) -> Unit
+    private class ProgressAnimate(
+        val from: Float,
+        val to: Float,
+        duration: Long,
+        interpolator: Interpolator,
+        val block: (Float) -> Unit
+    ) : Animate() {
 
-      constructor(from: Float, to: Float, duration: Long, interpolator: Interpolator, block: (Float) -> Unit) {
-        this.from = from
-        this.to = to
+      init {
         this.duration = duration
         this.interpolator = interpolator
         this.repeat = INFINITE
-        this.block = block
       }
 
       override fun onCalculate(progress: Float) { block(progress.lerp(from, to)) }
@@ -124,17 +123,11 @@ class ProgressDrawable : Drawable(), Animatable {
     animates = listOf(trimStart, trimEnd, trimOffset, trimRotation)
   }
 
-  override fun isRunning(): Boolean = indeterminate
-
-  override fun start() { indeterminate = true }
-
-  override fun stop() { indeterminate = false }
-
   override fun onLevelChange(level: Int): Boolean {
     indeterminate = false
     trimStart = 0f
-    // level is 0 to 1000
-    trimEnd = level / 1000.0f
+    // level is 0 to 10000
+    trimEnd = level / 10000.0f
     trimOffset = 0f
     trimRotation = 0f
     invalidateSelf()
