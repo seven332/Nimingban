@@ -19,6 +19,7 @@ package com.hippo.nimingban.scene.ui
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,10 +27,12 @@ import android.widget.TextView
 import com.hippo.android.resource.AttrResources
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.NmbReferenceSpan
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.component.DataList
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.prettyTime
+import com.hippo.nimingban.widget.LinkifyTextView
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.nimingban.widget.nmb.NmbThumb
@@ -96,12 +99,24 @@ class RepliesUi(
     val user = itemView.findViewById(R.id.user) as TextView
     val id = itemView.findViewById(R.id.id) as TextView
     val date = itemView.findViewById(R.id.date) as TextView
-    val content = itemView.findViewById(R.id.content) as TextView
+    val content = itemView.findViewById(R.id.content) as LinkifyTextView
     val thumb = itemView.findViewById(R.id.thumb) as NmbThumb
 
     val item: Reply? get() = adapterPosition.takeIf { it in 0 until list.size() }?.run { list.get(this) }
 
     init {
+      itemView.setOnClickListener {
+        content.currentSpan?.apply {
+          when (this) {
+            is NmbReferenceSpan -> {
+              // TODO
+            }
+            is URLSpan -> {
+              // TODO
+            }
+          }
+        }
+      }
       thumb.setOnClickListener { item?.run { logic.onClickThumb(this) } }
     }
   }
