@@ -36,12 +36,12 @@ abstract class Animate {
 
   /** Animation duration, must be greater than 0 **/
   var duration: Long = 300L
-    set(value) { check(value > 0L, { "Duration must be greater than 0" }).run { field = value } }
+    set(value) { check(value > 0L, { "Duration must be greater than 0" }).let { field = value } }
   /** Animation interpolator **/
   var interpolator: Interpolator? = null
   /** Animation repeat times, must be greater than 0, or INFINITE **/
   var repeat: Long = 1
-    set(value) { check(value > 0L || value == INFINITE, { "Repeat must be greater than 0, or INFINITE" }).run { field = value } }
+    set(value) { check(value > 0L || value == INFINITE, { "Repeat must be greater than 0, or INFINITE" }).let { field = value } }
 
   private var startTime: Long = NO_ANIMATION
   private var runCount: Long = 0L

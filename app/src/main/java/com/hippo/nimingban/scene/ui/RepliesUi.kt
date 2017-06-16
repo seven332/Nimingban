@@ -102,7 +102,7 @@ class RepliesUi(
     val content = itemView.findViewById(R.id.content) as LinkifyTextView
     val thumb = itemView.findViewById(R.id.thumb) as NmbThumb
 
-    val item: Reply? get() = adapterPosition.takeIf { it in 0 until list.size() }?.run { list.get(this) }
+    val item: Reply? get() = adapterPosition.takeIf { it in 0 until list.size() }?.let { list.get(it) }
 
     init {
       itemView.setOnClickListener {
@@ -117,7 +117,7 @@ class RepliesUi(
           }
         }
       }
-      thumb.setOnClickListener { item?.run { logic.onClickThumb(this) } }
+      thumb.setOnClickListener { item?.let { logic.onClickThumb(it) } }
     }
   }
 

@@ -96,15 +96,15 @@ class ThreadsUi(
     val replyCount = itemView.findViewById(R.id.reply_count) as TextView
     val bottom = itemView.findViewById(R.id.bottom)!!
 
-    val item: Thread? get() = adapterPosition.takeIf { it in 0 until list.size() }?.run { list.get(this) }
+    val item: Thread? get() = adapterPosition.takeIf { it in 0 until list.size() }?.let { list.get(it) }
 
     init {
       val drawable = AppCompatResources.getDrawable(itemView.context, R.drawable.comment_multiple_outline_secondary_x16)!!
       drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
       replyCount.setCompoundDrawables(drawable, null, null, null)
 
-      itemView.setOnClickListener { item?.run { logic.onClickThread(this) } }
-      thumb.setOnClickListener { item?.run { logic.onClickThumb(this.toReply()) } }
+      itemView.setOnClickListener { item?.let { logic.onClickThread(it) } }
+      thumb.setOnClickListener { item?.let { logic.onClickThumb(it.toReply()) } }
     }
 
     override fun onResume() {
