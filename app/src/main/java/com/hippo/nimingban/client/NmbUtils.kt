@@ -115,7 +115,7 @@ private fun SpannableStringBuilder.resolveReference(): SpannableStringBuilder {
     val start = matcher.start()
     val end = matcher.end()
 
-    val span = NmbReferenceSpan(matcher.group(0))
+    val span = NmbReferenceSpan(matcher.group(1))
     this.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
   }
 
