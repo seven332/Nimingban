@@ -99,13 +99,7 @@ data class Thread(
   var displayContent: CharSequence = ""
     private set
 
-
-  fun toReply(): Reply {
-    val replay = Reply(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin)
-    replay.init
-    return replay
-  }
-
+  fun toReply(): Reply = Reply(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin).apply { init }
 
   override fun describeContents() = 0
 
