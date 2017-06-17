@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene
+package com.hippo.nimingban.scene.ui
 
-import android.view.View
 import com.hippo.nimingban.REF_WATCHER
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/17/2017.
  */
 
-abstract class DebugScene : UiScene() {
-
-  override fun onDestroyView(view: View) {
-    super.onDestroyView(view)
-    REF_WATCHER.watch(view, "DebugScene.onDestroyView()")
-  }
+abstract class DebugUi : SceneUi() {
 
   override fun onDestroy() {
     super.onDestroy()
-    REF_WATCHER.watch(this, "DebugScene.onDestroy()")
+    REF_WATCHER.watch(this, "DebugUi.onDestroy()")
   }
 }

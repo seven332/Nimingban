@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.scene.ui
 
+import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.view.LayoutInflater
 import android.view.View
@@ -117,6 +118,14 @@ abstract class SceneUi : Ui {
     view = null
   }
 
+  fun saveState(outState: Bundle) {
+    onSaveState(outState)
+  }
+
+  fun restoreState(savedViewState: Bundle) {
+    onRestoreState(savedViewState)
+  }
+
   abstract fun onCreate(inflater: LayoutInflater, container: ViewGroup): View
 
   @CallSuper
@@ -140,6 +149,11 @@ abstract class SceneUi : Ui {
   @CallSuper
   open fun onDestroy() {}
 
+  @CallSuper
+  open fun onSaveState(outState: Bundle) {}
+
+  @CallSuper
+  open fun onRestoreState(savedViewState: Bundle) {}
 
   private class Lifecycle(var step: Int) {
 

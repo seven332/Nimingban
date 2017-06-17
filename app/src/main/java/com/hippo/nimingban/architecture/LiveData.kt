@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.scene
+package com.hippo.nimingban.architecture
 
-import android.view.View
-import com.hippo.nimingban.REF_WATCHER
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.Subject
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 6/16/2017.
  */
 
-abstract class DebugScene : UiScene() {
+/**
+ * LiveData is a observable. Observe it to catch change.
+ */
+class LiveData<T>(data: T) {
 
-  override fun onDestroyView(view: View) {
-    super.onDestroyView(view)
-    REF_WATCHER.watch(view, "DebugScene.onDestroyView()")
-  }
+  var data: T = data
+    set(value) {
+      field = value
+      observable.onNext(value)
+    }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    REF_WATCHER.watch(this, "DebugScene.onDestroy()")
-  }
+  val observable: Subject<T> = BehaviorSubject.createDefault(data).toSerialized()
 }

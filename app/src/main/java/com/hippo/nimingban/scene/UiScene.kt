@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.scene
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,7 @@ import com.hippo.stage.Scene
 
 abstract class UiScene : Scene() {
 
-  internal var ui: SceneUi? = null
+  private var ui: SceneUi? = null
 
   abstract fun createUi(): SceneUi
 
@@ -72,5 +73,15 @@ abstract class UiScene : Scene() {
     super.onDestroyView(view)
     ui?.destroy()
     ui = null
+  }
+
+  override fun onSaveViewState(view: View, outState: Bundle) {
+    super.onSaveViewState(view, outState)
+    ui?.saveState(outState)
+  }
+
+  override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+    super.onRestoreViewState(view, savedViewState)
+    ui?.restoreState(savedViewState)
   }
 }

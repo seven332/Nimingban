@@ -17,6 +17,7 @@
 package com.hippo.nimingban.scene.ui
 
 import android.content.Context
+import android.os.Bundle
 import com.hippo.nimingban.activity.NmbActivity
 
 /*
@@ -70,5 +71,15 @@ abstract class GroupUi(
   override fun onDestroy() {
     super.onDestroy()
     children.forEach { it.destroy() }
+  }
+
+  override fun onSaveState(outState: Bundle) {
+    super.onSaveState(outState)
+    children.forEach { it.saveState(outState) }
+  }
+
+  override fun onRestoreState(savedViewState: Bundle) {
+    super.onRestoreState(savedViewState)
+    children.forEach { it.restoreState(savedViewState) }
   }
 }

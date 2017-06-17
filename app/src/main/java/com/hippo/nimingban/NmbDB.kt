@@ -17,6 +17,7 @@
 package com.hippo.nimingban
 
 import android.content.Context
+import com.hippo.nimingban.architecture.LiveData
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.dao.FORUM_COLUMN_WEIGHT
@@ -50,6 +51,8 @@ class NmbDB(context: Context) {
               .build(context, DB_NAME, DB_VERSION))
       .addTypeMapping(Forum::class.java, ForumMapping())
       .build()
+
+  val liveForums: LiveData<List<Forum>> = LiveData(forums())
 
   /**
    * Sets official forums. Keeps origin order. Appends new official forums at end.
@@ -88,6 +91,9 @@ class NmbDB(context: Context) {
           .objects(currentForums)
           .prepare()
           .executeAsBlocking()
+
+      // Update live data
+      liveForums.data = currentForums
     }
   }
 
@@ -113,6 +119,9 @@ class NmbDB(context: Context) {
           .`object`(forum)
           .prepare()
           .executeAsBlocking()
+
+      // Update live data
+      liveForums.data = forums()
     }
   }
 
@@ -120,10 +129,15 @@ class NmbDB(context: Context) {
    * Remove a forum.
    */
   fun removeForum(forum: Forum) {
-    sql.delete()
-        .`object`(forum)
-        .prepare()
-        .executeAsBlocking()
+    sql.transaction {
+      sql.delete()
+          .`object`(forum)
+          .prepare()
+          .executeAsBlocking()
+
+      // Update live data
+      liveForums.data = forums()
+    }
   }
 
   /**
@@ -157,13 +171,16 @@ class NmbDB(context: Context) {
           .objects(forumsToUpdate)
           .prepare()
           .executeAsBlocking()
+
+      // Update live data
+      liveForums.data = forums.sortedBy { it.weight }
     }
   }
 
   /**
    * Get all forums.
    */
-  fun forums(): List<Forum> = sql.get()
+  internal fun forums(): List<Forum> = sql.get()
       .listOfObjects(Forum::class.java)
       .withQuery(Query.builder()
           .table(TABLE_FORUM)

@@ -20,11 +20,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hippo.drawerlayout.DrawerLayout
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.scene.ui.ForumListUi
 import com.hippo.nimingban.scene.ui.GroupUi
 import com.hippo.nimingban.scene.ui.NavigationUi
 import com.hippo.nimingban.scene.ui.ThreadsUi
+import com.hippo.nimingban.scene.ui.ToolbarUi
 import com.hippo.nimingban.scene.ui.wrapInToolbar
 
 /*
@@ -37,8 +40,14 @@ class ThreadsSceneUi(
     activity: NmbActivity
 ) : GroupUi(context, activity) {
 
+  private var drawerLayout: DrawerLayout? = null
+
+  private var toolbarUi: ToolbarUi? = null
+
   override fun onCreate(inflater: LayoutInflater, container: ViewGroup): View {
     val view = inflater.inflate(R.layout.ui_threads_scene, container, false)
+
+    drawerLayout = view.findViewById(R.id.drawer_layout) as DrawerLayout
 
     val drawerContentContainer = view.findViewById(R.id.drawer_content) as ViewGroup
     val drawerContentUi = ThreadsUi(logic, context, activity).wrapInToolbar(logic)
@@ -52,6 +61,18 @@ class ThreadsSceneUi(
     leftDrawerContainer.addView(leftDrawerView)
     addChild(leftDrawerUi)
 
+    val rightDrawerContainer = view.findViewById(R.id.right_drawer) as ViewGroup
+    val rightDrawerUi = ForumListUi(logic, context, activity)
+    val rightDrawerView = rightDrawerUi.create(inflater, rightDrawerContainer)
+    rightDrawerContainer.addView(rightDrawerView)
+    addChild(rightDrawerUi)
+
+    toolbarUi = drawerContentUi
+
     return view
   }
+
+  fun closeDrawers() { drawerLayout?.closeDrawers() }
+
+  fun setTitle(title: CharSequence?) { toolbarUi?.setTitle(title) }
 }

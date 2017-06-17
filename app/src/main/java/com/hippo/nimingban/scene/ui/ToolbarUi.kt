@@ -49,7 +49,7 @@ class ToolbarUi(
     return view
   }
 
-  fun setTitle(title: CharSequence) {
+  fun setTitle(title: CharSequence?) {
     toolbar?.title = title
   }
 }

@@ -177,6 +177,7 @@ abstract class ContentData<T> : AbsContentData<T>() {
     if (data.isEmpty()) {
       showProgressBar()
     } else {
+      setHeaderRefreshing()
       showContent()
     }
 
@@ -539,5 +540,41 @@ abstract class ContentData<T> : AbsContentData<T>() {
     }
 
     return true
+  }
+
+  fun forceError(e: Throwable) {
+    requireId = INVALID_ID
+    stopRefreshing()
+
+    // Clear all data
+    if (!data.isEmpty()) {
+      data.clear()
+      notifyDataSetChanged()
+    }
+    dataDivider.clear()
+    minPage = 0
+    maxPage = 0
+    beginPage = 0
+    endPage = 0
+
+    showTip(e)
+  }
+
+  fun forceProgress() {
+    requireId = INVALID_ID
+    stopRefreshing()
+
+    // Clear all data
+    if (!data.isEmpty()) {
+      data.clear()
+      notifyDataSetChanged()
+    }
+    dataDivider.clear()
+    minPage = 0
+    maxPage = 0
+    beginPage = 0
+    endPage = 0
+
+    showProgressBar()
   }
 }

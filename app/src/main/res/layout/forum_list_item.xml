@@ -15,29 +15,13 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.drawerlayout.DrawerLayout
+<TextView
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/drawer_layout"
+  android:id="@+id/text"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
-
-  <FrameLayout
-    android:id="@+id/drawer_content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-
-  <FrameLayout
-    android:id="@+id/left_drawer"
-    android:layout_width="256dp"
-    android:layout_height="match_parent"
-    android:layout_gravity="left"
-    android:background="?android:attr/windowBackground"/>
-
-  <FrameLayout
-    android:id="@+id/right_drawer"
-    android:layout_width="192dp"
-    android:layout_height="match_parent"
-    android:layout_gravity="right"
-    android:background="?android:attr/windowBackground"/>
-
-</com.hippo.drawerlayout.DrawerLayout>
+  android:layout_height="wrap_content"
+  android:gravity="center_vertical"
+  android:paddingLeft="16dp"
+  android:paddingRight="16dp"
+  android:minHeight="48dp"
+  android:textSize="@dimen/text_little_small"/>

@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.scene.threads
 
+import com.hippo.nimingban.scene.ui.ForumListLogic
 import com.hippo.nimingban.scene.ui.NavigationLogic
 import com.hippo.nimingban.scene.ui.ThreadsLogic
 import com.hippo.nimingban.scene.ui.ToolbarLogic
@@ -24,4 +25,4 @@ import com.hippo.nimingban.scene.ui.ToolbarLogic
  * Created by Hippo on 6/15/2017.
  */
 
-interface ThreadsSceneLogic : ThreadsLogic, ToolbarLogic, NavigationLogic
+interface ThreadsSceneLogic : ThreadsLogic, ToolbarLogic, NavigationLogic, ForumListLogic

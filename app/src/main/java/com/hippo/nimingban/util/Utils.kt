@@ -26,10 +26,10 @@ import com.hippo.html.Html
  */
 
 const val INVALID_ID = -1
+const val INVALID_INDEX = -1
 
-inline fun <T> T?.select(nonNullAction: (T) -> Unit, nullAction: () -> Unit) {
-  if (this != null) nonNullAction(this) else nullAction()
-}
+inline fun <T, R> T?.select(nonNullAction: (T) -> R, nullAction: () -> R) =
+    if (this != null) nonNullAction(this) else nullAction()
 
 fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
 

@@ -71,7 +71,7 @@ val GSON: Gson by lazy {
       .registerTypeAdapter(Forum::class.java, InstanceCreator {
         Forum(null, null, null, null, null, null, null, null, null, null)
       })
-      .registerTypeAdapter(Forum::class.java, InstanceCreator {
+      .registerTypeAdapter(ForumGroup::class.java, InstanceCreator {
         ForumGroup(null, null, null, null, null)
       })
       .registerTypeAdapter(Reply::class.java, InstanceCreator {

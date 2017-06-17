@@ -16,17 +16,20 @@
 
 package com.hippo.nimingban.scene.threads
 
-import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.hippo.nimingban.NMB_CLIENT
+import com.hippo.nimingban.NMB_DB
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.scene.NmbScene
 import com.hippo.nimingban.scene.gallery.galleryScene
 import com.hippo.nimingban.scene.replies.repliesScene
-import com.hippo.nimingban.scene.ui.SceneUi
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
@@ -45,6 +48,8 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
     private const val NO_FORUM = "ThreadsData:no_forum"
   }
 
+  private var ui: ThreadsSceneUi? = null
+
   private val data = ThreadsData()
 
   /** Forum id, null for no forum **/
@@ -56,14 +61,28 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
       }
     }
 
-  override fun onCreate(args: Bundle?) {
-    super.onCreate(args)
+  init {
+    // Show progress at first, let ForumListUi to trigger
+    data.forceProgress()
 
-    forum = "4"
+    // Update forums
+    NMB_CLIENT.forums()
+        .subscribeOn(Schedulers.io())
+        .subscribe({ it -> NMB_DB.setOfficialForums(it) })
+        .register()
   }
 
-  override fun createUi(): SceneUi {
-    return ThreadsSceneUi(this, context!!, activity as NmbActivity)
+  override fun createUi() = ThreadsSceneUi(this, context!!, activity as NmbActivity).also { ui = it }
+
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    val view = super.onCreateView(inflater, container)
+    ui?.setTitle(context?.getString(R.string.app_name))
+    return view
+  }
+
+  override fun onDestroyView(view: View) {
+    super.onDestroyView(view)
+    ui = null
   }
 
   override fun initializeAdapter(adapter: ContentDataAdapter<Thread, *>) { adapter.data = data }
@@ -77,6 +96,18 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
   override fun onClickThread(thread: Thread) { stage?.pushScene(thread.repliesScene()) }
 
   override fun onClickThumb(reply: Reply) { stage?.pushScene(reply.galleryScene()) }
+
+  override fun onSelectForum(forum: Forum) {
+    this.forum = forum.id ?: NO_FORUM
+    ui?.closeDrawers()
+    ui?.setTitle(forum.displayName)
+  }
+
+  override fun onNoForum() {
+    this.forum = NO_FORUM
+    ui?.closeDrawers()
+    ui?.setTitle(context?.getString(R.string.app_name))
+  }
 
   inner class ThreadsData : ContentData<Thread>() {
 

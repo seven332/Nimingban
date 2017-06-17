@@ -41,8 +41,11 @@ data class Forum(
 
   val init by lazy {
     id = _id
-    displayName = _showName?.fromHtml() ?: _name ?: DEFAULT_FORUM
-    displayMessage = _msg?.fromHtml() ?: DEFAULT_MESSAGE
+    displayName = (_showName?.fromHtml() ?: "")
+        .let { if (it.isNullOrBlank()) _name ?: "" else it }
+        .let { if (it.isNullOrBlank()) DEFAULT_FORUM else it }
+    displayMessage = (_msg?.fromHtml() ?: "")
+        .let { if (it.isNullOrBlank()) DEFAULT_MESSAGE else it }
   }
 
   var id: String? = null
