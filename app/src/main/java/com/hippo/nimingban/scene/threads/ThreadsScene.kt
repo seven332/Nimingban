@@ -88,6 +88,7 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ setData(id, it, Int.MAX_VALUE) }, { setError(id, it) })
+            .register()
       }
     }
 

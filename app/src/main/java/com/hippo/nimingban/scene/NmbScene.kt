@@ -17,6 +17,7 @@
 package com.hippo.nimingban.scene
 
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
@@ -28,14 +29,17 @@ abstract class NmbScene : DebugScene() {
 
   private val worker = AndroidSchedulers.mainThread().createWorker()
 
+  private val disposableSet = CompositeDisposable()
+
   override fun onDestroy() {
     super.onDestroy()
     worker.dispose()
+    disposableSet.dispose()
   }
 
   /**
    * Schedules an action for execution in UI thread.
-   * The action will be cancelled after the view destroyed.
+   * The action will be cancelled after the scene destroyed.
    * Returns `Disposables.disposed()` if the view is already destroyed.
    */
   fun schedule(action: () -> Unit): Disposable {
@@ -45,10 +49,16 @@ abstract class NmbScene : DebugScene() {
   /**
    * Schedules an action for execution at some point in the future
    * and in UI thread.
-   * The action will be cancelled after the view detached.
+   * The action will be cancelled after the scene destroyed.
    * Returns `Disposables.disposed()` if the view is already destroyed.
    */
   fun schedule(action: () -> Unit, delayMillis: Long): Disposable {
     return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS)
   }
+
+  /**
+   * Register a disposable to this scene.
+   * The disposable will be disposed after the scene destroyed.
+   */
+  fun Disposable.register() = disposableSet.add(this)
 }

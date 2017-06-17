@@ -90,13 +90,14 @@ class RepliesScene: NmbScene(), RepliesSceneLogic {
         NMB_CLIENT.replies(threadId, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( {
+            .subscribe({
               if (thread == null) thread = it.first
               // TODO need a better way to get max page
               setData(id, it.second, Int.MAX_VALUE)
             }, {
               setError(id, it)
             })
+            .register()
       } else {
         // TODO i18n
         schedule { setError(id, Exception("No thread id")) }
