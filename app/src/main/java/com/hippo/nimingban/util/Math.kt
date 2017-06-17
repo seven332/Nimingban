@@ -25,7 +25,7 @@ import java.util.Random
 /**
  * Returns the absolute value.
  */
-inline fun Long.abs() = Math.abs(this)
+fun Long.abs() = Math.abs(this)
 
 /**
  * Clamped the `Int` to the range &#91;bound1, bound2&#93; if bound2 &gt;= bound1,
@@ -79,7 +79,7 @@ fun Float.clamp(bound1: Float, bound2: Float): Float {
 /**
  * Calculates a linear interpolation between two inputs.
  */
-inline fun Float.lerp(from: Float, to: Float) = from + this * (to - from)
+fun Float.lerp(from: Float, to: Float) = from + this * (to - from)
 
 
 private val random = Random()

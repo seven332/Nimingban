@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
-
 package com.hippo.nimingban.util
 
 import com.hippo.nimingban.BuildConfig
@@ -24,6 +22,6 @@ import com.hippo.nimingban.BuildConfig
  * Created by Hippo on 6/10/2017.
  */
 
-inline fun debug(value: Boolean) = if (BuildConfig.DEBUG) check(value) { "Debug failed." } else Unit
+fun debug(value: Boolean) = if (BuildConfig.DEBUG) check(value) { "Debug failed." } else Unit
 
 inline fun debug(value: Boolean, lazyMessage: () -> Any) = if (BuildConfig.DEBUG) check(value, lazyMessage) else Unit
