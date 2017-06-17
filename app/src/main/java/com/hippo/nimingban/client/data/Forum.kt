@@ -27,16 +27,16 @@ import com.hippo.nimingban.util.fromHtml
  */
 
 data class Forum(
-    @Expose @SerializedName(ID) private val _id: String?,
-    @Expose @SerializedName(FGROUP) private val _fgroup: String?,
-    @Expose @SerializedName(SORT) private val _sort: String?,
-    @Expose @SerializedName(NAME) private val _name: String?,
-    @Expose @SerializedName(SHOW_NAME) private val _showName: String?,
-    @Expose @SerializedName(MSG) private val _msg: String?,
-    @Expose @SerializedName(INTERVAL) private val _interval: String?,
-    @Expose @SerializedName(CREATED_AT) private val _createdAt: String?,
-    @Expose @SerializedName(UPDATE_AT) private val _updateAt: String?,
-    @Expose @SerializedName(STATUS) private val _status: String?
+    @Expose @SerializedName(ID) val _id: String?,
+    @Expose @SerializedName(FGROUP) val _fgroup: String?,
+    @Expose @SerializedName(SORT) val _sort: String?,
+    @Expose @SerializedName(NAME) val _name: String?,
+    @Expose @SerializedName(SHOW_NAME) val _showName: String?,
+    @Expose @SerializedName(MSG) val _msg: String?,
+    @Expose @SerializedName(INTERVAL) val _interval: String?,
+    @Expose @SerializedName(CREATED_AT) val _createdAt: String?,
+    @Expose @SerializedName(UPDATE_AT) val _updateAt: String?,
+    @Expose @SerializedName(STATUS) val _status: String?
 ) : Parcelable {
 
   val init by lazy {
@@ -52,6 +52,11 @@ data class Forum(
   var displayMessage: CharSequence = ""
     private set
 
+  /** Whether the forum is from api **/
+  var official = false
+
+  /** Only useful to save it to db **/
+  var weight = 0
 
   override fun describeContents() = 0
 
@@ -66,6 +71,7 @@ data class Forum(
     dest.writeString(_createdAt)
     dest.writeString(_updateAt)
     dest.writeString(_status)
+    dest.writeInt(if (official) 1 else 0)
   }
 
   constructor(source: Parcel) : this(
@@ -78,7 +84,9 @@ data class Forum(
       source.readString(),
       source.readString(),
       source.readString(),
-      source.readString())
+      source.readString()) {
+    official = source.readInt() != 0
+  }
 
   companion object {
 
@@ -97,15 +105,8 @@ data class Forum(
     private const val DEFAULT_MESSAGE = "略"
 
     @JvmField val CREATOR: Parcelable.Creator<Forum> = object : Parcelable.Creator<Forum> {
-      override fun createFromParcel(source: Parcel): Forum {
-        val forum = Forum(source)
-        forum.init
-        return forum
-      }
-
-      override fun newArray(size: Int): Array<Forum?> {
-        return arrayOfNulls(size)
-      }
+      override fun createFromParcel(source: Parcel) = Forum(source).also { it.init }
+      override fun newArray(size: Int) = arrayOfNulls<Forum?>(size)
     }
   }
 }

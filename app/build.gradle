@@ -55,9 +55,8 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
 
-    // Anko
-    compile "org.jetbrains.anko:anko-commons:$ANKO_LIBRARY_VERSION"
-    compile "org.jetbrains.anko:anko-sqlite:$ANKO_LIBRARY_VERSION"
+    // StorIO
+    compile 'com.pushtorefresh.storio:sqlite:1.13.0'
 
     // RxJava
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
@@ -105,5 +104,6 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
     testCompile 'junit:junit:4.12'
+    testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
     testCompile 'org.robolectric:robolectric:3.3.2'
 }

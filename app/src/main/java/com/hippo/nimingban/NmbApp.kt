@@ -30,7 +30,6 @@ import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
-import com.hippo.nimingban.database.NmbDB
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import okhttp3.OkHttpClient

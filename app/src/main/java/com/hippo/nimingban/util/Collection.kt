@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.database
-
-import android.content.Context
-import com.hippo.nimingban.database.parser.ForumParser
-import io.reactivex.Single
-import org.jetbrains.anko.db.SqlOrderDirection
-import org.jetbrains.anko.db.select
+package com.hippo.nimingban.util
 
 /*
  * Created by Hippo on 6/16/2017.
  */
 
-class NmbDB(val content: Context) {
+/**
+ * Returns itself if it is `MutableList`, or convert it to a `MutableList`.
+ */
+fun <T> List<T>.asMutableList(): MutableList<T> = this as? MutableList<T> ?: this.toMutableList()
 
-  companion object {
-    val FORUM_PARSER = ForumParser()
+/**
+ * Removes and returns the first element matching the given [predicate].
+ */
+inline fun <T> MutableList<T>.removeFirst(predicate: (T) -> Boolean): T? {
+  val each = iterator()
+  while (each.hasNext()) {
+    val next = each.next()
+    if (predicate(next)) {
+      each.remove()
+      return next
+    }
   }
-
-  private val sql = NmbSQLite(content)
-  private val db = sql.writableDatabase
-
-  fun forums() = db.select(NmbSQLite.TABLE_FORUM)
-      .orderBy(NmbSQLite.FORUM_WEIGHT, SqlOrderDirection.ASC)
-      .parseList(FORUM_PARSER)
-
-  fun forumsAsSingle() = Single.fromCallable { forums() }
+  return null
 }

@@ -26,7 +26,11 @@ class NmbClient(private val engine: NmbEngine) {
       engine.forums()
           .map {
             // Init all forums
-            it.forEach { it.init }
+            it.forEach {
+              // All forums is official
+              it.forums.forEach { it.official = false }
+              it.init
+            }
             // Return it self
             it
           } !!
