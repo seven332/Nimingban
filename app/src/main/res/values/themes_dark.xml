@@ -37,6 +37,8 @@
     <item name="itemBackground">@drawable/item_background_dark</item>
     <item name="contentBackground">@drawable/content_background_dark</item>
 
+    <item name="forumListItemTextColor">@color/forum_list_item_text_dark</item>
+
     <item name="android:windowBackground">?attr/backgroundColorWindow</item>
   </style>
 

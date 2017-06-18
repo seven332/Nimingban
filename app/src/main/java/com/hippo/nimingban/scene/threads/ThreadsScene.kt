@@ -76,10 +76,7 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
     val view = super.onCreateView(inflater, container)
-
-    val title = if (forum !== NO_FORUM) forum.displayName else context?.getString(R.string.app_name)
-    ui?.setTitle(title)
-
+    ui?.setTitle(if (forum !== NO_FORUM) forum.displayName else context?.getString(R.string.app_name))
     return view
   }
 

@@ -15,15 +15,8 @@
   ~ limitations under the License.
   -->
 
-<TextView
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/text"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:gravity="center_vertical"
-  android:paddingLeft="16dp"
-  android:paddingRight="16dp"
-  android:minHeight="48dp"
-  android:textSize="@dimen/text_little_small"
-  android:textColor="?attr/forumListItemTextColor"
-  android:background="?attr/itemBackground"/>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_enabled="false" android:color="@color/secondary_text_disabled_light"/>
+  <item android:state_activated="true" android:color="?attr/colorPrimary"/>
+  <item android:color="@color/secondary_text_default_light"/>
+</selector>

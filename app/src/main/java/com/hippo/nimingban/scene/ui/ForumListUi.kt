@@ -175,7 +175,7 @@ class ForumListUi(
 
     override fun onBindViewHolder(holder: ForumHolder, position: Int) {
       holder.text.text = forums[position].displayName
-      holder.itemView.isSelected = position == selectedIndex
+      holder.itemView.isActivated = position == selectedIndex
     }
 
     override fun getItemCount() = forums.size

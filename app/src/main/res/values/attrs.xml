@@ -30,6 +30,8 @@
 
     <attr name="itemBackground" format="reference"/>
     <attr name="contentBackground" format="reference"/>
+
+    <attr name="forumListItemTextColor" format="color"/>
   </declare-styleable>
 
   <declare-styleable name="ProgressView">
