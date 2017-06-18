@@ -40,7 +40,7 @@ data class Forum(
 ) : Parcelable {
 
   val init by lazy {
-    id = _id
+    id = _id ?: ""
     displayName = (_showName?.fromHtml() ?: "")
         .let { if (it.isNullOrBlank()) _name ?: "" else it }
         .let { if (it.isNullOrBlank()) DEFAULT_FORUM else it }
@@ -48,7 +48,7 @@ data class Forum(
         .let { if (it.isNullOrBlank()) DEFAULT_MESSAGE else it }
   }
 
-  var id: String? = null
+  var id: String = ""
     private set
   var displayName: CharSequence = ""
     private set

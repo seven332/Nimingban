@@ -122,8 +122,8 @@ abstract class SceneUi : Ui {
     onSaveState(outState)
   }
 
-  fun restoreState(savedViewState: Bundle) {
-    onRestoreState(savedViewState)
+  fun restoreState(savedState: Bundle) {
+    onRestoreState(savedState)
   }
 
   abstract fun onCreate(inflater: LayoutInflater, container: ViewGroup): View
@@ -153,7 +153,7 @@ abstract class SceneUi : Ui {
   open fun onSaveState(outState: Bundle) {}
 
   @CallSuper
-  open fun onRestoreState(savedViewState: Bundle) {}
+  open fun onRestoreState(savedState: Bundle) {}
 
   private class Lifecycle(var step: Int) {
 

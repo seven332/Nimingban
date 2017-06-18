@@ -43,9 +43,8 @@ import io.reactivex.schedulers.Schedulers
 class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   companion object {
-    private const val INIT_FORUM = "ThreadsData:init_forum"
     /** Assigning it to [forum] means no forum available **/
-    private const val NO_FORUM = "ThreadsData:no_forum"
+    private val NO_FORUM = Forum(null, null, null, null, null, null, null, null, null, null)
   }
 
   private var ui: ThreadsSceneUi? = null
@@ -53,19 +52,17 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
   private val data = ThreadsData()
 
   /** Forum id, null for no forum **/
-  private var forum: String = INIT_FORUM
+  private var forum: Forum = NO_FORUM
     set(value) {
-      if (field != value) {
-        field = value
-        data.goTo(0)
-      }
+      field = value
+      data.goTo(0)
     }
 
   init {
     // Show progress at first, let ForumListUi to trigger
     data.forceProgress()
 
-    // Update forums
+    // Update forums for API
     NMB_CLIENT.forums()
         .subscribeOn(Schedulers.io())
         .subscribe({ it -> NMB_DB.setOfficialForums(it) })
@@ -76,7 +73,10 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
     val view = super.onCreateView(inflater, container)
-    ui?.setTitle(context?.getString(R.string.app_name))
+
+    val title = if (forum !== NO_FORUM) forum.displayName else context?.getString(R.string.app_name)
+    ui?.setTitle(title)
+
     return view
   }
 
@@ -98,7 +98,7 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
   override fun onClickThumb(reply: Reply) { stage?.pushScene(reply.galleryScene()) }
 
   override fun onSelectForum(forum: Forum) {
-    this.forum = forum.id ?: NO_FORUM
+    this.forum = forum
     ui?.closeDrawers()
     ui?.setTitle(forum.displayName)
   }
@@ -115,7 +115,7 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
       if (forum === NO_FORUM) {
         schedule { setError(id, PresetException("No forum", R.string.error_no_forum, R.drawable.emoticon_sad_primary_x64)) }
       } else {
-        NMB_CLIENT.threads(forum, page)
+        NMB_CLIENT.threads(forum.id, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ setData(id, it, Int.MAX_VALUE) }, { setError(id, it) })

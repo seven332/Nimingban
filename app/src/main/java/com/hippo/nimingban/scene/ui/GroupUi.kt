@@ -78,8 +78,8 @@ abstract class GroupUi(
     children.forEach { it.saveState(outState) }
   }
 
-  override fun onRestoreState(savedViewState: Bundle) {
-    super.onRestoreState(savedViewState)
-    children.forEach { it.restoreState(savedViewState) }
+  override fun onRestoreState(savedState: Bundle) {
+    super.onRestoreState(savedState)
+    children.forEach { it.restoreState(savedState) }
   }
 }
