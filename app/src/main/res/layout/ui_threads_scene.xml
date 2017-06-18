@@ -28,14 +28,14 @@
 
   <FrameLayout
     android:id="@+id/left_drawer"
-    android:layout_width="256dp"
+    android:layout_width="@dimen/threads_scene_left_drawer_width"
     android:layout_height="match_parent"
     android:layout_gravity="left"
     android:background="?android:attr/windowBackground"/>
 
   <FrameLayout
     android:id="@+id/right_drawer"
-    android:layout_width="192dp"
+    android:layout_width="@dimen/threads_scene_right_drawer_width"
     android:layout_height="match_parent"
     android:layout_gravity="right"
     android:background="?android:attr/windowBackground"/>

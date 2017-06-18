@@ -27,7 +27,7 @@ interface ForumListLogic {
   /**
    * Called when a forum is selected.
    */
-  fun onSelectForum(forum: Forum)
+  fun onSelectForum(forum: Forum, byUser: Boolean)
 
   /**
    * Called when no forum is available.

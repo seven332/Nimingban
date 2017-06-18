@@ -97,15 +97,16 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   override fun onClickThumb(reply: Reply) { stage?.pushScene(reply.galleryScene()) }
 
-  override fun onSelectForum(forum: Forum) {
+  override fun onSelectForum(forum: Forum, byUser: Boolean) {
     this.forum = forum
-    ui?.closeDrawers()
     ui?.setTitle(forum.displayName)
+    if (byUser) {
+      ui?.closeDrawers()
+    }
   }
 
   override fun onNoForum() {
     this.forum = NO_FORUM
-    ui?.closeDrawers()
     ui?.setTitle(context?.getString(R.string.app_name))
   }
 

@@ -49,4 +49,7 @@
   <dimen name="replies_item_margin_bottom">8dp</dimen>
   <dimen name="replies_item_item_margin">8dp</dimen>
 
+  <dimen name="threads_scene_left_drawer_width">256dp</dimen>
+  <dimen name="threads_scene_right_drawer_width">192dp</dimen>
+
 </resources>

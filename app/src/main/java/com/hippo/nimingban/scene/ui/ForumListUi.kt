@@ -103,14 +103,14 @@ class ForumListUi(
 
     this.selectedForum.let {
       if (it != null && it.id != selectedForum?.id) {
-        logic.onSelectForum(it)
+        logic.onSelectForum(it, false)
       } else if (it == null) {
         logic.onNoForum()
       }
     }
   }
 
-  private fun onSelectForum(forum: Forum, index: Int) {
+  private fun onSelectForum(forum: Forum, index: Int, byUser: Boolean) {
     if (selectedIndex == index) return
 
     val oldSelectedIndex = selectedIndex
@@ -122,20 +122,20 @@ class ForumListUi(
       if (index != INVALID_INDEX) adapter.notifyItemChanged(index)
     }
 
-    logic.onSelectForum(forum)
+    logic.onSelectForum(forum, byUser)
   }
 
   private fun onRestoreForum(forum: Forum, index: Int) {
     // Check whether the forum is still in the index
     if (index in 0 until forums.size && forum.id == forums[index].id) {
-      onSelectForum(forum, index)
+      onSelectForum(forum, index, false)
       return
     }
 
     // Try to find the same forum
     for ((i, it) in forums.withIndex()) {
       if (forum.id == it.id) {
-        onSelectForum(it, i)
+        onSelectForum(it, i, false)
         return
       }
     }
@@ -164,7 +164,7 @@ class ForumListUi(
     val item: Forum? get() = adapterPosition.takeIf { it in 0 until forums.size }?.let { forums[it] }
 
     init {
-      itemView.setOnClickListener { item?.let { onSelectForum(it, adapterPosition) } }
+      itemView.setOnClickListener { item?.let { onSelectForum(it, adapterPosition, true) } }
     }
   }
 
