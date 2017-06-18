@@ -24,6 +24,6 @@
 
     <path
       android:fillColor="@android:color/white"
-      android:pathData="@string/pd_subscriptions"/>
+      android:pathData="@string/pd_menu"/>
 
 </vector>

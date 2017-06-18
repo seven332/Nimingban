@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.scene.threads
 
+import android.support.v7.content.res.AppCompatResources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,7 +77,13 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
     val view = super.onCreateView(inflater, container)
-    ui?.setTitle(if (forum !== NO_FORUM) forum.displayName else context?.getString(R.string.app_name))
+
+    ui?.let { ui ->
+      ui.setTitle(if (forum !== NO_FORUM) forum.displayName else context?.getString(R.string.app_name))
+      ui.setNavigationIcon(AppCompatResources.getDrawable(context!!, R.drawable.menu_white_x24))
+      ui.setNavigationOnClickListener { this.ui?.toogleLeftDrawer() }
+    }
+
     return view
   }
 

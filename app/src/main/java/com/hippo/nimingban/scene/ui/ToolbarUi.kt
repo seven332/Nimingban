@@ -17,6 +17,7 @@
 package com.hippo.nimingban.scene.ui
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +52,14 @@ class ToolbarUi(
 
   fun setTitle(title: CharSequence?) {
     toolbar?.title = title
+  }
+
+  fun setNavigationIcon(icon: Drawable?) {
+    toolbar?.navigationIcon = icon
+  }
+
+  fun setNavigationOnClickListener(listener: (View) -> Unit) {
+    toolbar?.setNavigationOnClickListener { listener(it) }
   }
 }
 

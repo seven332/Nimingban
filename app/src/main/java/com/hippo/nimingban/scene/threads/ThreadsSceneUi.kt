@@ -17,6 +17,8 @@
 package com.hippo.nimingban.scene.threads
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,7 +74,27 @@ class ThreadsSceneUi(
     return view
   }
 
-  fun closeDrawers() { drawerLayout?.closeDrawers() }
+  fun closeDrawers() {
+    drawerLayout?.closeDrawers()
+  }
 
-  fun setTitle(title: CharSequence?) { toolbarUi?.setTitle(title) }
+  fun setTitle(title: CharSequence?) {
+    toolbarUi?.setTitle(title)
+  }
+
+  fun setNavigationIcon(icon: Drawable?) {
+    toolbarUi?.setNavigationIcon(icon)
+  }
+
+  fun setNavigationOnClickListener(listener: (View) -> Unit) {
+    toolbarUi?.setNavigationOnClickListener(listener)
+  }
+
+  fun toogleLeftDrawer() {
+    drawerLayout?.let { drawerLayout ->
+      if (!drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+        drawerLayout.openDrawer(Gravity.LEFT)
+      }
+    }
+  }
 }

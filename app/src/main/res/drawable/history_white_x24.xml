@@ -23,7 +23,7 @@
   android:viewportHeight="24">
 
     <path
-      android:fillColor="@color/white"
+      android:fillColor="@android:color/white"
       android:pathData="@string/pd_history"/>
 
 </vector>
