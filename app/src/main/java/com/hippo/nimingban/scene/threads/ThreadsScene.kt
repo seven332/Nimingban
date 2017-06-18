@@ -54,8 +54,11 @@ class ThreadsScene : NmbScene(), ThreadsSceneLogic {
   /** Forum id, null for no forum **/
   private var forum: Forum = NO_FORUM
     set(value) {
+      val oldValue = field
       field = value
-      data.goTo(0)
+      if (value.id != oldValue.id) {
+        data.goTo(0)
+      }
     }
 
   init {

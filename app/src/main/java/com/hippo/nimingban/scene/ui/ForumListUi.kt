@@ -57,13 +57,15 @@ class ForumListUi(
     val view = inflater.inflate(R.layout.ui_forum_list, container, false)
 
     val adapter = ForumAdapter(inflater)
-    val recyclerView = view.findViewById(R.id.recycler_view) as RecyclerView
+    val recyclerView = view.findViewById(R.id.forum_list) as RecyclerView
     recyclerView.layoutManager = LinearLayoutManager(context)
     recyclerView.adapter = adapter
-
     this.adapter = adapter
 
+    // Get forums here to make state restoring works
+    forums = NMB_DB.liveForums.data
     // Observe forums in db
+    // onUpdateForums() will be called in next UI turn, let it select forum
     NMB_DB.liveForums.observable
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { onUpdateForums(it) }
@@ -115,12 +117,28 @@ class ForumListUi(
     selectedForum = forum
     selectedIndex = index
 
-    adapter?.let {
-      if (oldSelectedIndex != INVALID_INDEX) it.notifyItemChanged(oldSelectedIndex)
-      if (index != INVALID_INDEX) it.notifyItemChanged(index)
+    adapter?.let { adapter->
+      if (oldSelectedIndex != INVALID_INDEX) adapter.notifyItemChanged(oldSelectedIndex)
+      if (index != INVALID_INDEX) adapter.notifyItemChanged(index)
     }
 
     logic.onSelectForum(forum)
+  }
+
+  private fun onRestoreForum(forum: Forum, index: Int) {
+    // Check whether the forum is still in the index
+    if (index in 0 until forums.size && forum.id == forums[index].id) {
+      onSelectForum(forum, index)
+      return
+    }
+
+    // Try to find the same forum
+    for ((i, it) in forums.withIndex()) {
+      if (forum.id == it.id) {
+        onSelectForum(it, i)
+        return
+      }
+    }
   }
 
   override fun onSaveState(outState: Bundle) {
@@ -129,10 +147,15 @@ class ForumListUi(
     outState.putInt(KEY_SELECTED_INDEX, selectedIndex)
   }
 
-  override fun onRestoreState(savedViewState: Bundle) {
-    super.onRestoreState(savedViewState)
-    selectedForum = savedViewState.getParcelable(KEY_SELECTED_FORUM)
-    selectedIndex = savedViewState.getInt(KEY_SELECTED_FORUM)
+  override fun onRestoreState(savedState: Bundle) {
+    super.onRestoreState(savedState)
+
+    val selectedForum: Forum? = savedState.getParcelable(KEY_SELECTED_FORUM)
+    val selectedIndex: Int = savedState.getInt(KEY_SELECTED_INDEX)
+
+    if (selectedForum != null) {
+      onRestoreForum(selectedForum, selectedIndex)
+    }
   }
 
   private inner class ForumHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
