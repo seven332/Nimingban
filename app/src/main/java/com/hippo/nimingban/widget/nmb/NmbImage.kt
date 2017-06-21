@@ -44,6 +44,7 @@ class NmbImage @JvmOverloads constructor(
     val progress = ProgressDrawable()
     progress.color = AttrResources.getAttrColor(context, R.attr.colorAccent)
     progress.size = 48.dp2pix(context)
+    progress.indeterminate = true
 
     hierarchy.setProgressBarImage(progress)
     hierarchy.setFailureImage(failure)
