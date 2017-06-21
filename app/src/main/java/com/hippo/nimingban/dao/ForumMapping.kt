@@ -82,19 +82,21 @@ private class ForumPutResolver : DefaultPutResolver<Forum>() {
       .table(TABLE_FORUM)
       .build()
 
-  override fun mapToContentValues(item: Forum) = ContentValues(11)
-      .also { it.put(COLUMN_ID, item._id) }
-      .also { it.put(COLUMN_FGROUP, item._fgroup) }
-      .also { it.put(COLUMN_SORT, item._sort) }
-      .also { it.put(COLUMN_NAME, item._name) }
-      .also { it.put(COLUMN_SHOW_NAME, item._showName) }
-      .also { it.put(COLUMN_MSG, item._msg) }
-      .also { it.put(COLUMN_INTERVAL, item._interval) }
-      .also { it.put(COLUMN_CREATED_AT, item._createdAt) }
-      .also { it.put(COLUMN_UPDATE_AT, item._updateAt) }
-      .also { it.put(COLUMN_STATUS, item._status) }
-      .also { it.put(COLUMN_OFFICIAL, item.official) }
-      .also { it.put(COLUMN_WEIGHT, item.weight) }
+  override fun mapToContentValues(item: Forum) = ContentValues(12)
+      .also {
+        it.put(COLUMN_ID, item._id)
+        it.put(COLUMN_FGROUP, item._fgroup)
+        it.put(COLUMN_SORT, item._sort)
+        it.put(COLUMN_NAME, item._name)
+        it.put(COLUMN_SHOW_NAME, item._showName)
+        it.put(COLUMN_MSG, item._msg)
+        it.put(COLUMN_INTERVAL, item._interval)
+        it.put(COLUMN_CREATED_AT, item._createdAt)
+        it.put(COLUMN_UPDATE_AT, item._updateAt)
+        it.put(COLUMN_STATUS, item._status)
+        it.put(COLUMN_OFFICIAL, item.official)
+        it.put(COLUMN_WEIGHT, item.weight)
+      }
 }
 
 private class ForumGetResolver : DefaultGetResolver<Forum>() {
@@ -110,9 +112,11 @@ private class ForumGetResolver : DefaultGetResolver<Forum>() {
       cursor.getString(COLUMN_CREATED_AT, null),
       cursor.getString(COLUMN_UPDATE_AT, null),
       cursor.getString(COLUMN_STATUS, null))
-      .also { it.init }
-      .also { it.official = cursor.getBoolean(COLUMN_OFFICIAL, false) }
-      .also { it.weight = cursor.getInt(COLUMN_WEIGHT, 0) }
+      .also {
+        it.init
+        it.official = cursor.getBoolean(COLUMN_OFFICIAL, false)
+        it.weight = cursor.getInt(COLUMN_WEIGHT, 0)
+      }
 }
 
 private class ForumDeleteResolver : DefaultDeleteResolver<Forum>() {
