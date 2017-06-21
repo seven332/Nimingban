@@ -32,7 +32,6 @@ import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -95,7 +94,7 @@ val REF_WATCHER: RefWatcher by lazy { _REF_WATCHER!! }
 fun updateForums() {
   NMB_CLIENT.forums()
       .subscribeOn(Schedulers.io())
-      .subscribe(Consumer { NMB_DB.setOfficialForums(it) })
+      .subscribe({ NMB_DB.setOfficialForums(it) }, { /* Ignore error */ })
 }
 
 class NmbApp : Application() {
