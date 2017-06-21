@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.widget.content
-
-import android.support.v7.widget.RecyclerView
+package com.hippo.nimingban.component
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 6/20/2017.
  */
 
-abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+abstract class GroupLogic : NmbLogic() {
 
-  var data: ContentData<T>? = null
+  private val children = mutableListOf<SceneLogic>()
 
-  val size get() = data?.size() ?: error("No data")
+  fun addChild(logic: SceneLogic) {
+    children.add(logic)
+  }
 
-  override fun getItemCount(): Int = data?.size() ?: error("No data")
-
-  operator fun get(index: Int): T = data?.get(index) ?: error("No data")
+  override fun onDestroy() {
+    super.onDestroy()
+    children.forEach { it.destroy() }
+  }
 }

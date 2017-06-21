@@ -15,16 +15,15 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.swipeback.SwipeBackLayout
+<vector
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/swipe_back"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:height="24dp"
+  android:width="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
 
-  <FrameLayout
-    android:id="@+id/swipe_back_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground"/>
+    <path
+      android:fillColor="@android:color/white"
+      android:pathData="@string/pd_arrow_left"/>
 
-</com.hippo.swipeback.SwipeBackLayout>
+</vector>

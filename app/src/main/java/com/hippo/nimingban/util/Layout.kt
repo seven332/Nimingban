@@ -19,8 +19,6 @@ package com.hippo.nimingban.util
 import android.content.Context
 import android.view.View
 
-
-
 /*
  * Created by Hippo on 6/7/2017.
  */
@@ -50,3 +48,5 @@ fun getSuitableSize(size: Int, spec: Int): Int {
   }
   return result
 }
+
+inline fun <reified T : View> View.find(id: Int): T = findViewById(id) as T

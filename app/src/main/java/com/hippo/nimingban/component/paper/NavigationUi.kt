@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.widget.content
+package com.hippo.nimingban.component.paper
 
-import android.support.v7.widget.RecyclerView
+import com.hippo.nimingban.architecture.Ui
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 6/20/2017.
  */
 
-abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
-
-  var data: ContentData<T>? = null
-
-  val size get() = data?.size() ?: error("No data")
-
-  override fun getItemCount(): Int = data?.size() ?: error("No data")
-
-  operator fun get(index: Int): T = data?.get(index) ?: error("No data")
-}
+interface NavigationUi : Ui

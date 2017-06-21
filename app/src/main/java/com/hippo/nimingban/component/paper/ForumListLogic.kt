@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.widget.content
+package com.hippo.nimingban.component.paper
 
-import android.support.v7.widget.RecyclerView
+import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.client.data.Forum
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 6/20/2017.
  */
 
-abstract class ContentDataAdapter<T, VH: RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+interface ForumListLogic : Logic {
 
-  var data: ContentData<T>? = null
+  /**
+   * Called when user click a forum.
+   */
+  fun onSelectForum(forum: Forum, index: Int)
 
-  val size get() = data?.size() ?: error("No data")
-
-  override fun getItemCount(): Int = data?.size() ?: error("No data")
-
-  operator fun get(index: Int): T = data?.get(index) ?: error("No data")
+  /**
+   * Returns the selected forum index.
+   */
+  fun getSelectedIndex(): Int
 }
