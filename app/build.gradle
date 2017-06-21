@@ -66,13 +66,15 @@ dependencies {
     // Gson
     compile 'com.google.code.gson:gson:2.8.1'
 
+    // Jsoup
+    compile 'org.jsoup:jsoup:1.10.3'
+
     // Html
     compile 'com.github.seven332:android-html:0.1.1'
 
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     // Stage
     compile "com.github.seven332.stage:stage:$STAGE_LIBRARY_VERSION"

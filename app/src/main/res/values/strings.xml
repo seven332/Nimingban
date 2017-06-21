@@ -26,6 +26,7 @@
 
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>
+  <string name="error_empty_body">Empty Body</string>
 
   <string name="pretty_time_just_now">just now</string>
   <string name="pretty_time_minutes">%d min</string>

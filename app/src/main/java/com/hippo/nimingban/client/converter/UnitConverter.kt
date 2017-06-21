@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.exception
+package com.hippo.nimingban.client.converter
 
 /*
- * Created by Hippo on 6/7/2017.
+ * Created by Hippo on 6/21/2017.
  */
 
-/**
- * Exception with a message, a localized message and a icon.
- */
-class PresetException(message: String, val text: Int, val icon: Int) : Exception(message)
+class UnitConverter : NmbConverter<Unit>() {
+
+  override fun doConvert(body: String) {
+    val error = parseError(body)
+    if (error != null) {
+      throw error
+    }
+  }
+}

@@ -38,6 +38,7 @@ const val NMB_API_THREADS = NMB_HOST + "/Api/showf?appid=" + NMB_APP_ID
 
 const val NMB_API_REPLIES = NMB_HOST + "/Api/thread?appid=" + NMB_APP_ID
 
+const val NMB_API_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
 
 fun forumsUrl() = NMB_API_FORUMS
 

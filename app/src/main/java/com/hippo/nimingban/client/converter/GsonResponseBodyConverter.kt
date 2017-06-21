@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.exception
+package com.hippo.nimingban.client.converter
+
+import com.google.gson.Gson
+import com.google.gson.TypeAdapter
 
 /*
- * Created by Hippo on 6/7/2017.
+ * Created by Hippo on 6/21/2017.
  */
 
-/**
- * Exception with a message, a localized message and a icon.
- */
-class PresetException(message: String, val text: Int, val icon: Int) : Exception(message)
+class GsonResponseBodyConverter<T>(
+    val gson: Gson,
+    val adapter: TypeAdapter<T>
+) : NmbConverter<T>() {
+
+  override fun doConvert(body: String) = adapter.fromJson(body)!!
+}

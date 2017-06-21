@@ -24,6 +24,7 @@ import com.google.gson.InstanceCreator
 import com.hippo.fresco.large.FrescoLarge
 import com.hippo.nimingban.client.NMB_HOST
 import com.hippo.nimingban.client.NmbClient
+import com.hippo.nimingban.client.NmbConverterFactory
 import com.hippo.nimingban.client.NmbEngine
 import com.hippo.nimingban.client.NmbInterceptor
 import com.hippo.nimingban.client.data.Forum
@@ -36,7 +37,6 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 
 /*
  * Created by Hippo on 6/4/2017.
@@ -52,7 +52,7 @@ val NMB_CLIENT: NmbClient by lazy {
       .baseUrl(NMB_HOST)
       .client(OK_HTTP_CLIENT)
       .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-      .addConverterFactory(GsonConverterFactory.create(GSON))
+      .addConverterFactory(NmbConverterFactory(GSON))
       .build()
   val nmbEngine = retrofit.create(NmbEngine::class.java)
   NmbClient(nmbEngine)

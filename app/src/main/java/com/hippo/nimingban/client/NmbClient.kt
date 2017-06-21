@@ -58,4 +58,13 @@ class NmbClient(private val engine: NmbEngine) {
             // Pack thread and reply list
             Pair(it, replies)
           } !!
+
+  fun post(
+      name: String,
+      email: String,
+      title: String,
+      content: String,
+      resto: String,
+      water: Boolean
+  ) = engine.post(name, email, title, content, resto, water.toString(), null)
 }

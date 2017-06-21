@@ -17,10 +17,10 @@
 package com.hippo.nimingban.exception
 
 /*
- * Created by Hippo on 6/7/2017.
+ * Created by Hippo on 6/21/2017.
  */
 
 /**
- * Exception with a message, a localized message and a icon.
+ * Unknown.
  */
-class PresetException(message: String, val text: Int, val icon: Int) : Exception(message)
+object UnknownException : Exception()
