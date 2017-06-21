@@ -187,7 +187,7 @@ abstract class SceneUi : Ui {
           emitter.onNext(step)
         } catch (t: Throwable) {
           Exceptions.throwIfFatal(t)
-          RxJavaPlugins.onError(t)
+          emitter.onError(t)
         }
       }
     }

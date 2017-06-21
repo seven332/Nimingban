@@ -39,7 +39,7 @@ abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : Co
     }
 
   init {
-    disposable = lifecycle.subscribe {
+    disposable = lifecycle.subscribe({
       when (it) {
         SceneUi.RESUME -> isResumed = true
         SceneUi.PAUSE -> isResumed = false
@@ -50,7 +50,7 @@ abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : Co
           disposable = null
         }
       }
-    }
+    }, { /* Ignore error */ })
   }
 
   @CallSuper

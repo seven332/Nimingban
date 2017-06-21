@@ -49,7 +49,7 @@ abstract class DefaultForumListLogic : NmbLogic(), ForumListLogic {
         // TODO Filter visible
         .map { it.toList() }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { onUpdateForums(it) }
+        .subscribe({ onUpdateForums(it) }, { /* Ignore error */ })
         .register()
   }
 
