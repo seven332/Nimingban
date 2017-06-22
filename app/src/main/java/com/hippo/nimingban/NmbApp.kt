@@ -35,6 +35,7 @@ import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 
@@ -63,6 +64,7 @@ val NMB_DB: NmbDB by lazy { NmbDB(NMB_APP) }
 val OK_HTTP_CLIENT: OkHttpClient by lazy {
   OkHttpClient.Builder()
       .addInterceptor(NmbInterceptor())
+      .addInterceptor(HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC })
       .build()
 }
 
