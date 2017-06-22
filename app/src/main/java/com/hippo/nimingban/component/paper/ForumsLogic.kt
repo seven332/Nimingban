@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.client.converter
+package com.hippo.nimingban.component.paper
 
-import com.google.gson.Gson
-import com.google.gson.TypeAdapter
+import com.hippo.nimingban.architecture.Logic
 
 /*
- * Created by Hippo on 6/21/2017.
+ * Created by Hippo on 6/22/2017.
  */
 
-class GsonResponseBodyConverter<T>(
-    val gson: Gson,
-    val adapter: TypeAdapter<T>
-) : NmbConverter<T>() {
+interface ForumsLogic : Logic {
 
-  override fun doConvert(body: String) = adapter.fromJson(body)!!
 }

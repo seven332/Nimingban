@@ -20,6 +20,7 @@ import android.content.Context
 import com.hippo.nimingban.architecture.LiveData
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
+import com.hippo.nimingban.dao.FORUM_COLUMN_ID
 import com.hippo.nimingban.dao.FORUM_COLUMN_WEIGHT
 import com.hippo.nimingban.dao.ForumMapping
 import com.hippo.nimingban.dao.TABLE_FORUM
@@ -98,22 +99,38 @@ class NmbDB(context: Context) {
   }
 
   /**
-   * Add a forum.
+   * Put a forum.
    */
-  fun addForum(forum: Forum) {
+  fun putForum(forum: Forum) {
     sql.transaction {
-      // Get the forum with the max weight
-      val lastForum = sql.get()
+      // Check old forum with the same id
+      val oldForum = sql.get()
           .`object`(Forum::class.java)
           .withQuery(Query.builder()
               .table(TABLE_FORUM)
-              .orderBy("$FORUM_COLUMN_WEIGHT DESC")
+              .where("$FORUM_COLUMN_ID = ?")
+              .whereArgs(forum.id)
               .limit(1)
               .build())
           .prepare()
           .executeAsBlocking()
 
-      forum.weight = (lastForum?.weight ?: -1) + 1
+      if (oldForum != null) {
+        // Keep weight
+        forum.weight = oldForum.weight
+      } else {
+        // Get the forum with the max weight
+        val lastForum = sql.get()
+            .`object`(Forum::class.java)
+            .withQuery(Query.builder()
+                .table(TABLE_FORUM)
+                .orderBy("$FORUM_COLUMN_WEIGHT DESC")
+                .limit(1)
+                .build())
+            .prepare()
+            .executeAsBlocking()
+        forum.weight = (lastForum?.weight ?: -1) + 1
+      }
 
       sql.put()
           .`object`(forum)

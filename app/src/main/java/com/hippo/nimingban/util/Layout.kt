@@ -50,3 +50,12 @@ fun getSuitableSize(size: Int, spec: Int): Int {
 }
 
 inline fun <reified T : View> View.find(id: Int): T = findViewById(id) as T
+
+/**
+ * Whether the view is under the point.
+ */
+fun View.isUnder(localX: Float, localY: Float, slop: Float = 0.0f) =
+    localX >= (left -slop)
+        && localY >= (top -slop)
+        && localX < (right + slop)
+        && localY < (bottom + slop)

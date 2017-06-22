@@ -39,7 +39,7 @@ abstract class NmbLogic : DebugLogic() {
   /**
    * Schedules an action for execution in UI thread.
    * The action will be cancelled after the logic destroyed.
-   * Returns `Disposables.disposed()` if the view is already destroyed.
+   * Returns `Disposables.disposed()` if the logic is already destroyed.
    */
   fun schedule(action: () -> Unit): Disposable {
     return worker.schedule(action)

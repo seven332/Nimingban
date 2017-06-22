@@ -58,7 +58,7 @@ class NmbDBTest {
     assertEquals(currentForums, db.forums())
 
     val customForum = randomCustomForum()
-    db.addForum(customForum)
+    db.putForum(customForum)
     currentForums.add(customForum)
     assertEquals(currentForums, db.forums())
 

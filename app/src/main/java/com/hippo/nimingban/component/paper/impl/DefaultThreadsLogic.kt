@@ -22,7 +22,6 @@ import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbLogic
-import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.paper.ThreadsLogic
 import com.hippo.nimingban.component.scene.galleryScene
 import com.hippo.nimingban.component.scene.repliesScene
@@ -30,6 +29,7 @@ import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
+import com.hippo.stage.Scene
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -38,7 +38,7 @@ import io.reactivex.schedulers.Schedulers
  */
 
 open class DefaultThreadsLogic(
-    val scene: NmbScene
+    val scene: Scene
 ) : NmbLogic(), ThreadsLogic {
 
   private val data = ThreadsData()

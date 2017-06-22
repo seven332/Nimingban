@@ -52,4 +52,8 @@
   <dimen name="threads_scene_left_drawer_width">256dp</dimen>
   <dimen name="threads_scene_right_drawer_width">192dp</dimen>
 
+  <dimen name="forums_item_height">48dp</dimen>
+  <dimen name="forums_item_icon_size">48dp</dimen>
+  <dimen name="forums_item_icon_padding">12dp</dimen>
+
 </resources>

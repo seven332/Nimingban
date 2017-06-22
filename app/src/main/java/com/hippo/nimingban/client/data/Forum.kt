@@ -58,6 +58,9 @@ data class Forum(
   /** Whether the forum is from api **/
   var official = false
 
+  /** Whether the forum is visible for user **/
+  var visible = true
+
   /** Only useful to save it to db **/
   var weight = 0
 

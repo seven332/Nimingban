@@ -46,8 +46,7 @@ abstract class DefaultForumListLogic : NmbLogic(), ForumListLogic {
     updateForums()
 
     NMB_DB.liveForums.observable
-        // TODO Filter visible
-        .map { it.toList() }
+        .map { it.filter { it.visible } }
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({ onUpdateForums(it) }, { /* Ignore error */ })
         .register()

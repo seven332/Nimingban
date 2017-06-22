@@ -16,9 +16,13 @@
 
 package com.hippo.nimingban.util
 
+import android.content.Context
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.StateListDrawable
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.v7.content.res.AppCompatResources
 import com.hippo.html.Html
 
 /*
@@ -49,3 +53,7 @@ fun <T> Parcel.readTypedList(creator: Parcelable.Creator<T>): MutableList<T> {
   readTypedList(list, creator)
   return list
 }
+
+fun Context.loadDrawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
+
+fun StateListDrawable.addState(drawable: Drawable, vararg states: Int) = addState(states, drawable)

@@ -16,8 +16,48 @@
 
 package com.hippo.nimingban.component
 
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import java.util.concurrent.TimeUnit
+
 /*
  * Created by Hippo on 6/19/2017.
  */
 
-abstract class NmbUi : DebugUi()
+abstract class NmbUi : DebugUi() {
+
+  private val worker = AndroidSchedulers.mainThread().createWorker()
+  private val disposableSet = CompositeDisposable()
+
+  override fun onDestroy() {
+    super.onDestroy()
+    worker.dispose()
+    disposableSet.dispose()
+  }
+
+  /**
+   * Schedules an action for execution in UI thread.
+   * The action will be cancelled after the view destroyed.
+   * Returns `Disposables.disposed()` if the view is already destroyed.
+   */
+  fun schedule(action: () -> Unit): Disposable {
+    return worker.schedule(action)
+  }
+
+  /**
+   * Schedules an action for execution at some point in the future
+   * and in UI thread.
+   * The action will be cancelled after the view destroyed.
+   * Returns `Disposables.disposed()` if the view is already destroyed.
+   */
+  fun schedule(action: () -> Unit, delayMillis: Long): Disposable {
+    return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS)
+  }
+
+  /**
+   * Register a disposable to this view.
+   * The disposable will be disposed after the view destroyed.
+   */
+  fun Disposable.register() = disposableSet.add(this)
+}

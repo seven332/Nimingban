@@ -48,8 +48,10 @@ private const val COLUMN_CREATED_AT = Forum.CREATED_AT
 private const val COLUMN_UPDATE_AT = Forum.UPDATE_AT
 private const val COLUMN_STATUS = Forum.STATUS
 private const val COLUMN_OFFICIAL = "official"
+private const val COLUMN_VISIBLE = "visible"
 private const val COLUMN_WEIGHT = "weight"
 
+const val FORUM_COLUMN_ID = COLUMN_ID
 const val FORUM_COLUMN_WEIGHT = COLUMN_WEIGHT
 
 fun forumVersion1(sqlBuilder: MSQLiteBuilder) {
@@ -65,6 +67,7 @@ fun forumVersion1(sqlBuilder: MSQLiteBuilder) {
       .insertColumn(TABLE_FORUM, COLUMN_UPDATE_AT, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_STATUS, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_OFFICIAL, Boolean::class)
+      .insertColumn(TABLE_FORUM, COLUMN_VISIBLE, Boolean::class)
       .insertColumn(TABLE_FORUM, COLUMN_WEIGHT, Int::class)
 }
 
@@ -82,7 +85,7 @@ private class ForumPutResolver : DefaultPutResolver<Forum>() {
       .table(TABLE_FORUM)
       .build()
 
-  override fun mapToContentValues(item: Forum) = ContentValues(12)
+  override fun mapToContentValues(item: Forum) = ContentValues(13)
       .also {
         it.put(COLUMN_ID, item._id)
         it.put(COLUMN_FGROUP, item._fgroup)
@@ -95,6 +98,7 @@ private class ForumPutResolver : DefaultPutResolver<Forum>() {
         it.put(COLUMN_UPDATE_AT, item._updateAt)
         it.put(COLUMN_STATUS, item._status)
         it.put(COLUMN_OFFICIAL, item.official)
+        it.put(COLUMN_VISIBLE, item.visible)
         it.put(COLUMN_WEIGHT, item.weight)
       }
 }
@@ -115,6 +119,7 @@ private class ForumGetResolver : DefaultGetResolver<Forum>() {
       .also {
         it.init
         it.official = cursor.getBoolean(COLUMN_OFFICIAL, false)
+        it.visible = cursor.getBoolean(COLUMN_VISIBLE, true)
         it.weight = cursor.getInt(COLUMN_WEIGHT, 0)
       }
 }

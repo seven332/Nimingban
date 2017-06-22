@@ -24,6 +24,8 @@
   <string name="navigation_history">History</string>
   <string name="navigation_settings">Settings</string>
 
+  <string name="forum_list_sort">Sort</string>
+
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>
   <string name="error_empty_body">Empty Body</string>

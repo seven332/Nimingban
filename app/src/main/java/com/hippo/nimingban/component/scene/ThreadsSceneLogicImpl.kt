@@ -22,7 +22,6 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.NmbLogic
-import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.paper.ForumListLogic
 import com.hippo.nimingban.component.paper.ForumListUi
 import com.hippo.nimingban.component.paper.NavigationLogic
@@ -34,13 +33,14 @@ import com.hippo.nimingban.component.paper.ToolbarUi
 import com.hippo.nimingban.component.paper.impl.DefaultForumListLogic
 import com.hippo.nimingban.component.paper.impl.DefaultThreadsLogic
 import com.hippo.nimingban.component.paper.impl.DefaultToolbarLogic
+import com.hippo.stage.Scene
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
 class ThreadsSceneLogicImpl(
-    scene: NmbScene
+    val scene: Scene
 ) : GroupLogic(), ThreadsSceneLogic {
 
   override var threadsSceneUi: ThreadsSceneUi? = null
@@ -97,9 +97,7 @@ class ThreadsSceneLogicImpl(
       threadsSceneUi?.toggleLeftDrawer()
     }
 
-    override fun onClickMenuItem(item: MenuItem): Boolean {
-      TODO("not implemented")
-    }
+    override fun onClickMenuItem(item: MenuItem) = false
   }
 
 
@@ -116,12 +114,26 @@ class ThreadsSceneLogicImpl(
 
 
   private inner class ForumListToolbarLogicImpl : DefaultToolbarLogic() {
+
+    init {
+      inflateMenu(R.menu.forum_list)
+    }
+
     override fun onClickNavigationIcon() {}
-    override fun onClickMenuItem(item: MenuItem): Boolean { return false }
+
+    override fun onClickMenuItem(item: MenuItem): Boolean {
+      when (item.itemId) {
+        R.id.action_sort -> {
+          scene.stage?.pushScene(ForumsScene())
+          return true
+        }
+        else -> return false
+      }
+    }
   }
 
 
   private inner class NavigationLogicImpl : NmbLogic(), NavigationLogic {
-    override fun onSelectNavigationItem(item: MenuItem): Boolean { return false }
+    override fun onSelectNavigationItem(item: MenuItem) = false
   }
 }
