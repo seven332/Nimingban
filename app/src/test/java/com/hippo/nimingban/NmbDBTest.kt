@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban
 
+import com.hippo.nimingban.client.data.Draft
 import com.hippo.nimingban.client.data.Forum
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,6 +24,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 /*
  * Created by Hippo on 6/17/2017.
@@ -77,5 +79,16 @@ class NmbDBTest {
     db.setOfficialForums(listOf(randomForumGroup(*forums.subList(0, 3).toTypedArray())))
     currentForums = mutableListOf<Forum>().also { it.addAll(forums.subList(0, 3)) }.also { it.add(customForum) }
     assertEquals(currentForums, db.forums())
+  }
+
+  @Test
+  fun testDraft() {
+    val draft1 = Draft(0, Draft.TYPE_POST, "5", 100, "haha")
+    db.putDraft(draft1)
+    val draft2 = db.getDraft(Draft.TYPE_POST, "5")
+    assertNotNull(draft2)
+    if (draft2 != null) {
+      assertEquals(Draft(draft2.id, draft1.type, draft1.toId, draft1.date, draft1.content), draft2)
+    }
   }
 }

@@ -18,12 +18,18 @@ package com.hippo.nimingban
 
 import android.content.Context
 import com.hippo.nimingban.architecture.LiveData
+import com.hippo.nimingban.client.data.Draft
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
+import com.hippo.nimingban.dao.DRAFT_COLUMN_TO_ID
+import com.hippo.nimingban.dao.DRAFT_COLUMN_TYPE
+import com.hippo.nimingban.dao.DraftMapping
 import com.hippo.nimingban.dao.FORUM_COLUMN_ID
 import com.hippo.nimingban.dao.FORUM_COLUMN_WEIGHT
 import com.hippo.nimingban.dao.ForumMapping
+import com.hippo.nimingban.dao.TABLE_DRAFT
 import com.hippo.nimingban.dao.TABLE_FORUM
+import com.hippo.nimingban.dao.draftVersion1
 import com.hippo.nimingban.dao.forumVersion1
 import com.hippo.nimingban.database.MSQLiteBuilder
 import com.hippo.nimingban.util.asMutableList
@@ -49,9 +55,15 @@ class NmbDB(context: Context) {
           MSQLiteBuilder()
               .also { it.version(1) }
               .also { forumVersion1(it) }
+              .also { draftVersion1(it) }
               .build(context, DB_NAME, DB_VERSION))
       .addTypeMapping(Forum::class.java, ForumMapping())
+      .addTypeMapping(Draft::class.java, DraftMapping())
       .build()
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Forum
+  ///////////////////////////////////////////////////////////////////////////
 
   val liveForums: LiveData<List<Forum>> = LiveData(forums())
 
@@ -205,4 +217,34 @@ class NmbDB(context: Context) {
           .build())
       .prepare()
       .executeAsBlocking()
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Draft
+  ///////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Put a draft.
+   */
+  fun putDraft(draft: Draft) {
+    sql.put()
+        .`object`(draft)
+        .prepare()
+        .executeAsBlocking()
+  }
+
+  /**
+   * Get a draft for the type and the to-id.
+   */
+  fun getDraft(type: Int, toId: String): Draft? {
+    return sql.get()
+        .`object`(Draft::class.java)
+        .withQuery(Query.builder()
+            .table(TABLE_DRAFT)
+            .where("$DRAFT_COLUMN_TYPE = ? AND $DRAFT_COLUMN_TO_ID = ?")
+            .whereArgs(type, toId)
+            .limit(1)
+            .build())
+        .prepare()
+        .executeAsBlocking()
+  }
 }
