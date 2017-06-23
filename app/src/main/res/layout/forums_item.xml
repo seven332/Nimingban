@@ -19,21 +19,25 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="@dimen/forums_item_height"
-  android:orientation="horizontal"
-  android:divider="@drawable/divider_key_margin"
-  android:showDividers="beginning|middle|end">
+  android:orientation="horizontal">
 
   <ImageView
     android:id="@+id/delete"
-    android:layout_width="@dimen/forums_item_icon_size"
-    android:layout_height="@dimen/forums_item_icon_size"
-    android:padding="@dimen/forums_item_icon_padding"/>
+    android:layout_width="@dimen/forums_item_icon_width"
+    android:layout_height="@dimen/forums_item_icon_height"
+    android:paddingLeft="@dimen/forums_item_icon_margin_left"
+    android:paddingRight="@dimen/forums_item_icon_margin_right"
+    android:paddingTop="@dimen/forums_item_icon_margin_top"
+    android:paddingBottom="@dimen/forums_item_icon_margin_bottom"/>
 
   <ImageView
     android:id="@+id/hide"
-    android:layout_width="@dimen/forums_item_icon_size"
-    android:layout_height="@dimen/forums_item_icon_size"
-    android:padding="@dimen/forums_item_icon_padding"/>
+    android:layout_width="@dimen/forums_item_icon_width"
+    android:layout_height="@dimen/forums_item_icon_height"
+    android:paddingLeft="@dimen/forums_item_icon_margin_left"
+    android:paddingRight="@dimen/forums_item_icon_margin_right"
+    android:paddingTop="@dimen/forums_item_icon_margin_top"
+    android:paddingBottom="@dimen/forums_item_icon_margin_bottom"/>
 
   <TextView
     android:id="@+id/name"
@@ -48,8 +52,11 @@
 
   <ImageView
     android:id="@+id/sort"
-    android:layout_width="@dimen/forums_item_icon_size"
-    android:layout_height="@dimen/forums_item_icon_size"
-    android:padding="@dimen/forums_item_icon_padding"/>
+    android:layout_width="@dimen/forums_item_icon_width"
+    android:layout_height="@dimen/forums_item_icon_height"
+    android:paddingLeft="@dimen/forums_item_icon_margin_right"
+    android:paddingRight="@dimen/forums_item_icon_margin_left"
+    android:paddingTop="@dimen/forums_item_icon_margin_top"
+    android:paddingBottom="@dimen/forums_item_icon_margin_bottom"/>
 
 </LinearLayout>

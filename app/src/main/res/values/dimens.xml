@@ -53,7 +53,11 @@
   <dimen name="threads_scene_right_drawer_width">192dp</dimen>
 
   <dimen name="forums_item_height">48dp</dimen>
-  <dimen name="forums_item_icon_size">48dp</dimen>
-  <dimen name="forums_item_icon_padding">12dp</dimen>
+  <dimen name="forums_item_icon_width">72dp</dimen>
+  <dimen name="forums_item_icon_height">48dp</dimen>
+  <dimen name="forums_item_icon_margin_top">12dp</dimen>
+  <dimen name="forums_item_icon_margin_bottom">12dp</dimen>
+  <dimen name="forums_item_icon_margin_left">16dp</dimen>
+  <dimen name="forums_item_icon_margin_right">32dp</dimen>
 
 </resources>
