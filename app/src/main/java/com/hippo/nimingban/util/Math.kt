@@ -81,6 +81,119 @@ fun Float.clamp(bound1: Float, bound2: Float): Float {
  */
 fun Float.lerp(from: Float, to: Float) = from + this * (to - from)
 
+/**
+ * Returns the largest (closest to positive infinity)
+ * `int` value that is less than or equal to the algebraic quotient.
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the quotient
+ */
+fun floorDiv(x: Int, y: Int): Int {
+  var r = x / y
+  // if the signs are different and modulo not zero, round down
+  if (x xor y < 0 && r * y != x) {
+    --r
+  }
+  return r
+}
+
+/**
+ * Returns the largest (closest to positive infinity)
+ * `long` value that is less than or equal to the algebraic quotient.
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the quotient
+ */
+fun floorDiv(x: Long, y: Long): Long {
+  var r = x / y
+  // if the signs are different and modulo not zero, round down
+  if (x xor y < 0 && r * y != x) {
+    --r
+  }
+  return r
+}
+
+/**
+ * Returns the floor modulus of the `int` arguments.
+ *
+ * The relationship between `floorDiv` and `floorMod` is such that:
+ * * `floorDiv(x, y) * y + floorMod(x, y) == x`
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the remainder
+ */
+fun floorMod(x: Int, y: Int): Int {
+  return x - floorDiv(x, y) * y
+}
+
+/**
+ * Returns the floor modulus of the `long` arguments.
+ *
+ * The relationship between `floorDiv` and `floorMod` is such that:
+ * * `floorDiv(x, y) * y + floorMod(x, y) == x`
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the remainder
+ */
+fun floorMod(x: Long, y: Long): Long {
+  return x - floorDiv(x, y) * y
+}
+
+/**
+ * Returns the smallest (closest to positive infinity)
+ * `int` value that is greater than or equal to the algebraic quotient.
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the quotient
+ */
+fun ceilDiv(x: Int, y: Int): Int {
+  return -floorDiv(-x, y)
+}
+
+/**
+ * Returns the smallest (closest to positive infinity)
+ * `long` value that is greater than or equal to the algebraic quotient.
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the quotient
+ */
+fun ceilDiv(x: Long, y: Long): Long {
+  return -floorDiv(-x, y)
+}
+
+/**
+ * Returns the ceil modulus of the `int` arguments.
+ *
+ * The relationship between `ceilDiv` and `ceilMod` is such that:
+ * * `ceilDiv(x, y) * y + ceilMod(x, y) == x`
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the remainder
+ */
+fun ceilMod(x: Int, y: Int): Int {
+  return x - ceilDiv(x, y) * y
+}
+
+/**
+ * Returns the ceil modulus of the `long` arguments.
+ *
+ * The relationship between `ceilDiv` and `ceilMod` is such that:
+ * * `ceilDiv(x, y) * y + ceilMod(x, y) == x`
+ *
+ * @param x the dividend
+ * @param y the divisor
+ * @return the remainder
+ */
+fun ceilMod(x: Long, y: Long): Long {
+  return x - ceilDiv(x, y) * y
+}
 
 private val random = Random()
 
