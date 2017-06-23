@@ -42,6 +42,7 @@ data class Forum(
 
   val init by lazy {
     id = _id ?: ""
+    name = _name ?: ""
     displayName = (_showName?.fromHtml() ?: "")
         .let { if (it.isNullOrBlank()) _name ?: "" else it }
         .let { if (it.isNullOrBlank()) DEFAULT_FORUM else it }
@@ -56,6 +57,8 @@ data class Forum(
   }
 
   var id: String = ""
+    private set
+  var name: String = ""
     private set
   var displayName: CharSequence = ""
     private set

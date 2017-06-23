@@ -32,18 +32,25 @@ abstract class DefaultToolbarLogic : NmbLogic(), ToolbarLogic {
       field = value
       if (value != null) {
         value.setTitle(title)
+        value.setSubtitle(subtitle)
         value.setNavigationIcon(icon)
         value.inflateMenu(menu)
       }
     }
 
   private var title: CharSequence? = null
+  private var subtitle: CharSequence? = null
   private var icon: Int = INVALID_ID
   private var menu: Int = INVALID_ID
 
   fun setTitle(title: CharSequence?) {
     this.title = title
     toolbarUi?.setTitle(title)
+  }
+
+  fun setSubtitle(subtitle: CharSequence?) {
+    this.subtitle = subtitle
+    toolbarUi?.setSubtitle(subtitle)
   }
 
   fun setNavigationIcon(icon: Int) {

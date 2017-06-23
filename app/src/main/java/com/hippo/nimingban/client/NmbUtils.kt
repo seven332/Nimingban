@@ -34,6 +34,8 @@ import java.util.regex.Pattern
  * Created by Hippo on 6/4/2017.
  */
 
+const val REPLY_PAGE_SIZE = 19
+
 private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault())
 
 // Kotlin need a way to initialize package-level val

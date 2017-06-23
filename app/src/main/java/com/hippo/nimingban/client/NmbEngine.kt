@@ -17,6 +17,7 @@
 package com.hippo.nimingban.client
 
 import com.hippo.nimingban.client.data.ForumGroup
+import com.hippo.nimingban.client.data.RepliesHtml
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.client.data.ThreadsHtml
 import io.reactivex.Single
@@ -50,6 +51,11 @@ interface NmbEngine {
   fun replies(
       @Url url: String
   ): Single<Thread>
+
+  @GET()
+  fun repliesHtml(
+      @Url url: String
+  ): Single<RepliesHtml>
 
   @FormUrlEncoded
   @POST(NMB_HTML_REPLY)

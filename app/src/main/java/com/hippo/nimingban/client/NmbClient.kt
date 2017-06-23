@@ -47,7 +47,7 @@ class NmbClient(private val engine: NmbEngine) {
   fun threadsHtml(forum: String, page: Int) = engine.threadsHtml(threadsHtmlUrl(forum, page))
 
   fun replies(id: String, page: Int) =
-      engine.replies(repliesUrl(id, page))
+      engine.replies(repliesApiUrl(id, page))
           .map {
             // Init the thread
             it.init
@@ -60,6 +60,8 @@ class NmbClient(private val engine: NmbEngine) {
             // Pack thread and reply list
             Pair(it, replies)
           } !!
+
+  fun repliesHtml(id: String, page: Int) = engine.repliesHtml(repliesHtmlUrl(id, page))
 
   fun post(
       name: String,

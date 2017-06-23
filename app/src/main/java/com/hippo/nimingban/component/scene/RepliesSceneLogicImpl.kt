@@ -40,15 +40,16 @@ import com.hippo.swipeback.SwipeBackLayout
 class RepliesSceneLogicImpl(
     id: String?,
     thread: Thread?,
+    forum: String?,
     val scene: NmbScene
 ) : GroupLogic(), RepliesSceneLogic {
 
   override var repliesSceneUi: RepliesSceneUi? = null
 
-  private val repliesLogic = RepliesLogicImpl(id, thread, scene).also { addChild(it) }
+  private val repliesLogic = RepliesLogicImpl(id, thread, forum, scene).also { addChild(it) }
   override var repliesUi: RepliesUi? = null
 
-  private val toolbarLogic = ToolbarLogicImpl(thread).also { addChild(it) }
+  private val toolbarLogic = ToolbarLogicImpl(thread, forum).also { addChild(it) }
   override var toolbarUi: ToolbarUi? = null
     set(value) {
       field = value
@@ -73,10 +74,11 @@ class RepliesSceneLogicImpl(
   override fun getSwipeBackLogic(): SwipeBackLogic = swipeBackLogic
 
 
-  private inner class ToolbarLogicImpl(thread: Thread?) : DefaultToolbarLogic() {
+  private inner class ToolbarLogicImpl(thread: Thread?, forum: String?) : DefaultToolbarLogic() {
 
     init {
       setTitle(thread)
+      if (!forum.isNullOrBlank()) setSubtitle(forum)
       setNavigationIcon(R.drawable.arrow_left_white_x24)
     }
 
@@ -95,11 +97,16 @@ class RepliesSceneLogicImpl(
   private inner class RepliesLogicImpl(
       id: String?,
       thread: Thread?,
+      forum: String?,
       scene: NmbScene
-  ) : DefaultRepliesLogic(id, thread, scene) {
+  ) : DefaultRepliesLogic(id, thread, forum, scene) {
 
     override fun onUpdateThread(thread: Thread) {
       toolbarLogic.setTitle(thread)
+    }
+
+    override fun onUpdateForum(forum: String) {
+      toolbarLogic.setSubtitle(forum)
     }
   }
 }

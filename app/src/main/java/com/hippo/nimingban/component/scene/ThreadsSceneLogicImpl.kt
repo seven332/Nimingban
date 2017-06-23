@@ -90,7 +90,7 @@ class ThreadsSceneLogicImpl(
     }
 
     fun onSetForum(forum: Forum?) {
-      setTitle(forum?.displayName ?: NMB_APP.getString(R.string.app_name))
+      setTitle(forum?.name ?: NMB_APP.getString(R.string.app_name))
     }
 
     override fun onClickNavigationIcon() {

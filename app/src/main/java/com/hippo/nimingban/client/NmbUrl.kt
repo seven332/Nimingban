@@ -40,9 +40,9 @@ const val NMB_API_REPLIES = NMB_HOST + "/Api/thread?appid=" + NMB_APP_ID
 
 const val NMB_HTML_THREADS = NMB_HOST + "/f/"
 
-const val NMB_HTML_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
+const val NMB_HTML_REPLIES = NMB_HOST + "/t/"
 
-fun forumsUrl() = NMB_API_FORUMS
+const val NMB_HTML_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
 
 fun timelineApiUrl(page: Int) =  NMB_API_TIMELINE + "&page=" + (page + 1)
 
@@ -56,7 +56,10 @@ fun threadsApiUrl(forum: String, page: Int): String {
 fun threadsHtmlUrl(forum: String, page: Int) =
     NMB_HTML_THREADS + forum + "?appid=" + NMB_APP_ID + "&page=" + (page + 1)
 
-fun repliesUrl(id: String, page: Int) = NMB_API_REPLIES + "&id=" + id + "&page=" + (page + 1)
+fun repliesApiUrl(id: String, page: Int) = NMB_API_REPLIES + "&id=" + id + "&page=" + (page + 1)
+
+fun repliesHtmlUrl(id: String, page: Int) =
+    NMB_HTML_REPLIES + id + "?appid=" + NMB_APP_ID + "&page=" + (page + 1)
 
 // TODO check NMB_DOMAIN, and image host
 fun isNmbUrl(url: HttpUrl): Boolean = true

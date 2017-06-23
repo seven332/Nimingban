@@ -79,7 +79,7 @@ open class DefaultThreadsLogic(
   }
 
   override fun onClickThread(thread: Thread) {
-    scene.stage?.pushScene(thread.repliesScene())
+    scene.stage?.pushScene(thread.repliesScene(forum?.name))
   }
 
   override fun onClickThumb(reply: Reply) {
@@ -101,7 +101,7 @@ open class DefaultThreadsLogic(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-              // Update pages if the
+              // Update pages
               val pages = it.second.pages
               if (pages != Int.MAX_VALUE) {
                 this@DefaultThreadsLogic.pages = pages

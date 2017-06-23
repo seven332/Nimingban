@@ -58,6 +58,10 @@ class DefaultToolbarUi(
     toolbar.title = title
   }
 
+  override fun setSubtitle(subtitle: CharSequence?) {
+    toolbar.subtitle = subtitle
+  }
+
   override fun setNavigationIcon(resId: Int) {
     if (resId != INVALID_ID) {
       toolbar.navigationIcon = AppCompatResources.getDrawable(context, resId)

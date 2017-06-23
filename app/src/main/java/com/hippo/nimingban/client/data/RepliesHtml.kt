@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.component.paper
-
-import com.hippo.nimingban.architecture.Ui
+package com.hippo.nimingban.client.data
 
 /*
- * Created by Hippo on 6/19/2017.
+ * Created by Hippo on 6/23/2017.
  */
 
-interface ToolbarUi : Ui {
-
-  fun setTitle(title: CharSequence?)
-
-  fun setSubtitle(subtitle: CharSequence?)
-
-  fun setNavigationIcon(resId: Int)
-
-  fun inflateMenu(resId: Int)
-}
+data class RepliesHtml(
+    val forum: String,
+    val pages: Int
+)

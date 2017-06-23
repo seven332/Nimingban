@@ -18,16 +18,20 @@ package com.hippo.nimingban.component.paper.impl
 
 import android.text.style.ClickableSpan
 import com.hippo.nimingban.NMB_CLIENT
+import com.hippo.nimingban.client.REPLY_PAGE_SIZE
+import com.hippo.nimingban.client.data.RepliesHtml
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.paper.RepliesLogic
 import com.hippo.nimingban.component.scene.galleryScene
+import com.hippo.nimingban.util.ceilDiv
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 
 /*
@@ -37,6 +41,7 @@ import io.reactivex.schedulers.Schedulers
 abstract class DefaultRepliesLogic(
     private val id: String?,
     private var thread: Thread?,
+    private var forum: String?,
     private val scene: NmbScene
 ) : NmbLogic(), RepliesLogic {
 
@@ -79,6 +84,11 @@ abstract class DefaultRepliesLogic(
    */
   abstract fun onUpdateThread(thread: Thread)
 
+  /**
+   * Called when the forum updated.
+   */
+  abstract fun onUpdateForum(forum: String)
+
 
   private  inner class RepliesData : ContentData<Reply>() {
 
@@ -87,16 +97,30 @@ abstract class DefaultRepliesLogic(
     override fun onRequireData(id: Int, page: Int) {
       val threadId = this.threadId
       if (threadId != null) {
+        // Try to parse html to get max page
+        val htmlSingle = NMB_CLIENT.repliesHtml(threadId, page)
+            // If error, max page is Int.MAX_VALUE
+            .onErrorReturn { it.printStackTrace(); RepliesHtml("", Int.MAX_VALUE) }
         NMB_CLIENT.replies(threadId, page)
+            .zipWith(htmlSingle) { (thread, replies), html -> Triple(thread, replies, html) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-              if (thread == null) {
-                thread = it.first
-                onUpdateThread(it.first)
+            .subscribe({ (thread, replies, html) ->
+              // Calculate page
+              val pages =
+                  if (thread.replies.size < REPLY_PAGE_SIZE) page + 1
+                  else ceilDiv(thread.replyCount, REPLY_PAGE_SIZE)
+              // Update thread
+              if (this@DefaultRepliesLogic.thread == null) {
+                this@DefaultRepliesLogic.thread = thread
+                onUpdateThread(thread)
               }
-              // TODO need a better way to get max page
-              setData(id, it.second, Int.MAX_VALUE)
+              // Update forum
+              if (!html.forum.isNullOrBlank() && forum != html.forum) {
+                forum = html.forum
+                onUpdateForum(forum!!)
+              }
+              setData(id, replies, pages)
             }, {
               setError(id, it)
             })

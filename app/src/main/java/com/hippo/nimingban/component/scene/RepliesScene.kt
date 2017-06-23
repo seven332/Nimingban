@@ -37,6 +37,7 @@ class RepliesScene : NmbScene() {
   companion object {
     const val KEY_ID = "RepliesScene:id"
     const val KEY_THREAD = "RepliesScene:thread"
+    const val KEY_FORUM = "RepliesScene:forum"
   }
 
   init {
@@ -46,11 +47,13 @@ class RepliesScene : NmbScene() {
   override fun createLogic(args: Bundle?): SceneLogic {
     var id: String? = null
     var thread: Thread? = null
+    var forum: String? = null
     if (args != null) {
       id = args.getString(KEY_ID)
       thread = args.getParcelable(KEY_THREAD)
+      forum = args.getString(KEY_FORUM)
     }
-    return RepliesSceneLogicImpl(id, thread, this)
+    return RepliesSceneLogicImpl(id, thread, forum, this)
   }
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup): SceneUi {
@@ -81,9 +84,10 @@ class RepliesScene : NmbScene() {
   }
 }
 
-fun Thread.repliesScene(): RepliesScene {
+fun Thread.repliesScene(forum: String?): RepliesScene {
   val args = Bundle()
   args.putParcelable(RepliesScene.KEY_THREAD, this)
+  args.putString(RepliesScene.KEY_FORUM, forum)
   val scene = RepliesScene()
   scene.args = args
   return scene
