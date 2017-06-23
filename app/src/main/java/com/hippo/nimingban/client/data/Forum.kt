@@ -21,6 +21,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.hippo.nimingban.util.fromHtml
+import java.net.URLEncoder
 
 /*
  * Created by Hippo on 6/12/2017.
@@ -46,6 +47,12 @@ data class Forum(
         .let { if (it.isNullOrBlank()) DEFAULT_FORUM else it }
     displayMessage = (_msg?.fromHtml() ?: "")
         .let { if (it.isNullOrBlank()) DEFAULT_MESSAGE else it }
+
+    if (_name != null) {
+      try {
+        htmlName = URLEncoder.encode(_name, "UTF-8")
+      } catch (e: Throwable) { /* Ignore error */ }
+    }
   }
 
   var id: String = ""
@@ -53,6 +60,8 @@ data class Forum(
   var displayName: CharSequence = ""
     private set
   var displayMessage: CharSequence = ""
+    private set
+  var htmlName: String = ""
     private set
 
   /** Whether the forum is from api **/

@@ -36,13 +36,15 @@ class NmbClient(private val engine: NmbEngine) {
           } !!
 
   fun threads(forum: String, page: Int) =
-      engine.threads(threadsUrl(forum, page))
+      engine.threads(threadsApiUrl(forum, page))
           .map {
             // Init all threads
             it.forEach { it.init }
             // Return it self
             it
           } !!
+
+  fun threadsHtml(forum: String, page: Int) = engine.threadsHtml(threadsHtmlUrl(forum, page))
 
   fun replies(id: String, page: Int) =
       engine.replies(repliesUrl(id, page))

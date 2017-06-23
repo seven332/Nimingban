@@ -18,6 +18,7 @@ package com.hippo.nimingban.client
 
 import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.client.data.ThreadsHtml
 import io.reactivex.Single
 import okhttp3.RequestBody
 import retrofit2.http.Field
@@ -41,12 +42,17 @@ interface NmbEngine {
   ): Single<List<Thread>>
 
   @GET()
+  fun threadsHtml(
+      @Url url: String
+  ): Single<ThreadsHtml>
+
+  @GET()
   fun replies(
       @Url url: String
   ): Single<Thread>
 
   @FormUrlEncoded
-  @POST(NMB_API_REPLY)
+  @POST(NMB_HTML_REPLY)
   fun post(
       @Field("name") name: String,
       @Field("email") email: String,

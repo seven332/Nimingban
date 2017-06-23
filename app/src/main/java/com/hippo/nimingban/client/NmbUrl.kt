@@ -38,18 +38,23 @@ const val NMB_API_THREADS = NMB_HOST + "/Api/showf?appid=" + NMB_APP_ID
 
 const val NMB_API_REPLIES = NMB_HOST + "/Api/thread?appid=" + NMB_APP_ID
 
-const val NMB_API_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
+const val NMB_HTML_THREADS = NMB_HOST + "/f/"
+
+const val NMB_HTML_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
 
 fun forumsUrl() = NMB_API_FORUMS
 
-fun timelineUrl(page: Int) =  NMB_API_TIMELINE + "&page=" + (page + 1)
+fun timelineApiUrl(page: Int) =  NMB_API_TIMELINE + "&page=" + (page + 1)
 
-fun threadsUrl(forum: String, page: Int): String {
+fun threadsApiUrl(forum: String, page: Int): String {
   return when (forum) {
-    NMB_FORUM_TIMELINE -> timelineUrl(page)
+    NMB_FORUM_TIMELINE -> timelineApiUrl(page)
     else -> NMB_API_THREADS + "&id=" + forum + "&page=" + (page + 1)
   }
 }
+
+fun threadsHtmlUrl(forum: String, page: Int) =
+    NMB_HTML_THREADS + forum + "?appid=" + NMB_APP_ID + "&page=" + (page + 1)
 
 fun repliesUrl(id: String, page: Int) = NMB_API_REPLIES + "&id=" + id + "&page=" + (page + 1)
 

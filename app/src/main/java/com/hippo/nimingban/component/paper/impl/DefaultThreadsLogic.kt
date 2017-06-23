@@ -21,6 +21,7 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.client.data.ThreadsHtml
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.paper.ThreadsLogic
 import com.hippo.nimingban.component.scene.galleryScene
@@ -31,6 +32,7 @@ import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.stage.Scene
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 
 /*
@@ -43,12 +45,15 @@ open class DefaultThreadsLogic(
 
   private val data = ThreadsData()
 
+  var pages: Int = Int.MAX_VALUE
   var forum: Forum? = null
     set(value) {
       val oldValue = field
       field = value
       // Refresh if the forum id is different or null
       if (value?.id != oldValue?.id || value?.id == null) {
+        // Reset pages
+        pages = Int.MAX_VALUE
         data.goTo(0)
       }
     }
@@ -87,10 +92,24 @@ open class DefaultThreadsLogic(
     override fun onRequireData(id: Int, page: Int) {
       val forum = this@DefaultThreadsLogic.forum
       if (forum != null) {
+        // Try to parse html to get max page
+        val htmlSingle = NMB_CLIENT.threadsHtml(forum.htmlName, page)
+            // If error, max page is Int.MAX_VALUE
+            .onErrorReturn { ThreadsHtml(Int.MAX_VALUE) }
         NMB_CLIENT.threads(forum.id, page)
+            .zipWith(htmlSingle) { t1, t2 -> Pair(t1, t2) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ setData(id, it, Int.MAX_VALUE) }, { setError(id, it) })
+            .subscribe({
+              // Update pages if the
+              val pages = it.second.pages
+              if (pages != Int.MAX_VALUE) {
+                this@DefaultThreadsLogic.pages = pages
+              }
+              setData(id, it.first, this@DefaultThreadsLogic.pages)
+            }, {
+              setError(id, it)
+            })
             .register()
       } else {
         schedule { setError(id, PresetException("No forum", R.string.error_no_forum, R.drawable.emoticon_sad_primary_x64)) }
