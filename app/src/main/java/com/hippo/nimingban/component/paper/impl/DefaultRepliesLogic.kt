@@ -31,7 +31,7 @@ import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.zipWith
+import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
 
 /*
@@ -97,13 +97,14 @@ abstract class DefaultRepliesLogic(
     override fun onRequireData(id: Int, page: Int) {
       val threadId = this.threadId
       if (threadId != null) {
-        // Try to parse html to get max page
-        val htmlSingle = NMB_CLIENT.repliesHtml(threadId, page)
-            // If error, max page is Int.MAX_VALUE
-            .onErrorReturn { it.printStackTrace(); RepliesHtml("", Int.MAX_VALUE) }
-        NMB_CLIENT.replies(threadId, page)
-            .zipWith(htmlSingle) { (thread, replies), html -> Triple(thread, replies, html) }
-            .subscribeOn(Schedulers.io())
+        Singles
+            .zip(
+                NMB_CLIENT.replies(threadId, page)
+                    .subscribeOn(Schedulers.io()),
+                NMB_CLIENT.repliesHtml(threadId, page)
+                    .subscribeOn(Schedulers.io())
+                    .onErrorReturn { it.printStackTrace(); RepliesHtml("", Int.MAX_VALUE) },
+                { (thread, replies), html -> Triple(thread, replies, html) })
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ (thread, replies, html) ->
               // Calculate page

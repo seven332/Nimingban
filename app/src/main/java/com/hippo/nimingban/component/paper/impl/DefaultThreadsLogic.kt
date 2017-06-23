@@ -32,7 +32,7 @@ import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.stage.Scene
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.zipWith
+import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
 
 /*
@@ -92,21 +92,22 @@ open class DefaultThreadsLogic(
     override fun onRequireData(id: Int, page: Int) {
       val forum = this@DefaultThreadsLogic.forum
       if (forum != null) {
-        // Try to parse html to get max page
-        val htmlSingle = NMB_CLIENT.threadsHtml(forum.htmlName, page)
-            // If error, max page is Int.MAX_VALUE
-            .onErrorReturn { ThreadsHtml(Int.MAX_VALUE) }
-        NMB_CLIENT.threads(forum.id, page)
-            .zipWith(htmlSingle) { t1, t2 -> Pair(t1, t2) }
-            .subscribeOn(Schedulers.io())
+        Singles
+            .zip(
+                NMB_CLIENT.threads(forum.id, page)
+                    .subscribeOn(Schedulers.io()),
+                NMB_CLIENT.threadsHtml(forum.htmlName, page)
+                    .subscribeOn(Schedulers.io())
+                    .onErrorReturn { ThreadsHtml(Int.MAX_VALUE) },
+                { list, html -> Pair(list, html) })
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+            .subscribe({ (list, html) ->
               // Update pages
-              val pages = it.second.pages
+              val pages = html.pages
               if (pages != Int.MAX_VALUE) {
                 this@DefaultThreadsLogic.pages = pages
               }
-              setData(id, it.first, this@DefaultThreadsLogic.pages)
+              setData(id, list, this@DefaultThreadsLogic.pages)
             }, {
               setError(id, it)
             })
