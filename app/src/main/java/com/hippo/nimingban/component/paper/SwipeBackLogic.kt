@@ -16,14 +16,37 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.component.NmbLogic
+import com.hippo.stage.Scene
 
 /*
  * Created by Hippo on 6/21/2017.
  */
 
-interface SwipeBackLogic : Logic {
+class SwipeBackLogic(
+    val scene: Scene
+) : NmbLogic() {
 
-  /** Called when user swipes the ui to finish it **/
-  fun onFinishUi()
+  var swipeBackUi: SwipeBackUi? = null
+    set(value) {
+      field = value
+      value?.setSwipeEdge(edge)
+    }
+
+  private var edge: Int = 0
+
+  /**
+   * Called when user swipes the ui to finish it
+   */
+  fun onFinishUi() {
+    scene.pop()
+  }
+
+  /**
+   * Set the edge to enable swiping.
+   */
+  fun setSwipeEdge(edge: Int) {
+    this.edge = edge
+    swipeBackUi?.setSwipeEdge(edge)
+  }
 }

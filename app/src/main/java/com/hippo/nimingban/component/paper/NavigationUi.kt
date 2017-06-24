@@ -16,10 +16,32 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Ui
+import android.support.design.widget.NavigationView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import com.hippo.nimingban.R
+import com.hippo.nimingban.component.NmbUi
+import com.hippo.nimingban.util.find
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
-interface NavigationUi : Ui
+class NavigationUi(
+    logic: NavigationLogic,
+    inflater: LayoutInflater,
+    container: ViewGroup
+) : NmbUi() {
+
+  override val view: View
+
+  init {
+    view = inflater.inflate(R.layout.ui_navigation, container, false)
+    val navigation = view.find<NavigationView>(R.id.navigation)
+    val button = view.find<Button>(R.id.button)
+
+    navigation.setNavigationItemSelectedListener { logic.onSelectNavigationItem(it) }
+  }
+}

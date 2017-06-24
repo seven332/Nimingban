@@ -16,12 +16,35 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.NMB_DB
+import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.component.NmbLogic
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 /*
  * Created by Hippo on 6/22/2017.
  */
 
-interface ForumsLogic : Logic {
+class ForumsLogic : NmbLogic() {
 
+  var forumsUi: ForumsUi? = null
+    set(value) {
+      field = value
+      value?.onUpdateForums(forums)
+    }
+
+  private var forums: List<Forum> = emptyList()
+
+  init {
+    NMB_DB.liveForums.observable
+        .map { it.toList() }
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({ onUpdateForums(it) }, { /* Ignore error */ })
+        .register()
+  }
+
+  private fun onUpdateForums(forums: List<Forum>) {
+    this.forums = forums
+    forumsUi?.onUpdateForums(forums)
+  }
 }

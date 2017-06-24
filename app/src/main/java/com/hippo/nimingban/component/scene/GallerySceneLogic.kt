@@ -16,28 +16,45 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Logic
+import android.view.MenuItem
+import com.hippo.nimingban.R
+import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.paper.GalleryLogic
-import com.hippo.nimingban.component.paper.GalleryUi
 import com.hippo.nimingban.component.paper.SwipeBackLogic
-import com.hippo.nimingban.component.paper.SwipeBackUi
 import com.hippo.nimingban.component.paper.ToolbarLogic
-import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.stage.Scene
+import com.hippo.swipeback.SwipeBackLayout
 
 /*
  * Created by Hippo on 6/21/2017.
  */
 
-interface GallerySceneLogic : Logic {
+class GallerySceneLogic(
+    val scene: Scene
+) : GroupLogic() {
 
-  var gallerySceneUi: GallerySceneUi?
+  val swipeBackLogic: SwipeBackLogic = SwipeBackLogic(scene).also { addChild(it) }
+  val toolbarLogic: ToolbarLogic = GalleryToolbarLogic().also { addChild(it) }
+  val galleryLogic: GalleryLogic = GalleryLogic().also { addChild(it) }
 
-  fun getGalleryLogic(): GalleryLogic
-  var galleryUi: GalleryUi?
+  init {
+    swipeBackLogic.setSwipeEdge(SwipeBackLayout.EDGE_LEFT or SwipeBackLayout.EDGE_RIGHT)
+  }
 
-  fun getToolbarLogic(): ToolbarLogic
-  var toolbarUi: ToolbarUi?
 
-  fun getSwipeBackLogic(): SwipeBackLogic
-  var swipeBackUi: SwipeBackUi?
+  private inner class GalleryToolbarLogic: ToolbarLogic() {
+
+    init {
+      setNavigationIcon(R.drawable.arrow_left_white_x24)
+    }
+
+    override fun onClickNavigationIcon() {
+      scene.pop()
+    }
+
+    override fun onClickMenuItem(item: MenuItem): Boolean {
+      // TODO("not implemented")
+      return false
+    }
+  }
 }

@@ -17,18 +17,26 @@
 package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import com.hippo.nimingban.component.NmbScene
+import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.client.data.Thread
 
 /*
- * Created by Hippo on 6/22/2017.
+ * Created by Hippo on 6/24/2017.
  */
 
-class ForumsScene : NmbScene() {
+fun Thread.repliesScene(forum: String?): RepliesScene {
+  val args = Bundle()
+  args.putParcelable(RepliesScene.KEY_THREAD, this)
+  args.putString(RepliesScene.KEY_FORUM, forum)
+  val scene = RepliesScene()
+  scene.args = args
+  return scene
+}
 
-  override fun createLogic(args: Bundle?) = ForumsSceneLogic(this)
-
-  override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
-      ForumsSceneUi(logic as ForumsSceneLogic, inflater, container)
+fun Reply.galleryScene(): GalleryScene {
+  val args = Bundle()
+  args.putParcelable(GalleryScene.KEY_REPLY, this)
+  val scene = GalleryScene()
+  scene.args = args
+  return scene
 }

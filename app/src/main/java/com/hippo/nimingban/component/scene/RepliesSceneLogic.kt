@@ -16,28 +16,73 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Logic
+import android.view.MenuItem
+import com.hippo.nimingban.NMB_APP
+import com.hippo.nimingban.R
+import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.component.GroupLogic
+import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.paper.RepliesLogic
-import com.hippo.nimingban.component.paper.RepliesUi
 import com.hippo.nimingban.component.paper.SwipeBackLogic
-import com.hippo.nimingban.component.paper.SwipeBackUi
 import com.hippo.nimingban.component.paper.ToolbarLogic
-import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.swipeback.SwipeBackLayout
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
-interface RepliesSceneLogic : Logic {
+class RepliesSceneLogic(
+    id: String?,
+    thread: Thread?,
+    forum: String?,
+    val scene: NmbScene
+) : GroupLogic() {
 
-  var repliesSceneUi: RepliesSceneUi?
+  val swipeBackLogic: SwipeBackLogic = SwipeBackLogic(scene).also { addChild(it) }
+  val toolbarLogic: ToolbarLogic = RepliesToolbarLogic(thread, forum).also { addChild(it) }
+  val repliesLogic: RepliesLogic = RepliesLogicImpl(id, thread, forum, scene).also { addChild(it) }
 
-  fun getRepliesLogic(): RepliesLogic
-  var repliesUi: RepliesUi?
+  init {
+    swipeBackLogic.setSwipeEdge(SwipeBackLayout.EDGE_LEFT or SwipeBackLayout.EDGE_RIGHT)
+  }
 
-  fun getToolbarLogic(): ToolbarLogic
-  var toolbarUi: ToolbarUi?
 
-  fun getSwipeBackLogic(): SwipeBackLogic
-  var swipeBackUi: SwipeBackUi?
+  private inner class RepliesToolbarLogic(
+      thread: Thread?,
+      forum: String?
+  ) : ToolbarLogic() {
+
+    init {
+      setTitle(thread)
+      if (!forum.isNullOrBlank()) setSubtitle(forum)
+      setNavigationIcon(R.drawable.arrow_left_white_x24)
+    }
+
+    fun setTitle(thread: Thread?) {
+      setTitle(thread?.displayId ?: NMB_APP.getString(R.string.app_name))
+    }
+
+    override fun onClickNavigationIcon() {
+      scene.pop()
+    }
+
+    override fun onClickMenuItem(item: MenuItem): Boolean { return false }
+  }
+
+
+  private inner class RepliesLogicImpl(
+      id: String?,
+      thread: Thread?,
+      forum: String?,
+      scene: NmbScene
+  ) : RepliesLogic(id, thread, forum, scene) {
+
+    override fun onUpdateThread(thread: Thread) {
+      (toolbarLogic as RepliesToolbarLogic).setTitle(thread)
+    }
+
+    override fun onUpdateForum(forum: String) {
+      toolbarLogic.setSubtitle(forum)
+    }
+  }
 }

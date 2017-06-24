@@ -17,13 +17,16 @@
 package com.hippo.nimingban.component.paper
 
 import android.view.MenuItem
-import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.component.NmbLogic
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
-interface NavigationLogic : Logic {
+abstract class NavigationLogic : NmbLogic() {
 
-  fun onSelectNavigationItem(item: MenuItem): Boolean
+  /**
+   * Called when user click items.
+   */
+  abstract fun onSelectNavigationItem(item: MenuItem): Boolean
 }

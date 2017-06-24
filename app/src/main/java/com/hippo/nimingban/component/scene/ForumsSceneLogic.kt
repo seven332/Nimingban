@@ -16,23 +16,40 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Logic
+import android.view.MenuItem
+import com.hippo.nimingban.NMB_APP
+import com.hippo.nimingban.R
+import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.paper.ForumsLogic
-import com.hippo.nimingban.component.paper.ForumsUi
 import com.hippo.nimingban.component.paper.ToolbarLogic
-import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.stage.Scene
 
 /*
  * Created by Hippo on 6/22/2017.
  */
 
-interface ForumsSceneLogic : Logic {
+class ForumsSceneLogic(
+    val scene: Scene
+) : GroupLogic() {
 
-  var forumsSceneUi: ForumsSceneUi?
+  val toolbarLogic: ToolbarLogic = ForumsToolbarLogic().also { addChild(it) }
+  val forumsLogic: ForumsLogic = ForumsLogic().also { addChild(it) }
 
-  fun getForumsLogic(): ForumsLogic
-  var forumsUi: ForumsUi?
 
-  fun getToolbarLogic(): ToolbarLogic
-  var toolbarUi: ToolbarUi?
+  private inner class ForumsToolbarLogic : ToolbarLogic() {
+
+    init {
+      setTitle(NMB_APP.getString(R.string.forums_title))
+      setNavigationIcon(R.drawable.arrow_left_white_x24)
+    }
+
+    override fun onClickNavigationIcon() {
+      scene.pop()
+    }
+
+    override fun onClickMenuItem(item: MenuItem): Boolean {
+      // TODO("not implemented")
+      return false
+    }
+  }
 }

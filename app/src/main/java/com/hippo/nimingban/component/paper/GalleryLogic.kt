@@ -16,11 +16,10 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Logic
+import com.hippo.nimingban.component.NmbLogic
 
 /*
  * Created by Hippo on 6/21/2017.
  */
 
-interface GalleryLogic : Logic {
-}
+class GalleryLogic : NmbLogic()

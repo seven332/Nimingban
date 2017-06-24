@@ -16,10 +16,36 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Ui
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.component.GroupUi
+import com.hippo.nimingban.component.paper.SwipeBackUi
+import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.nimingban.component.paper.gallery
+import com.hippo.nimingban.component.paper.swipeBack
+import com.hippo.nimingban.component.paper.toolbar
 
 /*
  * Created by Hippo on 6/21/2017.
  */
 
-interface GallerySceneUi : Ui
+class GallerySceneUi(
+    logic: GallerySceneLogic,
+    reply: Reply?,
+    override val inflater: LayoutInflater,
+    container: ViewGroup
+) : GroupUi() {
+
+  override val view: View
+
+  init {
+    swipeBack(logic.swipeBackLogic, container) {
+      toolbar(logic.toolbarLogic, SwipeBackUi.CONTAINER_ID) {
+        gallery(logic.galleryLogic, reply, ToolbarUi.CONTAINER_ID)
+      }
+    }
+    view = getChild(0).view
+  }
+}

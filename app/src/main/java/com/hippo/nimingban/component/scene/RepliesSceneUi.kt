@@ -16,10 +16,36 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Ui
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.component.GroupUi
+import com.hippo.nimingban.component.paper.SwipeBackUi
+import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.nimingban.component.paper.replies
+import com.hippo.nimingban.component.paper.swipeBack
+import com.hippo.nimingban.component.paper.toolbar
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
-interface RepliesSceneUi : Ui
+class RepliesSceneUi(
+    logic: RepliesSceneLogic,
+    activity: NmbActivity,
+    override val inflater: LayoutInflater,
+    container: ViewGroup
+) : GroupUi() {
+
+  override val view: View
+
+  init {
+    swipeBack(logic.swipeBackLogic, container) {
+      toolbar(logic.toolbarLogic, SwipeBackUi.CONTAINER_ID) {
+        replies(logic.repliesLogic, activity, ToolbarUi.CONTAINER_ID)
+      }
+    }
+    view = getChild(0).view
+  }
+}

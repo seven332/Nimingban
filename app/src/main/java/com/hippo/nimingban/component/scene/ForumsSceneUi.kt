@@ -16,16 +16,30 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Ui
-import com.hippo.nimingban.component.paper.ForumsLogic
-import com.hippo.nimingban.component.paper.ForumsUi
-import com.hippo.nimingban.component.paper.ToolbarLogic
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.component.GroupUi
 import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.nimingban.component.paper.forums
+import com.hippo.nimingban.component.paper.toolbar
 
 /*
  * Created by Hippo on 6/22/2017.
  */
 
-interface ForumsSceneUi : Ui {
+class ForumsSceneUi(
+    logic: ForumsSceneLogic,
+    override val inflater: LayoutInflater,
+    container: ViewGroup
+) : GroupUi() {
 
+  override val view: View
+
+  init {
+    toolbar(logic.toolbarLogic, container) {
+      forums(logic.forumsLogic, ToolbarUi.CONTAINER_ID)
+    }
+    view = getChild(0).view
+  }
 }

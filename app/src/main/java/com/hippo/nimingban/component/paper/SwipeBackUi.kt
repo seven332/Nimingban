@@ -16,13 +16,55 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Ui
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.R
+import com.hippo.nimingban.component.GroupUi
+import com.hippo.nimingban.util.find
+import com.hippo.swipeback.SwipeBackLayout
 
 /*
  * Created by Hippo on 6/21/2017.
  */
 
-interface SwipeBackUi : Ui {
+class SwipeBackUi(
+    val logic: SwipeBackLogic,
+    override val inflater: LayoutInflater,
+    container: ViewGroup
+) : GroupUi() {
 
-  fun setSwipeEdge(edge: Int)
+  companion object {
+    const val CONTAINER_ID = R.id.swipe_back_container
+  }
+
+  override val view: View
+  private val swipeBack: SwipeBackLayout
+
+  init {
+    view = inflater.inflate(R.layout.ui_swipe_back, container, false)
+    swipeBack = view.find<SwipeBackLayout>(R.id.swipe_back)
+
+    swipeBack.addSwipeListener(object : SwipeBackLayout.SwipeListener {
+      override fun onFinish() {
+        logic.onFinishUi()
+      }
+      override fun onSwipe(percent: Float) {}
+      override fun onSwipeOverThreshold() {}
+      override fun onStateChange(edge: Int, state: Int) {}
+    })
+
+    // Bind the ui to logic
+    logic.swipeBackUi = this
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    // Unbind the ui from logic
+    logic.swipeBackUi = null
+  }
+
+  fun setSwipeEdge(edge: Int) {
+    swipeBack.swipeEdge = edge
+  }
 }

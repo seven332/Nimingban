@@ -16,15 +16,68 @@
 
 package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.architecture.Ui
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.drawerlayout.DrawerLayout
+import com.hippo.nimingban.R
+import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.component.GroupUi
+import com.hippo.nimingban.component.paper.ToolbarUi
+import com.hippo.nimingban.component.paper.forumList
+import com.hippo.nimingban.component.paper.navigation
+import com.hippo.nimingban.component.paper.threads
+import com.hippo.nimingban.component.paper.toolbar
+import com.hippo.nimingban.util.find
 
 /*
  * Created by Hippo on 6/19/2017.
  */
 
-interface ThreadsSceneUi : Ui {
+class ThreadsSceneUi(
+    private val logic: ThreadsSceneLogic,
+    activity: NmbActivity,
+    override val inflater: LayoutInflater,
+    container: ViewGroup
+) : GroupUi() {
 
-  fun toggleLeftDrawer()
+  override val view: View
+  val drawerLayout: DrawerLayout
 
-  fun closeRightDrawer()
+  init {
+    view = inflater.inflate(R.layout.ui_threads_scene, container, false)
+    drawerLayout = view.find(R.id.drawer_layout)
+
+    toolbar(logic.threadsToolbarLogic, R.id.drawer_content) {
+      threads(logic.threadsLogic, activity, ToolbarUi.CONTAINER_ID)
+    }
+
+    navigation(logic.navigationLogic, R.id.left_drawer)
+
+    toolbar(logic.forumListToolbarLogic, R.id.right_drawer) {
+      forumList(logic.forumListLogic, ToolbarUi.CONTAINER_ID)
+    }
+
+    // Bind the ui to logic
+    logic.threadsSceneUi = this
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    // Unbind the ui from logic
+    logic.threadsSceneUi = null
+  }
+
+  fun toggleLeftDrawer() {
+    if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+      drawerLayout.closeDrawer(Gravity.LEFT)
+    } else {
+      drawerLayout.openDrawer(Gravity.LEFT)
+    }
+  }
+
+  fun closeRightDrawer() {
+    drawerLayout.closeDrawer(Gravity.RIGHT)
+  }
 }

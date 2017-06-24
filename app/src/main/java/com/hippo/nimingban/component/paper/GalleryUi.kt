@@ -16,11 +16,32 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Ui
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hippo.nimingban.R
+import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.component.NmbUi
+import com.hippo.nimingban.util.find
+import com.hippo.nimingban.widget.nmb.NmbImage
 
 /*
  * Created by Hippo on 6/21/2017.
  */
 
-interface GalleryUi : Ui {
+class GalleryUi(
+    logic: GalleryLogic,
+    reply: Reply?,
+    inflater: LayoutInflater,
+    container: ViewGroup
+) : NmbUi() {
+
+  override val view: View
+  private val image: NmbImage
+
+  init {
+    view = inflater.inflate(R.layout.ui_gallery, container, false)
+    image = view.find(R.id.image)
+    image.loadImage(reply?.image)
+  }
 }

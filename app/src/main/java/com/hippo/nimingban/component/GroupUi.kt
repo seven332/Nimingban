@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 
 /*
@@ -24,18 +25,28 @@ import android.view.ViewGroup
 
 abstract class GroupUi : NmbUi() {
 
+  abstract val inflater: LayoutInflater
+
   private val children = mutableListOf<SceneUi>()
 
   fun addChild(ui: SceneUi) {
     children.add(ui)
   }
 
+  fun getChild(index: Int) = children[index]
+
   /**
    * Create a child ui with special container and index.
    */
-  fun <T : SceneUi> inflateChild(creator: (ViewGroup) -> T, containerId: Int, index: Int): T {
+  fun <T : SceneUi> inflateChild(
+      containerId: Int,
+      index: Int,
+      creator: (ViewGroup) -> T,
+      init: T.() -> Unit = {}
+  ): T {
     val container = view.findViewById(containerId) as ViewGroup
     val child = creator(container)
+    child.init()
     container.addView(child.view, index)
     children.add(child)
     return child

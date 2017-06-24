@@ -16,16 +16,88 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.architecture.Ui
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.component.NmbUi
+import com.hippo.nimingban.util.INVALID_INDEX
+import com.hippo.nimingban.util.find
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
-interface ForumListUi : Ui {
+class ForumListUi(
+    val logic: ForumListLogic,
+    val inflater: LayoutInflater,
+    container: ViewGroup
+) : NmbUi() {
 
-  fun onUpdateForums(forums: List<Forum>)
+  override val view: View
+  private val context = inflater.context
+  private val adapter: ForumAdapter
+  private var forums: List<Forum> = emptyList()
 
-  fun onUpdateSelectedIndex(oldIndex: Int, newIndex: Int)
+  init {
+    view = inflater.inflate(R.layout.ui_forum_list, container, false)
+
+    adapter = ForumAdapter()
+
+    val recyclerView = view.find<RecyclerView>(R.id.forum_list)
+    recyclerView.adapter = adapter
+    recyclerView.layoutManager = LinearLayoutManager(context)
+
+    // Bind the ui to logic
+    logic.forumListUi = this
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    // Unbind the ui from logic
+    logic.forumListUi = null
+  }
+
+  fun onUpdateForums(forums: List<Forum>) {
+    this.forums = forums
+    adapter.notifyDataSetChanged()
+  }
+
+  fun onUpdateSelectedIndex(oldIndex: Int, newIndex: Int) {
+    if (oldIndex != INVALID_INDEX) {
+      adapter.notifyItemChanged(oldIndex)
+    }
+    if (newIndex != INVALID_INDEX) {
+      adapter.notifyItemChanged(newIndex)
+    }
+  }
+
+
+  private inner class ForumHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val text = itemView.findViewById(R.id.text) as TextView
+
+    val item: Forum? get() = adapterPosition.takeIf { it in 0 until forums.size }?.let { forums[it] }
+
+    init {
+      itemView.setOnClickListener { item?.let { logic.onSelectForum(it, adapterPosition) } }
+    }
+  }
+
+
+  private inner class ForumAdapter : RecyclerView.Adapter<ForumHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ForumHolder(inflater.inflate(R.layout.forum_list_item, parent, false))
+
+    override fun onBindViewHolder(holder: ForumHolder, position: Int) {
+      holder.text.text = forums[position].displayName
+      holder.itemView.isActivated = position == logic.getSelectedIndex()
+    }
+
+    override fun getItemCount() = forums.size
+  }
 }
