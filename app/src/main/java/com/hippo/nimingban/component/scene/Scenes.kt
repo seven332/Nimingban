@@ -17,6 +17,7 @@
 package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
+import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 
@@ -37,6 +38,14 @@ fun Reply.galleryScene(): GalleryScene {
   val args = Bundle()
   args.putParcelable(GalleryScene.KEY_REPLY, this)
   val scene = GalleryScene()
+  scene.args = args
+  return scene
+}
+
+fun Forum.sendScene(): SendScene {
+  val args = Bundle()
+  args.putParcelable(SendScene.KEY_FORUM, this)
+  val scene = SendScene()
   scene.args = args
   return scene
 }

@@ -56,7 +56,7 @@
       android:paddingLeft="@dimen/send_forum_padding_left"
       android:paddingRight="@dimen/send_forum_padding_right"
       android:textSize="@dimen/list_single_item_text"
-      android:text="综合一"/>
+      android:textColor="?android:attr/textColorPrimary"/>
 
     <android.support.v4.widget.Space
       android:layout_width="0dp"

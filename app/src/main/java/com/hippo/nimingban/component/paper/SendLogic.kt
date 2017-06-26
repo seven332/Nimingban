@@ -18,6 +18,7 @@ package com.hippo.nimingban.component.paper
 
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbLogic
+import com.hippo.nimingban.component.dialog.SelectForumDialog
 import com.hippo.stage.Scene
 
 /*
@@ -32,12 +33,17 @@ class SendLogic(
   var sendUi: SendUi? = null
     set(value) {
       field = value
-      value?.onUpdateForum(forum)
+      value?.onSelectForum(forum)
     }
 
+  fun onSelectForum(forum: Forum) {
+    this.forum = forum
+    sendUi?.onSelectForum(forum)
+  }
+
   fun onClickForum() {
-
-
-
+    val dialog = SelectForumDialog()
+    dialog.setTarget(scene)
+    scene.stage?.pushScene(dialog)
   }
 }

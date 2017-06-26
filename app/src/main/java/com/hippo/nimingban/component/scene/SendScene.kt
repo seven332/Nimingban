@@ -19,13 +19,15 @@ package com.hippo.nimingban.component.scene
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbScene
+import com.hippo.nimingban.component.dialog.SelectForumDialog
 
 /*
  * Created by Hippo on 6/24/2017.
  */
 
-class SendScene : NmbScene() {
+class SendScene : NmbScene(), SelectForumDialog.OnSelectForumListener {
 
   companion object {
     const val KEY_FORUM = "SendScene:forum"
@@ -40,4 +42,11 @@ class SendScene : NmbScene() {
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
       SendSceneUi(logic as SendSceneLogic, inflater, container)
+
+  override fun onSelectForum(forum: Forum) {
+    val logic = this.logic
+    if (logic is SendSceneLogic) {
+      logic.onSelectForum(forum)
+    }
+  }
 }

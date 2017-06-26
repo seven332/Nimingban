@@ -102,7 +102,7 @@ class SendUi(
     moreView.visibility = if (show) View.VISIBLE else View.GONE
   }
 
-  fun onUpdateForum(forum: Forum?) {
+  fun onSelectForum(forum: Forum?) {
     this.forum = forum
     if (forum != null) {
       moreText.visibility = View.GONE

@@ -38,6 +38,10 @@ class SendSceneLogic(
   val bottomToolLogic: BottomToolLogic = SendBottomToolLogic().also { addChild(it) }
   val sendLogic: SendLogic = SendLogic(scene, forum).also { addChild(it) }
 
+  fun onSelectForum(forum: Forum) {
+    sendLogic.onSelectForum(forum)
+  }
+
 
   private inner class SendToolbarLogic: ToolbarLogic() {
 

@@ -62,11 +62,14 @@ class ThreadsSceneLogic(
     override fun onClickMenuItem(item: MenuItem): Boolean {
       when (item.itemId) {
         R.id.action_post -> {
-          scene.stage?.pushScene(SendScene())
-          return true
+          val forum = forumListLogic.getSelectedForum()
+          if (forum != null) {
+            scene.stage?.pushScene(forum.sendScene())
+            return true
+          }
         }
-        else -> return false
       }
+      return false
     }
   }
 

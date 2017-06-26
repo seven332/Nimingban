@@ -97,6 +97,8 @@ abstract class ForumListLogic : NmbLogic() {
    */
   fun getSelectedIndex() = selectedIndex
 
+  fun getSelectedForum() = selectedForum
+
   /**
    * Called when a forum selected.
    */
