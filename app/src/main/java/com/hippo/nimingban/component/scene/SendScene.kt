@@ -38,7 +38,8 @@ class SendScene : NmbScene(), SelectForumDialog.OnSelectForumListener {
     super.onCreate(args)
   }
 
-  override fun createLogic(args: Bundle?) = SendSceneLogic(this, args?.getParcelable(KEY_FORUM))
+  override fun createLogic(args: Bundle?) =
+      SendSceneLogic(this, args?.getParcelable(KEY_FORUM), args?.getString(KEY_ID))
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
       SendSceneUi(logic as SendSceneLogic, inflater, container)

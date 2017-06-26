@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component.paper
 
+import android.os.Bundle
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.dialog.SelectForumDialog
@@ -30,6 +31,10 @@ class SendLogic(
     private var forum: Forum?
 ) : NmbLogic() {
 
+  companion object {
+    const val KEY_FORUM = "SendLogic:forum"
+  }
+
   var sendUi: SendUi? = null
     set(value) {
       field = value
@@ -43,7 +48,27 @@ class SendLogic(
 
   fun onClickForum() {
     val dialog = SelectForumDialog()
-    dialog.setTarget(scene)
+    dialog.target = scene
     scene.stage?.pushScene(dialog)
+  }
+
+  fun getForum() = forum
+
+  fun getTitle() = sendUi?.getTitle() ?: ""
+
+  fun getName() = sendUi?.getName() ?: ""
+
+  fun getEmail() = sendUi?.getEmail() ?: ""
+
+  fun getContent() = sendUi?.getContent() ?: ""
+
+  override fun onSaveState(outState: Bundle) {
+    super.onSaveState(outState)
+    outState.putParcelable(KEY_FORUM, forum)
+  }
+
+  override fun onRestoreState(savedViewState: Bundle) {
+    super.onRestoreState(savedViewState)
+    onSelectForum(savedViewState.getParcelable(KEY_FORUM))
   }
 }

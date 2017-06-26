@@ -42,6 +42,8 @@ const val NMB_HTML_THREADS = NMB_HOST + "/f/"
 
 const val NMB_HTML_REPLIES = NMB_HOST + "/t/"
 
+const val NMB_HTML_POST = NMB_HOST + "/Home/Forum/doPostThread.html?appid=" + NMB_APP_ID
+
 const val NMB_HTML_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
 
 fun timelineApiUrl(page: Int) =  NMB_API_TIMELINE + "&page=" + (page + 1)

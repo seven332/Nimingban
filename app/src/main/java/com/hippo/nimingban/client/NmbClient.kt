@@ -64,9 +64,18 @@ class NmbClient(private val engine: NmbEngine) {
   fun repliesHtml(id: String, page: Int) = engine.repliesHtml(repliesHtmlUrl(id, page))
 
   fun post(
+      title: String,
       name: String,
       email: String,
+      content: String,
+      fid: String,
+      water: Boolean
+  ) = engine.post(name, email, title, content, fid, water.toString(), null)
+
+  fun reply(
       title: String,
+      name: String,
+      email: String,
       content: String,
       resto: String,
       water: Boolean

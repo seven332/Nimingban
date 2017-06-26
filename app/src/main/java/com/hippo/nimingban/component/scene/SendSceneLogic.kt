@@ -23,6 +23,8 @@ import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.paper.BottomToolLogic
 import com.hippo.nimingban.component.paper.SendLogic
 import com.hippo.nimingban.component.paper.ToolbarLogic
+import com.hippo.nimingban.component.post
+import com.hippo.nimingban.component.reply
 import com.hippo.stage.Scene
 
 /*
@@ -31,7 +33,8 @@ import com.hippo.stage.Scene
 
 class SendSceneLogic(
     private val scene: Scene,
-    forum: Forum?
+    forum: Forum?,
+    val id: String?
 ) : GroupLogic() {
 
   val toolbarLogic: ToolbarLogic = SendToolbarLogic().also { addChild(it) }
@@ -40,6 +43,22 @@ class SendSceneLogic(
 
   fun onSelectForum(forum: Forum) {
     sendLogic.onSelectForum(forum)
+  }
+
+  private fun send() {
+    val forum = sendLogic.getForum()
+    val title = sendLogic.getTitle()
+    val name = sendLogic.getName()
+    val email = sendLogic.getEmail()
+    val content = sendLogic.getContent()
+
+    if (forum != null) {
+      post(title, name, email, content, forum.id, false)
+    } else if (id != null) {
+      reply(title, name, email, content, id, false)
+    }
+
+    scene.pop()
   }
 
 
@@ -57,7 +76,7 @@ class SendSceneLogic(
     override fun onClickMenuItem(item: MenuItem): Boolean {
       when (item.itemId) {
         R.id.action_send -> {
-          // TODO
+          send()
           return true
         }
         else -> return false

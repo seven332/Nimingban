@@ -58,8 +58,20 @@ interface NmbEngine {
   ): Single<RepliesHtml>
 
   @FormUrlEncoded
-  @POST(NMB_HTML_REPLY)
+  @POST(NMB_HTML_POST)
   fun post(
+      @Field("name") name: String,
+      @Field("email") email: String,
+      @Field("title") title: String,
+      @Field("content") content: String,
+      @Field("fid") resto: String,
+      @Field("water") water: String,
+      @Field("image") image: RequestBody?
+  ): Single<Unit>
+
+  @FormUrlEncoded
+  @POST(NMB_HTML_REPLY)
+  fun reply(
       @Field("name") name: String,
       @Field("email") email: String,
       @Field("title") title: String,
