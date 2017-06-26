@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.component
 
+import android.os.Bundle
+
 /*
  * Created by Hippo on 6/20/2017.
  */
@@ -31,5 +33,15 @@ abstract class GroupLogic : NmbLogic() {
   override fun onDestroy() {
     super.onDestroy()
     children.forEach { it.destroy() }
+  }
+
+  override fun onSaveState(outState: Bundle) {
+    super.onSaveState(outState)
+    children.forEach { it.saveState(outState) }
+  }
+
+  override fun onRestoreState(savedViewState: Bundle) {
+    super.onRestoreState(savedViewState)
+    children.forEach { it.restoreState(savedViewState) }
   }
 }

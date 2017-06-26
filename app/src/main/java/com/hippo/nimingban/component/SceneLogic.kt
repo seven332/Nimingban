@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component
 
+import android.os.Bundle
 import android.support.annotation.CallSuper
 
 /*
@@ -32,8 +33,34 @@ abstract class SceneLogic {
   }
 
   /**
+   * Save state of the logic.
+   */
+  internal fun saveState(outState: Bundle) {
+    onSaveState(outState)
+  }
+
+  /**
+   * Restore state of the logic.
+   */
+  internal fun restoreState(savedViewState: Bundle) {
+    onRestoreState(savedViewState)
+  }
+
+  /**
    * Called when the logic destroyed.
    */
   @CallSuper
   protected open fun onDestroy() {}
+
+  /**
+   * Called when the logic state saved.
+   */
+  @CallSuper
+  protected open fun onSaveState(outState: Bundle) {}
+
+  /**
+   * Called when the logic restored.
+   */
+  @CallSuper
+  protected open fun onRestoreState(savedViewState: Bundle) {}
 }

@@ -33,6 +33,8 @@ abstract class UiLogicScene : Scene() {
   protected var ui: SceneUi? = null
     private set
 
+  private var savedInstanceState: Bundle? = null
+
   /**
    * Create a logic for this scene.
    */
@@ -46,6 +48,10 @@ abstract class UiLogicScene : Scene() {
   override fun onCreate(args: Bundle?) {
     super.onCreate(args)
     this.logic = createLogic(args)
+    if (savedInstanceState != null) {
+      this.logic!!.restoreState(savedInstanceState!!)
+      savedInstanceState = null
+    }
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -104,5 +110,15 @@ abstract class UiLogicScene : Scene() {
   override fun onRestoreViewState(view: View, savedViewState: Bundle) {
     super.onRestoreViewState(view, savedViewState)
     this.ui?.restoreState(savedViewState) ?: error("Ui is null in onRestoreViewState(). It should not be null.")
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    this.logic?.saveState(outState) ?: error("Logic is null in onSaveInstanceState(). It should not be null.")
+  }
+
+  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+    super.onRestoreInstanceState(savedInstanceState)
+    this.savedInstanceState = savedInstanceState
   }
 }
