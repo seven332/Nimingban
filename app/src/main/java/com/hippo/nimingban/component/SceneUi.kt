@@ -16,13 +16,13 @@
 
 package com.hippo.nimingban.component
 
+import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.view.View
 import com.hippo.nimingban.architecture.Ui
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.exceptions.Exceptions
-import io.reactivex.plugins.RxJavaPlugins
 
 /*
  * Created by Hippo on 6/19/2017.
@@ -115,6 +115,20 @@ abstract class SceneUi : Ui {
   }
 
   /**
+   * Save state of the ui.
+   */
+  internal fun saveState(outState: Bundle) {
+    onSaveState(outState)
+  }
+
+  /**
+   * Restore state of the ui.
+   */
+  internal fun restoreState(savedViewState: Bundle) {
+    onRestoreState(savedViewState)
+  }
+
+  /**
    * Called when the ui attached.
    */
   @CallSuper
@@ -155,6 +169,18 @@ abstract class SceneUi : Ui {
    */
   @CallSuper
   protected open fun onDestroy() {}
+
+  /**
+   * Called when the ui state saved.
+   */
+  @CallSuper
+  protected open fun onSaveState(outState: Bundle) {}
+
+  /**
+   * Called when the ui state restored.
+   */
+  @CallSuper
+  protected open fun onRestoreState(savedViewState: Bundle) {}
 
 
   private class LifecycleHandler(var step: Int) {

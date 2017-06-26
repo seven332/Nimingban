@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
@@ -85,5 +86,15 @@ abstract class GroupUi : NmbUi() {
   override fun onDestroy() {
     super.onDestroy()
     children.forEach { it.destroy() }
+  }
+
+  override fun onSaveState(outState: Bundle) {
+    super.onSaveState(outState)
+    children.forEach { it.saveState(outState) }
+  }
+
+  override fun onRestoreState(savedViewState: Bundle) {
+    super.onRestoreState(savedViewState)
+    children.forEach { it.restoreState(savedViewState) }
   }
 }

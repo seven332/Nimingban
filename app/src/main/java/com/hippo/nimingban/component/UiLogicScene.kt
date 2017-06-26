@@ -95,4 +95,14 @@ abstract class UiLogicScene : Scene() {
     this.logic?.destroy() ?: error("Logic is null in onDestroy(). It should not be null.")
     this.logic = null
   }
+
+  override fun onSaveViewState(view: View, outState: Bundle) {
+    super.onSaveViewState(view, outState)
+    this.ui?.saveState(outState) ?: error("Ui is null in onSaveViewState(). It should not be null.")
+  }
+
+  override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+    super.onRestoreViewState(view, savedViewState)
+    this.ui?.restoreState(savedViewState) ?: error("Ui is null in onRestoreViewState(). It should not be null.")
+  }
 }
