@@ -15,7 +15,13 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:state_activated="true" android:drawable="@color/ripple_light"/>
-  <item android:drawable="@drawable/click_background_light"/>
-</selector>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/action_send"
+    android:title="@string/send_send"
+    android:icon="@drawable/send_white_x24"
+    app:showAsAction="always"/>
+
+</menu>

@@ -30,6 +30,14 @@
   <dimen name="text_small">14sp</dimen>
   <dimen name="text_super_small">12sp</dimen>
 
+  <dimen name="list_single_padding_top">4dp</dimen>
+  <dimen name="list_single_padding_left">@dimen/key_margin</dimen>
+  <dimen name="list_single_padding_right">@dimen/key_margin</dimen>
+  <dimen name="list_single_item_height">48dp</dimen>
+  <dimen name="list_single_item_text">16sp</dimen>
+  <dimen name="list_single_item_icon_size">@dimen/list_single_item_height</dimen>
+  <dimen name="list_single_item_icon_padding">12dp</dimen>
+
   <dimen name="thumb_height">80dp</dimen>
   <dimen name="thumb_width">80dp</dimen>
 
@@ -59,5 +67,11 @@
   <dimen name="forums_item_icon_margin_bottom">12dp</dimen>
   <dimen name="forums_item_icon_margin_left">16dp</dimen>
   <dimen name="forums_item_icon_margin_right">32dp</dimen>
+
+  <dimen name="send_forum_padding_top">4dp</dimen>
+  <dimen name="send_forum_padding_bottom">4dp</dimen>
+  <dimen name="send_forum_padding_left">12dp</dimen>
+  <dimen name="send_forum_padding_right">12dp</dimen>
+  <dimen name="send_forum_margin_left">12dp</dimen>
 
 </resources>

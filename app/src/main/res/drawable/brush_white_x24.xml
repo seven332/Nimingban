@@ -15,11 +15,15 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:state_activated="true" android:drawable="@color/ripple_light"/>
-  <item>
-    <ripple android:color="?attr/colorControlHighlight">
-      <item android:id="@android:id/mask" android:drawable="@android:color/white"/>
-    </ripple>
-  </item>
-</selector>
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:height="24dp"
+  android:width="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
+
+    <path
+      android:fillColor="@android:color/white"
+      android:pathData="@string/pd_brush"/>
+
+</vector>

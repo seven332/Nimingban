@@ -34,6 +34,7 @@
     <item name="backgroundColorWindow">@color/background_window_dark</item>
     <item name="backgroundColorContent">@color/background_content_dark</item>
 
+    <item name="clickBackground">@drawable/click_background_dark</item>
     <item name="itemBackground">@drawable/item_background_dark</item>
     <item name="contentBackground">@drawable/content_background_dark</item>
 

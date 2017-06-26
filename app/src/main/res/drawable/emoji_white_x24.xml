@@ -15,7 +15,15 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:state_activated="true" android:drawable="@color/ripple_light"/>
-  <item android:drawable="@drawable/click_background_light"/>
-</selector>
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:height="24dp"
+  android:width="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
+
+    <path
+      android:fillColor="@android:color/white"
+      android:pathData="@string/pd_emoji"/>
+
+</vector>

@@ -28,6 +28,7 @@
 
     <attr name="dividerColor" format="color"/>
 
+    <attr name="clickBackground" format="reference"/>
     <attr name="itemBackground" format="reference"/>
     <attr name="contentBackground" format="reference"/>
 

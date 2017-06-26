@@ -48,6 +48,7 @@ class ThreadsSceneLogic(
 
     init {
       setNavigationIcon(R.drawable.menu_white_x24)
+      inflateMenu(R.menu.threads)
     }
 
     fun onSetForum(forum: Forum?) {
@@ -59,8 +60,13 @@ class ThreadsSceneLogic(
     }
 
     override fun onClickMenuItem(item: MenuItem): Boolean {
-      // TODO
-      return false
+      when (item.itemId) {
+        R.id.action_post -> {
+          scene.stage?.pushScene(SendScene())
+          return true
+        }
+        else -> return false
+      }
     }
   }
 

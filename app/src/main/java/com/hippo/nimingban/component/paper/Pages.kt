@@ -37,6 +37,18 @@ fun GroupUi.toolbar(
     init: ToolbarUi.() -> Unit
 ) = inflateChild(container, 0, { ToolbarUi(logic, inflater, it) }, init)
 
+fun GroupUi.bottomTool(
+    logic: BottomToolLogic,
+    container: ViewGroup,
+    init: BottomToolUi.() -> Unit
+) = BottomToolUi(logic, inflater, container).also { init(it); addChild(it) }
+
+fun GroupUi.bottomTool(
+    logic: BottomToolLogic,
+    container: Int,
+    init: BottomToolUi.() -> Unit
+) = inflateChild(container, 0, { BottomToolUi(logic, inflater, it) }, init)
+
 fun GroupUi.swipeBack(
     logic: SwipeBackLogic,
     container: ViewGroup,
@@ -81,3 +93,8 @@ fun GroupUi.forums(
     logic: ForumsLogic,
     container: Int
 ) = inflateChild(container, 0, { ForumsUi(logic, inflater, it) })
+
+fun GroupUi.send(
+    logic: SendLogic,
+    container: Int
+) = inflateChild(container, 0, { SendUi(logic, inflater, it) })

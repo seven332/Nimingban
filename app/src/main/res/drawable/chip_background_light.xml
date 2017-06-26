@@ -15,7 +15,16 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:state_activated="true" android:drawable="@color/ripple_light"/>
-  <item android:drawable="@drawable/click_background_light"/>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <solid android:color="@color/background_status_bar_light"/>
+
+  <padding
+    android:top="4dp"
+    android:bottom="4dp"
+    android:left="12dp"
+    android:right="12dp"/>
+
+  <corners android:radius="12dp"/>
+
+</shape>

@@ -23,6 +23,7 @@ import android.graphics.drawable.StateListDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.support.v7.content.res.AppCompatResources
+import com.hippo.android.resource.AttrResources
 import com.hippo.html.Html
 
 /*
@@ -53,6 +54,8 @@ fun <T> Parcel.readTypedList(creator: Parcelable.Creator<T>): MutableList<T> {
   readTypedList(list, creator)
   return list
 }
+
+fun Context.attrColor(resId: Int) = AttrResources.getAttrColor(this, resId)
 
 fun Context.loadDrawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
 
