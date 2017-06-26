@@ -16,7 +16,6 @@
 
 package com.hippo.nimingban.component.dialog
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,6 @@ import com.hippo.nimingban.NMB_DB
 import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.util.find
-import com.hippo.stage.Scene
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 /*
@@ -37,26 +35,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 
 class SelectForumDialog : NmbDialog() {
 
-  companion object {
-    const val KEY_TARGET = "SelectForumDialog:target"
-  }
-
-  private var target: Int = Scene.INVALID_ID
   private var adapter: ForumsAdapter? = null
 
   init {
     setCancelledOnTouchOutside(false)
   }
 
-  fun setTarget(scene: Scene) {
-    target = scene.id
-  }
-
   override fun onCreateDialogView(inflater: LayoutInflater, container: ViewGroup): DialogView {
     adapter = ForumsAdapter(inflater)
     return DialogViewBuilder()
         .adapter(adapter) { dialog, index ->
-          val target = stage?.findSceneById(this.target)
+          val target = this.target
           val adapter = this.adapter
           if (target is OnSelectForumListener && adapter != null) {
             target.onSelectForum(adapter.getItem(index))
@@ -101,16 +90,6 @@ class SelectForumDialog : NmbDialog() {
     override fun getItemId(position: Int) = position.toLong()
 
     override fun getCount() = forums.size
-  }
-
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    outState.putInt(KEY_TARGET, target)
-  }
-
-  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-    super.onRestoreInstanceState(savedInstanceState)
-    target = savedInstanceState.getInt(KEY_TARGET)
   }
 
 
