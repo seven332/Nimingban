@@ -19,6 +19,7 @@ package com.hippo.nimingban.component.scene
 import android.view.MenuItem
 import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.paper.BottomToolLogic
 import com.hippo.nimingban.component.paper.SendLogic
@@ -34,7 +35,7 @@ import com.hippo.stage.Scene
 class SendSceneLogic(
     private val scene: Scene,
     forum: Forum?,
-    val id: String?
+    val thread: Thread?
 ) : GroupLogic() {
 
   val toolbarLogic: ToolbarLogic = SendToolbarLogic().also { addChild(it) }
@@ -54,8 +55,8 @@ class SendSceneLogic(
 
     if (forum != null) {
       post(title, name, email, content, forum.id, false)
-    } else if (id != null) {
-      reply(title, name, email, content, id, false)
+    } else if (thread != null) {
+      reply(title, name, email, content, thread.id, false)
     }
 
     scene.pop()

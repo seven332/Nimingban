@@ -43,7 +43,7 @@ fun post(
     water: Boolean
 ) {
   val notification = NotificationCompat.Builder(NMB_APP)
-      .setContentText(NMB_APP.getString(R.string.post_notification_title))
+      .setContentText(string(R.string.post_notification_title))
       .setSmallIcon(android.R.drawable.stat_sys_upload)
       .setCategory(NotificationCompat.CATEGORY_SOCIAL)
       .setOngoing(false)
@@ -70,9 +70,22 @@ fun reply(
     resto: String,
     water: Boolean
 ) {
-  // TODO Show a notification
+  val notification = NotificationCompat.Builder(NMB_APP)
+      .setContentText(string(R.string.reply_notification_title))
+      .setSmallIcon(android.R.drawable.stat_sys_upload)
+      .setCategory(NotificationCompat.CATEGORY_SOCIAL)
+      .setOngoing(false)
+      .build()
+  val id = NMB_NOTIFICATION.notify(TAG_REPLY, notification)
+
   NMB_CLIENT.reply(title, name, email, content, resto, water)
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({}, {})
+      .subscribe({
+        NMB_NOTIFICATION.cancel(TAG_REPLY, id)
+        tip(R.string.reply_success)
+      }, {
+        NMB_NOTIFICATION.cancel(TAG_REPLY, id)
+        tip("${string(R.string.reply_failure)}: ${explain(it)}")
+      })
 }

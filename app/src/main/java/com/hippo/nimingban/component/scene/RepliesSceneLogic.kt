@@ -48,17 +48,19 @@ class RepliesSceneLogic(
 
 
   private inner class RepliesToolbarLogic(
-      thread: Thread?,
+      var thread: Thread?,
       forum: String?
   ) : ToolbarLogic() {
 
     init {
-      setTitle(thread)
+      onUpdateThread(thread)
       if (!forum.isNullOrBlank()) setSubtitle(forum)
       setNavigationIcon(R.drawable.arrow_left_white_x24)
+      inflateMenu(R.menu.replies)
     }
 
-    fun setTitle(thread: Thread?) {
+    fun onUpdateThread(thread: Thread?) {
+      this.thread = thread
       setTitle(thread?.displayId ?: NMB_APP.getString(R.string.app_name))
     }
 
@@ -66,7 +68,18 @@ class RepliesSceneLogic(
       scene.pop()
     }
 
-    override fun onClickMenuItem(item: MenuItem): Boolean { return false }
+    override fun onClickMenuItem(item: MenuItem): Boolean {
+      return when(item.itemId) {
+        R.id.action_reply -> {
+          val thread = this.thread
+          if (thread != null) {
+            scene.stage?.pushScene(thread.sendScene())
+          }
+          true
+        }
+        else -> false
+      }
+    }
   }
 
 
@@ -78,7 +91,7 @@ class RepliesSceneLogic(
   ) : RepliesLogic(id, thread, forum, scene) {
 
     override fun onUpdateThread(thread: Thread) {
-      (toolbarLogic as RepliesToolbarLogic).setTitle(thread)
+      (toolbarLogic as RepliesToolbarLogic).onUpdateThread(thread)
     }
 
     override fun onUpdateForum(forum: String) {

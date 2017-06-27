@@ -30,6 +30,8 @@
 
   <string name="forums_title">All forums</string>
 
+  <string name="replies_reply">Reply</string>
+
   <string name="send_more_fields">More fields</string>
   <string name="send_forum">Forum</string>
   <string name="send_title">Title</string>
@@ -44,6 +46,10 @@
   <string name="post_notification_title">Posting…</string>
   <string name="post_success">Post succeeded</string>
   <string name="post_failure">Post failed</string>
+
+  <string name="reply_notification_title">Replying…</string>
+  <string name="reply_success">Reply succeeded</string>
+  <string name="reply_failure">Reply failed</string>
 
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>

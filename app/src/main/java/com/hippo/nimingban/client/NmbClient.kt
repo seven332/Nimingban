@@ -79,5 +79,5 @@ class NmbClient(private val engine: NmbEngine) {
       content: String,
       resto: String,
       water: Boolean
-  ) = engine.post(name, email, title, content, resto, water.toString(), null)
+  ) = engine.reply(name, email, title, content, resto, water.toString(), null)
 }

@@ -42,6 +42,14 @@ fun Reply.galleryScene(): GalleryScene {
   return scene
 }
 
+fun Thread.sendScene(): SendScene {
+  val args = Bundle()
+  args.putParcelable(SendScene.KEY_THREAD, this)
+  val scene = SendScene()
+  scene.args = args
+  return scene
+}
+
 fun Forum.sendScene(): SendScene {
   val args = Bundle()
   args.putParcelable(SendScene.KEY_FORUM, this)

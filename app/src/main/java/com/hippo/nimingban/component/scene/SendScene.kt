@@ -31,7 +31,7 @@ class SendScene : NmbScene(), SelectForumDialog.OnSelectForumListener {
 
   companion object {
     const val KEY_FORUM = "SendScene:forum"
-    const val KEY_ID = "SendScene:id"
+    const val KEY_THREAD = "SendScene:thread"
   }
 
   override fun onCreate(args: Bundle?) {
@@ -39,7 +39,7 @@ class SendScene : NmbScene(), SelectForumDialog.OnSelectForumListener {
   }
 
   override fun createLogic(args: Bundle?) =
-      SendSceneLogic(this, args?.getParcelable(KEY_FORUM), args?.getString(KEY_ID))
+      SendSceneLogic(this, args?.getParcelable(KEY_FORUM), args?.getParcelable(KEY_THREAD))
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
       SendSceneUi(logic as SendSceneLogic, inflater, container)

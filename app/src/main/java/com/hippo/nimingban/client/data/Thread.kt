@@ -48,7 +48,7 @@ data class Thread(
 ) : Parcelable {
 
   val init by lazy {
-    id = _id
+    id = _id ?: ""
     image = if (_img.isNullOrEmpty().not() && _ext.isNullOrEmpty().not()) _img + _ext else null
     date = _now.toNmbDate()
     user = _user
@@ -67,7 +67,7 @@ data class Thread(
     displayContent = _content.toNmbContent(sage, _title, _name, _email)
   }
 
-  var id: String? = null
+  var id: String = ""
     private set
   var image: String? = null
     private set
