@@ -21,11 +21,10 @@ import android.net.Uri
 import android.util.AttributeSet
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.GenericDraweeView
-import com.facebook.imagepipeline.request.ImageRequest
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.hippo.android.resource.AttrResources
 import com.hippo.nimingban.R
 import com.hippo.nimingban.drawable.TextDrawable
+import com.hippo.nimingban.util.attrColor
 
 /*
  * Created by Hippo on 6/14/2017.
@@ -43,8 +42,8 @@ class NmbCover @JvmOverloads constructor(
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)
-    failure.backgroundColor = AttrResources.getAttrColor(context, R.attr.backgroundColorAppBar)
-    failure.textColor = AttrResources.getAttrColor(context, android.R.attr.textColorTertiary)
+    failure.backgroundColor = context.attrColor(R.attr.backgroundColorAppBar)
+    failure.textColor = context.attrColor(android.R.attr.textColorTertiary)
     hierarchy.setFailureImage(failure)
     hierarchy.setRetryImage(failure.constantState.newDrawable())
 

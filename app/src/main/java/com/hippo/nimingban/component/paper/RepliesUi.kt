@@ -22,11 +22,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.hippo.android.resource.AttrResources
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.component.NmbUi
+import com.hippo.nimingban.util.attrColor
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.prettyTime
@@ -68,7 +68,7 @@ class RepliesUi(
     recyclerView.layoutManager = LinearLayoutManager(context)
     val itemDecoration = LinearDividerItemDecoration(
         LinearDividerItemDecoration.VERTICAL,
-        AttrResources.getAttrColor(context, R.attr.dividerColor),
+        context.attrColor(R.attr.dividerColor),
         1.dp2pix(context))
     itemDecoration.setShowLastDivider(true)
     recyclerView.addItemDecoration(itemDecoration)

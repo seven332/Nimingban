@@ -21,9 +21,9 @@ import android.util.AttributeSet
 import android.view.View
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.GenericDraweeView
-import com.hippo.android.resource.AttrResources
 import com.hippo.nimingban.R
 import com.hippo.nimingban.drawable.TextDrawable
+import com.hippo.nimingban.util.attrColor
 
 /*
  * Created by Hippo on 6/9/2017.
@@ -37,8 +37,8 @@ class NmbThumb @JvmOverloads constructor(
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)
-    failure.backgroundColor = AttrResources.getAttrColor(context, R.attr.backgroundColorAppBar)
-    failure.textColor = AttrResources.getAttrColor(context, android.R.attr.textColorTertiary)
+    failure.backgroundColor = context.attrColor(R.attr.backgroundColorAppBar)
+    failure.textColor = context.attrColor(android.R.attr.textColorTertiary)
     hierarchy.setFailureImage(failure)
     hierarchy.setRetryImage(failure.constantState.newDrawable())
   }

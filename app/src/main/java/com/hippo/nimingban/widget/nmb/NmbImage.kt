@@ -18,12 +18,12 @@ package com.hippo.nimingban.widget.nmb
 
 import android.content.Context
 import android.util.AttributeSet
-import com.hippo.android.resource.AttrResources
 import com.hippo.fresco.large.FrescoLarge
 import com.hippo.fresco.large.LargeDraweeView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.drawable.ProgressDrawable
 import com.hippo.nimingban.drawable.TextDrawable
+import com.hippo.nimingban.util.attrColor
 import com.hippo.nimingban.util.dp2pix
 
 /*
@@ -38,11 +38,11 @@ class NmbImage @JvmOverloads constructor(
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)
-    failure.backgroundColor = AttrResources.getAttrColor(context, R.attr.backgroundColorAppBar)
-    failure.textColor = AttrResources.getAttrColor(context, android.R.attr.textColorTertiary)
+    failure.backgroundColor = context.attrColor(R.attr.backgroundColorAppBar)
+    failure.textColor = context.attrColor(android.R.attr.textColorTertiary)
 
     val progress = ProgressDrawable()
-    progress.color = AttrResources.getAttrColor(context, R.attr.colorAccent)
+    progress.color = context.attrColor(R.attr.colorAccent)
     progress.size = 48.dp2pix(context)
     progress.indeterminate = true
 
