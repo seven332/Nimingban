@@ -16,7 +16,6 @@
 
 package com.hippo.nimingban.component.paper
 
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +23,7 @@ import android.view.ViewGroup
 import com.hippo.nimingban.R
 import com.hippo.nimingban.component.GroupUi
 import com.hippo.nimingban.util.INVALID_ID
+import com.hippo.nimingban.util.drawable
 import com.hippo.nimingban.util.find
 
 /*
@@ -71,7 +71,7 @@ class ToolbarUi(
 
   fun setNavigationIcon(resId: Int) {
     if (resId != INVALID_ID) {
-      toolbar.navigationIcon = AppCompatResources.getDrawable(context, resId)
+      toolbar.navigationIcon = context.drawable(resId)
     }
   }
 

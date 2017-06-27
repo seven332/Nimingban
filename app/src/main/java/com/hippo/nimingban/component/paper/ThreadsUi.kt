@@ -16,7 +16,6 @@
 
 package com.hippo.nimingban.component.paper
 
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -30,6 +29,7 @@ import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbUi
 import com.hippo.nimingban.component.adapter.AlertAdapter
 import com.hippo.nimingban.component.adapter.AlertHolder
+import com.hippo.nimingban.util.drawable
 import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.content.ContentLayout
@@ -96,7 +96,7 @@ class ThreadsUi(
     val item: Thread? get() = adapterPosition.takeIf { it in 0 until adapter.size }?.let { adapter[it] }
 
     init {
-      val drawable = AppCompatResources.getDrawable(itemView.context, R.drawable.comment_multiple_outline_secondary_x16)!!
+      val drawable = context.drawable(R.drawable.comment_multiple_outline_secondary_x16)
       drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
       replyCount.setCompoundDrawables(drawable, null, null, null)
 

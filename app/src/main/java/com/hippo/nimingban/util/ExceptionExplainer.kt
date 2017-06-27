@@ -18,7 +18,6 @@ package com.hippo.nimingban.util
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.content.res.AppCompatResources
 import com.hippo.nimingban.R
 import com.hippo.nimingban.exception.GeneralException
 import com.hippo.nimingban.exception.PresetException
@@ -47,5 +46,5 @@ fun explainVividly(context: Context, e: Throwable): Drawable {
     is PresetException -> if (e.icon != 0) e.icon else R.drawable.emoticon_sad_primary_x64
     else -> R.drawable.emoticon_sad_primary_x64
   }
-  return AppCompatResources.getDrawable(context, drawable)!!
+  return context.drawable(drawable)
 }

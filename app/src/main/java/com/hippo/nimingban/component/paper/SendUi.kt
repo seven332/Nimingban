@@ -32,7 +32,7 @@ import com.hippo.nimingban.drawable.ChipDrawable
 import com.hippo.nimingban.util.addState
 import com.hippo.nimingban.util.attrColor
 import com.hippo.nimingban.util.find
-import com.hippo.nimingban.util.loadDrawable
+import com.hippo.nimingban.util.drawable
 
 /*
  * Created by Hippo on 6/24/2017.
@@ -76,8 +76,8 @@ class SendUi(
     content = view.find(R.id.content)
 
     val moreDrawable = StateListDrawable().apply {
-      addState(context.loadDrawable(R.drawable.chevron_up_primary_x24), android.R.attr.state_activated)
-      addState(context.loadDrawable(R.drawable.chevron_down_primary_x24))
+      addState(context.drawable(R.drawable.chevron_up_primary_x24), android.R.attr.state_activated)
+      addState(context.drawable(R.drawable.chevron_down_primary_x24))
     }
     moreAction.setImageDrawable(moreDrawable)
     moreAction.setOnClickListener { showMore(!showMore) }

@@ -54,6 +54,6 @@ fun <T> Parcel.readTypedList(creator: Parcelable.Creator<T>): MutableList<T> {
 
 fun Context.attrColor(resId: Int) = AttrResources.getAttrColor(this, resId)
 
-fun Context.loadDrawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
+fun Context.drawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
 
 fun StateListDrawable.addState(drawable: Drawable, vararg states: Int) = addState(states, drawable)

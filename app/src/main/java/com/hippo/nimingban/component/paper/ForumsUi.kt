@@ -38,7 +38,7 @@ import com.hippo.nimingban.util.addState
 import com.hippo.nimingban.util.asMutableList
 import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.isUnder
-import com.hippo.nimingban.util.loadDrawable
+import com.hippo.nimingban.util.drawable
 
 /*
  * Created by Hippo on 6/22/2017.
@@ -114,13 +114,13 @@ class ForumsUi(
     val item: Forum? get() = adapterPosition.takeIf { it in 0 until forums.size }?.let { forums[it] }
 
     init {
-      delete.setImageDrawable(context.loadDrawable(R.drawable.delete_primary_x24))
+      delete.setImageDrawable(context.drawable(R.drawable.delete_primary_x24))
       val eye = StateListDrawable().apply {
-        addState(context.loadDrawable(R.drawable.eye_primary_x24), android.R.attr.state_activated)
-        addState(context.loadDrawable(R.drawable.eye_off_primary_x24))
+        addState(context.drawable(R.drawable.eye_primary_x24), android.R.attr.state_activated)
+        addState(context.drawable(R.drawable.eye_off_primary_x24))
       }
       hide.setImageDrawable(eye)
-      sort.setImageDrawable(context.loadDrawable(R.drawable.reorder_primary_x24))
+      sort.setImageDrawable(context.drawable(R.drawable.reorder_primary_x24))
 
       hide.setOnClickListener {
         val item = this.item
