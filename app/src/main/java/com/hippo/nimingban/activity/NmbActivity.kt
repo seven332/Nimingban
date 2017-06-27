@@ -44,8 +44,12 @@ class NmbActivity : StageActivity() {
     return ThreadsScene()
   }
 
+  fun snack(resId: Int) {
+    Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_SHORT).show()
+  }
+
   fun snack(message: CharSequence?) {
-    if (message != null && message.isNotEmpty()) {
+    if (message != null && message.isNotBlank()) {
       Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT).show()
     }
   }

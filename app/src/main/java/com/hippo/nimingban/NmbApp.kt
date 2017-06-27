@@ -16,12 +16,16 @@
 
 package com.hippo.nimingban
 
+import android.app.Activity
 import android.app.Application
+import android.os.Bundle
+import android.widget.Toast
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.InstanceCreator
 import com.hippo.fresco.large.FrescoLarge
+import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.NMB_HOST
 import com.hippo.nimingban.client.NmbClient
 import com.hippo.nimingban.client.NmbConverterFactory
@@ -31,6 +35,7 @@ import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.util.filterNot
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import io.reactivex.schedulers.Schedulers
@@ -38,6 +43,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import java.lang.ref.WeakReference
 
 /*
  * Created by Hippo on 6/4/2017.
@@ -60,6 +66,8 @@ val NMB_CLIENT: NmbClient by lazy {
 }
 
 val NMB_DB: NmbDB by lazy { NmbDB(NMB_APP) }
+
+val NMB_NOTIFICATION: NmbNotification by lazy { NmbNotification(NMB_APP) }
 
 val OK_HTTP_CLIENT: OkHttpClient by lazy {
   OkHttpClient.Builder()
@@ -91,6 +99,67 @@ private var _REF_WATCHER: RefWatcher? = null
 val REF_WATCHER: RefWatcher by lazy { _REF_WATCHER!! }
 
 /**
+ * Read s string resource.
+ */
+fun string(resId: Int) = NMB_APP.getString(resId)!!
+
+/**
+ * Show a tip.
+ * First, try to show it as a snack. If can't, show it as a toast.
+ */
+fun tip(resId: Int) {
+  if (!snack(resId)) {
+    toast(resId)
+  }
+}
+
+/**
+ * Show a tip.
+ * First, try to show it as a snack. If can't, show it as a toast.
+ */
+fun tip(text: CharSequence) {
+  if (!snack(text)) {
+    toast(text)
+  }
+}
+
+/**
+ * Show a snack on the top activity if it's NmbActivity.
+ * Return `true` if the snack can be shown.
+ */
+fun snack(resId: Int): Boolean {
+  val activity = NMB_APP.getNmbActivity()
+  if (activity != null) {
+    activity.snack(resId)
+    return true
+  } else {
+    return false
+  }
+}
+
+/**
+ * Show a snack on the top activity if it's NmbActivity.
+ * Return `true` if the snack can be shown.
+ */
+fun snack(text: CharSequence): Boolean {
+  val activity = NMB_APP.getNmbActivity()
+  if (activity != null) {
+    activity.snack(text)
+    return true
+  } else {
+    return false
+  }
+}
+
+fun toast(resId: Int) {
+  Toast.makeText(NMB_APP, resId, Toast.LENGTH_SHORT).show()
+}
+
+fun toast(text: CharSequence) {
+  Toast.makeText(NMB_APP, text, Toast.LENGTH_SHORT).show()
+}
+
+/**
  * Updates forums in database
  */
 fun updateForums() {
@@ -101,6 +170,8 @@ fun updateForums() {
 
 class NmbApp : Application() {
 
+  private val activities = mutableListOf<WeakReference<Activity>>()
+
   override fun onCreate() {
     _NMB_APP = this
     super.onCreate()
@@ -108,5 +179,32 @@ class NmbApp : Application() {
 
     val imagePipelineConfigBuilder = OkHttpImagePipelineConfigFactory.newBuilder(this, OK_HTTP_CLIENT)
     FrescoLarge.initialize(this, null, null, imagePipelineConfigBuilder)
+
+    registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+      override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        activities.add(WeakReference(activity))
+      }
+      override fun onActivityDestroyed(activity: Activity) {
+        activities.filterNot { it.get().let { it == null || it == activity } }
+      }
+      override fun onActivityStarted(activity: Activity) {}
+      override fun onActivityResumed(activity: Activity) {}
+      override fun onActivityPaused(activity: Activity) {}
+      override fun onActivityStopped(activity: Activity) {}
+      override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {}
+    })
+  }
+
+  /**
+   * If the top activity is [NmbActivity], returns it.
+   */
+  fun getNmbActivity(): NmbActivity? {
+    try {
+      val activity = activities.last { it.get() != null }.get()
+      if (activity is NmbActivity) {
+        return activity
+      }
+    } catch (e: NoSuchElementException) {}
+    return null
   }
 }

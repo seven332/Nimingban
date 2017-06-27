@@ -34,9 +34,6 @@ const val INVALID_ID = 0
 
 const val INVALID_INDEX = -1
 
-inline fun <T, R> T?.select(nonNullAction: (T) -> R, nullAction: () -> R) =
-    if (this != null) nonNullAction(this) else nullAction()
-
 fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
 
 inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {

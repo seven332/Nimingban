@@ -41,6 +41,10 @@
   <string name="send_draw">Draw</string>
   <string name="send_draft">Draft</string>
 
+  <string name="post_notification_title">Posting…</string>
+  <string name="post_success">Post succeeded</string>
+  <string name="post_failure">Post failed</string>
+
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>
   <string name="error_empty_body">Empty Body</string>

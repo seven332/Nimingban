@@ -16,13 +16,23 @@
 
 package com.hippo.nimingban.component
 
+import android.support.v7.app.NotificationCompat
+import com.hippo.nimingban.NMB_APP
 import com.hippo.nimingban.NMB_CLIENT
+import com.hippo.nimingban.NMB_NOTIFICATION
+import com.hippo.nimingban.R
+import com.hippo.nimingban.string
+import com.hippo.nimingban.tip
+import com.hippo.nimingban.util.explain
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /*
  * Created by Hippo on 6/26/2017.
  */
+
+private const val TAG_POST = "OPERATIONS:post"
+private const val TAG_REPLY = "OPERATIONS:reply"
 
 fun post(
     title: String,
@@ -32,11 +42,24 @@ fun post(
     fid: String,
     water: Boolean
 ) {
-  // TODO Show a notification
+  val notification = NotificationCompat.Builder(NMB_APP)
+      .setContentText(NMB_APP.getString(R.string.post_notification_title))
+      .setSmallIcon(android.R.drawable.stat_sys_upload)
+      .setCategory(NotificationCompat.CATEGORY_SOCIAL)
+      .setOngoing(false)
+      .build()
+  val id = NMB_NOTIFICATION.notify(TAG_POST, notification)
+
   NMB_CLIENT.post(title, name, email, content, fid, water)
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({}, {})
+      .subscribe({
+        NMB_NOTIFICATION.cancel(TAG_POST, id)
+        tip(R.string.post_success)
+      }, {
+        NMB_NOTIFICATION.cancel(TAG_POST, id)
+        tip("${string(R.string.post_failure)}: ${explain(it)}")
+      })
 }
 
 fun reply(

@@ -104,7 +104,7 @@ class ContentLayout @JvmOverloads constructor(
     val drawable = explainVividly(context, t)
     drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
     tipView.setCompoundDrawables(null, drawable, null, null)
-    tipView.text = explain(context, t)
+    tipView.text = explain(t)
   }
 
   override fun showProgressBar() {
@@ -114,7 +114,7 @@ class ContentLayout @JvmOverloads constructor(
   }
 
   override fun showMessage(t: Throwable) {
-    extension?.let { it.showMessage(explain(context, t)) }
+    extension?.let { it.showMessage(explain(t)) }
   }
 
   override fun stopRefreshing() {

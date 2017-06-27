@@ -28,7 +28,7 @@ fun <T> List<T>.asMutableList(): MutableList<T> = this as? MutableList<T> ?: thi
 /**
  * Removes and returns the first element matching the given [predicate].
  */
-inline fun <T> MutableList<T>.removeFirst(predicate: (T) -> Boolean): T? {
+inline fun <T> MutableIterable<T>.removeFirst(predicate: (T) -> Boolean): T? {
   val each = iterator()
   while (each.hasNext()) {
     val next = each.next()
@@ -38,4 +38,20 @@ inline fun <T> MutableList<T>.removeFirst(predicate: (T) -> Boolean): T? {
     }
   }
   return null
+}
+
+/**
+ * Removes all of the elements of this collection that satisfy the given [predicate].
+ * Returns `true` if any elements were removed.
+ */
+inline fun <T> MutableIterable<T>.filterNot(predicate: (T) -> Boolean): Boolean {
+  var removed = false
+  val each = iterator()
+  while (each.hasNext()) {
+    if (predicate(each.next())) {
+      each.remove()
+      removed = true
+    }
+  }
+  return removed
 }

@@ -20,7 +20,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v7.content.res.AppCompatResources
 import com.hippo.nimingban.R
+import com.hippo.nimingban.exception.GeneralException
 import com.hippo.nimingban.exception.PresetException
+import com.hippo.nimingban.string
 
 /*
  * Created by Hippo on 6/8/2017.
@@ -29,12 +31,12 @@ import com.hippo.nimingban.exception.PresetException
 /**
  * Explains the exception with a String.
  */
-fun explain(context: Context, e: Throwable): String {
-  val text: Int = when (e) {
-    is PresetException -> e.text
-    else -> R.string.error_unknown
+fun explain(e: Throwable): String {
+  return when (e) {
+    is PresetException -> string(e.text)
+    is GeneralException -> e.message
+    else -> string(R.string.error_unknown)
   }
-  return context.getString(text)
 }
 
 /**

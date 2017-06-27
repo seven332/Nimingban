@@ -23,4 +23,7 @@ package com.hippo.nimingban.exception
 /**
  * Exception with a special message.
  */
-class GeneralException(message: String): Exception(message)
+class GeneralException(message: String): Exception(message) {
+  override val message: String
+    get() = super.message!!
+}
