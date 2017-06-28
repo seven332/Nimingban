@@ -27,11 +27,10 @@ import android.view.MotionEvent
  * Created by Hippo on 6/16/2017.
  */
 
-class LinkifyTextView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatTextView(context, attrs, defStyleAttr) {
+class LinkifyTextView : AppCompatTextView {
+
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   var currentSpan: ClickableSpan? = null
     get() {

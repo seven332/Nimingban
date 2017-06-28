@@ -30,15 +30,14 @@ import com.hippo.nimingban.util.attrColor
  * Created by Hippo on 6/14/2017.
  */
 
-class NmbCover @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : GenericDraweeView(context, attrs, defStyleAttr) {
+class NmbCover : GenericDraweeView {
 
   companion object {
     private const val COVER_URL = "http://cover.acfunwiki.org/cover.php"
   }
+
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)

@@ -30,11 +30,10 @@ import io.reactivex.exceptions.Exceptions
  * `SafeCoordinatorLayout` ignores exceptions in
  * `onInterceptTouchEvent()` and `onTouchEvent()`.
  */
-class SafeCoordinatorLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : CoordinatorLayout(context, attrs, defStyleAttr) {
+class SafeCoordinatorLayout : CoordinatorLayout {
+
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
     try {

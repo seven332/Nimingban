@@ -30,11 +30,10 @@ import com.hippo.nimingban.util.dp2pix
  * Created by Hippo on 6/15/2017.
  */
 
-class NmbImage @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : LargeDraweeView(context, attrs, defStyleAttr) {
+class NmbImage : LargeDraweeView {
+
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)

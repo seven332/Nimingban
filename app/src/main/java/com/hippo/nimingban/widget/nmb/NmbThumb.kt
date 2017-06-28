@@ -29,11 +29,10 @@ import com.hippo.nimingban.util.attrColor
  * Created by Hippo on 6/9/2017.
  */
 
-class NmbThumb @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : GenericDraweeView(context, attrs, defStyleAttr) {
+class NmbThumb : GenericDraweeView {
+
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)

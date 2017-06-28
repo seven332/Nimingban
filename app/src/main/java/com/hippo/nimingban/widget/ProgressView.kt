@@ -33,11 +33,7 @@ import com.hippo.nimingban.util.getSuitableSize
 /**
  * `ProgressView` show a circle progress. It could be indeterminate or stable.
  */
-class ProgressView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class ProgressView : View {
 
   private val drawable = ProgressDrawable()
 
@@ -60,21 +56,23 @@ class ProgressView @JvmOverloads constructor(
     get() = drawable.color
     set(value) { drawable.color = value }
 
+  constructor(context: Context): super(context)
+
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs) {
+    val ta = context.obtainStyledAttributes(attrs, R.styleable.ProgressView, 0, 0)
+    color = ta.getColor(R.styleable.ProgressView_color, Color.BLACK)
+    val indeterminate = ta.getBoolean(R.styleable.ProgressView_indeterminate, true)
+    val progress = ta.getInteger(R.styleable.ProgressView_progress, -1)
+    if (progress in 0..1000) {
+      this.progress = progress
+    } else if (indeterminate) {
+      this.indeterminate = indeterminate
+    }
+    ta.recycle()
+  }
+
   init {
     drawable.callback = this
-
-    if (attrs != null) {
-      val ta = context.obtainStyledAttributes(attrs, R.styleable.ProgressView, defStyleAttr, 0)
-      color = ta.getColor(R.styleable.ProgressView_color, Color.BLACK)
-      val indeterminate = ta.getBoolean(R.styleable.ProgressView_indeterminate, true)
-      val progress = ta.getInteger(R.styleable.ProgressView_progress, -1)
-      if (progress in 0..1000) {
-        this.progress = progress
-      } else if (indeterminate) {
-        this.indeterminate = indeterminate
-      }
-      ta.recycle()
-    }
   }
 
   override fun verifyDrawable(who: Drawable?): Boolean {

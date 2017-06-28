@@ -28,14 +28,13 @@ import com.hippo.nimingban.R
  * Created by Hippo on 6/14/2017.
  */
 
-class NmbLeftDrawer @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+class NmbLeftDrawer : LinearLayout {
 
   private val button: View
   private val navigation: View
+
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   init {
     LayoutInflater.from(context).inflate(R.layout.widget_nmb_left_drawer, this)

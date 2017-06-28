@@ -28,10 +28,7 @@ import com.hippo.nimingban.util.random
  * Created by Hippo on 6/9/2017.
  */
 
-class NmbReplayMarquee @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null
-) : TextSwitcher(context, attrs), Runnable {
+class NmbReplayMarquee : TextSwitcher, Runnable {
 
   private var started = false
   private var index = 0
@@ -43,6 +40,8 @@ class NmbReplayMarquee @JvmOverloads constructor(
       nextReply(false)
     }
 
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
   init {
     setFactory { LayoutInflater.from(context).inflate(

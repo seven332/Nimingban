@@ -24,9 +24,7 @@ import com.hippo.stage.StageLayout
  * Created by Hippo on 6/12/2017.
  */
 
-class NmbStageLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : StageLayout(context, attrs, defStyleAttr) {
+class NmbStageLayout : StageLayout {
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 }
