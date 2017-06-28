@@ -29,6 +29,8 @@ import com.hippo.nimingban.util.readTypedList
  * Created by Hippo on 6/4/2017.
  */
 
+// TODO Thread needs a better format
+
 // Thread should extend Reply, but data class can't be open
 // I hope a property can be class delegation, but it can't
 data class Thread(
@@ -98,6 +100,8 @@ data class Thread(
     private set
   var displayContent: CharSequence = ""
     private set
+
+  var forum: String? = null
 
   fun toReply(): Reply = Reply(_id, _img, _ext, _now, _user, _name, _email, _title, _content, _sage, _admin).apply { init }
 

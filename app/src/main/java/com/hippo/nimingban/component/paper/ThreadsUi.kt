@@ -124,7 +124,7 @@ class ThreadsUi(
     override fun onBindViewHolder(holder: ThreadHolder, position: Int) {
       val thread = get(position)
       holder.user.text = thread.displayUser
-      holder.id.text = thread.displayId
+      holder.id.text = thread.forum ?: thread.displayId
       holder.date.text = thread.date.prettyTime(context)
       holder.content.text = thread.displayContent
       holder.thumb.loadThumb(thread.image)

@@ -17,10 +17,10 @@
 package com.hippo.nimingban.client.data
 
 /*
- * Created by Hippo on 6/23/2017.
+ * Created by Hippo on 6/27/2017.
  */
 
-data class ThreadsHtml(
-    val pages: Int,
-    val threads: List<ThreadHtml>
+data class ThreadHtml(
+    val id: String,
+    val forum: String
 )

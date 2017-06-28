@@ -21,7 +21,6 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
-import com.hippo.nimingban.client.data.ThreadsHtml
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.scene.galleryScene
 import com.hippo.nimingban.component.scene.repliesScene
@@ -31,7 +30,6 @@ import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.stage.Scene
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
 
 /*
@@ -96,18 +94,11 @@ class ThreadsLogic(
     override fun onRequireData(id: Int, page: Int) {
       val forum = this@ThreadsLogic.forum
       if (forum != null) {
-        Singles
-            .zip(
-                NMB_CLIENT.threads(forum.id, page)
-                    .subscribeOn(Schedulers.io()),
-                NMB_CLIENT.threadsHtml(forum.htmlName, page)
-                    .subscribeOn(Schedulers.io())
-                    .onErrorReturn { ThreadsHtml(Int.MAX_VALUE) },
-                { list, html -> Pair(list, html) })
+        NMB_CLIENT.threads(forum, page)
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ (list, html) ->
+            .subscribe({ (list, pages) ->
               // Update pages
-              val pages = html.pages
               if (pages != Int.MAX_VALUE) {
                 this@ThreadsLogic.pages = pages
               }

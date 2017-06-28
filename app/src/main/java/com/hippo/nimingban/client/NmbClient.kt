@@ -16,6 +16,10 @@
 
 package com.hippo.nimingban.client
 
+import com.hippo.nimingban.client.data.Forum
+import io.reactivex.rxkotlin.Singles
+import io.reactivex.schedulers.Schedulers
+
 /*
  * Created by Hippo on 6/4/2017.
  */
@@ -35,16 +39,22 @@ class NmbClient(private val engine: NmbEngine) {
             it
           } !!
 
-  fun threads(forum: String, page: Int) =
-      engine.threads(threadsApiUrl(forum, page))
-          .map {
-            // Init all threads
-            it.forEach { it.init }
-            // Return it self
-            it
-          } !!
-
-  fun threadsHtml(forum: String, page: Int) = engine.threadsHtml(threadsHtmlUrl(forum, page))
+  fun threads(forum: Forum, page: Int) =
+      Singles.zip(
+          engine.threads(threadsApiUrl(forum.id, page))
+              .map { it.also { it.forEach { it.init } } }
+              .subscribeOn(Schedulers.io()),
+          engine.threadsHtml(threadsHtmlUrl(forum.htmlName, page))
+              .subscribeOn(Schedulers.io()),
+          { list, (pages, threads) ->
+            // Pass forum from html to list
+            list.forEach { thread ->
+              threads.find { it.id == thread.id }
+                  ?.let { thread.forum = it.forum }
+            }
+            // Return a pair of list and pages
+            Pair(list, pages)
+          })
 
   fun replies(id: String, page: Int) =
       engine.replies(repliesApiUrl(id, page))

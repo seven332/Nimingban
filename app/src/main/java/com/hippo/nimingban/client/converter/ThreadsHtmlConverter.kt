@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.client.converter
 
+import com.hippo.nimingban.client.data.ThreadHtml
 import com.hippo.nimingban.client.data.ThreadsHtml
 import org.jsoup.Jsoup
 
@@ -27,12 +28,22 @@ class ThreadsHtmlConverter : NmbConverter<ThreadsHtml>() {
 
   override fun doConvert(body: String): ThreadsHtml {
     val document = Jsoup.parse(body)
+
+    val threads = mutableListOf<ThreadHtml>()
+    for (item in document.getElementsByClass("h-threads-item")) {
+      val id = item.attr("data-threads-id")
+      val forum = item.getElementsByClass("h-threads-info")?.first()
+          ?.getElementsByAttributeValue("style", "color:gray")?.first()
+          ?.text()
+      if (id != null && !id.isBlank() && forum != null && !forum.isBlank()) {
+        threads.add(ThreadHtml(id, forum))
+      }
+    }
+
     val pagination = document.getElementsByClass("h-pagination").first()
     val children = pagination?.children()
-
     var href: String? = null
     val last = children?.last()?.children()?.first()
-
     if (last?.text() == "末页") {
       href = last.attr("href")
     } else if (last?.text() == "下一页") {
@@ -41,7 +52,7 @@ class ThreadsHtmlConverter : NmbConverter<ThreadsHtml>() {
       }
     }
 
-    return ThreadsHtml(href.lastInt(Int.MAX_VALUE))
+    return ThreadsHtml(href.lastInt(Int.MAX_VALUE), threads)
   }
 }
 
