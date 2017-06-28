@@ -31,8 +31,8 @@ import com.hippo.nimingban.component.NmbUi
 import com.hippo.nimingban.drawable.ChipDrawable
 import com.hippo.nimingban.util.addState
 import com.hippo.nimingban.util.attrColor
-import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.drawable
+import com.hippo.nimingban.util.find
 
 /*
  * Created by Hippo on 6/24/2017.
@@ -89,6 +89,11 @@ class SendUi(
     showMore(showMore)
 
     logic.sendUi = this
+  }
+
+  override fun onAttach() {
+    super.onAttach()
+    content.requestFocus()
   }
 
   override fun onDestroy() {

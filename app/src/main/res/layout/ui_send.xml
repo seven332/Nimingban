@@ -86,7 +86,7 @@
     android:divider="@drawable/divider_v_x1_light"
     android:showDividers="middle|end">
 
-    <EditText
+    <com.hippo.nimingban.widget.AutoEditText
       android:id="@+id/title"
       android:layout_width="match_parent"
       android:layout_height="@dimen/list_single_item_height"
@@ -97,7 +97,7 @@
       android:background="@null"
       android:inputType="text"/>
 
-    <EditText
+    <com.hippo.nimingban.widget.AutoEditText
       android:id="@+id/name"
       android:layout_width="match_parent"
       android:layout_height="@dimen/list_single_item_height"
@@ -108,7 +108,7 @@
       android:background="@null"
       android:inputType="text"/>
 
-    <EditText
+    <com.hippo.nimingban.widget.AutoEditText
       android:id="@+id/email"
       android:layout_width="match_parent"
       android:layout_height="@dimen/list_single_item_height"
@@ -121,7 +121,7 @@
 
   </LinearLayout>
 
-  <EditText
+  <com.hippo.nimingban.widget.AutoEditText
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="0dp"
