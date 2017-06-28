@@ -17,14 +17,15 @@
 package com.hippo.nimingban.component.paper
 
 import android.text.style.ClickableSpan
+import android.text.style.URLSpan
 import com.hippo.nimingban.NMB_CLIENT
-import com.hippo.nimingban.architecture.Logic
 import com.hippo.nimingban.client.REPLY_PAGE_SIZE
 import com.hippo.nimingban.client.data.RepliesHtml
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.NmbScene
+import com.hippo.nimingban.component.openUrl
 import com.hippo.nimingban.component.scene.galleryScene
 import com.hippo.nimingban.util.ceilDiv
 import com.hippo.nimingban.widget.content.ContentData
@@ -78,7 +79,9 @@ abstract class RepliesLogic(
 
   /** Called when user click a span **/
   fun onClickSpan(span: ClickableSpan) {
-    // TODO
+    when(span) {
+      is URLSpan -> openUrl(span.url)
+    }
   }
 
   /** Called when user click a reply **/

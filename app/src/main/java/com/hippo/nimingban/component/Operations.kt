@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.component
 
+import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.NotificationCompat
 import com.hippo.nimingban.NMB_APP
 import com.hippo.nimingban.NMB_CLIENT
@@ -88,4 +90,18 @@ fun reply(
         NMB_NOTIFICATION.cancel(TAG_REPLY, id)
         tip("${string(R.string.reply_failure)}: ${explain(it)}")
       })
+}
+
+fun openUrl(url: String) {
+  val context = NMB_APP
+  val uri = Uri.parse(url)
+
+  val intent = Intent(Intent.ACTION_VIEW)
+  intent.data = uri
+
+  val resolveInfo = context.packageManager.resolveActivity(intent, 0)
+  if (resolveInfo != null) {
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    context.startActivity(intent)
+  }
 }
