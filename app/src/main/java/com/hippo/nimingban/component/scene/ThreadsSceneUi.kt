@@ -48,6 +48,8 @@ class ThreadsSceneUi(
   init {
     view = inflater.inflate(R.layout.ui_threads_scene, container, false)
     drawerLayout = view.find(R.id.drawer_layout)
+    drawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, Gravity.LEFT)
+    drawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, Gravity.RIGHT)
 
     toolbar(logic.threadsToolbarLogic, R.id.drawer_content) {
       threads(logic.threadsLogic, activity, ToolbarUi.CONTAINER_ID)
