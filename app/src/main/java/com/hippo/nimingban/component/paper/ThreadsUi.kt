@@ -81,9 +81,8 @@ class ThreadsUi(
   }
 
 
-  inner class ThreadHolder(
-      itemView: android.view.View
-  ) : AlertHolder(itemView) {
+  inner class ThreadHolder(itemView: View) : AlertHolder(itemView) {
+
     val user = itemView.findViewById(R.id.user) as TextView
     val id = itemView.findViewById(R.id.id) as TextView
     val date = itemView.findViewById(R.id.date) as TextView
@@ -107,11 +106,13 @@ class ThreadsUi(
     override fun onResume() {
       super.onResume()
       replies.start()
+      thumb.start()
     }
 
     override fun onPause() {
       super.onPause()
       replies.stop()
+      thumb.stop()
     }
   }
 

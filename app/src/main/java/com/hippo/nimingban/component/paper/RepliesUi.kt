@@ -26,12 +26,13 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.component.NmbUi
+import com.hippo.nimingban.component.adapter.AlertAdapter
+import com.hippo.nimingban.component.adapter.AlertHolder
 import com.hippo.nimingban.util.attrColor
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.prettyTime
 import com.hippo.nimingban.widget.LinkifyTextView
-import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import com.hippo.nimingban.widget.nmb.NmbThumb
 import com.hippo.recyclerview.addons.LinearDividerItemDecoration
@@ -87,9 +88,8 @@ class RepliesUi(
   }
 
 
-  private inner class RepliesHolder(
-      itemView: View
-  ) : RecyclerView.ViewHolder(itemView) {
+  private inner class RepliesHolder(itemView: View) : AlertHolder(itemView) {
+
     val user = itemView.findViewById(R.id.user) as TextView
     val id = itemView.findViewById(R.id.id) as TextView
     val date = itemView.findViewById(R.id.date) as TextView
@@ -109,10 +109,20 @@ class RepliesUi(
       }
       thumb.setOnClickListener { item?.let { logic.onClickThumb(it) } }
     }
+
+    override fun onResume() {
+      super.onResume()
+      thumb.start()
+    }
+
+    override fun onPause() {
+      super.onPause()
+      thumb.stop()
+    }
   }
 
 
-  private inner class RepliesAdapter : ContentDataAdapter<Reply, RepliesHolder>() {
+  private inner class RepliesAdapter : AlertAdapter<Reply, RepliesHolder>(lifecycle) {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
         RepliesHolder(inflater.inflate(R.layout.replies_item, parent, false))
@@ -124,6 +134,8 @@ class RepliesUi(
       holder.date.text = thread.date.prettyTime(inflater.context)
       holder.content.text = thread.displayContent
       holder.thumb.loadThumb(thread.image)
+
+      super.onBindViewHolder(holder, position)
     }
   }
 }

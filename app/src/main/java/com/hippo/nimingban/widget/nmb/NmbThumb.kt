@@ -17,10 +17,13 @@
 package com.hippo.nimingban.widget.nmb
 
 import android.content.Context
+import android.graphics.drawable.Animatable
 import android.util.AttributeSet
 import android.view.View
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.controller.BaseControllerListener
 import com.facebook.drawee.view.GenericDraweeView
+import com.facebook.imagepipeline.image.ImageInfo
 import com.hippo.nimingban.R
 import com.hippo.nimingban.drawable.TextDrawable
 import com.hippo.nimingban.util.attrColor
@@ -31,6 +34,8 @@ import com.hippo.nimingban.util.attrColor
 
 class NmbThumb : GenericDraweeView {
 
+  private var isStarted = false
+
   constructor(context: Context): super(context)
   constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
@@ -40,6 +45,16 @@ class NmbThumb : GenericDraweeView {
     failure.textColor = context.attrColor(android.R.attr.textColorTertiary)
     hierarchy.setFailureImage(failure)
     hierarchy.setRetryImage(failure.constantState.newDrawable())
+  }
+
+  fun start() {
+    isStarted = true
+    controller?.animatable?.start()
+  }
+
+  fun stop() {
+    isStarted = false
+    controller?.animatable?.stop()
   }
 
   // TODO get image url from api
@@ -57,8 +72,12 @@ class NmbThumb : GenericDraweeView {
     val controller = Fresco.newDraweeControllerBuilder()
         .setOldController(controller)
         .setTapToRetryEnabled(true)
-        .setAutoPlayAnimations(true)
         .setUri(url)
+        .setControllerListener(object : BaseControllerListener<ImageInfo>() {
+          override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
+            if (isStarted) animatable?.start()
+          }
+        })
         .build()
     setController(controller)
   }
