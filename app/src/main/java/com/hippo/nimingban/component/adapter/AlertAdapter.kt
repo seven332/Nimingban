@@ -21,7 +21,6 @@ import com.hippo.nimingban.component.SceneUi
 import com.hippo.nimingban.util.debug
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
 
 /*
  * Created by Hippo on 6/13/2017.
@@ -30,7 +29,6 @@ import io.reactivex.disposables.Disposable
 abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : ContentDataAdapter<T, VH>() {
 
   private val holderList = mutableListOf<VH>()
-  private var disposable: Disposable? = null
 
   private var isResumed = false
     set(value) {
@@ -39,15 +37,13 @@ abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : Co
     }
 
   init {
-    disposable = lifecycle.subscribe({
+    lifecycle.subscribe({
       when (it) {
         SceneUi.RESUME -> isResumed = true
         SceneUi.PAUSE -> isResumed = false
         SceneUi.DESTROY -> {
           debug(holderList.isEmpty(), { "All ViewHolders should be removed in onViewRecycled()" })
           holderList.clear()
-          disposable?.dispose()
-          disposable = null
         }
       }
     }, { /* Ignore error */ })

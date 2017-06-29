@@ -22,6 +22,7 @@ import android.view.View
 import com.hippo.nimingban.architecture.Ui
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
+import io.reactivex.disposables.Disposables
 import io.reactivex.exceptions.Exceptions
 
 /*
@@ -185,13 +186,17 @@ abstract class SceneUi : Ui {
 
   private class LifecycleHandler(var step: Int) {
 
-    private val list = mutableListOf<ObservableEmitter<Int>>()
+    private val emitters = mutableListOf<ObservableEmitter<Int>>()
 
     val observable : Observable<Int> by lazy {
       Observable.create<Int> {
-        list.add(it)
-        it.setCancellable { list.remove(it) }
-        emitMissingStep(it)
+        if (step != DESTROY) {
+          emitters.add(it)
+          it.setDisposable(Disposables.fromAction { emitters.remove(it) })
+          emitMissingStep(it)
+        } else {
+          it.setDisposable(Disposables.disposed())
+        }
       }
     }
 
@@ -204,7 +209,11 @@ abstract class SceneUi : Ui {
 
     fun emit(step: Int) {
       this.step = step
-      list.forEach { emit(it, step) }
+      emitters.forEach { emit(it, step) }
+
+      if (step == DESTROY) {
+        emitters.clear()
+      }
     }
 
     private fun emit(emitter: ObservableEmitter<Int>, step: Int) {
