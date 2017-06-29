@@ -26,7 +26,7 @@ import com.hippo.nimingban.network.publicsuffix.PUBLIC_SUFFIX_UNDER
 
 // https://github.com/google/guava/blob/v22.0/guava/src/com/google/common/net/InternetDomainName.java
 
-private val DOT_REGEX = "\\."
+private val DOT_REGEX = Regex("\\.")
 
 /**
  * Indicates whether this domain name represents a *public suffix*, as defined by the Mozilla
@@ -47,6 +47,6 @@ fun isPublicSuffix(domain: String?): Boolean {
  * Does the domain name match one of the "wildcard" patterns (e.g. `"*.ar"`)?
  */
 private fun matchesWildcardPublicSuffix(domain: String): Boolean {
-  val pieces = domain.split(DOT_REGEX.toRegex(), 2).toTypedArray()
+  val pieces = domain.split(DOT_REGEX, 2)
   return pieces.size == 2 && PUBLIC_SUFFIX_UNDER.containsKey(pieces[1])
 }

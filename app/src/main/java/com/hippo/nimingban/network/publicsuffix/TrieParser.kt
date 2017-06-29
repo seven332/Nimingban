@@ -93,6 +93,3 @@ private fun doParseTrieToBuilder(
   stack.removeAt(0)
   return idx
 }
-
-
-
