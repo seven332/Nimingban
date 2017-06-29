@@ -17,6 +17,7 @@
 package com.hippo.nimingban.util
 
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import com.pushtorefresh.storio.sqlite.StorIOSQLite
 
 /*
@@ -86,6 +87,30 @@ fun Cursor.getString(column: String, defValue: String?): String? {
     }
   } catch (e: Throwable) {}
   return defValue
+}
+
+/**
+ * Runs the provided SQL and executes the given [block] on each row.
+ */
+inline fun SQLiteDatabase.rawQuery(sql: String, selectionArgs: Array<String>?, block: (Cursor) -> Unit) {
+  val cursor = rawQuery(sql, selectionArgs)
+  cursor.use {
+    while (it.moveToNext()) {
+      block(cursor)
+    }
+  }
+}
+
+/**
+ * Executes the given [block] function in transaction.
+ */
+inline fun <R> SQLiteDatabase.transaction(block: (SQLiteDatabase) -> R): R {
+  beginTransaction()
+  try {
+    return block(this).also { setTransactionSuccessful() }
+  } finally {
+    endTransaction()
+  }
 }
 
 /**

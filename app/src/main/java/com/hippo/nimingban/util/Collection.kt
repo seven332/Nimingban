@@ -55,3 +55,16 @@ inline fun <T> MutableIterable<T>.filterNot(predicate: (T) -> Boolean): Boolean 
   }
   return removed
 }
+
+/**
+ * Performs the given [action] on each entry. Remove the entry if return `true`.
+ */
+inline fun <K, V> MutableMap<K, V>.foreachRemoved(action: (K, V) -> Boolean ) {
+  val iterator = entries.iterator()
+  while (iterator.hasNext()) {
+    val entry = iterator.next()
+    if (action(entry.key, entry.value)) {
+      iterator.remove()
+    }
+  }
+}

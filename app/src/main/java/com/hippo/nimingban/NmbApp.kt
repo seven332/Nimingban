@@ -35,6 +35,7 @@ import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.network.CookieRepository
 import com.hippo.nimingban.util.filterNot
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
@@ -69,10 +70,15 @@ val NMB_DB: NmbDB by lazy { NmbDB(NMB_APP) }
 
 val NMB_NOTIFICATION: NmbNotification by lazy { NmbNotification(NMB_APP) }
 
+val COOKIE_JAR: CookieRepository by lazy {
+  CookieRepository(NMB_APP)
+}
+
 val OK_HTTP_CLIENT: OkHttpClient by lazy {
   OkHttpClient.Builder()
       .addInterceptor(NmbInterceptor())
       .addInterceptor(HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC })
+      .cookieJar(COOKIE_JAR)
       .build()
 }
 
