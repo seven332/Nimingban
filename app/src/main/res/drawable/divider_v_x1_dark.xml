@@ -20,7 +20,7 @@
   android:shape="rectangle">
 
   <size
-    android:width="-1px"
+    android:width="0dp"
     android:height="1dp"/>
 
   <solid android:color="@color/divider_dark"/>
