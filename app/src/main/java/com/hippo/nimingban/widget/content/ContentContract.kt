@@ -60,6 +60,8 @@ interface ContentUi : Ui {
 
   fun scrollToPosition(position: Int)
 
+  fun scrollUpALittle()
+
   fun scrollDownALittle()
 
   fun notifyDataSetChanged()
@@ -126,6 +128,11 @@ abstract class AbsContentData<out T> : ContentDataLogic<T>, ContentUi {
   override fun scrollToPosition(position: Int) {
     ui?.scrollToPosition(position)
     state.scrollToPosition(position)
+  }
+
+  override fun scrollUpALittle() {
+    ui?.scrollUpALittle()
+    state.scrollUpALittle()
   }
 
   override fun scrollDownALittle() {

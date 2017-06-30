@@ -134,6 +134,12 @@ class ContentLayout @JvmOverloads constructor(
     recyclerView.scrollToPosition(position)
   }
 
+  override fun scrollUpALittle() {
+    if (recyclerView.computeVerticalScrollOffset() == 0) {
+      recyclerView.smoothScrollBy(0, -aLittleDistance)
+    }
+  }
+
   override fun scrollDownALittle() {
     if (refreshLayout.isAlmostBottom) {
       recyclerView.smoothScrollBy(0, aLittleDistance)

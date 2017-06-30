@@ -416,6 +416,8 @@ abstract class ContentData<T> : AbsContentData<T>() {
       if (adjustPosition) {
         // Scroll to the first position of require page
         scrollToPosition(0)
+      } else {
+        scrollUpALittle()
       }
     }
   }

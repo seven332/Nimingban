@@ -88,6 +88,8 @@ class ContentStateImpl : ContentState {
 
   override fun scrollToPosition(position: Int) {}
 
+  override fun scrollUpALittle() {}
+
   override fun scrollDownALittle() {}
 
   override fun notifyDataSetChanged() {}
