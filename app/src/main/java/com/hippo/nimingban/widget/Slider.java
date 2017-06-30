@@ -27,6 +27,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatImageView;
@@ -134,7 +136,7 @@ public class Slider extends View {
     updateTextSize();
 
     setRange(a.getInteger(R.styleable.Slider_min, 1), a.getInteger(R.styleable.Slider_max, 100));
-    setProgress(a.getInteger(R.styleable.Slider_progress, 0));
+    setProgress(a.getInteger(R.styleable.Slider_progress, 0), false);
     mThickness = a.getDimension(R.styleable.Slider_thickness, 2);
     mRadius = a.getDimension(R.styleable.Slider_radius, 6);
     setColor(a.getColor(R.styleable.Slider_color, Color.BLACK));
@@ -292,12 +294,12 @@ public class Slider extends View {
   public void setRange(int start, int end) {
     mStart = start;
     mEnd = end;
-    setProgress(mProgress);
+    setProgress(mProgress, false);
 
     updateBubbleSize();
   }
 
-  public void setProgress(int progress) {
+  public void setProgress(int progress, boolean animation) {
     progress = MathKt.clamp(progress, mStart, mEnd);
     int oldProgress = mProgress;
     if (mProgress != progress) {
@@ -305,7 +307,7 @@ public class Slider extends View {
       mPercent = MathKt.delerp(mProgress, mStart, mEnd);
       mTargetProgress = progress;
 
-      if (mProgressAnimation == null) {
+      if (mProgressAnimation == null || !animation) {
         // For init
         mDrawPercent = mPercent;
         mDrawProgress = mProgress;
@@ -517,6 +519,54 @@ public class Slider extends View {
       int x = width / 2;
       int y = (int) ((height * TEXT_CENTER) + (mRect.height() / 2));
       canvas.drawText(mProgressStr, x, y, mTextPaint);
+    }
+  }
+
+  @Override
+  protected Parcelable onSaveInstanceState() {
+    Parcelable superState = super.onSaveInstanceState();
+    SavedState savedState = new SavedState(superState);
+    savedState.progress = mProgress;
+    return savedState;
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Parcelable state) {
+    SavedState ss = (SavedState) state;
+    super.onRestoreInstanceState(ss.getSuperState());
+    setProgress(ss.progress, false);
+  }
+
+  private static class SavedState extends BaseSavedState {
+
+    int progress;
+
+    SavedState(Parcelable superState) {
+      super(superState);
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+      super.writeToParcel(out, flags);
+      out.writeInt(progress);
+    }
+
+    public static final Parcelable.Creator<SavedState> CREATOR
+        = new Parcelable.Creator<SavedState>() {
+      @Override
+      public SavedState createFromParcel(Parcel in) {
+        return new SavedState(in);
+      }
+
+      @Override
+      public SavedState[] newArray(int size) {
+        return new SavedState[size];
+      }
+    };
+
+    private SavedState(Parcel in) {
+      super(in);
+      progress = in.readInt();
     }
   }
 
