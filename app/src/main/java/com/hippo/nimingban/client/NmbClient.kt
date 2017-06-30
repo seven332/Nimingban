@@ -17,6 +17,7 @@
 package com.hippo.nimingban.client
 
 import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.client.data.ThreadsHtml
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
 
@@ -25,6 +26,10 @@ import io.reactivex.schedulers.Schedulers
  */
 
 class NmbClient(private val engine: NmbEngine) {
+
+  companion object {
+    private const val MAX_THREADS_PAGES = 100
+  }
 
   fun forums() =
       engine.forums()
@@ -45,6 +50,7 @@ class NmbClient(private val engine: NmbEngine) {
               .map { it.also { it.forEach { it.init } } }
               .subscribeOn(Schedulers.io()),
           engine.threadsHtml(threadsHtmlUrl(forum.htmlName, page))
+              .onErrorReturn { ThreadsHtml(MAX_THREADS_PAGES, emptyList()) }
               .subscribeOn(Schedulers.io()),
           { list, (pages, threads) ->
             // Pass forum from html to list
@@ -53,7 +59,7 @@ class NmbClient(private val engine: NmbEngine) {
                   ?.let { thread.forum = it.forum }
             }
             // Return a pair of list and pages
-            Pair(list, pages)
+            Pair(list, minOf(pages, MAX_THREADS_PAGES))
           })
 
   fun replies(id: String, page: Int) =
