@@ -40,6 +40,8 @@
 
     <item name="forumListItemTextColor">@color/forum_list_item_text_dark</item>
 
+    <item name="sliderStyle">@style/Slider.Dark</item>
+
     <item name="android:windowBackground">?attr/backgroundColorWindow</item>
   </style>
 

@@ -81,6 +81,10 @@ fun Float.clamp(bound1: Float, bound2: Float): Float {
  */
 fun Float.lerp(from: Float, to: Float) = from + this * (to - from)
 
+fun Int.delerp(from: Int, to: Int) = if (from == to) 1.0f else (this - from).toFloat() / (to - from).toFloat()
+
+fun Float.delerp(from: Float, to: Float) = if (from == to) 1.0f else (this - from) / (to - from)
+
 /**
  * Returns the largest (closest to positive infinity)
  * `int` value that is less than or equal to the algebraic quotient.

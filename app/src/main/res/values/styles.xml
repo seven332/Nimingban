@@ -34,6 +34,18 @@
     <item name="android:minHeight">76dp</item>
   </style>
 
+  <style name="Slider">
+    <item name="thickness">2dp</item>
+    <item name="radius">6dp</item>
+    <item name="color">?attr/colorPrimary</item>
+    <item name="bgColor">?attr/backgroundColorStatusBar</item>
+    <item name="textColor">?android:attr/textColorPrimaryInverse</item>
+    <item name="textSize">@dimen/text_super_small</item>
+  </style>
+
+  <style name="Slider.Dark">
+    <item name="textColor">?android:attr/textColorPrimary</item>
+  </style>
 
   <style name="Nmb"/>
 

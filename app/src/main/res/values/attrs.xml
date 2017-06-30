@@ -33,12 +33,28 @@
     <attr name="contentBackground" format="reference"/>
 
     <attr name="forumListItemTextColor" format="color"/>
+
+    <attr name="sliderStyle" format="reference"/>
   </declare-styleable>
 
   <declare-styleable name="ProgressView">
     <attr name="color" format="color"/>
     <attr name="indeterminate" format="boolean"/>
     <attr name="progress" format="integer"/>
+  </declare-styleable>
+
+  <declare-styleable name="Slider">
+    <attr name="min" format="integer"/>
+    <attr name="max" format="integer"/>
+    <attr name="progress"/>
+    <attr name="thickness" format="dimension"/>
+    <attr name="radius" format="dimension"/>
+    <attr name="color"/>
+    <attr name="bgColor" format="color"/>
+    <attr name="textColor" format="color"/>
+    <attr name="textSize" format="dimension"/>
+    <attr name="reversed" format="boolean"/>
+    <attr name="isIndicator" format="boolean"/>
   </declare-styleable>
 
 </resources>
