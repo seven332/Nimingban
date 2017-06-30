@@ -30,6 +30,11 @@ class ContentStateImpl : ContentState {
   private var headerRefreshing: Boolean = false
   private var footerRefreshing: Boolean = false
 
+  /**
+   * Returns `true` if the content is showing and stable.
+   */
+  fun isLoaded() = showContent && !headerRefreshing && !footerRefreshing
+
   override fun restore(ui: ContentUi) {
     if (showContent) {
       ui.showContent()

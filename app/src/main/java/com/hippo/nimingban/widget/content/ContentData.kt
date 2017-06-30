@@ -17,6 +17,7 @@
 package com.hippo.nimingban.widget.content
 
 import com.hippo.nimingban.util.INVALID_ID
+import com.hippo.nimingban.util.INVALID_INDEX
 
 /*
  * Created by Hippo on 6/5/2017.
@@ -66,9 +67,11 @@ abstract class ContentData<T> : AbsContentData<T>() {
 
   private val data: MutableList<T> = mutableListOf()
   /** The min page index **/
-  private var minPage = DEFAULT_FIRST_PAGE_INDEX
+  var minPage = DEFAULT_FIRST_PAGE_INDEX
+    private set
   /** The max page index + 1  */
-  private var maxPage = DEFAULT_FIRST_PAGE_INDEX
+  var maxPage = DEFAULT_FIRST_PAGE_INDEX
+    private set
   /** The first loaded page index **/
   private var beginPage = DEFAULT_FIRST_PAGE_INDEX
   /** The last loaded page index + 1 **/
@@ -94,6 +97,28 @@ abstract class ContentData<T> : AbsContentData<T>() {
   private fun isMinReached() = beginPage <= minPage
 
   override fun isMaxReached() = endPage >= maxPage
+
+  fun getPageForPosition(position: Int): Int {
+    if (position < 0) {
+      return INVALID_INDEX
+    }
+
+    var i = 0
+    val n = dataDivider.size
+    while (i < n) {
+      if (position < dataDivider[i]) {
+        return i + beginPage
+      }
+      i++
+    }
+
+    return INVALID_INDEX
+  }
+
+  /**
+   * Returns `true` if the content is showing and stable.
+   */
+  fun isLoaded() = state.isLoaded()
 
   fun restore() = requireData(0, TYPE_RESTORE)
 

@@ -114,7 +114,7 @@ class ContentLayout @JvmOverloads constructor(
   }
 
   override fun showMessage(t: Throwable) {
-    extension?.let { it.showMessage(explain(t)) }
+    extension?.showMessage(explain(t))
   }
 
   override fun stopRefreshing() {
