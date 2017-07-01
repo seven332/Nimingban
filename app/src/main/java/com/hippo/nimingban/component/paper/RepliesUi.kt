@@ -70,6 +70,7 @@ class RepliesUi(
     recyclerView = view.find(R.id.recycler_view)
     recyclerView.adapter = adapter
     recyclerView.layoutManager = layoutManager
+    recyclerView.itemAnimator = null
     val itemDecoration = LinearDividerItemDecoration(
         LinearDividerItemDecoration.VERTICAL,
         context.attrColor(R.attr.dividerColor),

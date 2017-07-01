@@ -69,6 +69,7 @@ class ThreadsUi(
     recyclerView = view.find(R.id.recycler_view)
     recyclerView.adapter = adapter
     recyclerView.layoutManager = layoutManager
+    recyclerView.itemAnimator = null
 
     logic.threadsUi = this
   }
