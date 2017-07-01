@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 @RunWith(RobolectricTestRunner::class)
 class CookieRepositoryTest {
 
-  fun equals(cookieSet: CookieSet, cookies: List<Cookie>) {
+  internal fun equals(cookieSet: CookieSet, cookies: List<Cookie>) {
     assertNotNull(cookieSet)
     assertNotNull(cookies)
 
