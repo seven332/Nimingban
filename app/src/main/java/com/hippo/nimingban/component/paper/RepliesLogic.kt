@@ -25,6 +25,7 @@ import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.openUrl
 import com.hippo.nimingban.component.scene.galleryScene
+import com.hippo.nimingban.util.INVALID_INDEX
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
@@ -41,6 +42,8 @@ abstract class RepliesLogic(
     private var forum: String?,
     private val scene: NmbScene
 ) : NmbLogic() {
+
+  var repliesUi: RepliesUi? = null
 
   private val data = RepliesData()
 
@@ -83,6 +86,18 @@ abstract class RepliesLogic(
   /** Called when user click a reply **/
   fun onClickReply(reply: Reply) {
     // TODO
+  }
+
+  fun getMinPage() = data.minPage
+
+  fun getMaxPage() = data.maxPage
+
+  fun getCurrentPage() = data.getPageForPosition(repliesUi?.findFirstVisibleItemPosition() ?: INVALID_INDEX)
+
+  fun isLoaded() = data.isLoaded()
+
+  fun onGoTo(page: Int) {
+    data.switchTo(page)
   }
 
   /**

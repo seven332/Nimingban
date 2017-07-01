@@ -50,6 +50,7 @@ class ThreadsUi(
   override val view: View
   private val context = inflater.context
   private val adapter: ThreadAdapter
+  private val layoutManager: LinearLayoutManager
   private val contentLayout: ContentLayout
   private val recyclerView: RecyclerView
 
@@ -63,13 +64,18 @@ class ThreadsUi(
     contentLayout.extension = this
     logic.initializeContentLayout(contentLayout)
 
+    layoutManager = LinearLayoutManager(context)
+
     recyclerView = view.find(R.id.recycler_view)
     recyclerView.adapter = adapter
-    recyclerView.layoutManager = LinearLayoutManager(context)
+    recyclerView.layoutManager = layoutManager
+
+    logic.threadsUi = this
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    logic.threadsUi = null
     logic.terminateAdapter(adapter)
     logic.terminateContentLayout(contentLayout)
     recyclerView.adapter = null
@@ -79,6 +85,8 @@ class ThreadsUi(
   override fun showMessage(message: String) {
     activity.snack(message)
   }
+
+  fun findFirstVisibleItemPosition() = layoutManager.findFirstVisibleItemPosition()
 
 
   inner class ThreadHolder(itemView: View) : AlertHolder(itemView) {

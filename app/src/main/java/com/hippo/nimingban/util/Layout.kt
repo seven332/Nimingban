@@ -17,6 +17,7 @@
 package com.hippo.nimingban.util
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 
 /*
@@ -59,3 +60,8 @@ fun View.isUnder(localX: Float, localY: Float, slop: Float = 0.0f) =
         && localY >= (top -slop)
         && localX < (right + slop)
         && localY < (bottom + slop)
+
+/**
+ * Inflates
+ */
+fun LayoutInflater.inflate(resource: Int) = inflate(resource, null)!!

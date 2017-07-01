@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.content.res.AppCompatResources
 import com.hippo.android.resource.AttrResources
 import com.hippo.html.Html
@@ -57,3 +58,5 @@ fun Context.attrColor(resId: Int) = AttrResources.getAttrColor(this, resId)
 fun Context.drawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
 
 fun StateListDrawable.addState(drawable: Drawable, vararg states: Int) = addState(states, drawable)
+
+fun Drawable.wrap() = DrawableCompat.wrap(this)

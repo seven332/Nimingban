@@ -25,12 +25,14 @@
   <string name="navigation_settings">Settings</string>
 
   <string name="thread_post">Post</string>
+  <string name="thread_go_to">Go to</string>
 
   <string name="forum_list_sort">Sort</string>
 
   <string name="forums_title">All forums</string>
 
   <string name="replies_reply">Reply</string>
+  <string name="replies_go_to">Go to</string>
 
   <string name="send_more_fields">More fields</string>
   <string name="send_forum">Forum</string>
@@ -50,6 +52,8 @@
   <string name="reply_notification_title">Replying…</string>
   <string name="reply_success">Reply succeeded</string>
   <string name="reply_failure">Reply failed</string>
+
+  <string name="go_to_title">Go to</string>
 
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>

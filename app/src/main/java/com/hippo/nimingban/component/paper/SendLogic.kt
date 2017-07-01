@@ -19,7 +19,7 @@ package com.hippo.nimingban.component.paper
 import android.os.Bundle
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbLogic
-import com.hippo.nimingban.component.dialog.SelectForumDialog
+import com.hippo.nimingban.component.dialog.selectForumDialog
 import com.hippo.stage.Scene
 
 /*
@@ -47,9 +47,7 @@ class SendLogic(
   }
 
   fun onClickForum() {
-    val dialog = SelectForumDialog()
-    dialog.target = scene
-    scene.stage?.pushScene(dialog)
+    scene.stage?.pushScene(selectForumDialog(scene))
   }
 
   fun getForum() = forum

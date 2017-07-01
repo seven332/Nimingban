@@ -21,15 +21,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.component.NmbScene
+import com.hippo.nimingban.component.dialog.GoToDialog
 
 /*
  * Created by Hippo on 6/19/2017.
  */
 
-class ThreadsScene : NmbScene() {
+class ThreadsScene : NmbScene(), GoToDialog.OnGoToListener {
 
   override fun createLogic(args: Bundle?) = ThreadsSceneLogic(this)
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
       ThreadsSceneUi(logic as ThreadsSceneLogic, activity as NmbActivity, inflater, container)
+
+  override fun onGoTo(page: Int) {
+    val logic = this.logic
+    if (logic is ThreadsSceneLogic) {
+      logic.onGoTo(page)
+    }
+  }
 }

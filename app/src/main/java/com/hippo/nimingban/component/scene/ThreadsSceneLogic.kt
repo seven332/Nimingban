@@ -21,10 +21,12 @@ import com.hippo.nimingban.NMB_APP
 import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.GroupLogic
+import com.hippo.nimingban.component.dialog.goToDialog
 import com.hippo.nimingban.component.paper.ForumListLogic
 import com.hippo.nimingban.component.paper.NavigationLogic
 import com.hippo.nimingban.component.paper.ThreadsLogic
 import com.hippo.nimingban.component.paper.ToolbarLogic
+import com.hippo.nimingban.util.INVALID_INDEX
 import com.hippo.stage.Scene
 
 /*
@@ -42,6 +44,10 @@ class ThreadsSceneLogic(
   val forumListToolbarLogic: ToolbarLogic = ForumListToolbarLogic().also { addChild(it) }
   val forumListLogic: ForumListLogic = ForumListLogicImpl().also { addChild(it) }
   val navigationLogic: NavigationLogic = NavigationLogicImpl().also { addChild(it) }
+
+  fun onGoTo(page: Int) {
+    threadsLogic.onGoTo(page)
+  }
 
 
   private inner class ThreadsToolbarLogic : ToolbarLogic() {
@@ -66,6 +72,16 @@ class ThreadsSceneLogic(
           if (forum != null) {
             scene.stage?.pushScene(forum.sendScene())
             return true
+          }
+        }
+        R.id.action_go_to -> {
+          if (threadsLogic.isLoaded()) {
+            val min = threadsLogic.getMinPage()
+            val max = threadsLogic.getMaxPage()
+            val current = threadsLogic.getCurrentPage()
+            if (min != INVALID_INDEX && max != INVALID_INDEX && current != INVALID_INDEX) {
+              scene.stage?.pushScene(goToDialog(scene, min, max, current))
+            }
           }
         }
       }

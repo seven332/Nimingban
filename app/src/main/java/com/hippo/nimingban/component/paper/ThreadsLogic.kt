@@ -25,6 +25,7 @@ import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.scene.galleryScene
 import com.hippo.nimingban.component.scene.repliesScene
 import com.hippo.nimingban.exception.PresetException
+import com.hippo.nimingban.util.INVALID_INDEX
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
@@ -39,6 +40,8 @@ import io.reactivex.schedulers.Schedulers
 class ThreadsLogic(
     val scene: Scene
 ) : NmbLogic() {
+
+  var threadsUi: ThreadsUi? = null
 
   private val data = ThreadsData()
 
@@ -88,6 +91,19 @@ class ThreadsLogic(
   fun onClickThumb(reply: Reply) {
     scene.stage?.pushScene(reply.galleryScene())
   }
+
+  fun getMinPage() = data.minPage
+
+  fun getMaxPage() = data.maxPage
+
+  fun getCurrentPage() = data.getPageForPosition(threadsUi?.findFirstVisibleItemPosition() ?: INVALID_INDEX)
+
+  fun isLoaded() = data.isLoaded()
+
+  fun onGoTo(page: Int) {
+    data.switchTo(page)
+  }
+
 
   inner class ThreadsData : ContentData<Thread>() {
 

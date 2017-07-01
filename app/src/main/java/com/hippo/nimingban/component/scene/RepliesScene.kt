@@ -23,12 +23,13 @@ import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.SceneLogic
+import com.hippo.nimingban.component.dialog.GoToDialog
 
 /*
  * Created by Hippo on 6/20/2017.
  */
 
-class RepliesScene : NmbScene() {
+class RepliesScene : NmbScene(), GoToDialog.OnGoToListener {
 
   companion object {
     const val KEY_ID = "RepliesScene:id"
@@ -54,4 +55,11 @@ class RepliesScene : NmbScene() {
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
       RepliesSceneUi(logic as RepliesSceneLogic, activity as NmbActivity, inflater, container)
+
+  override fun onGoTo(page: Int) {
+    val logic = this.logic
+    if (logic is RepliesSceneLogic) {
+      logic.onGoTo(page)
+    }
+  }
 }

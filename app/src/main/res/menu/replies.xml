@@ -24,4 +24,11 @@
     android:icon="@drawable/reply_white_x24"
     app:showAsAction="always"/>
 
+  <item
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/action_go_to"
+    android:title="@string/replies_go_to"
+    android:icon="@drawable/go_to_white_x24"
+    app:showAsAction="ifRoom"/>
+
 </menu>

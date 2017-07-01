@@ -22,9 +22,11 @@ import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.NmbScene
+import com.hippo.nimingban.component.dialog.goToDialog
 import com.hippo.nimingban.component.paper.RepliesLogic
 import com.hippo.nimingban.component.paper.SwipeBackLogic
 import com.hippo.nimingban.component.paper.ToolbarLogic
+import com.hippo.nimingban.util.INVALID_INDEX
 import com.hippo.swipeback.SwipeBackLayout
 
 /*
@@ -44,6 +46,10 @@ class RepliesSceneLogic(
 
   init {
     swipeBackLogic.setSwipeEdge(SwipeBackLayout.EDGE_LEFT or SwipeBackLayout.EDGE_RIGHT)
+  }
+
+  fun onGoTo(page: Int) {
+    repliesLogic.onGoTo(page)
   }
 
 
@@ -69,16 +75,26 @@ class RepliesSceneLogic(
     }
 
     override fun onClickMenuItem(item: MenuItem): Boolean {
-      return when(item.itemId) {
+      when(item.itemId) {
         R.id.action_reply -> {
           val thread = this.thread
           if (thread != null) {
             scene.stage?.pushScene(thread.sendScene())
           }
-          true
+          return true
         }
-        else -> false
+        R.id.action_go_to -> {
+          if (repliesLogic.isLoaded()) {
+            val min = repliesLogic.getMinPage()
+            val max = repliesLogic.getMaxPage()
+            val current = repliesLogic.getCurrentPage()
+            if (min != INVALID_INDEX && max != INVALID_INDEX && current != INVALID_INDEX) {
+              scene.stage?.pushScene(goToDialog(scene, min, max, current))
+            }
+          }
+        }
       }
+      return false
     }
   }
 

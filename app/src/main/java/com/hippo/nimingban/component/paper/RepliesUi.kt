@@ -51,6 +51,7 @@ class RepliesUi(
   override val view: View
   private val context = inflater.context
   private val adapter: RepliesAdapter
+  private val layoutManager: LinearLayoutManager
   private val contentLayout: ContentLayout
   private val recyclerView: RecyclerView
 
@@ -64,19 +65,24 @@ class RepliesUi(
     contentLayout.extension = this
     logic.initializeContentLayout(contentLayout)
 
+    layoutManager = LinearLayoutManager(context)
+
     recyclerView = view.find(R.id.recycler_view)
     recyclerView.adapter = adapter
-    recyclerView.layoutManager = LinearLayoutManager(context)
+    recyclerView.layoutManager = layoutManager
     val itemDecoration = LinearDividerItemDecoration(
         LinearDividerItemDecoration.VERTICAL,
         context.attrColor(R.attr.dividerColor),
         1.dp2pix(context))
     itemDecoration.setShowLastDivider(true)
     recyclerView.addItemDecoration(itemDecoration)
+
+    logic.repliesUi = this
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    logic.repliesUi = null
     logic.terminateAdapter(adapter)
     logic.terminateContentLayout(contentLayout)
     recyclerView.adapter = null
@@ -86,6 +92,8 @@ class RepliesUi(
   override fun showMessage(message: String) {
     activity.snack(message)
   }
+
+  fun findFirstVisibleItemPosition() = layoutManager.findFirstVisibleItemPosition()
 
 
   private inner class RepliesHolder(itemView: View) : AlertHolder(itemView) {
