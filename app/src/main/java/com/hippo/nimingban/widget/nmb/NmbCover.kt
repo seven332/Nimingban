@@ -41,7 +41,7 @@ class NmbCover : GenericDraweeView {
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)
-    failure.backgroundColor = context.attrColor(R.attr.backgroundColorAppBar)
+    failure.backgroundColor = context.attrColor(R.attr.backgroundColorStatusBar)
     failure.textColor = context.attrColor(android.R.attr.textColorTertiary)
     hierarchy.setFailureImage(failure)
     hierarchy.setRetryImage(failure.constantState.newDrawable())

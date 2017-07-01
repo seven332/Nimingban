@@ -17,6 +17,7 @@
 package com.hippo.nimingban.widget.nmb
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import com.hippo.fresco.large.FrescoLarge
 import com.hippo.fresco.large.LargeDraweeView
@@ -37,7 +38,7 @@ class NmbImage : LargeDraweeView {
 
   init {
     val failure = TextDrawable("(;´Д`)", 0.8f)
-    failure.backgroundColor = context.attrColor(R.attr.backgroundColorAppBar)
+    failure.backgroundColor = Color.TRANSPARENT
     failure.textColor = context.attrColor(android.R.attr.textColorTertiary)
 
     val progress = ProgressDrawable()

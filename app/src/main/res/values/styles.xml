@@ -50,7 +50,7 @@
   <style name="Nmb"/>
 
   <style name="Nmb.Thumb">
-    <item name="placeholderImage">?attr/backgroundColorAppBar</item>
+    <item name="placeholderImage">?attr/backgroundColorStatusBar</item>
     <item name="actualImageScaleType">fitCenter</item>
   </style>
 
@@ -59,7 +59,7 @@
   </style>
 
   <style name="Nmb.Cover">
-    <item name="placeholderImage">?attr/backgroundColorAppBar</item>
+    <item name="placeholderImage">?attr/backgroundColorStatusBar</item>
     <item name="viewAspectRatio">1</item>
   </style>
 
