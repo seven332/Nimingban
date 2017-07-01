@@ -18,6 +18,8 @@ package com.hippo.nimingban.client
 
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ThreadsHtml
+import com.hippo.nimingban.util.Quad
+import com.hippo.nimingban.util.ceilDiv
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
 
@@ -29,6 +31,7 @@ class NmbClient(private val engine: NmbEngine) {
 
   companion object {
     private const val MAX_THREADS_PAGES = 100
+    private const val MAX_REPLY_PAGE_SIZE = 19
   }
 
   fun forums() =
@@ -63,21 +66,28 @@ class NmbClient(private val engine: NmbEngine) {
           })
 
   fun replies(id: String, page: Int) =
-      engine.replies(repliesApiUrl(id, page))
-          .map {
-            // Init the thread
-            it.init
-            // The reply list
-            val replies = it.replies.toMutableList()
+      Singles.zip(
+          engine.replies(repliesApiUrl(id, page))
+              .subscribeOn(Schedulers.io()),
+          engine.repliesHtml(repliesHtmlUrl(id, page))
+              .subscribeOn(Schedulers.io()),
+          { thread, (forum, _) ->
+            thread.init
+            val replies = thread.replies.toMutableList()
             if (page == 0) {
-              // It's the first, add thread itself to the header
-              replies.add(0, it.toReply())
+              replies.add(0, thread.toReply())
             }
-            // Pack thread and reply list
-            Pair(it, replies)
-          } !!
 
-  fun repliesHtml(id: String, page: Int) = engine.repliesHtml(repliesHtmlUrl(id, page))
+            val pages: Int
+            if (thread.replies.size < REPLY_PAGE_SIZE) {
+              pages = page + 1
+            } else {
+              pages = ceilDiv(thread.replyCount, REPLY_PAGE_SIZE)
+            }
+
+            Quad(thread, replies, forum, pages)
+          }
+      )
 
   fun post(
       title: String,

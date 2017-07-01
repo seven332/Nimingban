@@ -19,20 +19,16 @@ package com.hippo.nimingban.component.paper
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import com.hippo.nimingban.NMB_CLIENT
-import com.hippo.nimingban.client.REPLY_PAGE_SIZE
-import com.hippo.nimingban.client.data.RepliesHtml
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.NmbScene
 import com.hippo.nimingban.component.openUrl
 import com.hippo.nimingban.component.scene.galleryScene
-import com.hippo.nimingban.util.ceilDiv
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
 
 /*
@@ -100,36 +96,26 @@ abstract class RepliesLogic(
   abstract fun onUpdateForum(forum: String)
 
 
-  private  inner class RepliesData : ContentData<Reply>() {
+  private inner class RepliesData : ContentData<Reply>() {
 
     private val threadId get() = id ?: thread?.id
 
     override fun onRequireData(id: Int, page: Int) {
       val threadId = this.threadId
       if (threadId != null) {
-        Singles
-            .zip(
-                NMB_CLIENT.replies(threadId, page)
-                    .subscribeOn(Schedulers.io()),
-                NMB_CLIENT.repliesHtml(threadId, page)
-                    .subscribeOn(Schedulers.io())
-                    .onErrorReturn { it.printStackTrace(); RepliesHtml("", Int.MAX_VALUE) },
-                { (thread, replies), html -> Triple(thread, replies, html) })
+        NMB_CLIENT.replies(threadId, page)
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ (thread, replies, html) ->
-              // Calculate page
-              val pages =
-                  if (thread.replies.size < REPLY_PAGE_SIZE) page + 1
-                  else ceilDiv(thread.replyCount, REPLY_PAGE_SIZE)
+            .subscribe({ (thread, replies, forum, pages) ->
               // Update thread
               if (this@RepliesLogic.thread == null) {
                 this@RepliesLogic.thread = thread
                 onUpdateThread(thread)
               }
               // Update forum
-              if (!html.forum.isNullOrBlank() && forum != html.forum) {
-                forum = html.forum
-                onUpdateForum(forum!!)
+              if (!forum.isNullOrBlank() && this@RepliesLogic.forum != forum) {
+                this@RepliesLogic.forum = forum
+                onUpdateForum(forum)
               }
               setData(id, replies, pages)
             }, {
