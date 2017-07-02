@@ -42,8 +42,8 @@ abstract class SceneLogic {
   /**
    * Restore state of the logic.
    */
-  internal fun restoreState(savedViewState: Bundle) {
-    onRestoreState(savedViewState)
+  internal fun restoreState(savedState: Bundle) {
+    onRestoreState(savedState)
   }
 
   /**
@@ -62,5 +62,5 @@ abstract class SceneLogic {
    * Called when the logic restored.
    */
   @CallSuper
-  protected open fun onRestoreState(savedViewState: Bundle) {}
+  protected open fun onRestoreState(savedState: Bundle) {}
 }

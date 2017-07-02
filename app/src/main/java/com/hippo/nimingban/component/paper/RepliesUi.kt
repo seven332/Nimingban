@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component.paper
 
+import android.graphics.Typeface
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -25,10 +26,12 @@ import android.widget.TextView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbUi
 import com.hippo.nimingban.component.adapter.AlertAdapter
 import com.hippo.nimingban.component.adapter.AlertHolder
 import com.hippo.nimingban.util.attrColor
+import com.hippo.nimingban.util.color
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.prettyTime
@@ -54,6 +57,8 @@ class RepliesUi(
   private val layoutManager: LinearLayoutManager
   private val contentLayout: ContentLayout
   private val recyclerView: RecyclerView
+
+  private val defaultUserColor = context.attrColor(android.R.attr.textColorSecondary)
 
   init {
     view = inflater.inflate(R.layout.ui_replies, container, false)
@@ -95,6 +100,12 @@ class RepliesUi(
   }
 
   fun findFirstVisibleItemPosition() = layoutManager.findFirstVisibleItemPosition()
+
+  fun onUpdateThread(thread: Thread) {
+    thread.user?.let {
+      logic.registerUserColor(it, context.color(R.color.green_ntr))
+    }
+  }
 
 
   private inner class RepliesHolder(itemView: View) : AlertHolder(itemView) {
@@ -138,6 +149,16 @@ class RepliesUi(
 
     override fun onBindViewHolder(holder: RepliesHolder, position: Int) {
       val thread = get(position)
+
+      val userColor = thread.user?.let { logic.getUserColor(it) }
+      if (userColor != null) {
+        holder.user.setTextColor(userColor)
+        holder.user.setTypeface(null, Typeface.BOLD)
+      } else {
+        holder.user.setTextColor(defaultUserColor)
+        holder.user.setTypeface(null, 0)
+      }
+
       holder.user.text = thread.displayedUser
       holder.id.text = thread.displayedId
       holder.date.text = thread.date.prettyTime(inflater.context)

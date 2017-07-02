@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component.paper
 
+import android.os.Bundle
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import com.hippo.nimingban.NMB_CLIENT
@@ -43,7 +44,18 @@ abstract class RepliesLogic(
     private val scene: NmbScene
 ) : NmbLogic() {
 
+  companion object {
+    private const val KEY_USER_COLOR_MAP = "RepliesLogic:user_color_map"
+  }
+
   var repliesUi: RepliesUi? = null
+    set(value) {
+      field = value
+      thread?.let { value?.onUpdateThread(it) }
+    }
+
+  // TODO Save it to state
+  private val userColorMap: MutableMap<String, Int> = HashMap()
 
   private val data = RepliesData()
 
@@ -100,15 +112,59 @@ abstract class RepliesLogic(
     data.switchTo(page)
   }
 
+  fun registerUserColor(user: String, color: Int) {
+    userColorMap.put(user, color)
+  }
+
+  fun unregisterUserColor(user: String) {
+    userColorMap.remove(user)
+  }
+
+  fun getUserColor(user: String) = userColorMap[user]
+
+  fun updateThread(thread: Thread) {
+    if (this.thread == null) {
+      this.thread = thread
+      repliesUi?.onUpdateThread(thread)
+      onUpdateThread(thread)
+    }
+  }
+
   /**
    * Called when the thread updated.
    */
   abstract fun onUpdateThread(thread: Thread)
 
+  fun updateForum(forum: String?) {
+    if (forum != null && forum.isNotBlank() && this.forum != forum) {
+      this.forum = forum
+      onUpdateForum(forum)
+    }
+  }
+
   /**
    * Called when the forum updated.
    */
   abstract fun onUpdateForum(forum: String)
+
+  override fun onSaveState(outState: Bundle) {
+    super.onSaveState(outState)
+
+    val backup = Bundle()
+    for ((key, value) in userColorMap) {
+      backup.putInt(key, value)
+    }
+    outState.putBundle(KEY_USER_COLOR_MAP, backup)
+  }
+
+  override fun onRestoreState(savedState: Bundle) {
+    super.onRestoreState(savedState)
+
+    val backup = savedState.getBundle(KEY_USER_COLOR_MAP)
+    for (key in backup.keySet()) {
+      userColorMap.put(key, backup.getInt(key))
+    }
+  }
 
 
   private inner class RepliesData : ContentData<Reply>() {
@@ -123,15 +179,9 @@ abstract class RepliesLogic(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ (thread, replies, forum, pages) ->
               // Update thread
-              if (this@RepliesLogic.thread == null) {
-                this@RepliesLogic.thread = thread
-                onUpdateThread(thread)
-              }
+              updateThread(thread)
               // Update forum
-              if (!forum.isNullOrBlank() && this@RepliesLogic.forum != forum) {
-                this@RepliesLogic.forum = forum
-                onUpdateForum(forum)
-              }
+              updateForum(forum)
               setData(id, replies, pages)
             }, {
               setError(id, it)

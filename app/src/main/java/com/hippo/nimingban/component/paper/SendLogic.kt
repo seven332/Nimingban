@@ -65,8 +65,8 @@ class SendLogic(
     outState.putParcelable(KEY_FORUM, forum)
   }
 
-  override fun onRestoreState(savedViewState: Bundle) {
-    super.onRestoreState(savedViewState)
-    onSelectForum(savedViewState.getParcelable(KEY_FORUM))
+  override fun onRestoreState(savedState: Bundle) {
+    super.onRestoreState(savedState)
+    onSelectForum(savedState.getParcelable(KEY_FORUM))
   }
 }
