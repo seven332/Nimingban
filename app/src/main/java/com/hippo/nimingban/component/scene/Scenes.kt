@@ -25,7 +25,7 @@ import com.hippo.nimingban.client.data.Thread
  * Created by Hippo on 6/24/2017.
  */
 
-fun Thread.repliesScene(forum: String?): RepliesScene {
+fun Thread.repliesScene(): RepliesScene {
   val args = Bundle()
   args.putParcelable(RepliesScene.KEY_THREAD, this)
   args.putString(RepliesScene.KEY_FORUM, forum)

@@ -24,8 +24,8 @@ import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.hippo.nimingban.client.NO_NAME
 import com.hippo.nimingban.client.NO_TITLE
-import com.hippo.nimingban.client.toNmbContent
 import com.hippo.nimingban.client.fromNmbDate
+import com.hippo.nimingban.client.toNmbContent
 import com.hippo.nimingban.client.toNmbUser
 import com.hippo.nimingban.exception.GsonException
 import com.hippo.nimingban.util.element
@@ -60,7 +60,8 @@ class ThreadApiGson : JsonDeserializer<Thread> {
         replyCount = jo.int("replyCount", 0),
         replies = jo.element("replys")?.let {
           context.deserialize<List<Reply>>(it, object : TypeToken<List<Reply>>(){}.type)
-        } ?: emptyList()
+        } ?: emptyList(),
+        forum = null
     )
   }
 }
@@ -78,10 +79,9 @@ data class Thread(
     val sage: Boolean,
     val admin: Boolean,
     val replyCount: Int,
-    val replies: List<Reply>
+    val replies: List<Reply>,
+    var forum: String?
 ) : Parcelable {
-
-  var forum: String? = null
 
   val displayId = "No." + id
   val displayUser = user.toNmbUser(admin)
@@ -111,9 +111,8 @@ data class Thread(
       parcel.readByte() != 0.toByte(),
       parcel.readByte() != 0.toByte(),
       parcel.readInt(),
-      parcel.createTypedArrayList(Reply)) {
-    forum = parcel.readString()
-  }
+      parcel.createTypedArrayList(Reply),
+      parcel.readString())
 
   override fun writeToParcel(parcel: Parcel, flags: Int) {
     parcel.writeString(id)

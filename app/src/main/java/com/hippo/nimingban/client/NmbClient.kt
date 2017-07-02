@@ -44,11 +44,17 @@ class NmbClient(private val engine: NmbEngine) {
               .onErrorReturn { ThreadsHtml(MAX_THREADS_PAGES, emptyList()) }
               .subscribeOn(Schedulers.io()),
           { list, (pages, threads) ->
-            // Pass forum from html to list
-            list.forEach { thread ->
-              threads.find { it.id == thread.id }
-                  ?.let { thread.forum = it.forum }
+            if (forum.isVirtual()) {
+              // For virtual forum, use forum from html
+              list.forEach { thread ->
+                threads.find { it.id == thread.id }
+                    ?.let { thread.forum = it.forum }
+              }
+            } else {
+              // For actual forum, use requested forum
+              list.forEach { it.forum = forum.displayedName }
             }
+
             // Return a pair of list and pages
             Pair(list, minOf(pages, MAX_THREADS_PAGES))
           })

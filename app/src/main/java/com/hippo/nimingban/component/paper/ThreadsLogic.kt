@@ -84,7 +84,7 @@ class ThreadsLogic(
 
   /** Called when user click a thread **/
   fun onClickThread(thread: Thread) {
-    scene.stage?.pushScene(thread.repliesScene(forum?.displayedName))
+    scene.stage?.pushScene(thread.repliesScene())
   }
 
   /** Called when user click a thread **/

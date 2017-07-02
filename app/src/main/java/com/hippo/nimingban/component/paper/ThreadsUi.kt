@@ -131,10 +131,19 @@ class ThreadsUi(
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
         ThreadHolder(inflater.inflate(R.layout.threads_item, parent, false))
 
+    private fun Thread.idText(): String {
+      val forum = this.forum
+      if (forum != null && !forum.isEmpty() && logic.forum?.isVirtual() ?: false) {
+        return forum
+      } else {
+        return displayId
+      }
+    }
+
     override fun onBindViewHolder(holder: ThreadHolder, position: Int) {
       val thread = get(position)
       holder.user.text = thread.displayUser
-      holder.id.text = thread.forum ?: thread.displayId
+      holder.id.text = thread.idText()
       holder.date.text = thread.date.prettyTime(context)
       holder.content.text = thread.displayContent
       holder.thumb.loadThumb(thread.image)

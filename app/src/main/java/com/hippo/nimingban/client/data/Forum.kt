@@ -34,6 +34,8 @@ import java.net.URLEncoder
  * Created by Hippo on 6/12/2017.
  */
 
+private val VIRTUAL_FORUM_IDS = arrayOf("-1")
+
 
 class ForumApiGson : JsonDeserializer<Forum> {
 
@@ -50,8 +52,10 @@ class ForumApiGson : JsonDeserializer<Forum> {
         interval = jo.stringNotEmpty("interval"),
         createdAt = jo.stringNotEmpty("createdAt"),
         updateAt = jo.stringNotEmpty("updateAt"),
-        status = jo.stringNotEmpty("status"))
-        .also { it.official = true }
+        status = jo.stringNotEmpty("status"),
+        official = true,
+        visible = true,
+        weight = 0)
   }
 }
 
@@ -66,7 +70,13 @@ data class Forum(
     val interval: String?,
     val createdAt: String?,
     val updateAt: String?,
-    val status: String?
+    val status: String?,
+    /** Whether the forum is from api **/
+    var official: Boolean,
+    /** Whether the forum is visible for user. **/
+    var visible: Boolean,
+    /** Order **/
+    var weight: Int
 ) : Parcelable {
 
   val displayedName = name.toNmbName()
@@ -82,21 +92,6 @@ data class Forum(
     } catch (e: Throwable) { throw GsonException("Can't encode forum name") }
   }
 
-  /**
-   * Whether the forum is from api.
-   */
-  var official = false
-
-  /**
-   * Whether the forum is visible for user.
-   */
-  var visible = true
-
-  /**
-   * Only useful to save it to db.
-   */
-  var weight = 0
-
   constructor(parcel: Parcel) : this(
       parcel.readString(),
       parcel.readString(),
@@ -107,11 +102,15 @@ data class Forum(
       parcel.readString(),
       parcel.readString(),
       parcel.readString(),
-      parcel.readString()) {
-    official = parcel.readByte() != 0.toByte()
-    visible = parcel.readByte() != 0.toByte()
-    weight = parcel.readInt()
-  }
+      parcel.readString(),
+      parcel.readByte() != 0.toByte(),
+      parcel.readByte() != 0.toByte(),
+      parcel.readInt())
+
+  /**
+   * Virtual forums works like views in SQL.
+   */
+  fun isVirtual() = VIRTUAL_FORUM_IDS.contains(id)
 
   override fun writeToParcel(parcel: Parcel, flags: Int) {
     parcel.writeString(id)

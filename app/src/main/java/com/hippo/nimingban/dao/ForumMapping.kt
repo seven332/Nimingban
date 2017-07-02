@@ -106,21 +106,19 @@ private class ForumPutResolver : DefaultPutResolver<Forum>() {
 private class ForumGetResolver : DefaultGetResolver<Forum>() {
 
   override fun mapFromCursor(cursor: Cursor) = Forum(
-      cursor.getString(COLUMN_ID, null) ?: "-1",
-      cursor.getString(COLUMN_GROUP, null),
-      cursor.getString(COLUMN_SORT, null),
-      cursor.getString(COLUMN_NAME, null),
-      cursor.getString(COLUMN_SHOWN_NAME, null),
-      cursor.getString(COLUMN_MESSAGE, null),
-      cursor.getString(COLUMN_INTERVAL, null),
-      cursor.getString(COLUMN_CREATED_AT, null),
-      cursor.getString(COLUMN_UPDATE_AT, null),
-      cursor.getString(COLUMN_STATUS, null))
-      .also {
-        it.official = cursor.getBoolean(COLUMN_OFFICIAL, false)
-        it.visible = cursor.getBoolean(COLUMN_VISIBLE, true)
-        it.weight = cursor.getInt(COLUMN_WEIGHT, 0)
-      }
+      id = cursor.getString(COLUMN_ID, null) ?: "-1",
+      group = cursor.getString(COLUMN_GROUP, null),
+      sort = cursor.getString(COLUMN_SORT, null),
+      name = cursor.getString(COLUMN_NAME, null),
+      shownName = cursor.getString(COLUMN_SHOWN_NAME, null),
+      message = cursor.getString(COLUMN_MESSAGE, null),
+      interval = cursor.getString(COLUMN_INTERVAL, null),
+      createdAt = cursor.getString(COLUMN_CREATED_AT, null),
+      updateAt = cursor.getString(COLUMN_UPDATE_AT, null),
+      status = cursor.getString(COLUMN_STATUS, null),
+      official = cursor.getBoolean(COLUMN_OFFICIAL, false),
+      visible = cursor.getBoolean(COLUMN_VISIBLE, true),
+      weight = cursor.getInt(COLUMN_WEIGHT, 0))
 }
 
 private class ForumDeleteResolver : DefaultDeleteResolver<Forum>() {

@@ -39,7 +39,10 @@ fun randomForum() = Forum(
     randomString(),
     randomString(),
     randomString(),
-    randomString())
+    randomString(),
+    false,
+    true,
+    0)
 
 fun randomOfficeForum() = randomForum().also { it.official = true }
 
