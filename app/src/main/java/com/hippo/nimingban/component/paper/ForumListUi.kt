@@ -94,7 +94,7 @@ class ForumListUi(
         ForumHolder(inflater.inflate(R.layout.forum_list_item, parent, false))
 
     override fun onBindViewHolder(holder: ForumHolder, position: Int) {
-      holder.text.text = forums[position].displayName
+      holder.text.text = forums[position].displayedVividName
       holder.itemView.isActivated = position == logic.getSelectedIndex()
     }
 

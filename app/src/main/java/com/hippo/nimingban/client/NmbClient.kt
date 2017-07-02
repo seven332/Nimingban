@@ -34,18 +34,7 @@ class NmbClient(private val engine: NmbEngine) {
     private const val MAX_REPLY_PAGE_SIZE = 19
   }
 
-  fun forums() =
-      engine.forums()
-          .map {
-            // Init all forums
-            it.forEach {
-              it.init
-              // All forums is official
-              it.forums.forEach { it.official = true }
-            }
-            // Return it self
-            it
-          } !!
+  fun forums() = engine.forums()
 
   fun threads(forum: Forum, page: Int) =
       Singles.zip(

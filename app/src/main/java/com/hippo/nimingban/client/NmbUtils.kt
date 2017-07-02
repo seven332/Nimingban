@@ -58,7 +58,7 @@ private fun String.removeBrackets(): String {
 /**
  * Parses nmb-style data string. Like `2017-06-11(日)23:41:31`.
  */
-fun String?.toNmbDate(): Long {
+fun String?.fromNmbDate(): Long {
   if (this == null) return 0
 
   try {
@@ -144,4 +144,45 @@ fun String?.toNmbContent(sage: Boolean, title: String?, name: String?, email: St
   }
   sb.append(if (!this.isNullOrEmpty()) this else DEFAULT_CONTENT)
   return (sb.toString().fromHtml() as SpannableStringBuilder).resolveUrl().resolveReference()
+}
+
+
+private const val DEFAULT_MESSAGE = "略"
+
+/**
+ * Apply style to message
+ */
+fun String?.toNmbMessage(): CharSequence {
+  if (this != null && !this.isEmpty()) {
+    return fromHtml()
+  } else {
+    return DEFAULT_MESSAGE
+  }
+}
+
+
+private const val DEFAULT_FORUM = "板块丁"
+
+/**
+ * Apply style to forum name.
+ */
+fun String?.toNmbName(): String {
+  if (this != null && !this.isEmpty()) {
+    return this
+  } else {
+    return DEFAULT_FORUM
+  }
+}
+
+/**
+ * Apply style to forum name.
+ */
+fun String?.toNmbVividName(shownName: String?): CharSequence {
+  if (shownName != null && !shownName.isEmpty()) {
+    return shownName.fromHtml()
+  } else if (this != null && !this.isEmpty()) {
+    return fromHtml()
+  } else {
+    return DEFAULT_FORUM
+  }
 }

@@ -23,7 +23,6 @@ import android.widget.Toast
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.InstanceCreator
 import com.hippo.fresco.large.FrescoLarge
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.NMB_HOST
@@ -32,7 +31,9 @@ import com.hippo.nimingban.client.NmbConverterFactory
 import com.hippo.nimingban.client.NmbEngine
 import com.hippo.nimingban.client.NmbInterceptor
 import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.client.data.ForumApiGson
 import com.hippo.nimingban.client.data.ForumGroup
+import com.hippo.nimingban.client.data.ForumGroupApiGson
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.ReplyApiGson
 import com.hippo.nimingban.client.data.Thread
@@ -87,12 +88,8 @@ val OK_HTTP_CLIENT: OkHttpClient by lazy {
 val GSON: Gson by lazy {
   GsonBuilder()
       .excludeFieldsWithoutExposeAnnotation()
-      .registerTypeAdapter(Forum::class.java, InstanceCreator {
-        Forum(null, null, null, null, null, null, null, null, null, null)
-      })
-      .registerTypeAdapter(ForumGroup::class.java, InstanceCreator {
-        ForumGroup(null, null, null, null, null)
-      })
+      .registerTypeAdapter(Forum::class.java, ForumApiGson())
+      .registerTypeAdapter(ForumGroup::class.java, ForumGroupApiGson())
       .registerTypeAdapter(Reply::class.java, ReplyApiGson())
       .registerTypeAdapter(Thread::class.java, ThreadApiGson())
       .create()

@@ -113,7 +113,7 @@ class SendUi(
       moreText.visibility = View.GONE
       forumText.visibility = View.VISIBLE
       forumView.visibility = View.VISIBLE
-      forumView.text = forum.name
+      forumView.text = forum.displayedName
     } else {
       moreText.visibility = View.VISIBLE
       forumText.visibility = View.GONE

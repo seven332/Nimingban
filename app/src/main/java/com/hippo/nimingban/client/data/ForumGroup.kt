@@ -18,60 +18,71 @@ package com.hippo.nimingban.client.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import com.hippo.nimingban.util.readTypedList
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.reflect.TypeToken
+import com.hippo.nimingban.exception.GsonException
+import com.hippo.nimingban.util.element
+import com.hippo.nimingban.util.stringNotEmpty
+import java.lang.reflect.Type
 
 /*
  * Created by Hippo on 6/12/2017.
  */
 
+class ForumGroupApiGson : JsonDeserializer<ForumGroup> {
+
+  override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): ForumGroup {
+    val jo = json.asJsonObject
+
+    return ForumGroup(
+        id = jo.stringNotEmpty("id") ?: throw GsonException("Invalid forum group id"),
+        sort = jo.stringNotEmpty("sort"),
+        name = jo.stringNotEmpty("name"),
+        status = jo.stringNotEmpty("status"),
+        forums = jo.element("forums")?.let {
+          context.deserialize<List<Forum>>(it, object : TypeToken<List<Forum>>(){}.type)
+        } ?: emptyList()
+    )
+  }
+}
+
+
 data class ForumGroup(
-    @Expose @SerializedName("id") private val _id: String?,
-    @Expose @SerializedName("sort") private val _sort: String?,
-    @Expose @SerializedName("name") private val _name: String?,
-    @Expose @SerializedName("status") private val _status: String?,
-    @Expose @SerializedName("forums") private val _forums: List<Forum>?
+    val id: String,
+    val sort: String?,
+    val name: String?,
+    val status: String?,
+    val forums: List<Forum>
 ) : Parcelable {
 
-  val init by lazy {
-    forums = _forums ?: emptyList()
-    forums.forEach { it.init }
+  constructor(parcel: Parcel) : this(
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.createTypedArrayList(Forum))
+
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeString(id)
+    parcel.writeString(sort)
+    parcel.writeString(name)
+    parcel.writeString(status)
+    parcel.writeTypedList(forums)
   }
 
-  var forums: List<Forum> = emptyList()
-    private set
-
-
-  override fun describeContents() = 0
-
-  override fun writeToParcel(dest: Parcel, flags: Int) {
-    dest.writeString(_id)
-    dest.writeString(_sort)
-    dest.writeString(_name)
-    dest.writeString(_status)
-    dest.writeTypedList(_forums)
+  override fun describeContents(): Int {
+    return 0
   }
 
-  constructor(source: Parcel) : this(
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readTypedList(Forum.CREATOR))
+  companion object CREATOR : Parcelable.Creator<ForumGroup> {
+    override fun createFromParcel(parcel: Parcel): ForumGroup {
+      return ForumGroup(parcel)
+    }
 
-
-  companion object {
-    @JvmField val CREATOR: Parcelable.Creator<ForumGroup> = object : Parcelable.Creator<ForumGroup> {
-      override fun createFromParcel(source: Parcel): ForumGroup {
-        val forumGroup = ForumGroup(source)
-        forumGroup.init
-        return forumGroup
-      }
-
-      override fun newArray(size: Int): Array<ForumGroup?> {
-        return arrayOfNulls(size)
-      }
+    override fun newArray(size: Int): Array<ForumGroup?> {
+      return arrayOfNulls(size)
     }
   }
 }

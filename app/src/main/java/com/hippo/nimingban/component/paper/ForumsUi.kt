@@ -36,9 +36,9 @@ import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbUi
 import com.hippo.nimingban.util.addState
 import com.hippo.nimingban.util.asMutableList
+import com.hippo.nimingban.util.drawable
 import com.hippo.nimingban.util.find
 import com.hippo.nimingban.util.isUnder
-import com.hippo.nimingban.util.drawable
 
 /*
  * Created by Hippo on 6/22/2017.
@@ -143,7 +143,7 @@ class ForumsUi(
 
     override fun onBindViewHolder(holder: ForumHolder, position: Int) {
       val forum = forums[position]
-      holder.name.text = forum.displayName
+      holder.name.text = forum.displayedVividName
       holder.delete.visibility = if (forum.official) View.GONE else View.VISIBLE
       holder.hide.visibility = if (forum.official) View.VISIBLE else View.GONE
       holder.hide.isActivated = forum.visible

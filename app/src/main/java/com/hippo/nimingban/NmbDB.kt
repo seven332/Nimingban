@@ -17,6 +17,7 @@
 package com.hippo.nimingban
 
 import android.content.Context
+import android.util.Log
 import com.hippo.nimingban.architecture.LiveData
 import com.hippo.nimingban.client.data.Draft
 import com.hippo.nimingban.client.data.Forum
@@ -76,6 +77,8 @@ class NmbDB(context: Context) {
       val newForums = forums
           .flatMap { it.forums }
           .asMutableList()
+
+      Log.d("TAG", "newForums ${newForums.size}")
 
       val oldForums = forums()
 

@@ -40,7 +40,6 @@ fun randomForum() = Forum(
     randomString(),
     randomString(),
     randomString())
-    .also { it.init }
 
 fun randomOfficeForum() = randomForum().also { it.official = true }
 
@@ -52,4 +51,3 @@ fun randomForumGroup(vararg forums: Forum) = ForumGroup(
     randomString(),
     randomString(),
     forums.asList())
-    .also { it.init }

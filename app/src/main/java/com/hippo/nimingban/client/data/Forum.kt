@@ -18,113 +18,128 @@ package com.hippo.nimingban.client.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import com.hippo.nimingban.util.fromHtml
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.hippo.nimingban.client.NmbEngine
+import com.hippo.nimingban.client.toNmbMessage
+import com.hippo.nimingban.client.toNmbName
+import com.hippo.nimingban.client.toNmbVividName
+import com.hippo.nimingban.exception.GsonException
+import com.hippo.nimingban.util.stringNotEmpty
+import java.lang.reflect.Type
 import java.net.URLEncoder
 
 /*
  * Created by Hippo on 6/12/2017.
  */
 
+
+class ForumApiGson : JsonDeserializer<Forum> {
+
+  override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Forum {
+    val jo = json.asJsonObject
+
+    return Forum(
+        id = jo.stringNotEmpty("id") ?: throw GsonException("Invalid forum id"),
+        group = jo.stringNotEmpty("fgroup"),
+        sort = jo.stringNotEmpty("sort"),
+        name = jo.stringNotEmpty("name"),
+        shownName = jo.stringNotEmpty("showName"),
+        message = jo.stringNotEmpty("msg"),
+        interval = jo.stringNotEmpty("interval"),
+        createdAt = jo.stringNotEmpty("createdAt"),
+        updateAt = jo.stringNotEmpty("updateAt"),
+        status = jo.stringNotEmpty("status"))
+        .also { it.official = true }
+  }
+}
+
+
 data class Forum(
-    @Expose @SerializedName(ID) val _id: String?,
-    @Expose @SerializedName(FGROUP) val _fgroup: String?,
-    @Expose @SerializedName(SORT) val _sort: String?,
-    @Expose @SerializedName(NAME) val _name: String?,
-    @Expose @SerializedName(SHOW_NAME) val _showName: String?,
-    @Expose @SerializedName(MSG) val _msg: String?,
-    @Expose @SerializedName(INTERVAL) val _interval: String?,
-    @Expose @SerializedName(CREATED_AT) val _createdAt: String?,
-    @Expose @SerializedName(UPDATE_AT) val _updateAt: String?,
-    @Expose @SerializedName(STATUS) val _status: String?
+    val id: String,
+    val group: String?,
+    val sort: String?,
+    val name: String?,
+    val shownName: String?,
+    val message: String?,
+    val interval: String?,
+    val createdAt: String?,
+    val updateAt: String?,
+    val status: String?
 ) : Parcelable {
 
-  val init by lazy {
-    id = _id ?: ""
-    name = _name ?: ""
-    displayName = (_showName?.fromHtml() ?: "")
-        .let { if (it.isNullOrBlank()) _name ?: "" else it }
-        .let { if (it.isNullOrBlank()) DEFAULT_FORUM else it }
-    displayMessage = (_msg?.fromHtml() ?: "")
-        .let { if (it.isNullOrBlank()) DEFAULT_MESSAGE else it }
+  val displayedName = name.toNmbName()
+  val displayedVividName = name.toNmbVividName(shownName)
+  val displayedMessage = message.toNmbMessage()
 
-    if (_name != null) {
-      try {
-        htmlName = URLEncoder.encode(_name, "UTF-8")
-      } catch (e: Throwable) { /* Ignore error */ }
-    }
+  /**
+   * Used for [NmbEngine.threadsHtml].
+   */
+  val htmlName = run {
+    try {
+      URLEncoder.encode(name, "UTF-8")!!
+    } catch (e: Throwable) { throw GsonException("Can't encode forum name") }
   }
 
-  var id: String = ""
-    private set
-  var name: String = ""
-    private set
-  var displayName: CharSequence = ""
-    private set
-  var displayMessage: CharSequence = ""
-    private set
-  var htmlName: String = ""
-    private set
-
-  /** Whether the forum is from api **/
+  /**
+   * Whether the forum is from api.
+   */
   var official = false
 
-  /** Whether the forum is visible for user **/
+  /**
+   * Whether the forum is visible for user.
+   */
   var visible = true
 
-  /** Only useful to save it to db **/
+  /**
+   * Only useful to save it to db.
+   */
   var weight = 0
 
-  override fun describeContents() = 0
-
-  override fun writeToParcel(dest: Parcel, flags: Int) {
-    dest.writeString(_id)
-    dest.writeString(_fgroup)
-    dest.writeString(_sort)
-    dest.writeString(_name)
-    dest.writeString(_showName)
-    dest.writeString(_msg)
-    dest.writeString(_interval)
-    dest.writeString(_createdAt)
-    dest.writeString(_updateAt)
-    dest.writeString(_status)
-    dest.writeInt(if (official) 1 else 0)
+  constructor(parcel: Parcel) : this(
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString()) {
+    official = parcel.readByte() != 0.toByte()
+    visible = parcel.readByte() != 0.toByte()
+    weight = parcel.readInt()
   }
 
-  constructor(source: Parcel) : this(
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString()) {
-    official = source.readInt() != 0
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeString(id)
+    parcel.writeString(group)
+    parcel.writeString(sort)
+    parcel.writeString(name)
+    parcel.writeString(shownName)
+    parcel.writeString(message)
+    parcel.writeString(interval)
+    parcel.writeString(createdAt)
+    parcel.writeString(updateAt)
+    parcel.writeString(status)
+    parcel.writeByte(if (official) 1 else 0)
+    parcel.writeByte(if (visible) 1 else 0)
+    parcel.writeInt(weight)
   }
 
-  companion object {
+  override fun describeContents(): Int {
+    return 0
+  }
 
-    const val ID = "id"
-    const val FGROUP = "fgroup"
-    const val SORT = "sort"
-    const val NAME = "name"
-    const val SHOW_NAME = "showName"
-    const val MSG = "msg"
-    const val INTERVAL = "interval"
-    const val CREATED_AT = "createdAt"
-    const val UPDATE_AT = "updateAt"
-    const val STATUS = "status"
+  companion object CREATOR : Parcelable.Creator<Forum> {
+    override fun createFromParcel(parcel: Parcel): Forum {
+      return Forum(parcel)
+    }
 
-    private const val DEFAULT_FORUM = "板块丁"
-    private const val DEFAULT_MESSAGE = "略"
-
-    @JvmField val CREATOR: Parcelable.Creator<Forum> = object : Parcelable.Creator<Forum> {
-      override fun createFromParcel(source: Parcel) = Forum(source).also { it.init }
-      override fun newArray(size: Int) = arrayOfNulls<Forum?>(size)
+    override fun newArray(size: Int): Array<Forum?> {
+      return arrayOfNulls(size)
     }
   }
 }

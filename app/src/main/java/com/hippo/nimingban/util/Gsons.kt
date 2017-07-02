@@ -18,46 +18,37 @@ package com.hippo.nimingban.util
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.hippo.nimingban.exception.GsonException
 
 /*
  * Created by Hippo on 7/1/2017.
  */
 
-private fun error(key: String): Nothing = throw GsonException("Invalid value: $key")
-
-fun JsonObject.element(key: String): JsonElement {
-  try {
-    return get(key) ?: error(key)
-  } catch (e: Throwable) { error(key) }
+fun JsonObject.element(key: String): JsonElement? {
+  return try {
+    get(key)
+  } catch (e: Throwable) {
+    null
+  }
 }
 
-fun JsonObject.int(key: String): Int {
-  try {
-    return get(key).asInt
-  } catch (e: Throwable) { error(key) }
+fun JsonObject.int(key: String, defValue: Int): Int {
+  return try {
+    get(key).asInt
+  } catch (e: Throwable) {
+    defValue
+  }
 }
 
-fun JsonObject.string(key: String): String {
-  try {
-    return get(key).asString ?: error(key)
-  } catch (e: Throwable) { error(key) }
+fun JsonObject.string(key: String, defValue: String?): String? {
+  return try {
+    get(key).asString
+  } catch (e: Throwable) {
+    defValue
+  }
 }
 
-fun JsonObject.stringOrNull(key: String): String? {
-  try {
-    return get(key).asString
-  } catch (e: Throwable) { error(key) }
-}
-
-fun JsonObject.stringNotBlank(key: String): String {
-  try {
-    return get(key).asString.also { if (it.isNullOrBlank()) error(key) }
-  } catch (e: Throwable) { error(key) }
-}
-
-fun JsonObject.stringNotBlankOrNull(key: String): String? {
-  try {
-    return get(key).asString.let { if (it.isNullOrBlank()) null else it }
-  } catch (e: Throwable) { error(key) }
+fun JsonObject.stringNotEmpty(key: String): String? {
+  return string(key, null).let {
+    if (it.isNullOrEmpty()) null else it
+  }
 }

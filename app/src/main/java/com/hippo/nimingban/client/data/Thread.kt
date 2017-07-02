@@ -25,13 +25,12 @@ import com.google.gson.reflect.TypeToken
 import com.hippo.nimingban.client.NO_NAME
 import com.hippo.nimingban.client.NO_TITLE
 import com.hippo.nimingban.client.toNmbContent
-import com.hippo.nimingban.client.toNmbDate
+import com.hippo.nimingban.client.fromNmbDate
 import com.hippo.nimingban.client.toNmbUser
+import com.hippo.nimingban.exception.GsonException
 import com.hippo.nimingban.util.element
 import com.hippo.nimingban.util.int
-import com.hippo.nimingban.util.stringNotBlank
-import com.hippo.nimingban.util.stringNotBlankOrNull
-import com.hippo.nimingban.util.stringOrNull
+import com.hippo.nimingban.util.stringNotEmpty
 import java.lang.reflect.Type
 
 /*
@@ -44,24 +43,24 @@ class ThreadApiGson : JsonDeserializer<Thread> {
     val jo = json.asJsonObject
 
     return Thread(
-        id = jo.stringNotBlank("id"),
-        date = jo.stringOrNull("now").toNmbDate(),
-        user = jo.stringOrNull("userid"),
-        title = jo.stringNotBlankOrNull("title")?.let { if (it == NO_TITLE) null else it },
-        name = jo.stringNotBlankOrNull("name")?.let { if (it == NO_NAME) null else it },
-        email = jo.stringNotBlankOrNull("email"),
-        content = jo.stringOrNull("content"),
+        id = jo.stringNotEmpty("id") ?: throw GsonException("Invalid thread id"),
+        date = jo.stringNotEmpty("now").fromNmbDate(),
+        user = jo.stringNotEmpty("userid"),
+        title = jo.stringNotEmpty("title")?.let { if (it == NO_TITLE) null else it },
+        name = jo.stringNotEmpty("name")?.let { if (it == NO_NAME) null else it },
+        email = jo.stringNotEmpty("email"),
+        content = jo.stringNotEmpty("content"),
         image = run {
-          val img = jo.stringNotBlankOrNull("img")
-          val ext = jo.stringNotBlankOrNull("ext")
+          val img = jo.stringNotEmpty("img")
+          val ext = jo.stringNotEmpty("ext")
           if (img != null && ext != null) img + ext else null
         },
-        sage = jo.int("sage") == 1,
-        admin = jo.int("admin") == 1,
-        replyCount = jo.int("replyCount"),
-        replies = jo.element("replys").let {
+        sage = jo.int("sage", 0) == 1,
+        admin = jo.int("admin", 0) == 1,
+        replyCount = jo.int("replyCount", 0),
+        replies = jo.element("replys")?.let {
           context.deserialize<List<Reply>>(it, object : TypeToken<List<Reply>>(){}.type)
-        }
+        } ?: emptyList()
     )
   }
 }

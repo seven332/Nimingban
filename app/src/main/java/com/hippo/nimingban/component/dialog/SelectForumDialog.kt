@@ -81,7 +81,7 @@ class SelectForumDialog : NmbDialog() {
       if (view == null) {
         view = inflater.inflate(R.layout.list_single_item, parent, false)!!
       }
-      view.find<TextView>(android.R.id.text1).text = forums[position].name
+      view.find<TextView>(android.R.id.text1).text = forums[position].displayedName
       return view
     }
 

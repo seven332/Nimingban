@@ -37,16 +37,16 @@ import com.pushtorefresh.storio.sqlite.queries.UpdateQuery
 
 const val TABLE_FORUM = "forum"
 
-private const val COLUMN_ID = Forum.ID
-private const val COLUMN_FGROUP = Forum.FGROUP
-private const val COLUMN_SORT = Forum.SORT
-private const val COLUMN_NAME = Forum.NAME
-private const val COLUMN_SHOW_NAME = Forum.SHOW_NAME
-private const val COLUMN_MSG = Forum.MSG
-private const val COLUMN_INTERVAL = Forum.INTERVAL
-private const val COLUMN_CREATED_AT = Forum.CREATED_AT
-private const val COLUMN_UPDATE_AT = Forum.UPDATE_AT
-private const val COLUMN_STATUS = Forum.STATUS
+private const val COLUMN_ID = "id"
+private const val COLUMN_GROUP = "fgroup"
+private const val COLUMN_SORT = "sort"
+private const val COLUMN_NAME = "name"
+private const val COLUMN_SHOWN_NAME = "shown_name"
+private const val COLUMN_MESSAGE = "message"
+private const val COLUMN_INTERVAL = "interval"
+private const val COLUMN_CREATED_AT = "created_at"
+private const val COLUMN_UPDATE_AT = "update_at"
+private const val COLUMN_STATUS = "status"
 private const val COLUMN_OFFICIAL = "official"
 private const val COLUMN_VISIBLE = "visible"
 private const val COLUMN_WEIGHT = "weight"
@@ -57,11 +57,11 @@ const val FORUM_COLUMN_WEIGHT = COLUMN_WEIGHT
 fun forumVersion1(sqlBuilder: MSQLiteBuilder) {
   sqlBuilder
       .createTable(TABLE_FORUM, COLUMN_ID, String::class)
-      .insertColumn(TABLE_FORUM, COLUMN_FGROUP, String::class)
+      .insertColumn(TABLE_FORUM, COLUMN_GROUP, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_SORT, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_NAME, String::class)
-      .insertColumn(TABLE_FORUM, COLUMN_SHOW_NAME, String::class)
-      .insertColumn(TABLE_FORUM, COLUMN_MSG, String::class)
+      .insertColumn(TABLE_FORUM, COLUMN_SHOWN_NAME, String::class)
+      .insertColumn(TABLE_FORUM, COLUMN_MESSAGE, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_INTERVAL, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_CREATED_AT, String::class)
       .insertColumn(TABLE_FORUM, COLUMN_UPDATE_AT, String::class)
@@ -87,16 +87,16 @@ private class ForumPutResolver : DefaultPutResolver<Forum>() {
 
   override fun mapToContentValues(item: Forum) = ContentValues(13)
       .also {
-        it.put(COLUMN_ID, item._id)
-        it.put(COLUMN_FGROUP, item._fgroup)
-        it.put(COLUMN_SORT, item._sort)
-        it.put(COLUMN_NAME, item._name)
-        it.put(COLUMN_SHOW_NAME, item._showName)
-        it.put(COLUMN_MSG, item._msg)
-        it.put(COLUMN_INTERVAL, item._interval)
-        it.put(COLUMN_CREATED_AT, item._createdAt)
-        it.put(COLUMN_UPDATE_AT, item._updateAt)
-        it.put(COLUMN_STATUS, item._status)
+        it.put(COLUMN_ID, item.id)
+        it.put(COLUMN_GROUP, item.group)
+        it.put(COLUMN_SORT, item.sort)
+        it.put(COLUMN_NAME, item.name)
+        it.put(COLUMN_SHOWN_NAME, item.shownName)
+        it.put(COLUMN_MESSAGE, item.message)
+        it.put(COLUMN_INTERVAL, item.interval)
+        it.put(COLUMN_CREATED_AT, item.createdAt)
+        it.put(COLUMN_UPDATE_AT, item.updateAt)
+        it.put(COLUMN_STATUS, item.status)
         it.put(COLUMN_OFFICIAL, item.official)
         it.put(COLUMN_VISIBLE, item.visible)
         it.put(COLUMN_WEIGHT, item.weight)
@@ -106,18 +106,17 @@ private class ForumPutResolver : DefaultPutResolver<Forum>() {
 private class ForumGetResolver : DefaultGetResolver<Forum>() {
 
   override fun mapFromCursor(cursor: Cursor) = Forum(
-      cursor.getString(COLUMN_ID, null),
-      cursor.getString(COLUMN_FGROUP, null),
+      cursor.getString(COLUMN_ID, null) ?: "-1",
+      cursor.getString(COLUMN_GROUP, null),
       cursor.getString(COLUMN_SORT, null),
       cursor.getString(COLUMN_NAME, null),
-      cursor.getString(COLUMN_SHOW_NAME, null),
-      cursor.getString(COLUMN_MSG, null),
+      cursor.getString(COLUMN_SHOWN_NAME, null),
+      cursor.getString(COLUMN_MESSAGE, null),
       cursor.getString(COLUMN_INTERVAL, null),
       cursor.getString(COLUMN_CREATED_AT, null),
       cursor.getString(COLUMN_UPDATE_AT, null),
       cursor.getString(COLUMN_STATUS, null))
       .also {
-        it.init
         it.official = cursor.getBoolean(COLUMN_OFFICIAL, false)
         it.visible = cursor.getBoolean(COLUMN_VISIBLE, true)
         it.weight = cursor.getInt(COLUMN_WEIGHT, 0)
