@@ -34,7 +34,9 @@ import com.hippo.nimingban.client.NmbInterceptor
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.ForumGroup
 import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.client.data.ReplyApiGson
 import com.hippo.nimingban.client.data.Thread
+import com.hippo.nimingban.client.data.ThreadApiGson
 import com.hippo.nimingban.network.CookieRepository
 import com.hippo.nimingban.util.filterNot
 import com.squareup.leakcanary.LeakCanary
@@ -77,7 +79,7 @@ val COOKIE_JAR: CookieRepository by lazy {
 val OK_HTTP_CLIENT: OkHttpClient by lazy {
   OkHttpClient.Builder()
       .addInterceptor(NmbInterceptor())
-      .addInterceptor(HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC })
+      .addNetworkInterceptor(HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC })
       .cookieJar(COOKIE_JAR)
       .build()
 }
@@ -91,12 +93,8 @@ val GSON: Gson by lazy {
       .registerTypeAdapter(ForumGroup::class.java, InstanceCreator {
         ForumGroup(null, null, null, null, null)
       })
-      .registerTypeAdapter(Reply::class.java, InstanceCreator {
-        Reply(null, null, null, null, null, null, null, null, null, null, null)
-      })
-      .registerTypeAdapter(Thread::class.java, InstanceCreator {
-        Thread(null, null, null, null, null, null, null, null, null, null, null, null, null)
-      })
+      .registerTypeAdapter(Reply::class.java, ReplyApiGson())
+      .registerTypeAdapter(Thread::class.java, ThreadApiGson())
       .create()
 }
 

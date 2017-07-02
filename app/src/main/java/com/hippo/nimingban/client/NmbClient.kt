@@ -50,7 +50,6 @@ class NmbClient(private val engine: NmbEngine) {
   fun threads(forum: Forum, page: Int) =
       Singles.zip(
           engine.threads(threadsApiUrl(forum.id, page))
-              .map { it.also { it.forEach { it.init } } }
               .subscribeOn(Schedulers.io()),
           engine.threadsHtml(threadsHtmlUrl(forum.htmlName, page))
               .onErrorReturn { ThreadsHtml(MAX_THREADS_PAGES, emptyList()) }
@@ -72,17 +71,16 @@ class NmbClient(private val engine: NmbEngine) {
           engine.repliesHtml(repliesHtmlUrl(id, page))
               .subscribeOn(Schedulers.io()),
           { thread, (forum, _) ->
-            thread.init
             val replies = thread.replies.toMutableList()
             if (page == 0) {
               replies.add(0, thread.toReply())
             }
 
             val pages: Int
-            if (thread.replies.size < REPLY_PAGE_SIZE) {
+            if (thread.replies.size < MAX_REPLY_PAGE_SIZE) {
               pages = page + 1
             } else {
-              pages = ceilDiv(thread.replyCount, REPLY_PAGE_SIZE)
+              pages = ceilDiv(thread.replyCount, MAX_REPLY_PAGE_SIZE)
             }
 
             Quad(thread, replies, forum, pages)

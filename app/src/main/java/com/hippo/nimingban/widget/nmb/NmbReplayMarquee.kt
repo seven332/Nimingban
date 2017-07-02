@@ -70,7 +70,7 @@ class NmbReplayMarquee : TextSwitcher, Runnable {
       setText(null)
     } else {
       index = (++index).let { if (it >= replies.size) 0 else it }.let { if (it < 0) 0 else it}
-      val text = replies[index].displayContent
+      val text = replies[index].displayedContent
       if (animation) {
         setText(text)
       } else {

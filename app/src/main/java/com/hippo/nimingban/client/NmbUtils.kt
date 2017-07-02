@@ -34,15 +34,12 @@ import java.util.regex.Pattern
  * Created by Hippo on 6/4/2017.
  */
 
-const val REPLY_PAGE_SIZE = 19
+const val NO_TITLE = "无标题"
+const val NO_NAME = "无名氏"
+
 
 private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault())
-
-// Kotlin need a way to initialize package-level val
-// https://youtrack.jetbrains.com/issue/KT-13486
-private val INIT = run {
-  DATE_FORMAT.timeZone = TimeZone.getTimeZone("GMT+08:00")
-}
+    .also { it.timeZone = TimeZone.getTimeZone("GMT+08:00") }
 
 // Remove all brackets in string
 private fun String.removeBrackets(): String {
@@ -58,6 +55,9 @@ private fun String.removeBrackets(): String {
   return sb.toString()
 }
 
+/**
+ * Parses nmb-style data string. Like `2017-06-11(日)23:41:31`.
+ */
 fun String?.toNmbDate(): Long {
   if (this == null) return 0
 
@@ -71,6 +71,9 @@ fun String?.toNmbDate(): Long {
 
 private const val DEFAULT_USER = "无名氏"
 
+/**
+ * Apply style to user.
+ */
 fun String?.toNmbUser(admin: Boolean): CharSequence {
   val user = this?.fromHtml() ?: DEFAULT_USER
   if (admin) {
@@ -83,8 +86,6 @@ fun String?.toNmbUser(admin: Boolean): CharSequence {
 }
 
 
-private const val NO_TITLE = "无标题"
-private const val NO_NAME = "无名氏"
 private const val DEFAULT_CONTENT = "无文本"
 
 private val URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?")
@@ -124,6 +125,9 @@ private fun SpannableStringBuilder.resolveReference(): SpannableStringBuilder {
   return this
 }
 
+/**
+ * Apply style to content.
+ */
 fun String?.toNmbContent(sage: Boolean, title: String?, name: String?, email: String?): CharSequence {
   val sb = StringBuilder()
   if (sage) {

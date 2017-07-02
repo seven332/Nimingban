@@ -18,116 +18,102 @@ package com.hippo.nimingban.client.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.hippo.nimingban.client.NO_NAME
+import com.hippo.nimingban.client.NO_TITLE
 import com.hippo.nimingban.client.toNmbContent
 import com.hippo.nimingban.client.toNmbDate
 import com.hippo.nimingban.client.toNmbUser
+import com.hippo.nimingban.util.int
+import com.hippo.nimingban.util.stringNotBlank
+import com.hippo.nimingban.util.stringNotBlankOrNull
+import com.hippo.nimingban.util.stringOrNull
+import java.lang.reflect.Type
 
 /*
  * Created by Hippo on 6/4/2017.
  */
 
+class ReplyApiGson : JsonDeserializer<Reply> {
+
+  override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Reply {
+    val jo = json.asJsonObject
+
+    return Reply(
+        id = jo.stringNotBlank("id"),
+        date = jo.stringOrNull("now").toNmbDate(),
+        user = jo.stringOrNull("userid"),
+        title = jo.stringNotBlankOrNull("title")?.let { if (it == NO_TITLE) null else it },
+        name = jo.stringNotBlankOrNull("name")?.let { if (it == NO_NAME) null else it },
+        email = jo.stringNotBlankOrNull("email"),
+        content = jo.stringOrNull("content"),
+        image = run {
+          val img = jo.stringNotBlankOrNull("img")
+          val ext = jo.stringNotBlankOrNull("ext")
+          if (img != null && ext != null) img + ext else null
+        },
+        sage = jo.int("sage") == 1,
+        admin = jo.int("admin") == 1
+    )
+  }
+}
+
+
 data class Reply(
-    @Expose @SerializedName("id") private val _id: String?,
-    @Expose @SerializedName("img") private val _img: String?,
-    @Expose @SerializedName("ext") private val _ext: String?,
-    @Expose @SerializedName("now") private val _now: String?,
-    @Expose @SerializedName("userid") private val _user: String?,
-    @Expose @SerializedName("name") private val _name: String?,
-    @Expose @SerializedName("email") private val _email: String?,
-    @Expose @SerializedName("title") private val _title: String?,
-    @Expose @SerializedName("content") private val _content: String?,
-    @Expose @SerializedName("sage") private val _sage: String?,
-    @Expose @SerializedName("admin") private val _admin: String?
+    val id: String,
+    val date: Long,
+    val user: String?,
+    val title: String?,
+    val name: String?,
+    val email: String?,
+    val content: String?,
+    val image: String?,
+    val sage: Boolean,
+    val admin: Boolean
 ) : Parcelable {
 
-  val init by lazy {
-    id = _id
-    image = if (_img.isNullOrEmpty().not() && _ext.isNullOrEmpty().not()) _img + _ext else null
-    date = _now.toNmbDate()
-    user = _user
-    name = _name
-    email = _email
-    title = _title
-    content = _content
-    sage = _sage == "1"
-    admin = _admin == "1"
+  val displayedId = "No." + id
+  val displayedUser = user.toNmbUser(admin)
+  val displayedContent = content.toNmbContent(sage, title, name, email)
 
-    displayId = "No." + (_id ?: "0")
-    displayUser = _user.toNmbUser(admin)
-    displayContent = _content.toNmbContent(sage, _title, _name, _email)
+  constructor(parcel: Parcel) : this(
+      parcel.readString(),
+      parcel.readLong(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readByte() != 0.toByte(),
+      parcel.readByte() != 0.toByte())
+
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeString(id)
+    parcel.writeLong(date)
+    parcel.writeString(user)
+    parcel.writeString(title)
+    parcel.writeString(name)
+    parcel.writeString(email)
+    parcel.writeString(content)
+    parcel.writeString(image)
+    parcel.writeByte(if (sage) 1 else 0)
+    parcel.writeByte(if (admin) 1 else 0)
   }
 
-  var id: String? = null
-    private set
-  var image: String? = null
-    private set
-  var date: Long = 0
-    private set
-  var user: String? = null
-    private set
-  var name: String? = null
-    private set
-  var email: String? = null
-    private set
-  var title: String? = null
-    private set
-  var content: String? = null
-    private set
-  var sage: Boolean = false
-    private set
-  var admin: Boolean = false
-    private set
-
-  var displayId: CharSequence = ""
-    private set
-  var displayUser: CharSequence = ""
-    private set
-  var displayContent: CharSequence = ""
-    private set
-
-
-  override fun describeContents() = 0
-
-  override fun writeToParcel(dest: Parcel, flags: Int) {
-    dest.writeString(_id)
-    dest.writeString(_img)
-    dest.writeString(_ext)
-    dest.writeString(_now)
-    dest.writeString(_user)
-    dest.writeString(_name)
-    dest.writeString(_email)
-    dest.writeString(_title)
-    dest.writeString(_content)
-    dest.writeString(_sage)
-    dest.writeString(_admin)
+  override fun describeContents(): Int {
+    return 0
   }
 
-  constructor(source: Parcel) : this(
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString())
+  companion object CREATOR : Parcelable.Creator<Reply> {
+    override fun createFromParcel(parcel: Parcel): Reply {
+      return Reply(parcel)
+    }
 
-  companion object {
-    @JvmField val CREATOR: Parcelable.Creator<Reply> = object : Parcelable.Creator<Reply> {
-      override fun createFromParcel(source: Parcel): Reply {
-        val reply = Reply(source)
-        reply.init
-        return reply
-      }
-
-      override fun newArray(size: Int): Array<Reply?> {
-        return arrayOfNulls(size)
-      }
+    override fun newArray(size: Int): Array<Reply?> {
+      return arrayOfNulls(size)
     }
   }
 }
