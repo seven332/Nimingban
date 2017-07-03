@@ -92,16 +92,25 @@ fun reply(
       })
 }
 
-fun openUrl(url: String) {
+private fun Intent.startActivity() {
   val context = NMB_APP
-  val uri = Uri.parse(url)
-
-  val intent = Intent(Intent.ACTION_VIEW)
-  intent.data = uri
-
-  val resolveInfo = context.packageManager.resolveActivity(intent, 0)
+  val resolveInfo = context.packageManager.resolveActivity(this, 0)
   if (resolveInfo != null) {
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
+    this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    context.startActivity(this)
   }
+}
+
+fun openUrl(url: String) {
+  val intent = Intent(Intent.ACTION_VIEW)
+  intent.data = Uri.parse(url)
+  intent.startActivity()
+}
+
+fun share(text: String) {
+  val intent = Intent()
+  intent.action = Intent.ACTION_SEND
+  intent.putExtra(Intent.EXTRA_TEXT, text)
+  intent.type = "text/plain"
+  intent.startActivity()
 }

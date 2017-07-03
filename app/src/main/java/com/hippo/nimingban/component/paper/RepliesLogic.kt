@@ -24,6 +24,7 @@ import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbLogic
 import com.hippo.nimingban.component.NmbScene
+import com.hippo.nimingban.component.dialog.replyOptionDialog
 import com.hippo.nimingban.component.openUrl
 import com.hippo.nimingban.component.scene.galleryScene
 import com.hippo.nimingban.util.INVALID_INDEX
@@ -97,7 +98,10 @@ abstract class RepliesLogic(
 
   /** Called when user click a reply **/
   fun onClickReply(reply: Reply) {
-    // TODO
+    val thread = this.thread
+    if (thread != null) {
+      scene.stage?.pushScene(replyOptionDialog(thread, reply))
+    }
   }
 
   fun getMinPage() = data.minPage

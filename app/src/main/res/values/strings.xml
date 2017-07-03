@@ -54,6 +54,12 @@
   <string name="reply_failure">Reply failed</string>
 
   <string name="go_to_title">Go to</string>
+  
+  <string name="reply_option_reply">Reply</string>
+  <string name="reply_option_copy">Copy</string>
+  <string name="reply_option_share">Share</string>
+  <string name="reply_option_report">Report</string>
+  <string name="reply_option_copy_done">Copied to clipboard</string>
 
   <string name="error_unknown">Unknown Error</string>
   <string name="error_no_forum">No Forum</string>

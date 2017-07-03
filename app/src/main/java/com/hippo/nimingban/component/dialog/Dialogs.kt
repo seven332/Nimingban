@@ -17,6 +17,8 @@
 package com.hippo.nimingban.component.dialog
 
 import android.os.Bundle
+import com.hippo.nimingban.client.data.Reply
+import com.hippo.nimingban.client.data.Thread
 import com.hippo.stage.Scene
 
 /*
@@ -37,5 +39,14 @@ fun goToDialog(target: Scene, min: Int, max: Int, progress: Int): GoToDialog {
   val dialog = GoToDialog()
   dialog.args = args
   dialog.target = target
+  return dialog
+}
+
+fun replyOptionDialog(thread: Thread, reply: Reply): ReplyOptionDialog {
+  val args = Bundle()
+  args.putParcelable(ReplyOptionDialog.KEY_THREAD, thread)
+  args.putParcelable(ReplyOptionDialog.KEY_REPLY, reply)
+  val dialog = ReplyOptionDialog()
+  dialog.args = args
   return dialog
 }

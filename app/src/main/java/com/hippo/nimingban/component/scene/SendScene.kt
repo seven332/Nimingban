@@ -30,8 +30,9 @@ import com.hippo.nimingban.component.dialog.SelectForumDialog
 class SendScene : NmbScene(), SelectForumDialog.OnSelectForumListener {
 
   companion object {
-    const val KEY_FORUM = "SendScene:forum"
-    const val KEY_THREAD = "SendScene:thread"
+    internal const val KEY_FORUM = "SendScene:forum"
+    internal const val KEY_THREAD = "SendScene:thread"
+    internal const val KEY_PRESET_CONTENT = "SendScene:preset_content"
   }
 
   override fun onCreate(args: Bundle?) {
@@ -42,7 +43,7 @@ class SendScene : NmbScene(), SelectForumDialog.OnSelectForumListener {
       SendSceneLogic(this, args?.getParcelable(KEY_FORUM), args?.getParcelable(KEY_THREAD))
 
   override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
-      SendSceneUi(logic as SendSceneLogic, inflater, container)
+      SendSceneUi(logic as SendSceneLogic, args?.getString(KEY_PRESET_CONTENT), inflater, container)
 
   override fun onSelectForum(forum: Forum) {
     val logic = this.logic

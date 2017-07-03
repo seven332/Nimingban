@@ -32,6 +32,7 @@ import com.hippo.nimingban.component.paper.toolbar
 
 class SendSceneUi(
     logic: SendSceneLogic,
+    presetContent: String?,
     override val inflater: LayoutInflater,
     container: ViewGroup
 ) : GroupUi() {
@@ -41,7 +42,7 @@ class SendSceneUi(
   init {
     toolbar(logic.toolbarLogic, container) {
       bottomTool(logic.bottomToolLogic, ToolbarUi.CONTAINER_ID) {
-        send(logic.sendLogic, BottomToolUi.CONTAINER_ID)
+        send(logic.sendLogic, presetContent, BottomToolUi.CONTAINER_ID)
       }
     }
     view = getChild(0).view

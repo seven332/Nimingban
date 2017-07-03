@@ -23,6 +23,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
+import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.util.fromHtml
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -186,3 +187,5 @@ fun String?.toNmbVividName(shownName: String?): CharSequence {
     return DEFAULT_FORUM
   }
 }
+
+fun Reply.referenceText() = ">>No." + id

@@ -40,6 +40,7 @@ import com.hippo.nimingban.util.find
 
 class SendUi(
     private val logic: SendLogic,
+    presetContent: String?,
     inflater: LayoutInflater,
     container: ViewGroup
 ) : NmbUi() {
@@ -87,6 +88,8 @@ class SendUi(
     ViewCompat.setBackground(forumView, ChipDrawable(context.attrColor(R.attr.backgroundColorStatusBar)))
 
     showMore(showMore)
+
+    content.setText(presetContent)
 
     logic.sendUi = this
   }

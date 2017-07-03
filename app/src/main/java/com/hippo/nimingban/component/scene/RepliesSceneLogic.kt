@@ -79,7 +79,7 @@ class RepliesSceneLogic(
         R.id.action_reply -> {
           val thread = this.thread
           if (thread != null) {
-            scene.stage?.pushScene(thread.sendScene())
+            scene.stage?.pushScene(sendScene(thread, null))
           }
           return true
         }

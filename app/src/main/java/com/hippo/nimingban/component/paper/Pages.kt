@@ -96,5 +96,6 @@ fun GroupUi.forums(
 
 fun GroupUi.send(
     logic: SendLogic,
+    presetContent: String?,
     container: Int
-) = inflateChild(container, 0, { SendUi(logic, inflater, it) })
+) = inflateChild(container, 0, { SendUi(logic, presetContent, inflater, it) })
