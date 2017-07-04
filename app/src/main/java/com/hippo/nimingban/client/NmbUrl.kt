@@ -42,6 +42,8 @@ const val NMB_HTML_THREADS = NMB_HOST + "/f/"
 
 const val NMB_HTML_REPLIES = NMB_HOST + "/t/"
 
+const val NMB_HTML_REFERENCE = NMB_HOST + "/Home/Forum/ref?appid=" + NMB_APP_ID
+
 const val NMB_HTML_POST = NMB_HOST + "/Home/Forum/doPostThread.html?appid=" + NMB_APP_ID
 
 const val NMB_HTML_REPLY = NMB_HOST + "/Home/Forum/doReplyThread.html?appid=" + NMB_APP_ID
@@ -62,6 +64,8 @@ fun repliesApiUrl(id: String, page: Int) = NMB_API_REPLIES + "&id=" + id + "&pag
 
 fun repliesHtmlUrl(id: String, page: Int) =
     NMB_HTML_REPLIES + id + "?appid=" + NMB_APP_ID + "&page=" + (page + 1)
+
+fun referenceHtmlUrl(id: String) = NMB_HTML_REFERENCE + "&id=" + id
 
 // TODO check NMB_DOMAIN, and image host
 fun isNmbUrl(url: HttpUrl): Boolean = true

@@ -14,28 +14,35 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.client.converter
-
-import okhttp3.ResponseBody
-import retrofit2.Converter
+package com.hippo.nimingban.client.data
 
 /*
- * Created by Hippo on 6/21/2017.
+ * Created by Hippo on 2017/7/4.
  */
 
-abstract class NmbConverter<T> : Converter<ResponseBody, T> {
+data class Reference(
+    val id: String,
+    val date: Long,
+    val user: String?,
+    val title: String?,
+    val name: String?,
+    val email: String?,
+    val content: String?,
+    val image: String?,
+    val sage: Boolean,
+    val admin: Boolean,
+    val threadId: String?
+) {
 
-  override final fun convert(value: ResponseBody): T {
-    val body = value.string()
-    try {
-      return doConvert(body)
-    } catch (e: Throwable) {
-      throw parseError(body) ?: e
-    }
-  }
-
-  /**
-   * Converts the body to value.
-   */
-  abstract fun doConvert(body: String): T
+  fun toReply() = Reply(
+      id = id,
+      date = date,
+      user = user,
+      title = title,
+      name = name,
+      email = email,
+      content = content,
+      image = image,
+      sage = sage,
+      admin = admin)
 }

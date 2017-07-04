@@ -82,6 +82,10 @@ class NmbClient(private val engine: NmbEngine) {
           }
       )
 
+  fun reference(
+      id: String
+  ) = engine.reference(referenceHtmlUrl(id))
+
   fun post(
       title: String,
       name: String,

@@ -55,25 +55,3 @@ class ThreadsHtmlConverter : NmbConverter<ThreadsHtml>() {
     return ThreadsHtml(href.lastInt(Int.MAX_VALUE), threads)
   }
 }
-
-internal fun String?.lastInt(defValue: Int): Int {
-  if (this == null) return defValue
-
-  var result = 0
-  var base = 1
-  var inInt = false
-  for (i in this.length - 1 downTo 0) {
-    val ch = this[i]
-    val isInt = ch in '0' .. '9'
-
-    if (isInt) {
-      inInt = true
-      result += (ch - '0') * base
-      base *= 10
-    } else if (inInt) {
-      return result
-    }
-  }
-
-  return if (inInt) result else defValue
-}

@@ -19,9 +19,11 @@ package com.hippo.nimingban.client
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hippo.nimingban.client.converter.GsonConverter
+import com.hippo.nimingban.client.converter.ReferenceHtmlConverter
 import com.hippo.nimingban.client.converter.RepliesHtmlConverter
 import com.hippo.nimingban.client.converter.ThreadsHtmlConverter
 import com.hippo.nimingban.client.converter.UnitConverter
+import com.hippo.nimingban.client.data.Reference
 import com.hippo.nimingban.client.data.RepliesHtml
 import com.hippo.nimingban.client.data.ThreadsHtml
 import okhttp3.ResponseBody
@@ -41,6 +43,7 @@ class NmbConverterFactory(val gson: Gson) : Converter.Factory() {
       retrofit: Retrofit?
   ): Converter<ResponseBody, *>? = when(type) {
     Unit::class.java -> UnitConverter()
+    Reference::class.java -> ReferenceHtmlConverter()
     ThreadsHtml::class.java -> ThreadsHtmlConverter()
     RepliesHtml::class.java -> RepliesHtmlConverter()
     else -> {
