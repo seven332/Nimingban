@@ -20,13 +20,14 @@ import android.content.Context
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import android.os.Parcel
-import android.os.Parcelable
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.content.res.AppCompatResources
+import com.facebook.common.memory.PooledByteBuffer
+import com.facebook.common.memory.PooledByteBufferInputStream
 import com.hippo.android.resource.AttrResources
 import com.hippo.html.Html
+import java.io.File
 
 /*
  * Created by Hippo on 6/5/2017.
@@ -48,12 +49,6 @@ inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
 
 fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!
 
-fun <T> Parcel.readTypedList(creator: Parcelable.Creator<T>): MutableList<T> {
-  val list = mutableListOf<T>()
-  readTypedList(list, creator)
-  return list
-}
-
 fun Context.attrColor(resId: Int) = AttrResources.getAttrColor(this, resId)
 
 fun Context.string(resId: Int) = getString(resId)!!
@@ -67,3 +62,7 @@ fun Context.drawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
 fun StateListDrawable.addState(drawable: Drawable, vararg states: Int) = addState(states, drawable)
 
 fun Drawable.wrap() = DrawableCompat.wrap(this)!!
+
+fun File.child(name: String) = File(this, name)
+
+fun PooledByteBuffer.stream() = PooledByteBufferInputStream(this)
