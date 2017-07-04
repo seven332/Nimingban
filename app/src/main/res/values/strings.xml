@@ -69,7 +69,7 @@
   <string name="pretty_time_minutes">%d min</string>
   <string name="pretty_time_hours">%d h</string>
   <string name="pretty_time_days">%d d</string>
-  <string name="pretty_time_ago">%s age</string>
-  <string name="pretty_time_before">%s before</string>
+  <string name="pretty_time_ago">%s</string>
+  <string name="pretty_time_before">%s</string>
 
 </resources>

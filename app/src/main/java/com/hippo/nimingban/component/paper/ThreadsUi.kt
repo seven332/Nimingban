@@ -144,7 +144,7 @@ class ThreadsUi(
       val thread = get(position)
       holder.user.text = thread.displayUser
       holder.id.text = thread.idText()
-      holder.date.text = thread.date.prettyTime(context)
+      holder.date.text = thread.date.prettyTime()
       holder.content.text = thread.displayContent
       holder.thumb.loadThumb(thread.image)
       holder.replies.replies = thread.replies

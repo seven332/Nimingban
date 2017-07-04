@@ -28,11 +28,24 @@ import org.robolectric.annotation.Config
  */
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+@Config(manifest = "src/main/AndroidManifest.xml")
 class PrettyTimeTest {
+
+  private val SECOND_MILLIS = 1000L
+  private val MINUTE_MILLIS = 60 * SECOND_MILLIS
+  private val HOUR_MILLIS = 60 * MINUTE_MILLIS
+  private val DAY_MILLIS = 24 * HOUR_MILLIS
+  private val WEEK_MILLIS = 7 * DAY_MILLIS
 
   @Test
   fun testPrettyTime() {
-    assertEquals("7.8", 1466995612728L.prettyTime(RuntimeEnvironment.application))
+    val context = RuntimeEnvironment.application
+
+    assertEquals("just now", 0L.prettyTime(context, 0))
+    assertEquals("2 min", (2 * MINUTE_MILLIS).prettyTime(context, 0))
+    assertEquals("1 h", (50 * MINUTE_MILLIS).prettyTime(context, 0))
+    assertEquals("12 h", (12 * HOUR_MILLIS).prettyTime(context, 0))
+    assertEquals("1 d", (DAY_MILLIS).prettyTime(context, 0))
+    assertEquals("13 d", (2 * WEEK_MILLIS - 1).prettyTime(context, 0))
   }
 }

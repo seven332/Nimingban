@@ -58,6 +58,8 @@ fun Context.attrColor(resId: Int) = AttrResources.getAttrColor(this, resId)
 
 fun Context.string(resId: Int) = getString(resId)!!
 
+fun Context.string(resId: Int, vararg formatArgs: Any) = getString(resId, *formatArgs)!!
+
 fun Context.color(resId: Int) = ContextCompat.getColor(this, resId)
 
 fun Context.drawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!

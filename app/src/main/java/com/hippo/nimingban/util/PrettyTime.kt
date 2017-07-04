@@ -17,6 +17,7 @@
 package com.hippo.nimingban.util
 
 import android.content.Context
+import com.hippo.nimingban.NMB_APP
 import com.hippo.nimingban.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -34,20 +35,16 @@ const private val DAY_MILLIS = 24 * HOUR_MILLIS
 const private val WEEK_MILLIS = 7 * DAY_MILLIS
 
 private val CALENDAR = Calendar.getInstance()
-private val DATE_FORMAT = SimpleDateFormat("M.d", Locale.getDefault())
-private val DATE_FORMAT_WITH_YEAR = SimpleDateFormat("y.M.d", Locale.getDefault())
+private val DATE_FORMAT = SimpleDateFormat("M/d", Locale.getDefault())
+private val DATE_FORMAT_WITH_YEAR = SimpleDateFormat("y/M/d", Locale.getDefault())
 private val LOCK = Any()
 
-fun Long.prettyTime(context: Context): String {
-  val now = System.currentTimeMillis()
+fun Long.prettyTime(context: Context = NMB_APP, now: Long = System.currentTimeMillis()): String {
   val diff = (now - this).abs()
   val ago = now > this
 
-  if (diff < 2 * MINUTE_MILLIS) {
-    return context.getString(R.string.pretty_time_just_now)
-  }
-
-  if (diff > WEEK_MILLIS) {
+  // If the interval is longer than a week, use time instead of interval
+  if (diff >= WEEK_MILLIS) {
     synchronized (LOCK) {
       val nowDate = Date(now)
       val timeDate = Date(this)
@@ -63,18 +60,24 @@ fun Long.prettyTime(context: Context): String {
     }
   }
 
+  if (diff < 2 * MINUTE_MILLIS) {
+    return context.string(R.string.pretty_time_just_now)
+  }
+
   val time: String
   if (diff < 50 * MINUTE_MILLIS) {
     val minutes = (diff / MINUTE_MILLIS).toInt()
-    time = context.getString(R.string.pretty_time_minutes, minutes)
-  } else if (diff < 24 * HOUR_MILLIS) {
+    time = context.string(R.string.pretty_time_minutes, minutes)
+  } else if (diff < 90 * MINUTE_MILLIS) {
+    val hours = 1
+    time = context.string(R.string.pretty_time_hours, hours)
+  } else if (diff < DAY_MILLIS) {
     val hours = (diff / HOUR_MILLIS).toInt()
-    time = context.getString(R.string.pretty_time_hours, hours)
+    time = context.string(R.string.pretty_time_hours, hours)
   } else {
     val days = (diff / DAY_MILLIS).toInt()
-    time = context.getString(R.string.pretty_time_days, days)
+    time = context.string(R.string.pretty_time_days, days)
   }
 
-  return time
-  //return context.getString(if (ago) R.string.pretty_time_ago else R.string.pretty_time_before, time)
+  return context.string(if (ago) R.string.pretty_time_ago else R.string.pretty_time_before, time)
 }

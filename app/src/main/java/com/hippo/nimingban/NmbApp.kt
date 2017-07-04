@@ -105,6 +105,11 @@ val REF_WATCHER: RefWatcher by lazy { _REF_WATCHER!! }
 fun string(resId: Int) = NMB_APP.getString(resId)!!
 
 /**
+ * Read s string resource.
+ */
+fun string(resId: Int, vararg formatArgs: Any) = NMB_APP.getString(resId, *formatArgs)!!
+
+/**
  * Show a tip.
  * First, try to show it as a snack. If can't, show it as a toast.
  */
@@ -169,7 +174,7 @@ fun updateForums() {
       .subscribe({ NMB_DB.setOfficialForums(it) }, { /* Ignore error */ })
 }
 
-class NmbApp : Application() {
+open class NmbApp : Application() {
 
   private val activities = mutableListOf<WeakReference<Activity>>()
 

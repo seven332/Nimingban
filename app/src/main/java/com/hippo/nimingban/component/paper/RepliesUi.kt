@@ -161,7 +161,7 @@ class RepliesUi(
 
       holder.user.text = thread.displayedUser
       holder.id.text = thread.displayedId
-      holder.date.text = thread.date.prettyTime(inflater.context)
+      holder.date.text = thread.date.prettyTime()
       holder.content.text = thread.displayedContent
       holder.thumb.loadThumb(thread.image)
 
