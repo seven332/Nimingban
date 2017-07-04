@@ -22,6 +22,7 @@ import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.GroupLogic
 import com.hippo.nimingban.component.paper.BottomToolLogic
+import com.hippo.nimingban.component.paper.ScrollLogic
 import com.hippo.nimingban.component.paper.SendLogic
 import com.hippo.nimingban.component.paper.ToolbarLogic
 import com.hippo.nimingban.component.post
@@ -40,6 +41,7 @@ class SendSceneLogic(
 
   val toolbarLogic: ToolbarLogic = SendToolbarLogic().also { addChild(it) }
   val bottomToolLogic: BottomToolLogic = SendBottomToolLogic().also { addChild(it) }
+  val scrollLogic: ScrollLogic = ScrollLogic().also { addChild(it) }
   val sendLogic: SendLogic = SendLogic(scene, forum).also { addChild(it) }
 
   fun onSelectForum(forum: Forum) {

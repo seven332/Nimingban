@@ -14,41 +14,31 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.component.scene
+package com.hippo.nimingban.component.paper
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hippo.nimingban.R
 import com.hippo.nimingban.component.GroupUi
-import com.hippo.nimingban.component.paper.BottomToolUi
-import com.hippo.nimingban.component.paper.ScrollUi
-import com.hippo.nimingban.component.paper.ToolbarUi
-import com.hippo.nimingban.component.paper.bottomTool
-import com.hippo.nimingban.component.paper.scroll
-import com.hippo.nimingban.component.paper.send
-import com.hippo.nimingban.component.paper.toolbar
 
 /*
- * Created by Hippo on 6/24/2017.
+ * Created by Hippo on 2017/7/4.
  */
 
-class SendSceneUi(
-    logic: SendSceneLogic,
-    presetContent: String?,
+class ScrollUi(
+    val logic: ScrollLogic,
     override val inflater: LayoutInflater,
     container: ViewGroup
 ) : GroupUi() {
 
+  companion object {
+    const val CONTAINER_ID = R.id.scroll_container
+  }
+
   override val view: View
 
   init {
-    toolbar(logic.toolbarLogic, container) {
-      bottomTool(logic.bottomToolLogic, ToolbarUi.CONTAINER_ID) {
-        scroll(logic.scrollLogic, BottomToolUi.CONTAINER_ID) {
-          send(logic.sendLogic, presetContent, ScrollUi.CONTAINER_ID)
-        }
-      }
-    }
-    view = getChild(0).view
+    view = inflater.inflate(R.layout.ui_scroll, container, false)
   }
 }

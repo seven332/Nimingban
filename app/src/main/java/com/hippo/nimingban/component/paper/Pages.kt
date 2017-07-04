@@ -61,6 +61,18 @@ fun GroupUi.swipeBack(
     init: SwipeBackUi.() -> Unit
 ) = inflateChild(container, 0, { SwipeBackUi(logic, inflater, it) }, init)
 
+fun GroupUi.scroll(
+    logic: ScrollLogic,
+    container: ViewGroup,
+    init: ScrollUi.() -> Unit
+) = ScrollUi(logic, inflater, container).also { init(it); addChild(it) }
+
+fun GroupUi.scroll(
+    logic: ScrollLogic,
+    container: Int,
+    init: ScrollUi.() -> Unit
+) = inflateChild(container, 0, { ScrollUi(logic, inflater, it) }, init)
+
 fun GroupUi.threads(
     logic: ThreadsLogic,
     activity: NmbActivity,
