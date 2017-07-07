@@ -23,7 +23,7 @@ import com.hippo.nimingban.util.INVALID_INDEX
  * Created by Hippo on 6/5/2017.
  */
 
-abstract class ContentData<T> : AbsContentData<T>() {
+abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
 
   companion object {
     @JvmField val TYPE_RESTORE = 0
@@ -89,6 +89,13 @@ abstract class ContentData<T> : AbsContentData<T>() {
   // Duplicates checking left and right range
   private var duplicatesCheckRange = 50
 
+  override fun iterator() = object : Iterator<T> {
+    var index = 0
+
+    override fun next() = data[index++]
+
+    override fun hasNext() = index < data.size
+  }
 
   override fun size() = data.size
 
