@@ -83,7 +83,11 @@ class NmbDB(context: Context) {
 
       val currentForums = oldForums
           // Replace old forum with new forum, with origin order, keep custom forum
-          .map {forum -> newForums.removeFirst { forum.id == it.id } ?: if (forum.official) null else forum }
+          .map { forum ->
+            // Keep visibility
+            newForums.removeFirst { forum.id == it.id }?.also { it.visible = forum.visible }
+                ?: if (forum.official) null else forum
+          }
           .filterNotNull()
           .asMutableList()
           // Add remain new forums
@@ -174,9 +178,9 @@ class NmbDB(context: Context) {
   }
 
   /**
-   * Order a forum.
+   * Reorder a forum.
    */
-  fun orderForum(oldIndex: Int, newIndex: Int) {
+  fun reorderForum(oldIndex: Int, newIndex: Int) {
     if (oldIndex == newIndex) return
     sql.transaction {
       val forums = forums()
