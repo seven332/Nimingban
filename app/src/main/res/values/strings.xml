@@ -45,6 +45,13 @@
   <string name="send_draw">Draw</string>
   <string name="send_draft">Draft</string>
 
+  <plurals name="refresh_forums_new">
+    <item quantity="one">New form: </item>
+    <item quantity="other">New forms: </item>
+  </plurals>
+  <string name="refresh_forums_new_joint">", "</string>
+  <string name="refresh_forums_new_a_lot">%d New forms</string>
+
   <string name="post_notification_title">Posting…</string>
   <string name="post_success">Post succeeded</string>
   <string name="post_failure">Post failed</string>
@@ -62,6 +69,8 @@
   <string name="reply_option_copy_done">Copied to clipboard</string>
 
   <string name="error_unknown">Unknown Error</string>
+  <string name="error_not_found">Not Found</string>
+  <string name="error_tap_to_load">Tap to load</string>
   <string name="error_no_forum">No Forum</string>
   <string name="error_empty_body">Empty Body</string>
 

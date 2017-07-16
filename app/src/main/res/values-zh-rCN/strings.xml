@@ -45,6 +45,12 @@
   <string name="send_draw">涂鸦</string>
   <string name="send_draft">草稿</string>
 
+  <plurals name="refresh_forums_new">
+    <item quantity="other">新增板块：</item>
+  </plurals>
+  <string name="refresh_forums_new_joint">，</string>
+  <string name="refresh_forums_new_a_lot">新增 %d 个板块</string>
+
   <string name="post_notification_title">发送中…</string>
   <string name="post_success">发送成功</string>
   <string name="post_failure">发送失败</string>
@@ -62,6 +68,8 @@
   <string name="reply_option_copy_done">已复制到剪切板</string>
 
   <string name="error_unknown">奇怪的错误</string>
+  <string name="error_not_found">什么都没找到</string>
+  <string name="error_tap_to_load">点击继续加载</string>
   <string name="error_no_forum">找不到板块</string>
   <string name="error_empty_body">响应为空</string>
 

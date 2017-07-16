@@ -16,68 +16,44 @@
 
 package com.hippo.nimingban.component.paper
 
-import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.hippo.nimingban.R
-import com.hippo.nimingban.component.GroupUi
-import com.hippo.nimingban.util.INVALID_ID
-import com.hippo.nimingban.util.drawable
-import com.hippo.nimingban.util.find
+import android.graphics.drawable.Drawable
+import com.hippo.nimingban.component.MvpUi
+import com.hippo.viewstate.GenerateViewState
+import com.hippo.viewstate.strategy.SingleByMethod
+import com.hippo.viewstate.strategy.SingleByTag
+import com.hippo.viewstate.strategy.StrategyType
 
 /*
- * Created by Hippo on 6/19/2017.
+ * Created by Hippo on 2017/7/13.
  */
 
-class ToolbarUi(
-    private val logic: ToolbarLogic,
-    override val inflater: LayoutInflater,
-    container: ViewGroup
-) : GroupUi() {
+@GenerateViewState
+interface ToolbarUi : MvpUi {
 
   companion object {
-    const val CONTAINER_ID = R.id.toolbar_content_container
+    private const val TAG_SET_TITLE = "ToolbarUi:set_title"
+    private const val TAG_SET_SUBTITLE = "ToolbarUi:set_subtitle"
+    private const val TAG_SET_NAVIGATION_ICON = "ToolbarUi:set_navigation_icon"
   }
 
-  override val view: View
-  private val context = inflater.context
-  private var toolbar: Toolbar
+  @StrategyType(value = SingleByTag::class, tag = TAG_SET_TITLE)
+  fun setTitle(title: CharSequence)
 
-  init {
-    view = inflater.inflate(R.layout.ui_toolbar, container, false)
+  @StrategyType(value = SingleByTag::class, tag = TAG_SET_TITLE)
+  fun setTitle(resId: Int)
 
-    toolbar = view.find(R.id.toolbar)
-    toolbar.setNavigationOnClickListener { logic.onClickNavigationIcon() }
-    toolbar.setOnMenuItemClickListener { logic.onClickMenuItem(it) }
+  @StrategyType(value = SingleByTag::class, tag = TAG_SET_SUBTITLE)
+  fun setSubtitle(subtitle: CharSequence)
 
-    // Bind the ui to logic
-    logic.toolbarUi = this
-  }
+  @StrategyType(value = SingleByTag::class, tag = TAG_SET_SUBTITLE)
+  fun setSubtitle(resId: Int)
 
-  override fun onDestroy() {
-    super.onDestroy()
-    // Unbind the ui from logic
-    logic.toolbarUi = null
-  }
+  @StrategyType(value = SingleByTag::class, tag = TAG_SET_NAVIGATION_ICON)
+  fun setNavigationIcon(icon: Drawable)
 
-  fun setTitle(title: CharSequence?) {
-    toolbar.title = title
-  }
+  @StrategyType(value = SingleByTag::class, tag = TAG_SET_NAVIGATION_ICON)
+  fun setNavigationIcon(resId: Int)
 
-  fun setSubtitle(subtitle: CharSequence?) {
-    toolbar.subtitle = subtitle
-  }
-
-  fun setNavigationIcon(resId: Int) {
-    if (resId != INVALID_ID) {
-      toolbar.navigationIcon = context.drawable(resId)
-    }
-  }
-
-  fun inflateMenu(resId: Int) {
-    if (resId != INVALID_ID) {
-      toolbar.inflateMenu(resId)
-    }
-  }
+  @StrategyType(value = SingleByMethod::class)
+  fun inflateMenu(resId: Int)
 }

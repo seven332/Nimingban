@@ -40,9 +40,7 @@ class NmbActivity : StageActivity() {
     return stageLayout
   }
 
-  override fun onCreateRootScene(): Scene {
-    return ThreadsScene()
-  }
+  override fun onCreateRootScene(): Scene = ThreadsScene()
 
   fun snack(resId: Int) {
     Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_SHORT).show()

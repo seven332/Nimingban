@@ -18,15 +18,15 @@ package com.hippo.nimingban.component.adapter
 
 import android.support.annotation.CallSuper
 import android.support.v7.widget.RecyclerView
+import android.view.View
 
 /*
  * Created by Hippo on 6/13/2017.
  */
 
-abstract class AlertHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
+abstract class AlertHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
   private var hasResumed = false
-
 
   internal var isAttached = false
     set(value) {

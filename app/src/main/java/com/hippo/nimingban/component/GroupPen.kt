@@ -16,16 +16,37 @@
 
 package com.hippo.nimingban.component
 
-import com.hippo.nimingban.REF_WATCHER
+import android.os.Bundle
 
 /*
- * Created by Hippo on 6/19/2017.
+ * Created by Hippo on 6/20/2017.
  */
 
-abstract class NmbScene : MvpScene() {
+abstract class GroupPen<P : Any> : NmbPen<P>() {
+
+  private val children = mutableListOf<MvpPen<*>>()
+
+  fun addChild(pen: MvpPen<*>) {
+    children.add(pen)
+  }
+
+  override fun print() {
+    super.print()
+    children.forEach { it.print() }
+  }
+
+  override fun onCreate(args: Bundle) {
+    super.onCreate(args)
+    children.forEach { it.create(args) }
+  }
 
   override fun onDestroy() {
     super.onDestroy()
-    REF_WATCHER?.watch(this, "NmbScene.onDestroy()")
+    children.forEach { it.destroy() }
+  }
+
+  override fun onUpdateArgs(args: Bundle) {
+    super.onUpdateArgs(args)
+    children.forEach { it.updateArgs(args) }
   }
 }

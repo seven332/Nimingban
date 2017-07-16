@@ -17,7 +17,7 @@
 package com.hippo.nimingban.component.adapter
 
 import android.support.annotation.CallSuper
-import com.hippo.nimingban.component.SceneUi
+import com.hippo.nimingban.component.MvpPaper
 import com.hippo.nimingban.util.debug
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import io.reactivex.Observable
@@ -26,7 +26,9 @@ import io.reactivex.Observable
  * Created by Hippo on 6/13/2017.
  */
 
-abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : ContentDataAdapter<T, VH>() {
+abstract class AlertAdapter<T : Any, VH: AlertHolder>(
+    lifecycle: Observable<Int>
+) : ContentDataAdapter<T, VH>() {
 
   private val holderList = mutableListOf<VH>()
 
@@ -39,9 +41,9 @@ abstract class AlertAdapter<T, VH: AlertHolder>(lifecycle: Observable<Int>) : Co
   init {
     lifecycle.subscribe({
       when (it) {
-        SceneUi.RESUME -> isResumed = true
-        SceneUi.PAUSE -> isResumed = false
-        SceneUi.DESTROY -> {
+        MvpPaper.RESUME -> isResumed = true
+        MvpPaper.PAUSE -> isResumed = false
+        MvpPaper.DESTROY -> {
           debug(holderList.isEmpty(), { "All ViewHolders should be removed in onViewRecycled()" })
           holderList.clear()
         }

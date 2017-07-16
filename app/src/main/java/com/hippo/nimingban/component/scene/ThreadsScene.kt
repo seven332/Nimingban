@@ -17,27 +17,115 @@
 package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.MenuItem
+import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
+import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.component.MvpPaper
+import com.hippo.nimingban.component.MvpPen
 import com.hippo.nimingban.component.NmbScene
-import com.hippo.nimingban.component.dialog.GoToDialog
+import com.hippo.nimingban.component.paper.DrawerPaper
+import com.hippo.nimingban.component.paper.DrawerPen
+import com.hippo.nimingban.component.paper.ForumListPen
+import com.hippo.nimingban.component.paper.ThreadsPen
+import com.hippo.nimingban.component.paper.ToolbarPaper
+import com.hippo.nimingban.component.paper.ToolbarPen
+import com.hippo.nimingban.component.paper.drawer
+import com.hippo.nimingban.component.paper.forumList
+import com.hippo.nimingban.component.paper.papers
+import com.hippo.nimingban.component.paper.pens
+import com.hippo.nimingban.component.paper.threads
+import com.hippo.nimingban.component.paper.toolbar
+import com.hippo.nimingban.component.refreshForums
+import com.hippo.nimingban.widget.nmb.NmbDrawerSide
+import com.hippo.stage.Stage
 
 /*
- * Created by Hippo on 6/19/2017.
+ * Created by Hippo on 2017/7/14.
  */
 
-class ThreadsScene : NmbScene(), GoToDialog.OnGoToListener {
+class ThreadsScene : NmbScene() {
 
-  override fun createLogic(args: Bundle?) = ThreadsSceneLogic(this)
+  private val drawer: DrawerPen = object : DrawerPen() {
 
-  override fun createUi(inflater: LayoutInflater, container: ViewGroup) =
-      ThreadsSceneUi(logic as ThreadsSceneLogic, activity as NmbActivity, inflater, container)
-
-  override fun onGoTo(page: Int) {
-    val logic = this.logic
-    if (logic is ThreadsSceneLogic) {
-      logic.onGoTo(page)
+    override fun onCreate(args: Bundle) {
+      super.onCreate(args)
+      view.setLeftDrawerWidth(R.dimen.threads_scene_left_drawer_width)
+      view.setRightDrawerWidth(R.dimen.threads_scene_right_drawer_width)
+      view.setLeftDrawerMode(NmbDrawerSide.NONE)
+      view.setRightDrawerMode(NmbDrawerSide.ACTION_BAR)
     }
+
+    override fun onOpenRightDrawer() {
+      toolbar.view.inflateMenu(R.menu.forum_list)
+    }
+
+    override fun onCloseRightDrawer() {
+      toolbar.view.inflateMenu(R.menu.threads)
+    }
+  }
+
+  private val toolbar: ToolbarPen = object : ToolbarPen() {
+
+    override fun onCreate(args: Bundle) {
+      super.onCreate(args)
+      view.setTitle(R.string.app_name)
+      view.setNavigationIcon(R.drawable.menu_white_x24)
+      view.inflateMenu(R.menu.threads)
+    }
+
+    override fun onClickNavigationIcon() {
+      drawer.view.openLeftDrawer()
+    }
+
+    override fun onClickMenuItem(item: MenuItem): Boolean {
+      // TODO
+      return false
+    }
+  }
+
+  private val threads: ThreadsPen = object : ThreadsPen() {
+
+    override val activity: NmbActivity?
+      get() = this@ThreadsScene.activity as? NmbActivity
+    override val stage: Stage?
+      get() = this@ThreadsScene.stage
+  }
+
+  private val forumList: ForumListPen = object : ForumListPen() {
+
+    override fun onSelectForum(forum: Forum?, byUser: Boolean) {
+      threads.setForum(forum)
+
+      val title = forum?.displayedName
+      if (title != null) {
+        toolbar.view.setTitle(title)
+      } else {
+        toolbar.view.setTitle(R.string.app_name)
+      }
+
+      if (byUser) {
+        drawer.view.closeDrawers()
+      }
+    }
+  }
+
+  private val pen = pens(drawer, toolbar, threads, forumList)
+
+  override fun createPen(): MvpPen<*> = pen
+
+  override fun createPaper(): MvpPaper<*> = papers(pen) {
+    drawer(drawer, it) {
+      toolbar(toolbar, DrawerPaper.CONTAINER_ID_CONTENT) {
+        threads(threads, ToolbarPaper.CONTAINER_ID)
+      }
+      forumList(forumList, DrawerPaper.CONTAINER_ID_RIGHT)
+    }
+  }
+
+  override fun onCreate(args: Bundle) {
+    super.onCreate(args)
+    // Refresh forums every time when ThreadsScene started
+    refreshForums()
   }
 }

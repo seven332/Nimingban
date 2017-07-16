@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.widget.content
 
+import com.hippo.nimingban.R
+import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.util.INVALID_ID
 import com.hippo.nimingban.util.INVALID_INDEX
 
@@ -23,39 +25,33 @@ import com.hippo.nimingban.util.INVALID_INDEX
  * Created by Hippo on 6/5/2017.
  */
 
-abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
+abstract class ContentData<T : Any> : ContentLogic, Iterable<T> {
+
+  /**
+   * Mark the entrance to change view.
+   *
+   * It could be doc, annotation is better.
+   */
+  @Target(AnnotationTarget.FUNCTION)
+  @Retention(AnnotationRetention.SOURCE)
+  private annotation class Entrance
 
   companion object {
-    @JvmField val TYPE_RESTORE = 0
-    @JvmField val TYPE_GOTO = 1
-    @JvmField val TYPE_PREV_PAGE = 2
-    @JvmField val TYPE_PREV_PAGE_ADJUST_POSITION = 3
-    @JvmField val TYPE_NEXT_PAGE = 4
-    @JvmField val TYPE_NEXT_PAGE_ADJUST_POSITION = 5
-    @JvmField val TYPE_REFRESH_PAGE = 6
+    private const val TYPE_RESTORE = 0
+    private const val TYPE_GOTO = 1
+    private const val TYPE_PREV_PAGE = 2
+    private const val TYPE_PREV_PAGE_ADJUST_POSITION = 3
+    private const val TYPE_NEXT_PAGE = 4
+    private const val TYPE_NEXT_PAGE_ADJUST_POSITION = 5
+    private const val TYPE_REFRESH_PAGE = 6
 
-    @JvmField val DEFAULT_FIRST_PAGE_INDEX = 0
+    private const val DEFAULT_FIRST_PAGE_INDEX = 0
 
-    @JvmField val NOT_FOUND_EXCEPTION = Exception("Not Found")
-    @JvmField val TAP_TO_LOAD_EXCEPTION = Exception("Tap to Load")
-    @JvmField val FAILED_TO_RESTORE_EXCEPTION = Exception("Failed to Restore")
+    @JvmField val NOT_FOUND_EXCEPTION = PresetException("not found", R.string.error_not_found, 0)
+    @JvmField val TAP_TO_LOAD_EXCEPTION = PresetException("tap to Load", R.string.error_tap_to_load, 0)
   }
 
-  override var ui: ContentUi? = null
-    get() = field
-    set(value) {
-      val oldValue = field
-      if (oldValue != null) {
-        oldValue.logic = null
-      }
-      if (value != null) {
-        value.logic = this
-        state.restore(value)
-      }
-      field = value
-    }
-
-  override val state = ContentStateImpl()
+  private val state: ContentUiState = ContentUiState()
 
   private var idGenerator = INVALID_ID
 
@@ -85,9 +81,37 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
    */
   private var dataDivider: MutableList<Int> = mutableListOf()
 
-  private var removeDuplicates = true
-  // Duplicates checking left and right range
-  private var duplicatesCheckRange = 50
+  /**
+   * Whether remove duplicates. If remove, duplicate item
+   * in [.setData] will be ignored.
+   *
+   * Duplicates in the same page are not ignored.
+   *
+   * `true` in default.
+   */
+  var removeDuplicates = true
+
+  /**
+   * Sets duplicates checking range.
+   *
+   * `50` in default.
+   */
+  var duplicatesCheckRange = 50
+
+  /**
+   * Attaches a layout to the view.
+   */
+  fun attach(layout: ContentLayout) {
+    layout.logic = this
+    state.attach(layout)
+  }
+
+  /**
+   * Detach the layout from the view.
+   */
+  fun detach() {
+    state.detach()
+  }
 
   override fun iterator() = object : Iterator<T> {
     var index = 0
@@ -97,52 +121,67 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     override fun hasNext() = index < data.size
   }
 
-  override fun size() = data.size
+  fun size() = data.size
 
-  override fun get(index: Int) = data[index]
+  fun get(index: Int) = data[index]
 
   private fun isMinReached() = beginPage <= minPage
 
-  override fun isMaxReached() = endPage >= maxPage
+  private fun isMaxReached() = endPage >= maxPage
 
+  fun isRestoring() = requireId != INVALID_ID && requireType == TYPE_RESTORE
+
+  /**
+   * Gets the page of the position.
+   */
   fun getPageForPosition(position: Int): Int {
     if (position < 0) {
       return INVALID_INDEX
     }
 
-    var i = 0
-    val n = dataDivider.size
-    while (i < n) {
-      if (position < dataDivider[i]) {
-        return i + beginPage
+    for ((i, divider) in dataDivider.withIndex()) {
+      if (position < divider) {
+        return beginPage + i
       }
-      i++
     }
 
     return INVALID_INDEX
   }
 
   /**
-   * Returns `true` if the content is showing and stable.
+   * Restores data. `goTo(0)` will be called after failure or success.
    */
-  fun isLoaded() = state.isLoaded()
-
-  fun restore() = requireData(0, TYPE_RESTORE)
+  @Entrance
+  fun restore() {
+    state.stopRefreshing()
+    state.showProgressBar()
+    requireData(0, TYPE_RESTORE)
+  }
 
   /**
-   * Go to target page. It discards all previous data.
+   * Goes to target page. It discards all previous data.
    */
-  override fun goTo(page: Int) = requireData(page, TYPE_GOTO)
+  @Entrance
+  fun goTo(page: Int) {
+    if (data.isEmpty()) {
+      state.stopRefreshing()
+      state.showProgressBar()
+    } else {
+      state.setHeaderRefreshing()
+      state.showContent()
+    }
+    requireData(page, TYPE_GOTO)
+  }
 
   /**
    * It's different from goTo().
-   * switchTo() will only scrollToPosition() if
-   * the page is in range.
+   * switchTo() will only scrollToPosition() if the page is in range.
    */
-  override fun switchTo(page: Int) {
+  @Entrance
+  fun switchTo(page: Int) {
     if (page in beginPage until endPage) {
       val beginIndex = if (page == beginPage) 0 else dataDivider[page - beginPage - 1]
-      scrollToPosition(beginIndex)
+      state.scrollToPosition(beginIndex)
     } else if (page == endPage) {
       nextPage(true)
     } else if (page == beginPage - 1) {
@@ -152,13 +191,29 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     }
   }
 
-  internal fun prevPage(adjustPosition: Boolean) =
-      requireData(beginPage - 1, if (adjustPosition) TYPE_PREV_PAGE_ADJUST_POSITION else TYPE_PREV_PAGE)
+  @Entrance
+  private fun prevPage(adjustPosition: Boolean) {
+    if (data.isEmpty()) {
+      state.stopRefreshing()
+      state.showProgressBar()
+    } else {
+      state.setHeaderRefreshing()
+      state.showContent()
+    }
+    requireData(beginPage - 1, if (adjustPosition) TYPE_PREV_PAGE_ADJUST_POSITION else TYPE_PREV_PAGE)
+  }
 
-  internal fun nextPage(adjustPosition: Boolean) =
-      requireData(endPage, if (adjustPosition) TYPE_NEXT_PAGE_ADJUST_POSITION else TYPE_NEXT_PAGE)
-
-  internal fun refreshPage(page: Int) = requireData(page, TYPE_REFRESH_PAGE)
+  @Entrance
+  private fun nextPage(adjustPosition: Boolean) {
+    if (data.isEmpty()) {
+      state.stopRefreshing()
+      state.showProgressBar()
+    } else {
+      state.setFooterRefreshing()
+      state.showContent()
+    }
+    requireData(endPage, if (adjustPosition) TYPE_NEXT_PAGE_ADJUST_POSITION else TYPE_NEXT_PAGE)
+  }
 
   override fun onRefreshHeader() {
     if (isMinReached()) {
@@ -166,22 +221,29 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     } else {
       prevPage(false)
     }
-    state.setHeaderRefreshing()
   }
 
+  @Entrance
   override fun onRefreshFooter() {
     if (beginPage == endPage) {
       // No data is loaded
-      stopRefreshing()
-      return
+      state.stopRefreshing()
     } else if (isMaxReached()) {
-      refreshPage(endPage - 1)
+      state.setFooterRefreshing()
+      requireData(endPage - 1, TYPE_REFRESH_PAGE)
     } else {
       nextPage(false)
     }
-    state.setFooterRefreshing()
   }
 
+  @Entrance
+  override fun onReachBottom() {
+    if (!isMaxReached()) {
+      nextPage(false)
+    }
+  }
+
+  @Entrance
   override fun onClickTip() {
     if (!isMaxReached()) {
       nextPage(true)
@@ -190,7 +252,6 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     } else {
       goTo(DEFAULT_FIRST_PAGE_INDEX)
     }
-    showProgressBar()
   }
 
   private fun nextId(): Int {
@@ -205,13 +266,6 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     requirePage = page
     requireType = type
     requireId = nextId()
-
-    if (data.isEmpty()) {
-      showProgressBar()
-    } else {
-      setHeaderRefreshing()
-      showContent()
-    }
 
     if (type == TYPE_RESTORE) {
       onRestoreData(requireId)
@@ -240,28 +294,6 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
   protected abstract fun onBackupData(data: List<T>)
 
   /**
-   * Whether remove duplicates. If remove, duplicate item
-   * in [.setData] will be ignored.
-   *
-   *
-   * Duplicates in the same page are not ignored.
-   *
-   * @see .isDuplicate
-   */
-  fun setRemoveDuplicates(remove: Boolean) {
-    this.removeDuplicates = remove
-  }
-
-  /**
-   * Sets duplicates checking range.
-   *
-   * @see .setRemoveDuplicates
-   */
-  fun setDuplicatesCheckRange(range: Int) {
-    duplicatesCheckRange = range
-  }
-
-  /**
    * Returns `true` if the two items are duplicate.
    *
    * @see .setRemoveDuplicates
@@ -273,11 +305,13 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
    *
    * Min page index is `0` as default.
    */
+  @Entrance
   fun setData(id: Int, list: List<T>, max: Int) = setData(id, list, 0, max)
 
   /**
    * Got data. Return {@code true} if it affects this {@code ContentData}.
    */
+  @Entrance
   fun setData(id: Int, list: List<T>, min: Int, max: Int): Boolean {
     if (requireId == INVALID_ID || id != requireId) return false
 
@@ -285,7 +319,7 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
 
     requireId = INVALID_ID
     restored = requireType == TYPE_RESTORE
-    stopRefreshing()
+    state.stopRefreshing()
 
     when (requireType) {
       TYPE_RESTORE -> onRestore(list)
@@ -301,11 +335,12 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     return true
   }
 
+  @Entrance
   private fun onRestore(list: List<T>) {
     // Update data
     data.clear()
     data.addAll(list)
-    notifyDataSetChanged()
+    state.notifyDataSetChanged()
 
     // Update dataDivider
     dataDivider.clear()
@@ -320,22 +355,23 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
 
     // Update UI
     if (data.isEmpty()) {
-      showProgressBar()
+      state.showProgressBar()
     } else {
-      showContent()
-      scrollToPosition(0)
-      setHeaderRefreshing()
+      state.showContent()
+      state.scrollToPosition(0)
+      state.setHeaderRefreshing()
     }
 
     // Keep loading
     goTo(DEFAULT_FIRST_PAGE_INDEX)
   }
 
+  @Entrance
   private fun onGoTo(d: List<T>, min: Int, max: Int) {
     // Update data
     data.clear()
     data.addAll(d)
-    notifyDataSetChanged()
+    state.notifyDataSetChanged()
 
     // Update dataDivider
     dataDivider.clear()
@@ -350,14 +386,14 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(NOT_FOUND_EXCEPTION)
+        state.showTip(NOT_FOUND_EXCEPTION)
       } else {
-        showTip(TAP_TO_LOAD_EXCEPTION)
+        state.showTip(TAP_TO_LOAD_EXCEPTION)
       }
     } else {
-      showContent()
+      state.showContent()
       // Scroll to top
-      scrollToPosition(0)
+      state.scrollToPosition(0)
     }
 
     // Backup data
@@ -379,6 +415,7 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     return list.filter { it1 -> control.all { it2 -> !isDuplicate(it1, it2) } }
   }
 
+  @Entrance
   private fun onPrevPage(_list: List<T>, min: Int, max: Int, adjustPosition: Boolean) {
     // Remove duplicates
     val list: List<T>
@@ -392,7 +429,7 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     val size = list.size
     if (size != 0) {
       data.addAll(0, list)
-      notifyItemRangeInserted(0, size)
+      state.notifyItemRangeInserted(0, size)
     }
 
     // Update dataDivider
@@ -414,21 +451,22 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(NOT_FOUND_EXCEPTION)
+        state.showTip(NOT_FOUND_EXCEPTION)
       } else {
-        showTip(TAP_TO_LOAD_EXCEPTION)
+        state.showTip(TAP_TO_LOAD_EXCEPTION)
       }
     } else {
-      showContent()
+      state.showContent()
       if (adjustPosition) {
         // Scroll to the first position of require page
-        scrollToPosition(0)
+        state.scrollToPosition(0)
       } else {
-        scrollUpALittle()
+        state.scrollUpALittle()
       }
     }
   }
 
+  @Entrance
   private fun onNextPage(_list: List<T>, min: Int, max: Int, adjustPosition: Boolean) {
     // Remove duplicates
     val list: List<T>
@@ -442,7 +480,7 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     val oldSize = data.size
     if (!list.isEmpty()) {
       data.addAll(list)
-      notifyItemRangeInserted(oldSize, list.size)
+      state.notifyItemRangeInserted(oldSize, list.size)
     }
 
     // Update dataDivider
@@ -456,23 +494,24 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(NOT_FOUND_EXCEPTION)
+        state.showTip(NOT_FOUND_EXCEPTION)
       } else {
-        showTip(TAP_TO_LOAD_EXCEPTION)
+        state.showTip(TAP_TO_LOAD_EXCEPTION)
       }
     } else {
-      showContent()
+      state.showContent()
       if (adjustPosition) {
         if (!list.isEmpty()) {
           // Scroll to the first position of require page
-          scrollToPosition(oldSize)
+          state.scrollToPosition(oldSize)
         }
       } else {
-        scrollDownALittle()
+        state.scrollDownALittle()
       }
     }
   }
 
+  @Entrance
   private fun onRefreshPage(_list: List<T>, min: Int, max: Int) {
     if (requirePage >= endPage || requirePage < beginPage) {
       throw IllegalStateException("TYPE_REFRESH_PAGE requires requirePage in range, "
@@ -501,17 +540,17 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     if (overlapCount != 0) {
       data.subList(beginIndex, beginIndex + overlapCount).clear()
       data.addAll(beginIndex, list.subList(0, overlapCount))
-      notifyItemRangeChanged(beginIndex, overlapCount)
+      state.notifyItemRangeChanged(beginIndex, overlapCount)
     }
     // Remove remaining data
     if (oldCount > overlapCount) {
       data.subList(beginIndex + overlapCount, beginIndex + oldCount).clear()
-      notifyItemRangeRemoved(beginIndex + overlapCount, oldCount - overlapCount)
+      state.notifyItemRangeRemoved(beginIndex + overlapCount, oldCount - overlapCount)
     }
     // Add remaining data
     if (newCount > overlapCount) {
       data.addAll(beginIndex + overlapCount, list.subList(overlapCount, newCount))
-      notifyItemRangeInserted(beginIndex + overlapCount, newCount - overlapCount)
+      state.notifyItemRangeInserted(beginIndex + overlapCount, newCount - overlapCount)
     }
 
     // Update dataDivider
@@ -531,29 +570,30 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(NOT_FOUND_EXCEPTION)
+        state.showTip(NOT_FOUND_EXCEPTION)
       } else {
-        showTip(TAP_TO_LOAD_EXCEPTION)
+        state.showTip(TAP_TO_LOAD_EXCEPTION)
       }
     } else {
-      showContent()
+      state.showContent()
     }
   }
 
   /**
    * Got exception. Return `true` if it affects this `ContentData`.
    */
+  @Entrance
   fun setError(id: Int, e: Throwable): Boolean {
     if (requireId == INVALID_ID || id != requireId) return false
 
     requireId = INVALID_ID
-    stopRefreshing()
+    state.stopRefreshing()
 
     if ((requireType == TYPE_GOTO && !restored) || requireType == TYPE_RESTORE || data.isEmpty()) {
       // Clear all data
       if (!data.isEmpty()) {
         data.clear()
-        notifyDataSetChanged()
+        state.notifyDataSetChanged()
       }
       dataDivider.clear()
       minPage = 0
@@ -562,28 +602,29 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
       endPage = 0
 
       if (requireType == TYPE_RESTORE) {
-        showProgressBar()
+        state.showProgressBar()
         goTo(0)
       } else {
-        showTip(e)
+        state.showTip(e)
       }
     } else {
       // Has some data
       // Only non-interrupting message
-      showMessage(e)
+      state.showMessage(e)
     }
 
     return true
   }
 
+  @Entrance
   fun forceError(e: Throwable) {
     requireId = INVALID_ID
-    stopRefreshing()
+    state.stopRefreshing()
 
     // Clear all data
     if (!data.isEmpty()) {
       data.clear()
-      notifyDataSetChanged()
+      state.notifyDataSetChanged()
     }
     dataDivider.clear()
     minPage = 0
@@ -591,17 +632,18 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     beginPage = 0
     endPage = 0
 
-    showTip(e)
+    state.showTip(e)
   }
 
+  @Entrance
   fun forceProgress() {
     requireId = INVALID_ID
-    stopRefreshing()
+    state.stopRefreshing()
 
     // Clear all data
     if (!data.isEmpty()) {
       data.clear()
-      notifyDataSetChanged()
+      state.notifyDataSetChanged()
     }
     dataDivider.clear()
     minPage = 0
@@ -609,6 +651,6 @@ abstract class ContentData<T> : AbsContentData<T>(), Iterable<T> {
     beginPage = 0
     endPage = 0
 
-    showProgressBar()
+    state.showProgressBar()
   }
 }

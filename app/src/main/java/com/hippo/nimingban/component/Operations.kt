@@ -16,16 +16,21 @@
 
 package com.hippo.nimingban.component
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.NotificationCompat
 import com.hippo.nimingban.NMB_APP
 import com.hippo.nimingban.NMB_CLIENT
+import com.hippo.nimingban.NMB_DB
 import com.hippo.nimingban.NMB_NOTIFICATION
 import com.hippo.nimingban.R
+import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.string
 import com.hippo.nimingban.tip
 import com.hippo.nimingban.util.explain
+import com.hippo.nimingban.util.quantityString
+import com.hippo.nimingban.util.string
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -35,6 +40,30 @@ import io.reactivex.schedulers.Schedulers
 
 private const val TAG_POST = "OPERATIONS:post"
 private const val TAG_REPLY = "OPERATIONS:reply"
+
+internal fun newForumsTip(forums: List<Forum>, context: Context = NMB_APP): String? {
+  if (forums.isNotEmpty() && forums.size <= 3) {
+    return context.quantityString(R.plurals.refresh_forums_new, forums.size) +
+        forums.map { it.displayedName }
+            .joinToString(context.string(R.string.refresh_forums_new_joint))
+  } else if (forums.size > 3) {
+    return context.string(R.string.refresh_forums_new_a_lot, forums.size)
+  } else {
+    return null
+  }
+}
+
+fun refreshForums() {
+  NMB_CLIENT.forums()
+      .subscribeOn(Schedulers.io())
+      .subscribe({
+        val forums = NMB_DB.setOfficialForums(it)
+        val tip = newForumsTip(forums)
+        if (tip != null) {
+          tip(tip)
+        }
+      }, { /* Ignore error */ })
+}
 
 fun post(
     title: String,

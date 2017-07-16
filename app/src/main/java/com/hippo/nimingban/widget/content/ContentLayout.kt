@@ -22,35 +22,40 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import com.hippo.nimingban.R
 import com.hippo.nimingban.util.dp2pix
 import com.hippo.nimingban.util.explain
 import com.hippo.nimingban.util.explainVividly
+import com.hippo.nimingban.util.find
+import com.hippo.nimingban.util.onClick
 import com.hippo.refreshlayout.RefreshLayout
-import kotlinx.android.synthetic.main.widget_content_layout.view.*
 
 /*
  * Created by Hippo on 6/5/2017.
  */
 
-class ContentLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), ContentUi {
+class ContentLayout : FrameLayout, ContentUi {
 
-  override var logic: ContentLogic? = null
-  var extension: Extension? = null
+  constructor(context: Context): super(context)
+  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
 
-  val refreshLayout by lazy { refresh_layout!! }
-  val recyclerView by lazy { recycler_view!! }
-  val tipView by lazy { tip_view!! }
-  val progressView by lazy { progress_view!! }
+  lateinit var logic: ContentLogic
+  lateinit var extension: Extension
+
+  val refreshLayout: RefreshLayout
+  val recyclerView: RecyclerView
+  val tipView: TextView
+  val progressView: View
 
   val aLittleDistance: Int
 
   init {
     LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this)
+    refreshLayout = find(R.id.refresh_layout)
+    recyclerView = find(R.id.recycler_view)
+    tipView = find(R.id.tip_view)
+    progressView = find(R.id.progress_view)
 
     refreshLayout.setHeaderColorSchemeResources(
         R.color.color_scheme_1,
@@ -69,23 +74,19 @@ class ContentLayout @JvmOverloads constructor(
         R.color.color_scheme_6
     )
     refreshLayout.setOnRefreshListener(object : RefreshLayout.OnRefreshListener {
-      override fun onHeaderRefresh() { logic?.onRefreshHeader() }
-      override fun onFooterRefresh() { logic?.onRefreshFooter() }
+      override fun onHeaderRefresh() { logic.onRefreshHeader() }
+      override fun onFooterRefresh() { logic.onRefreshFooter() }
     })
 
     recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
       override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-        val logic = this@ContentLayout.logic ?: return
-        if (!refreshLayout.isRefreshing && refreshLayout.isAlmostBottom &&
-            !logic.isMaxReached()) {
-          refreshLayout.isFooterRefreshing = true
-          logic.onRefreshFooter()
+        if (!refreshLayout.isRefreshing && refreshLayout.isAlmostBottom) {
+          logic.onReachBottom()
         }
       }
     })
 
-    // TODO throttleFirst
-    tipView.setOnClickListener { logic?.onClickTip() }
+    tipView.onClick { logic.onClickTip() }
 
     aLittleDistance = 48.dp2pix(context)
   }
@@ -101,10 +102,10 @@ class ContentLayout @JvmOverloads constructor(
     tipView.visibility = View.VISIBLE
     progressView.visibility = View.GONE
 
-    val drawable = explainVividly(context, t)
+    val drawable = explainVividly(t, context)
     drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
     tipView.setCompoundDrawables(null, drawable, null, null)
-    tipView.text = explain(t)
+    tipView.text = explain(t, context)
   }
 
   override fun showProgressBar() {
@@ -114,7 +115,7 @@ class ContentLayout @JvmOverloads constructor(
   }
 
   override fun showMessage(t: Throwable) {
-    extension?.showMessage(explain(t))
+    extension.showMessage(explain(t, context))
   }
 
   override fun stopRefreshing() {

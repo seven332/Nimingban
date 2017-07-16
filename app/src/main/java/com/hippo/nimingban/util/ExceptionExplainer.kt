@@ -18,10 +18,10 @@ package com.hippo.nimingban.util
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import com.hippo.nimingban.NMB_APP
 import com.hippo.nimingban.R
 import com.hippo.nimingban.exception.GeneralException
 import com.hippo.nimingban.exception.PresetException
-import com.hippo.nimingban.string
 
 /*
  * Created by Hippo on 6/8/2017.
@@ -30,20 +30,20 @@ import com.hippo.nimingban.string
 /**
  * Explains the exception with a String.
  */
-fun explain(e: Throwable): String {
-  return when (e) {
-    is PresetException -> string(e.text)
-    is GeneralException -> e.message
-    else -> string(R.string.error_unknown)
+fun explain(error: Throwable, context: Context = NMB_APP): String {
+  return when (error) {
+    is PresetException -> context.string(error.text)
+    is GeneralException -> error.message
+    else -> context.string(R.string.error_unknown)
   }
 }
 
 /**
  * Explains the exception with a Drawable.
  */
-fun explainVividly(context: Context, e: Throwable): Drawable {
-  val drawable: Int = when (e) {
-    is PresetException -> if (e.icon != 0) e.icon else R.drawable.emoticon_sad_primary_x64
+fun explainVividly(error: Throwable, context: Context): Drawable {
+  val drawable: Int = when (error) {
+    is PresetException -> if (error.icon != 0) error.icon else R.drawable.emoticon_sad_primary_x64
     else -> R.drawable.emoticon_sad_primary_x64
   }
   return context.drawable(drawable)

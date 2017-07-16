@@ -16,91 +16,16 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.NMB_DB
 import com.hippo.nimingban.client.data.Forum
-import com.hippo.nimingban.component.NmbLogic
-import com.hippo.nimingban.updateForums
-import com.hippo.nimingban.util.INVALID_INDEX
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.hippo.nimingban.component.MvpLogic
 
 /*
- * Created by Hippo on 6/20/2017.
+ * Created by Hippo on 2017/7/15.
  */
 
-abstract class ForumListLogic : NmbLogic() {
+interface ForumListLogic : MvpLogic<ForumListUi> {
 
-  var forumListUi: ForumListUi? = null
-    set(value) {
-      field = value
-      value?.onUpdateForums(forums)
-    }
+  fun getSelectedIndex(): Int
 
-  private var forums: List<Forum> = emptyList()
-  private var selectedForum: Forum? = null
-  private var selectedIndex: Int = -1
-
-  init {
-    // Always update forums
-    updateForums()
-
-    NMB_DB.liveForums.observable
-        .map { it.filter { it.visible } }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({ onUpdateForums(it) }, { /* Ignore error */ })
-        .register()
-  }
-
-  private fun onUpdateForums(forums: List<Forum>) {
-    this.forums = forums
-
-    val oldSelectedForum = selectedForum
-
-    selectedForum = null
-    selectedIndex = INVALID_INDEX
-
-    // Try to find the same selected forum in the new forums
-    if (oldSelectedForum != null) {
-      for ((index, item) in forums.withIndex()) {
-        if (item.id == oldSelectedForum.id) {
-          selectedForum = item
-          selectedIndex = index
-          break
-        }
-      }
-    }
-
-    // Select the first forum
-    if (selectedForum == null && forums.isNotEmpty()) {
-      selectedForum = forums[0]
-      selectedIndex = 0
-    }
-
-    forumListUi?.onUpdateForums(forums)
-    onSelectForum(selectedForum, false)
-  }
-
-  /**
-   * Called when user click a forum.
-   */
-  fun onSelectForum(forum: Forum, index: Int) {
-    val oldSelectedIndex = selectedIndex
-    selectedForum = forum
-    selectedIndex = index
-    if (oldSelectedIndex != index) {
-      forumListUi?.onUpdateSelectedIndex(oldSelectedIndex, index)
-      onSelectForum(forum, true)
-    }
-  }
-
-  /**
-   * Returns the selected forum index.
-   */
-  fun getSelectedIndex() = selectedIndex
-
-  fun getSelectedForum() = selectedForum
-
-  /**
-   * Called when a forum selected.
-   */
-  abstract fun onSelectForum(forum: Forum?, byUser: Boolean)
+  fun onClickForum(forum: Forum, index: Int)
 }

@@ -70,8 +70,10 @@ class NmbDB(context: Context) {
   /**
    * Sets official forums. Keeps origin order. Appends new official forums at end.
    * Removes old official forums which don't exist. Keeps custom forums.
+   *
+   * @return newly appended forums
    */
-  fun setOfficialForums(forums: List<ForumGroup>) {
+  fun setOfficialForums(forums: List<ForumGroup>): List<Forum> {
     sql.transaction {
       val newForums = forums
           .flatMap { it.forums }
@@ -107,6 +109,8 @@ class NmbDB(context: Context) {
 
       // Update live data
       liveForums.data = currentForums
+
+      return newForums
     }
   }
 

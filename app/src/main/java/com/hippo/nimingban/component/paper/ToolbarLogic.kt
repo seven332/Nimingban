@@ -17,52 +17,15 @@
 package com.hippo.nimingban.component.paper
 
 import android.view.MenuItem
-import com.hippo.nimingban.component.NmbLogic
-import com.hippo.nimingban.util.INVALID_ID
+import com.hippo.nimingban.component.MvpLogic
 
 /*
  * Created by Hippo on 6/19/2017.
  */
 
-abstract class ToolbarLogic : NmbLogic() {
+interface ToolbarLogic : MvpLogic<ToolbarUi> {
 
-  var toolbarUi: ToolbarUi? = null
-    set(value) {
-      field = value
-      if (value != null) {
-        value.setTitle(title)
-        value.setSubtitle(subtitle)
-        value.setNavigationIcon(icon)
-        value.inflateMenu(menu)
-      }
-    }
+  fun onClickNavigationIcon()
 
-  private var title: CharSequence? = null
-  private var subtitle: CharSequence? = null
-  private var icon: Int = INVALID_ID
-  private var menu: Int = INVALID_ID
-
-  fun setTitle(title: CharSequence?) {
-    this.title = title
-    toolbarUi?.setTitle(title)
-  }
-
-  fun setSubtitle(subtitle: CharSequence?) {
-    this.subtitle = subtitle
-    toolbarUi?.setSubtitle(subtitle)
-  }
-
-  fun setNavigationIcon(icon: Int) {
-    this.icon = icon
-    toolbarUi?.setNavigationIcon(icon)
-  }
-
-  fun inflateMenu(menu: Int) {
-    this.menu = menu
-    toolbarUi?.inflateMenu(menu)
-  }
-
-  abstract fun onClickNavigationIcon()
-
-  abstract fun onClickMenuItem(item: MenuItem): Boolean
+  fun onClickMenuItem(item: MenuItem): Boolean
 }

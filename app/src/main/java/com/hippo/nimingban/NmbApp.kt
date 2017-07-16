@@ -19,6 +19,7 @@ package com.hippo.nimingban
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.support.annotation.PluralsRes
 import android.widget.Toast
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
 import com.google.gson.Gson
@@ -42,7 +43,6 @@ import com.hippo.nimingban.network.CookieRepository
 import com.hippo.nimingban.util.filterNot
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -97,17 +97,27 @@ val GSON: Gson by lazy {
 
 private var _REF_WATCHER: RefWatcher? = null
 
-val REF_WATCHER: RefWatcher by lazy { _REF_WATCHER!! }
+val REF_WATCHER: RefWatcher? by lazy { _REF_WATCHER }
 
 /**
- * Read s string resource.
+ * Reads a string resource.
  */
 fun string(resId: Int) = NMB_APP.getString(resId)!!
 
 /**
- * Read s string resource.
+ * Reads a string resource.
  */
 fun string(resId: Int, vararg formatArgs: Any) = NMB_APP.getString(resId, *formatArgs)!!
+
+/**
+ * Reads a quantity string resource.
+ */
+fun quantityString(@PluralsRes id: Int, quantity: Int) = NMB_APP.resources.getQuantityString(id, quantity)!!
+
+/**
+ * Reads a quantity string resource.
+ */
+fun quantityString(@PluralsRes id: Int, quantity: Int, vararg formatArgs: Any) = NMB_APP.resources.getQuantityString(id, quantity, formatArgs)!!
 
 /**
  * Show a tip.
@@ -163,15 +173,6 @@ fun toast(resId: Int) {
 
 fun toast(text: CharSequence) {
   Toast.makeText(NMB_APP, text, Toast.LENGTH_SHORT).show()
-}
-
-/**
- * Updates forums in database
- */
-fun updateForums() {
-  NMB_CLIENT.forums()
-      .subscribeOn(Schedulers.io())
-      .subscribe({ NMB_DB.setOfficialForums(it) }, { /* Ignore error */ })
 }
 
 open class NmbApp : Application() {

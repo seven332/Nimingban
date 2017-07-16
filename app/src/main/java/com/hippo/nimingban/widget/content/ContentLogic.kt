@@ -16,19 +16,17 @@
 
 package com.hippo.nimingban.widget.content
 
-import android.support.v7.widget.RecyclerView
-
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 2017/7/14.
  */
 
-abstract class ContentDataAdapter<T : Any, VH: RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+interface ContentLogic {
 
-  lateinit var data: ContentData<T>
+  fun onRefreshHeader()
 
-  val size get() = data.size()
+  fun onRefreshFooter()
 
-  override fun getItemCount(): Int = data.size()
+  fun onReachBottom()
 
-  operator fun get(index: Int): T = data.get(index)
+  fun onClickTip()
 }

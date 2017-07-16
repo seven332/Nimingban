@@ -16,6 +16,9 @@
 
 package com.hippo.nimingban.client.data
 
+import android.os.Parcel
+import android.os.Parcelable
+
 /*
  * Created by Hippo on 2017/7/4.
  */
@@ -32,7 +35,7 @@ data class Reference(
     val sage: Boolean,
     val admin: Boolean,
     val threadId: String?
-) {
+) : Parcelable {
 
   fun toReply() = Reply(
       id = id,
@@ -45,4 +48,45 @@ data class Reference(
       image = image,
       sage = sage,
       admin = admin)
+
+  constructor(parcel: Parcel) : this(
+      parcel.readString(),
+      parcel.readLong(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readString(),
+      parcel.readByte() != 0.toByte(),
+      parcel.readByte() != 0.toByte(),
+      parcel.readString())
+
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeString(id)
+    parcel.writeLong(date)
+    parcel.writeString(user)
+    parcel.writeString(title)
+    parcel.writeString(name)
+    parcel.writeString(email)
+    parcel.writeString(content)
+    parcel.writeString(image)
+    parcel.writeByte(if (sage) 1 else 0)
+    parcel.writeByte(if (admin) 1 else 0)
+    parcel.writeString(threadId)
+  }
+
+  override fun describeContents(): Int {
+    return 0
+  }
+
+  companion object CREATOR : Parcelable.Creator<Reference> {
+    override fun createFromParcel(parcel: Parcel): Reference {
+      return Reference(parcel)
+    }
+
+    override fun newArray(size: Int): Array<Reference?> {
+      return arrayOfNulls(size)
+    }
+  }
 }

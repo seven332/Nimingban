@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.widget.content
-
-import android.support.v7.widget.RecyclerView
+package com.hippo.nimingban.component
 
 /*
- * Created by Hippo on 6/8/2017.
+ * Created by Hippo on 2017/7/14.
  */
 
-abstract class ContentDataAdapter<T : Any, VH: RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+interface MvpLogic<in Ui : Any> {
 
-  lateinit var data: ContentData<T>
+  /**
+   * Attaches a ui to the logic.
+   */
+  fun attach(ui: Ui)
 
-  val size get() = data.size()
-
-  override fun getItemCount(): Int = data.size()
-
-  operator fun get(index: Int): T = data.get(index)
+  /**
+   * Detaches the ui of the logic.
+   */
+  fun detach()
 }
