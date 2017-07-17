@@ -17,6 +17,8 @@
 package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
+import com.hippo.nimingban.client.data.Reference
+import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 
 /*
@@ -29,6 +31,28 @@ fun replies(thread: Thread, forum: String?): RepliesScene {
   args.putString(RepliesScene.KEY_REPLY_ID, thread.id)
   args.putString(RepliesScene.KEY_FORUM, thread.forum ?: forum)
   val scene = RepliesScene()
+  scene.setArgs(args)
+  return scene
+}
+
+fun gallery(image: String?): GalleryScene {
+  val args = Bundle()
+  args.putString(GalleryScene.KEY_IMAGE, image)
+  val scene = GalleryScene()
+  scene.setArgs(args)
+  return scene
+}
+
+fun gallery(thread: Thread) = galleryNmb(thread.image)
+
+fun gallery(reply: Reply)= galleryNmb(reply.image)
+
+fun gallery(reference: Reference) = galleryNmb(reference.image)
+
+private fun galleryNmb(nmbImage: String?): GalleryScene {
+  val args = Bundle()
+  args.putString(GalleryScene.KEY_NMB_IMAGE, nmbImage)
+  val scene = GalleryScene()
   scene.setArgs(args)
   return scene
 }

@@ -32,9 +32,10 @@
   <string name="sort_forums_title">所有板块</string>
 
   <string name="replies_title">串</string>
-
   <string name="replies_reply">回复</string>
   <string name="replies_go_to">跳页</string>
+
+  <string name="gallery_title">图片欣赏</string>
 
   <string name="send_more_fields">更多字段</string>
   <string name="send_forum">板块</string>

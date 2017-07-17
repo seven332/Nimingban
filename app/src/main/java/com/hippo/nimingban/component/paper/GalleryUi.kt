@@ -18,10 +18,23 @@ package com.hippo.nimingban.component.paper
 
 import com.hippo.nimingban.component.MvpUi
 import com.hippo.viewstate.GenerateViewState
+import com.hippo.viewstate.strategy.SingleByTag
+import com.hippo.viewstate.strategy.StrategyType
 
 /*
- * Created by Hippo on 2017/7/14.
+ * Created by Hippo on 2017/7/18.
  */
 
 @GenerateViewState
-interface ThreadsUi : MvpUi
+interface GalleryUi : MvpUi {
+
+  companion object {
+    private const val TAG_IMAGE = "GalleryUi:image"
+  }
+
+  @StrategyType(value = SingleByTag::class, tag = TAG_IMAGE)
+  fun setImage(url: String?)
+
+  @StrategyType(value = SingleByTag::class, tag = TAG_IMAGE)
+  fun setNmbImage(nmbImage: String?)
+}

@@ -20,7 +20,6 @@ import android.os.Bundle
 import com.hippo.nimingban.NMB_CLIENT
 import com.hippo.nimingban.R
 import com.hippo.nimingban.client.data.Forum
-import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.NmbPen
 import com.hippo.nimingban.exception.PresetException
@@ -73,7 +72,7 @@ open class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
 
   override fun onClickThread(thread: Thread) {}
 
-  override fun onClickThumb(reply: Reply) {}
+  override fun onClickThumb(thread: Thread) {}
 
   override fun onCreate(args: Bundle) {
     super.onCreate(args)

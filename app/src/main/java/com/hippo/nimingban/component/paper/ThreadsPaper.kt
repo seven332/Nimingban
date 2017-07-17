@@ -99,7 +99,7 @@ class ThreadsPaper(
       replyCount.setCompoundDrawables(drawable, null, null, null)
 
       itemView.setOnClickListener { item?.let { logic.onClickThread(it) } }
-      thumb.setOnClickListener { item?.let { logic.onClickThumb(it.toReply()) } }
+      thumb.setOnClickListener { item?.let { logic.onClickThumb(it) } }
     }
 
     override fun onResume() {

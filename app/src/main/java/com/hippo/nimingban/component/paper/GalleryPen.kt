@@ -16,12 +16,23 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.component.MvpUi
-import com.hippo.viewstate.GenerateViewState
+import com.hippo.nimingban.component.NmbPen
 
 /*
- * Created by Hippo on 2017/7/14.
+ * Created by Hippo on 2017/7/18.
  */
 
-@GenerateViewState
-interface ThreadsUi : MvpUi
+open class GalleryPen : NmbPen<GalleryUi>(), GalleryLogic {
+
+  init {
+    GalleryUiState().also { view = it; state = it }
+  }
+
+  fun setImage(url: String?) {
+    view.setImage(url)
+  }
+
+  fun setNmbImage(nmbImage: String) {
+    view.setNmbImage(nmbImage)
+  }
+}

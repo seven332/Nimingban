@@ -130,7 +130,8 @@ private fun Intent.startActivity() {
   }
 }
 
-fun openUrl(url: String) {
+fun openUrl(url: String, handleNmb: Boolean) {
+  // TODO handle nmb
   val intent = Intent(Intent.ACTION_VIEW)
   intent.data = Uri.parse(url)
   intent.startActivity()

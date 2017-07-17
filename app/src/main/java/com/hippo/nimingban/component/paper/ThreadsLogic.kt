@@ -42,5 +42,5 @@ interface ThreadsLogic : MvpLogic<ThreadsUi> {
 
   fun onClickThread(thread: Thread)
 
-  fun onClickThumb(reply: Reply)
+  fun onClickThumb(thread: Thread)
 }

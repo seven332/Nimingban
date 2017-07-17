@@ -32,9 +32,10 @@
   <string name="sort_forums_title">All forums</string>
 
   <string name="replies_title">Thread</string>
-
   <string name="replies_reply">Reply</string>
   <string name="replies_go_to">Go to</string>
+
+  <string name="gallery_title">Gallery</string>
 
   <string name="send_more_fields">More fields</string>
   <string name="send_forum">Forum</string>

@@ -16,12 +16,11 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.component.MvpUi
-import com.hippo.viewstate.GenerateViewState
+import com.hippo.nimingban.component.MvpLogic
 
 /*
- * Created by Hippo on 2017/7/14.
+ * Created by Hippo on 2017/7/18.
  */
 
-@GenerateViewState
-interface ThreadsUi : MvpUi
+interface GalleryLogic : MvpLogic<GalleryUi> {
+}

@@ -99,3 +99,8 @@ fun GroupPaper<*>.replies(
     logic: RepliesLogic,
     containerId: Int
 ) = inflateChild(containerId) { container -> RepliesPaper(logic).also { it.create(inflater, container) } }
+
+fun GroupPaper<*>.gallery(
+    logic: GalleryLogic,
+    containerId: Int
+) = inflateChild(containerId) { container -> GalleryPaper(logic).also { it.create(inflater, container) } }

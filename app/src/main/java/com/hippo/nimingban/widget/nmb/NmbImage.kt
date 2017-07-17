@@ -53,10 +53,10 @@ class NmbImage : LargeDraweeView {
   }
 
   // TODO get image url from api
-  fun loadImage(image: String?) =
-      load(if (image.isNullOrEmpty()) null else "http://img6.nimingban.com/image/" + image)
+  fun loadNmbImage(nmbImage: String?) =
+      loadImage(if (nmbImage.isNullOrEmpty()) null else "http://img6.nimingban.com/image/" + nmbImage)
 
-  fun load(url: String?) {
+  fun loadImage(url: String?) {
     val controller = FrescoLarge.newDraweeControllerBuilder()
         .setOldController(controller)
         .setTapToRetryEnabled(true)

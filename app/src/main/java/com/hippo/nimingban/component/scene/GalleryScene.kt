@@ -17,38 +17,31 @@
 package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
-import android.text.style.ClickableSpan
-import android.text.style.URLSpan
 import com.hippo.nimingban.R
-import com.hippo.nimingban.activity.NmbActivity
-import com.hippo.nimingban.client.data.Reply
-import com.hippo.nimingban.client.toNmbId
 import com.hippo.nimingban.component.MvpPaper
 import com.hippo.nimingban.component.MvpPen
 import com.hippo.nimingban.component.NmbScene
-import com.hippo.nimingban.component.openUrl
-import com.hippo.nimingban.component.paper.RepliesPen
+import com.hippo.nimingban.component.paper.GalleryPen
 import com.hippo.nimingban.component.paper.SwipeBackPaper
 import com.hippo.nimingban.component.paper.SwipeBackPen
 import com.hippo.nimingban.component.paper.ToolbarPaper
 import com.hippo.nimingban.component.paper.ToolbarPen
+import com.hippo.nimingban.component.paper.gallery
 import com.hippo.nimingban.component.paper.papers
 import com.hippo.nimingban.component.paper.pens
-import com.hippo.nimingban.component.paper.replies
 import com.hippo.nimingban.component.paper.swipeBack
 import com.hippo.nimingban.component.paper.toolbar
 import com.hippo.swipeback.SwipeBackLayout
 
 /*
- * Created by Hippo on 2017/7/17.
+ * Created by Hippo on 2017/7/18.
  */
 
-class RepliesScene : NmbScene() {
+class GalleryScene : NmbScene() {
 
   companion object {
-    internal const val KEY_THREAD = "RepliesScene:thread"
-    internal const val KEY_REPLY_ID = "RepliesScene:reply_id"
-    internal const val KEY_FORUM = "RepliesScene:forum"
+    internal const val KEY_IMAGE = "GalleryScene:image"
+    internal const val KEY_NMB_IMAGE = "GalleryScene:nmb_image"
   }
 
   private val swipeBack: SwipeBackPen = object : SwipeBackPen() {
@@ -69,65 +62,42 @@ class RepliesScene : NmbScene() {
 
     override fun onCreate(args: Bundle) {
       super.onCreate(args)
-      view.setTitle(R.string.replies_title)
+      view.setTitle(R.string.gallery_title)
       view.setNavigationIcon(R.drawable.arrow_left_white_x24)
-      view.inflateMenu(R.menu.replies)
     }
 
     override fun onClickNavigationIcon() {
+      super.onClickNavigationIcon()
       pop()
     }
   }
 
-  private val replies: RepliesPen = object : RepliesPen() {
+  private val gallery: GalleryPen = object : GalleryPen() {}
 
-    override fun showMessage(message: String) {
-      super.showMessage(message)
-      (activity as? NmbActivity)?.snack(message)
-    }
-
-    override fun onUpdateThreadId(threadId: String) {
-      super.onUpdateThreadId(threadId)
-      toolbar.view.setTitle(threadId.toNmbId())
-    }
-
-    override fun onUpdateForum(forum: String) {
-      super.onUpdateForum(forum)
-      toolbar.view.setSubtitle(forum)
-    }
-
-    override fun onClickThumb(reply: Reply) {
-      super.onClickThumb(reply)
-      stage?.pushScene(gallery(reply))
-    }
-
-    override fun onClickSpan(span: ClickableSpan) {
-      super.onClickSpan(span)
-      when (span) {
-        is URLSpan -> openUrl(span.url, true)
-        // TODO else
-      }
-    }
-  }
-
-  private val pen = pens(swipeBack, toolbar, replies)
+  private val pen = pens(swipeBack, toolbar, gallery)
 
   override fun createPen(): MvpPen<*> = pen
 
   override fun createPaper(): MvpPaper<*> = papers(pen) {
     swipeBack(swipeBack, it) {
       toolbar(toolbar, SwipeBackPaper.CONTAINER_ID) {
-        replies(replies, ToolbarPaper.CONTAINER_ID)
+        gallery(gallery, ToolbarPaper.CONTAINER_ID)
       }
     }
   }
 
   override fun onCreate(args: Bundle) {
     super.onCreate(args)
+
     opacity = TRANSLUCENT
-    replies.init(
-        thread = args.getParcelable(KEY_THREAD),
-        replyId = args.getString(KEY_REPLY_ID),
-        forum = args.getString(KEY_FORUM))
+
+    val image = args.getString(KEY_IMAGE)
+    val nmbImage = args.getString(KEY_NMB_IMAGE)
+
+    if (image != null) {
+      gallery.setImage(image)
+    } else {
+      gallery.setNmbImage(nmbImage)
+    }
   }
 }

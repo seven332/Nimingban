@@ -117,6 +117,11 @@ class ThreadsScene : NmbScene() {
       super.onClickThread(thread)
       stage?.pushScene(replies(thread, getForum()?.name))
     }
+
+    override fun onClickThumb(thread: Thread) {
+      super.onClickThumb(thread)
+      stage?.pushScene(gallery(thread))
+    }
   }
 
   private val forumList: ForumListPen = object : ForumListPen() {
