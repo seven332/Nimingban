@@ -58,6 +58,7 @@ class ThreadsPaper(
     adapter = ThreadAdapter()
     logic.initAdapter(adapter)
 
+    contentLayout.extension = this
     logic.initContentLayout(contentLayout)
 
     recyclerView.adapter = adapter
@@ -67,6 +68,7 @@ class ThreadsPaper(
   override fun onDestroy() {
     super.onDestroy()
 
+    logic.termAdapter(adapter)
     logic.termContentLayout(contentLayout)
 
     recyclerView.adapter = null

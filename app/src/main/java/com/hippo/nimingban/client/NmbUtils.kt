@@ -188,4 +188,6 @@ fun String?.toNmbVividName(shownName: String?): CharSequence {
   }
 }
 
-fun Reply.referenceText() = ">>No." + id
+fun String.toNmbId() = "No." + this
+
+fun Reply.toNmbReference() = ">>No." + id

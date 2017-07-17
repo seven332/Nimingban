@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.component.paper
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hippo.nimingban.component.GroupPaper
@@ -50,6 +51,18 @@ fun GroupPaper<*>.drawer(
     init: DrawerPaper.() -> Unit
 ) = inflateChild(containerId) { container -> DrawerPaper(logic).also { it.create(inflater, container) } }.apply { init() }
 
+fun GroupPaper<*>.swipeBack(
+    logic: SwipeBackLogic,
+    container: ViewGroup,
+    init: SwipeBackPaper.() -> Unit
+) = SwipeBackPaper(logic).also { it.create(inflater, container); it.init() }
+
+fun GroupPaper<*>.swipeBack(
+    logic: SwipeBackLogic,
+    containerId: Int,
+    init: SwipeBackPaper.() -> Unit
+) = inflateChild(containerId) { container -> SwipeBackPaper(logic).also { it.create(inflater, container) } }.apply { init() }
+
 fun GroupPaper<*>.toolbar(
     logic: ToolbarLogic,
     container: ViewGroup,
@@ -60,7 +73,12 @@ fun GroupPaper<*>.toolbar(
     logic: ToolbarLogic,
     containerId: Int,
     init: ToolbarPaper.() -> Unit
-) = inflateChild(containerId) { container -> ToolbarPaper(logic).also { it.create(inflater, container) } }.apply { init() }
+) : ToolbarPaper {
+
+  Log.d("TAG", "Papers.toolbar this = $this")
+
+  return inflateChild(containerId) { container -> ToolbarPaper(logic).also { it.create(inflater, container) } }.apply { init() }
+}
 
 fun GroupPaper<*>.threads(
     logic: ThreadsLogic,
@@ -76,3 +94,8 @@ fun GroupPaper<*>.sortForums(
     logic: SortForumsLogic,
     containerId: Int
 ) = inflateChild(containerId) { container -> SortForumsPaper(logic).also { it.create(inflater, container) } }
+
+fun GroupPaper<*>.replies(
+    logic: RepliesLogic,
+    containerId: Int
+) = inflateChild(containerId) { container -> RepliesPaper(logic).also { it.create(inflater, container) } }

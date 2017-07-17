@@ -19,16 +19,14 @@ package com.hippo.nimingban.component.paper
 import com.hippo.nimingban.component.NmbPen
 
 /*
- * Created by Hippo on 2017/7/15.
+ * Created by Hippo on 2017/7/17.
  */
 
-open class DrawerPen : NmbPen<DrawerUi>(), DrawerLogic {
+open class SwipeBackPen : NmbPen<SwipeBackUi>(), SwipeBackLogic {
 
   init {
-    DrawerUiState().also { view = it; state = it }
+    SwipeBackUiState().also { view = it; state = it }
   }
 
-  override fun onOpenRightDrawer() {}
-
-  override fun onCloseRightDrawer() {}
+  override fun onFinishUi() {}
 }

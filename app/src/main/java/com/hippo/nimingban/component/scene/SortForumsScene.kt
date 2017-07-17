@@ -51,6 +51,8 @@ class SortForumsScene : NmbScene() {
     override fun onClickMenuItem(item: MenuItem): Boolean {
       return false
     }
+
+    override fun onDoubleClick() {}
   }
 
   private val sortForums: SortForumsPen = object : SortForumsPen() {}

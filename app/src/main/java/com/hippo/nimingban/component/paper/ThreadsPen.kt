@@ -19,7 +19,6 @@ package com.hippo.nimingban.component.paper
 import android.os.Bundle
 import com.hippo.nimingban.NMB_CLIENT
 import com.hippo.nimingban.R
-import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
@@ -28,7 +27,6 @@ import com.hippo.nimingban.exception.PresetException
 import com.hippo.nimingban.widget.content.ContentData
 import com.hippo.nimingban.widget.content.ContentDataAdapter
 import com.hippo.nimingban.widget.content.ContentLayout
-import com.hippo.stage.Stage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -36,14 +34,11 @@ import io.reactivex.schedulers.Schedulers
  * Created by Hippo on 2017/7/14.
  */
 
-abstract class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
+open class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
 
   init {
     ThreadsUiState().also { view = it; state = it }
   }
-
-  protected abstract val activity: NmbActivity?
-  protected abstract val stage: Stage?
 
   private val data = ThreadsData()
 
@@ -60,6 +55,7 @@ abstract class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
   override fun termAdapter(adapter: ContentDataAdapter<Thread, *>) {}
 
   override fun initContentLayout(layout: ContentLayout) {
+    layout.logic = data
     data.attach(layout)
   }
 
@@ -67,9 +63,7 @@ abstract class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
     data.detach()
   }
 
-  override fun showMessage(message: String) {
-    activity?.snack(message)
-  }
+  override fun showMessage(message: String) {}
 
   fun refresh() = data.goTo(0)
 
@@ -77,13 +71,9 @@ abstract class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
 
   fun isLoading() = data.isLoading()
 
-  override fun onClickThread(thread: Thread) {
-    // TODO("not implemented")
-  }
+  override fun onClickThread(thread: Thread) {}
 
-  override fun onClickThumb(reply: Reply) {
-    // TODO("not implemented")
-  }
+  override fun onClickThumb(reply: Reply) {}
 
   override fun onCreate(args: Bundle) {
     super.onCreate(args)
@@ -91,6 +81,8 @@ abstract class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
     // The next request should wait for setForum()
     data.restore()
   }
+
+  fun getForum() = forum
 
   fun setForum(forum: Forum?) {
     val oldForum = this.forum

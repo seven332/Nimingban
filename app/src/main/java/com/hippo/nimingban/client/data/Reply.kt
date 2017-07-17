@@ -23,8 +23,9 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.hippo.nimingban.client.NO_NAME
 import com.hippo.nimingban.client.NO_TITLE
-import com.hippo.nimingban.client.toNmbContent
 import com.hippo.nimingban.client.fromNmbDate
+import com.hippo.nimingban.client.toNmbContent
+import com.hippo.nimingban.client.toNmbId
 import com.hippo.nimingban.client.toNmbUser
 import com.hippo.nimingban.exception.GsonException
 import com.hippo.nimingban.util.int
@@ -73,7 +74,7 @@ data class Reply(
     val admin: Boolean
 ) : Parcelable {
 
-  val displayedId = "No." + id
+  val displayedId = id.toNmbId()
   val displayedUser = user.toNmbUser(admin)
   val displayedContent = content.toNmbContent(sage, title, name, email)
 

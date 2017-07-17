@@ -16,19 +16,18 @@
 
 package com.hippo.nimingban.component.paper
 
-import com.hippo.nimingban.component.NmbPen
+import com.hippo.nimingban.component.MvpUi
+import com.hippo.viewstate.GenerateViewState
+import com.hippo.viewstate.strategy.SingleByMethod
+import com.hippo.viewstate.strategy.StrategyType
 
 /*
- * Created by Hippo on 2017/7/15.
+ * Created by Hippo on 2017/7/17.
  */
 
-open class DrawerPen : NmbPen<DrawerUi>(), DrawerLogic {
+@GenerateViewState
+interface RepliesUi : MvpUi {
 
-  init {
-    DrawerUiState().also { view = it; state = it }
-  }
-
-  override fun onOpenRightDrawer() {}
-
-  override fun onCloseRightDrawer() {}
+  @StrategyType(value = SingleByMethod::class)
+  fun setThreadUser(user: String)
 }

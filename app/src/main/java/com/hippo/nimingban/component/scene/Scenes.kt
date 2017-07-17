@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.hippo.nimingban.component.paper
+package com.hippo.nimingban.component.scene
 
-import com.hippo.nimingban.component.NmbPen
+import android.os.Bundle
+import com.hippo.nimingban.client.data.Thread
 
 /*
- * Created by Hippo on 2017/7/15.
+ * Created by Hippo on 2017/7/17.
  */
 
-open class DrawerPen : NmbPen<DrawerUi>(), DrawerLogic {
-
-  init {
-    DrawerUiState().also { view = it; state = it }
-  }
-
-  override fun onOpenRightDrawer() {}
-
-  override fun onCloseRightDrawer() {}
+fun replies(thread: Thread, forum: String?): RepliesScene {
+  val args = Bundle()
+  args.putParcelable(RepliesScene.KEY_THREAD, thread)
+  args.putString(RepliesScene.KEY_REPLY_ID, thread.id)
+  args.putString(RepliesScene.KEY_FORUM, thread.forum ?: forum)
+  val scene = RepliesScene()
+  scene.setArgs(args)
+  return scene
 }

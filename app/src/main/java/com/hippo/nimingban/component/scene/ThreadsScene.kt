@@ -22,6 +22,7 @@ import android.view.View
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Forum
+import com.hippo.nimingban.client.data.Thread
 import com.hippo.nimingban.component.MvpPaper
 import com.hippo.nimingban.component.MvpPen
 import com.hippo.nimingban.component.NmbScene
@@ -39,7 +40,6 @@ import com.hippo.nimingban.component.paper.threads
 import com.hippo.nimingban.component.paper.toolbar
 import com.hippo.nimingban.component.refreshForums
 import com.hippo.nimingban.widget.nmb.NmbDrawerSide
-import com.hippo.stage.Stage
 
 /*
  * Created by Hippo on 2017/7/14.
@@ -64,10 +64,12 @@ class ThreadsScene : NmbScene() {
     }
 
     override fun onOpenRightDrawer() {
+      super.onOpenRightDrawer()
       toolbar.view.inflateMenu(R.menu.forum_list)
     }
 
     override fun onCloseRightDrawer() {
+      super.onCloseRightDrawer()
       toolbar.view.inflateMenu(R.menu.threads)
     }
   }
@@ -106,15 +108,22 @@ class ThreadsScene : NmbScene() {
 
   private val threads: ThreadsPen = object : ThreadsPen() {
 
-    override val activity: NmbActivity?
-      get() = this@ThreadsScene.activity as? NmbActivity
-    override val stage: Stage?
-      get() = this@ThreadsScene.stage
+    override fun showMessage(message: String) {
+      super.showMessage(message)
+      (activity as? NmbActivity)?.snack(message)
+    }
+
+    override fun onClickThread(thread: Thread) {
+      super.onClickThread(thread)
+      stage?.pushScene(replies(thread, getForum()?.name))
+    }
   }
 
   private val forumList: ForumListPen = object : ForumListPen() {
 
     override fun onSelectForum(forum: Forum?, byUser: Boolean) {
+      super.onSelectForum(forum, byUser)
+
       threads.setForum(forum)
 
       val title = forum?.displayedName

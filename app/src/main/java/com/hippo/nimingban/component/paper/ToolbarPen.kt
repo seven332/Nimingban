@@ -16,15 +16,24 @@
 
 package com.hippo.nimingban.component.paper
 
+import android.view.MenuItem
 import com.hippo.nimingban.component.NmbPen
 
 /*
  * Created by Hippo on 2017/7/13.
  */
 
-abstract class ToolbarPen : NmbPen<ToolbarUi>(), ToolbarLogic {
+open class ToolbarPen : NmbPen<ToolbarUi>(), ToolbarLogic {
 
   init {
     ToolbarUiState().also { view = it; state = it }
   }
+
+  override fun onClickNavigationIcon() {}
+
+  override fun onClickMenuItem(item: MenuItem): Boolean {
+    return false
+  }
+
+  override fun onDoubleClick() {}
 }

@@ -31,6 +31,8 @@
 
   <string name="sort_forums_title">All forums</string>
 
+  <string name="replies_title">Thread</string>
+
   <string name="replies_reply">Reply</string>
   <string name="replies_go_to">Go to</string>
 

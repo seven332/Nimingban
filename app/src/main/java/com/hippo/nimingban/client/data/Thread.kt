@@ -26,6 +26,7 @@ import com.hippo.nimingban.client.NO_NAME
 import com.hippo.nimingban.client.NO_TITLE
 import com.hippo.nimingban.client.fromNmbDate
 import com.hippo.nimingban.client.toNmbContent
+import com.hippo.nimingban.client.toNmbId
 import com.hippo.nimingban.client.toNmbUser
 import com.hippo.nimingban.exception.GsonException
 import com.hippo.nimingban.util.element
@@ -83,7 +84,7 @@ data class Thread(
     var forum: String?
 ) : Parcelable {
 
-  val displayId = "No." + id
+  val displayId = id.toNmbId()
   val displayUser = user.toNmbUser(admin)
   val displayContent = content.toNmbContent(sage, title, name, email)
 

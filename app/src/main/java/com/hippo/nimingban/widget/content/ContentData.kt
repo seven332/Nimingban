@@ -49,6 +49,7 @@ abstract class ContentData<T : Any> : ContentLogic, Iterable<T> {
 
     @JvmField val NOT_FOUND_EXCEPTION = PresetException("not found", R.string.error_not_found, 0)
     @JvmField val TAP_TO_LOAD_EXCEPTION = PresetException("tap to Load", R.string.error_tap_to_load, 0)
+    @JvmField val FAILED_TO_RESTORE_EXCEPTION = Exception()
   }
 
   private val state: ContentUiState = ContentUiState()
@@ -101,8 +102,7 @@ abstract class ContentData<T : Any> : ContentLogic, Iterable<T> {
   /**
    * Attaches a layout to the view.
    */
-  fun attach(layout: ContentLayout) {
-    layout.logic = this
+  fun attach(layout: ContentUi) {
     state.attach(layout)
   }
 

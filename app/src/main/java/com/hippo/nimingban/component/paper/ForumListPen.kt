@@ -17,7 +17,6 @@
 package com.hippo.nimingban.component.paper
 
 import android.os.Bundle
-import android.util.Log
 import com.hippo.nimingban.NMB_DB
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbPen
@@ -28,7 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
  * Created by Hippo on 2017/7/15.
  */
 
-abstract class ForumListPen : NmbPen<ForumListUi>(), ForumListLogic {
+open class ForumListPen : NmbPen<ForumListUi>(), ForumListLogic {
 
   init {
     ForumListUiState().also { view = it; state = it }
@@ -88,5 +87,5 @@ abstract class ForumListPen : NmbPen<ForumListUi>(), ForumListLogic {
 
   override fun getSelectedIndex() = selectedIndex
 
-  abstract fun onSelectForum(forum: Forum?, byUser: Boolean)
+  open fun onSelectForum(forum: Forum?, byUser: Boolean) {}
 }
