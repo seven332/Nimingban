@@ -71,3 +71,8 @@ fun GroupPaper<*>.forumList(
     logic: ForumListLogic,
     containerId: Int
 ) = inflateChild(containerId) { container -> ForumListPaper(logic).also { it.create(inflater, container) } }
+
+fun GroupPaper<*>.sortForums(
+    logic: SortForumsLogic,
+    containerId: Int
+) = inflateChild(containerId) { container -> SortForumsPaper(logic).also { it.create(inflater, container) } }

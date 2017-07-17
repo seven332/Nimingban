@@ -29,7 +29,7 @@
 
   <string name="forum_list_sort">排序</string>
 
-  <string name="forums_title">所有板块</string>
+  <string name="sort_forums_title">所有板块</string>
 
   <string name="replies_reply">回复</string>
   <string name="replies_go_to">跳页</string>
@@ -79,5 +79,7 @@
   <string name="pretty_time_days">%d 天</string>
   <string name="pretty_time_ago">%s前</string>
   <string name="pretty_time_before">%s后</string>
+
+  <string name="press_twice_exit">再按一下退出</string>
 
 </resources>

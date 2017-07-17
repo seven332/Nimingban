@@ -17,6 +17,7 @@
 package com.hippo.nimingban.component.paper
 
 import android.os.Bundle
+import android.util.Log
 import com.hippo.nimingban.NMB_DB
 import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.NmbPen
@@ -41,7 +42,7 @@ abstract class ForumListPen : NmbPen<ForumListUi>(), ForumListLogic {
     super.onCreate(args)
 
     NMB_DB.liveForums.observable
-        .map { it.toList() }
+        .map { it.filter { it.visible } }
         .observeOn(AndroidSchedulers.mainThread())
         .register({ onUpdateForums(it) }, { /* Ignore error */ })
   }

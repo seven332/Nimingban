@@ -18,6 +18,7 @@ package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Forum
@@ -46,6 +47,10 @@ import com.hippo.stage.Stage
 
 class ThreadsScene : NmbScene() {
 
+  companion object {
+    private const val BACK_PRESSED_INTERVAL = 1000L
+  }
+
   private val drawer: DrawerPen = object : DrawerPen() {
 
     override fun onCreate(args: Bundle) {
@@ -54,6 +59,8 @@ class ThreadsScene : NmbScene() {
       view.setRightDrawerWidth(R.dimen.threads_scene_right_drawer_width)
       view.setLeftDrawerMode(NmbDrawerSide.NONE)
       view.setRightDrawerMode(NmbDrawerSide.ACTION_BAR)
+      view.setLeftDrawerShadow(R.drawable.drawer_left_shadow)
+      view.setRightDrawerShadow(R.drawable.drawer_right_shadow)
     }
 
     override fun onOpenRightDrawer() {
@@ -79,8 +86,13 @@ class ThreadsScene : NmbScene() {
     }
 
     override fun onClickMenuItem(item: MenuItem): Boolean {
-      // TODO
-      return false
+      when (item.itemId) {
+        R.id.action_sort -> {
+          stage?.pushScene(SortForumsScene())
+          return true
+        }
+        else -> return false
+      }
     }
   }
 
@@ -112,6 +124,12 @@ class ThreadsScene : NmbScene() {
 
   private val pen = pens(drawer, toolbar, threads, forumList)
 
+  // Ui can't container any method with return value
+  // But paper can.
+  private var drawerPaper: DrawerPaper? = null
+
+  private var lastPressBackTime = 0L
+
   override fun createPen(): MvpPen<*> = pen
 
   override fun createPaper(): MvpPaper<*> = papers(pen) {
@@ -120,12 +138,36 @@ class ThreadsScene : NmbScene() {
         threads(threads, ToolbarPaper.CONTAINER_ID)
       }
       forumList(forumList, DrawerPaper.CONTAINER_ID_RIGHT)
-    }
+    }.also { drawerPaper = it }
   }
 
   override fun onCreate(args: Bundle) {
     super.onCreate(args)
     // Refresh forums every time when ThreadsScene started
     refreshForums()
+  }
+
+  override fun onDestroyView(view: View) {
+    super.onDestroyView(view)
+    drawerPaper = null
+  }
+
+  override fun handleBack(): Boolean {
+    if (!super.handleBack()) {
+      // Close drawer if it's open
+      if (drawerPaper?.isDrawerOpen() ?: false) {
+        drawerPaper?.closeDrawers()
+        return true
+      }
+      // Check pressing twice
+      val now = System.currentTimeMillis()
+      if (lastPressBackTime + BACK_PRESSED_INTERVAL < now) {
+        lastPressBackTime = now
+        (activity as? NmbActivity)?.snack(R.string.press_twice_exit)
+        return true
+      }
+      return false
+    }
+    return true
   }
 }

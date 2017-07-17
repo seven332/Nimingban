@@ -68,11 +68,11 @@ class NmbDBTest {
     currentForums.removeAt(3)
     assertEquals(currentForums, db.forums())
 
-    db.orderForum(11, 5)
+    db.reorderForum(11, 5)
     currentForums.add(5, currentForums.removeAt(11))
     assertEquals(currentForums, db.forums())
 
-    db.orderForum(7, 10)
+    db.reorderForum(7, 10)
     currentForums.add(10, currentForums.removeAt(7))
     assertEquals(currentForums, db.forums())
 

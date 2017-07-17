@@ -16,40 +16,19 @@
 
 package com.hippo.nimingban.component.paper
 
-import android.support.annotation.DimenRes
+import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.component.MvpUi
 import com.hippo.viewstate.GenerateViewState
 import com.hippo.viewstate.strategy.SingleByMethod
 import com.hippo.viewstate.strategy.StrategyType
 
 /*
- * Created by Hippo on 2017/7/15.
+ * Created by Hippo on 2017/7/16.
  */
 
 @GenerateViewState
-interface DrawerUi : MvpUi {
+interface SortForumsUi : MvpUi {
 
   @StrategyType(value = SingleByMethod::class)
-  fun setLeftDrawerWidth(@DimenRes resId: Int)
-
-  @StrategyType(value = SingleByMethod::class)
-  fun setRightDrawerWidth(@DimenRes resId: Int)
-
-  @StrategyType(value = SingleByMethod::class)
-  fun setLeftDrawerMode(mode: Int)
-
-  @StrategyType(value = SingleByMethod::class)
-  fun setRightDrawerMode(mode: Int)
-
-  @StrategyType(value = SingleByMethod::class)
-  fun setLeftDrawerShadow(resId: Int)
-
-  @StrategyType(value = SingleByMethod::class)
-  fun setRightDrawerShadow(resId: Int)
-
-  fun closeDrawers()
-
-  fun openLeftDrawer()
-
-  fun openRightDrawer()
+  fun updateForums(forums: MutableList<Forum>)
 }

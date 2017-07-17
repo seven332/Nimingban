@@ -20,7 +20,7 @@
   android:shape="rectangle">
 
   <size
-    android:width="@dimen/strip_shadow"
+    android:width="@dimen/drawer_shadow"
     android:height="0dp"/>
 
   <gradient

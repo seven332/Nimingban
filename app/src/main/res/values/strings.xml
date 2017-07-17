@@ -29,7 +29,7 @@
 
   <string name="forum_list_sort">Sort</string>
 
-  <string name="forums_title">All forums</string>
+  <string name="sort_forums_title">All forums</string>
 
   <string name="replies_reply">Reply</string>
   <string name="replies_go_to">Go to</string>
@@ -80,5 +80,7 @@
   <string name="pretty_time_days">%d d</string>
   <string name="pretty_time_ago">%s</string>
   <string name="pretty_time_before">%s</string>
+
+  <string name="press_twice_exit">Press twice to exit</string>
 
 </resources>

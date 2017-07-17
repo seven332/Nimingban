@@ -89,6 +89,14 @@ class DrawerPaper(
     rightDrawer.mode = mode
   }
 
+  override fun setLeftDrawerShadow(resId: Int) {
+    drawerLayout.setDrawerShadow(resId, Gravity.LEFT)
+  }
+
+  override fun setRightDrawerShadow(resId: Int) {
+    drawerLayout.setDrawerShadow(resId, Gravity.RIGHT)
+  }
+
   override fun closeDrawers() {
     drawerLayout.closeDrawers()
   }
@@ -100,4 +108,6 @@ class DrawerPaper(
   override fun openRightDrawer() {
     drawerLayout.openDrawer(Gravity.RIGHT)
   }
+
+  fun isDrawerOpen() = drawerLayout.isDrawerOpen(Gravity.LEFT) or drawerLayout.isDrawerOpen(Gravity.RIGHT)
 }

@@ -20,6 +20,7 @@
   <dimen name="key_margin">16dp</dimen>
 
   <dimen name="strip_shadow">4dp</dimen>
+  <dimen name="drawer_shadow">8dp</dimen>
 
   <!-- Text size -->
   <dimen name="text_super_large">24sp</dimen>
