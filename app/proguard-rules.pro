@@ -54,3 +54,4 @@
 -dontwarn javax.annotation.**
 -dontwarn com.facebook.infer.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn rx.**
