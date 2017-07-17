@@ -28,4 +28,6 @@ interface ToolbarLogic : MvpLogic<ToolbarUi> {
   fun onClickNavigationIcon()
 
   fun onClickMenuItem(item: MenuItem): Boolean
+
+  fun onDoubleClick()
 }

@@ -18,7 +18,9 @@ package com.hippo.nimingban.component.paper
 
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.Toolbar
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
 import com.hippo.nimingban.R
 import com.hippo.nimingban.component.GroupPaper
@@ -74,5 +76,15 @@ class ToolbarPaper(
   override fun inflateMenu(resId: Int) {
     toolbar.menu.clear()
     toolbar.inflateMenu(resId)
+  }
+
+  override fun enableDoubleClick() {
+    val detector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+      override fun onDoubleTap(e: MotionEvent?): Boolean {
+        logic.onDoubleClick()
+        return true
+      }
+    })
+    toolbar.setOnTouchListener { _, event -> detector.onTouchEvent(event) }
   }
 }

@@ -56,4 +56,7 @@ interface ToolbarUi : MvpUi {
 
   @StrategyType(value = SingleByMethod::class)
   fun inflateMenu(resId: Int)
+
+  @StrategyType(value = SingleByMethod::class)
+  fun enableDoubleClick()
 }

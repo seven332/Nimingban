@@ -79,6 +79,7 @@ class ThreadsScene : NmbScene() {
       view.setTitle(R.string.app_name)
       view.setNavigationIcon(R.drawable.menu_white_x24)
       view.inflateMenu(R.menu.threads)
+      view.enableDoubleClick()
     }
 
     override fun onClickNavigationIcon() {
@@ -87,11 +88,18 @@ class ThreadsScene : NmbScene() {
 
     override fun onClickMenuItem(item: MenuItem): Boolean {
       when (item.itemId) {
+        // TODO handle more item
         R.id.action_sort -> {
           stage?.pushScene(SortForumsScene())
           return true
         }
         else -> return false
+      }
+    }
+
+    override fun onDoubleClick() {
+      if (!threads.isLoading()) {
+        threads.refresh()
       }
     }
   }

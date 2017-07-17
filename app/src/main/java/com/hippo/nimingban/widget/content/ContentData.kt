@@ -129,6 +129,14 @@ abstract class ContentData<T : Any> : ContentLogic, Iterable<T> {
 
   private fun isMaxReached() = endPage >= maxPage
 
+  /**
+   * Returns `true` if there is a loading task running.
+   */
+  fun isLoading() = requireId != INVALID_ID
+
+  /**
+   * Returns `true` if it's under restoring.
+   */
   fun isRestoring() = requireId != INVALID_ID && requireType == TYPE_RESTORE
 
   /**

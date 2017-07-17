@@ -71,7 +71,11 @@ abstract class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
     activity?.snack(message)
   }
 
+  fun refresh() = data.goTo(0)
+
   override fun isVirtualForum() = forum?.isVirtual() ?: false
+
+  fun isLoading() = data.isLoading()
 
   override fun onClickThread(thread: Thread) {
     // TODO("not implemented")
