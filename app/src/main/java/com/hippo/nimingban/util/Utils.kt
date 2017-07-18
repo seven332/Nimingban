@@ -16,19 +16,12 @@
 
 package com.hippo.nimingban.util
 
-import android.content.Context
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import android.support.annotation.AttrRes
-import android.support.annotation.PluralsRes
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v7.content.res.AppCompatResources
 import com.facebook.common.memory.PooledByteBuffer
 import com.facebook.common.memory.PooledByteBufferInputStream
-import com.hippo.android.resource.AttrResources
 import com.hippo.html.Html
 import java.io.File
 
@@ -51,24 +44,6 @@ inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
 }
 
 fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!
-
-fun Context.attrColor(@AttrRes resId: Int) = AttrResources.getAttrColor(this, resId)
-
-fun Context.attrDimensionPixelSize(@AttrRes resId: Int) = AttrResources.getAttrDimensionPixelSize(this, resId)
-
-fun Context.string(@StringRes resId: Int) = getString(resId)!!
-
-fun Context.string(@StringRes resId: Int, vararg formatArgs: Any) = getString(resId, *formatArgs)!!
-
-fun Context.quantityString(@PluralsRes id: Int, quantity: Int) = resources.getQuantityString(id, quantity)!!
-
-fun Context.quantityString(@PluralsRes id: Int, quantity: Int, vararg formatArgs: Any) = resources.getQuantityString(id, quantity, *formatArgs)!!
-
-fun Context.color(resId: Int) = ContextCompat.getColor(this, resId)
-
-fun Context.dimensionPixelSize(resId: Int) = resources.getDimensionPixelSize(resId)
-
-fun Context.drawable(resId: Int) = AppCompatResources.getDrawable(this, resId)!!
 
 fun StateListDrawable.addState(drawable: Drawable, vararg states: Int) = addState(states, drawable)
 
