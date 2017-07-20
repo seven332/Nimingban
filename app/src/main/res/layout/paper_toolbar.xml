@@ -29,7 +29,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
   <FrameLayout
-    android:id="@+id/toolbar_content_container"
+    android:id="@+id/toolbar_container"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1">

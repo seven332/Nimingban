@@ -17,6 +17,7 @@
 package com.hippo.nimingban.component.scene
 
 import android.os.Bundle
+import com.hippo.nimingban.client.data.Forum
 import com.hippo.nimingban.client.data.Reference
 import com.hippo.nimingban.client.data.Reply
 import com.hippo.nimingban.client.data.Thread
@@ -53,6 +54,22 @@ private fun galleryNmb(nmbImage: String?): GalleryScene {
   val args = Bundle()
   args.putString(GalleryScene.KEY_NMB_IMAGE, nmbImage)
   val scene = GalleryScene()
+  scene.setArgs(args)
+  return scene
+}
+
+fun send(forum: Forum): SendScene {
+  val args = Bundle()
+  args.putParcelable(SendScene.KEY_FORUM, forum)
+  val scene = SendScene()
+  scene.setArgs(args)
+  return scene
+}
+
+fun send(threadId: String): SendScene {
+  val args = Bundle()
+  args.putString(SendScene.KEY_THREAD_ID, threadId)
+  val scene = SendScene()
   scene.setArgs(args)
   return scene
 }

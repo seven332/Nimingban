@@ -41,7 +41,28 @@ open class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
 
   private val data = ThreadsData()
 
-  private var forum: Forum? = null
+  var forum: Forum? = null
+    set(value) {
+      val oldForum = field
+      field = value
+      hasSetForum = true
+
+      val forumHungOn = this.forumHungOn
+      if (forumHungOn != null) {
+        // Continue what's hung on
+        this.forumHungOn = null
+        data.requestThreads(forumHungOn.first, forumHungOn.second)
+      } else if (!data.isRestoring()) {
+        // It's not in restoring, just go to first page if it's a different forum
+        if (oldForum?.id != value?.id) {
+          data.goTo(0)
+        }
+      } else {
+        // It's in restoring, wait for next requiring
+      }
+    }
+
+
   private var hasSetForum = false
   private var forumHungOn: Pair<Int, Int>? = null
 
@@ -79,28 +100,6 @@ open class ThreadsPen : NmbPen<ThreadsUi>(), ThreadsLogic {
     // Call restore first
     // The next request should wait for setForum()
     data.restore()
-  }
-
-  fun getForum() = forum
-
-  fun setForum(forum: Forum?) {
-    val oldForum = this.forum
-    this.forum = forum
-    hasSetForum = true
-
-    val forumHungOn = this.forumHungOn
-    if (forumHungOn != null) {
-      // Continue what's hung on
-      this.forumHungOn = null
-      data.requestThreads(forumHungOn.first, forumHungOn.second)
-    } else if (!data.isRestoring()) {
-      // It's not in restoring, just go to first page if it's a different forum
-      if (oldForum?.id != forum?.id) {
-        data.goTo(0)
-      }
-    } else {
-      // It's in restoring, wait for next requiring
-    }
   }
 
 

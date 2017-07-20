@@ -37,6 +37,9 @@
 
   <string name="gallery_title">Gallery</string>
 
+  <string name="send_post">Post</string>
+  <string name="send_reply">Post</string>
+  <string name="send_report">Report</string>
   <string name="send_more_fields">More fields</string>
   <string name="send_forum">Forum</string>
   <string name="send_title">Title</string>

@@ -16,35 +16,14 @@
 
 package com.hippo.nimingban.util
 
-import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import android.support.v4.graphics.drawable.DrawableCompat
-import com.facebook.common.memory.PooledByteBuffer
-import com.facebook.common.memory.PooledByteBufferInputStream
-import com.hippo.html.Html
-import java.io.File
 
 /*
- * Created by Hippo on 6/5/2017.
+ * Created by Hippo on 2017/7/18.
  */
 
-const val INVALID_ID = 0
+fun Drawable.wrap(): Drawable = DrawableCompat.wrap(this)
 
-const val INVALID_INDEX = -1
-
-fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }
-
-inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
-  var result = false
-  for (element in this) {
-    result = action(element) || result
-  }
-  return result
-}
-
-fun String.fromHtml() = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)!!
-
-fun File.child(name: String) = File(this, name)
-
-fun PooledByteBuffer.stream() = PooledByteBufferInputStream(this)
+fun StateListDrawable.addState(drawable: Drawable, vararg states: Int): Unit = addState(states, drawable)

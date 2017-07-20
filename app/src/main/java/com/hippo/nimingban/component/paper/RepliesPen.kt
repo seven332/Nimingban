@@ -39,7 +39,8 @@ open class RepliesPen : NmbPen<RepliesUi>(), RepliesLogic {
 
   private val data = RepliesData()
 
-  private var threadId: String? = null
+  var threadId: String? = null
+    private set
   // The first reply in list
   private var reply: Reply? = null
   private var replyId: String? = null

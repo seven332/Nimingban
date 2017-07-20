@@ -16,7 +16,6 @@
 
 package com.hippo.nimingban.component.paper
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hippo.nimingban.component.GroupPaper
@@ -73,12 +72,31 @@ fun GroupPaper<*>.toolbar(
     logic: ToolbarLogic,
     containerId: Int,
     init: ToolbarPaper.() -> Unit
-) : ToolbarPaper {
+) = inflateChild(containerId) { container -> ToolbarPaper(logic).also { it.create(inflater, container) } }.apply { init() }
 
-  Log.d("TAG", "Papers.toolbar this = $this")
+fun GroupPaper<*>.bottomTool(
+    logic: BottomToolLogic,
+    container: ViewGroup,
+    init: BottomToolPaper.() -> Unit
+) = BottomToolPaper(logic).also { it.create(inflater, container); it.init() }
 
-  return inflateChild(containerId) { container -> ToolbarPaper(logic).also { it.create(inflater, container) } }.apply { init() }
-}
+fun GroupPaper<*>.bottomTool(
+    logic: BottomToolLogic,
+    containerId: Int,
+    init: BottomToolPaper.() -> Unit
+) = inflateChild(containerId) { container -> BottomToolPaper(logic).also { it.create(inflater, container) } }.apply { init() }
+
+fun GroupPaper<*>.scroll(
+    logic: ScrollLogic,
+    container: ViewGroup,
+    init: ScrollPaper.() -> Unit
+) = ScrollPaper(logic).also { it.create(inflater, container); it.init() }
+
+fun GroupPaper<*>.scroll(
+    logic: ScrollLogic,
+    containerId: Int,
+    init: ScrollPaper.() -> Unit
+) = inflateChild(containerId) { container -> ScrollPaper(logic).also { it.create(inflater, container) } }.apply { init() }
 
 fun GroupPaper<*>.threads(
     logic: ThreadsLogic,
@@ -104,3 +122,8 @@ fun GroupPaper<*>.gallery(
     logic: GalleryLogic,
     containerId: Int
 ) = inflateChild(containerId) { container -> GalleryPaper(logic).also { it.create(inflater, container) } }
+
+fun GroupPaper<*>.send(
+    logic: SendLogic,
+    containerId: Int
+) = inflateChild(containerId) { container -> SendPaper(logic).also { it.create(inflater, container) } }

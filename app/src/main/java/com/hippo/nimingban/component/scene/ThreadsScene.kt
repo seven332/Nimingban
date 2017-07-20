@@ -91,11 +91,18 @@ class ThreadsScene : NmbScene() {
     override fun onClickMenuItem(item: MenuItem): Boolean {
       when (item.itemId) {
         // TODO handle more item
+        R.id.action_post -> {
+          val forum = threads.forum
+          if (forum != null) {
+            stage?.pushScene(send(forum))
+          }
+          return true
+        }
         R.id.action_sort -> {
           stage?.pushScene(SortForumsScene())
           return true
         }
-        else -> return false
+        else -> return super.onClickMenuItem(item)
       }
     }
 
@@ -115,7 +122,7 @@ class ThreadsScene : NmbScene() {
 
     override fun onClickThread(thread: Thread) {
       super.onClickThread(thread)
-      stage?.pushScene(replies(thread, getForum()?.name))
+      stage?.pushScene(replies(thread, forum?.name))
     }
 
     override fun onClickThumb(thread: Thread) {
@@ -129,7 +136,7 @@ class ThreadsScene : NmbScene() {
     override fun onSelectForum(forum: Forum?, byUser: Boolean) {
       super.onSelectForum(forum, byUser)
 
-      threads.setForum(forum)
+      threads.forum = forum
 
       val title = forum?.displayedName
       if (title != null) {

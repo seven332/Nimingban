@@ -35,7 +35,7 @@ class ToolbarPaper(
 ) : GroupPaper<ToolbarUi>(logic), ToolbarUi {
 
   companion object {
-    const val CONTAINER_ID = R.id.toolbar_content_container
+    const val CONTAINER_ID = R.id.toolbar_container
   }
 
   private lateinit var toolbar: Toolbar

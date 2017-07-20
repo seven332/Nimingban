@@ -19,6 +19,7 @@ package com.hippo.nimingban.component.scene
 import android.os.Bundle
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
+import android.view.MenuItem
 import com.hippo.nimingban.R
 import com.hippo.nimingban.activity.NmbActivity
 import com.hippo.nimingban.client.data.Reply
@@ -76,6 +77,19 @@ class RepliesScene : NmbScene() {
 
     override fun onClickNavigationIcon() {
       pop()
+    }
+
+    override fun onClickMenuItem(item: MenuItem): Boolean {
+      when (item.itemId) {
+        R.id.action_reply -> {
+          val threadId = replies.threadId
+          if (threadId != null) {
+            stage?.pushScene(send(threadId))
+          }
+          return true
+        }
+        else -> return super.onClickMenuItem(item)
+      }
     }
   }
 
