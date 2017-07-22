@@ -71,7 +71,7 @@ internal fun parseError(body: String): Throwable? {
   } catch (e: JsonSyntaxException) { /* Ignore */ }
 
   // Sometimes the server may return a string in json format
-  if (body.length >= 2 && body.startsWith('\'') && body.endsWith('\'')) {
+  if (body.length >= 2 && body.startsWith('"') && body.endsWith('"')) {
     try {
       return GeneralException(GSON.fromJson(body, String::class.java))
     } catch (e: JsonSyntaxException) { /* Ignore */ }
