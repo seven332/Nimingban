@@ -205,6 +205,10 @@
     <string name="share_image">Share image</string>
     <string name="cant_save_image">Failed to save the image. </string>
 
+    <string name="qr_scan_tip">Align the cookie QR code</string>
+    <string name="qr_scan_succeed">Cookie added!</string>
+    <string name="qr_scan_invalid">Invalid cookie QR code</string>
+
     <string name="settings">Settings</string>
     <string name="display_settings_title">Display</string>
     <string name="config_settings_title">Config</string>
@@ -239,6 +243,9 @@
     <string name="main_ac_cookies_summary_no">Theoretically speaking, you don\'t have any cookies</string>
     <string name="main_ac_cookies_summary_valid">Theoretically speaking, your cookies will be invalid in %s</string>
     <string name="main_ac_cookies_summary_forever">Theoretically speaking, you have everlasting cookies</string>
+    <string name="main_add_cookies">Add cookies</string>
+    <string name="main_add_cookies_summary">Scan QR code to add cookies</string>
+    <string name="main_add_cookies_denied">Can\'t scan QR code without using camera</string>
     <string name="main_save_cookies">Save cookies</string>
     <string name="main_save_cookies_summary">Save cookies to external storage</string>
     <string name="main_restore_cookies">Restore cookies</string>

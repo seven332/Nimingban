@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban.ui;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Dialog;
@@ -38,6 +39,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -96,9 +99,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SettingsActivity extends AbsPreferenceActivity {
+public class SettingsActivity extends AbsPreferenceActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final int REQUEST_CODE_FRAGMENT = 0;
+    private static final int REQUEST_CODE_CAMERA = 0;
 
     private static final String[] ENTRY_FRAGMENTS = {
             DisplayFragment.class.getName(),
@@ -236,6 +240,21 @@ public class SettingsActivity extends AbsPreferenceActivity {
             setResult(resultCode);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(this, QRCodeScanActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, R.string.main_add_cookies_denied, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -417,12 +436,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
 
         private static final String KEY_AC_COOKIES = "ac_cookies";
+        private static final String KEY_ADD_COOKIES = "add_cookies";
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
         private static final String KEY_APP_ICON = "app_icon";
         private static final String KEY_ABOUT_ANALYSIS = "about_analysis";
 
         private Preference mACCookies;
+        private Preference mAddCookies;
         private Preference mSaveCookies;
         private Preference mRestoreCookies;
         private Preference mFeedId;
@@ -468,6 +489,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             addPreferencesFromResource(R.xml.config_settings);
 
             mACCookies = findPreference(KEY_AC_COOKIES);
+            mAddCookies = findPreference(KEY_ADD_COOKIES);
             mSaveCookies = findPreference(KEY_SAVE_COOKIES);
             mRestoreCookies = findPreference(KEY_RESTORE_COOKIES);
             mFeedId = findPreference(Settings.KEY_FEED_ID);
@@ -477,6 +499,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mAboutAnalysis = findPreference(KEY_ABOUT_ANALYSIS);
 
             mACCookies.setOnPreferenceClickListener(this);
+            mAddCookies.setOnPreferenceClickListener(this);
             mSaveCookies.setOnPreferenceClickListener(this);
             mRestoreCookies.setOnPreferenceClickListener(this);
             mFeedId.setOnPreferenceClickListener(this);
@@ -507,6 +530,15 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     ensurePopupWindow();
                 }
             });
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            long maxAge = ACSite.getInstance().getCookieMaxAge(getActivity());
+            setACCookiesSummary(-2);
+            setACCookiesSummary(maxAge);
         }
 
         private void startTimingLife(long millisInFuture) {
@@ -898,6 +930,16 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     }
                 } else {
                     mClick = 0;
+                }
+                return true;
+            } else if (KEY_ADD_COOKIES.equals(key)) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+                } else {
+                    Intent intent = new Intent(getActivity(), QRCodeScanActivity.class);
+                    getActivity().startActivity(intent);
                 }
                 return true;
             } else if (KEY_SAVE_COOKIES.equals(key)) {

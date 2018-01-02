@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name="com.hippo.nimingban.NMBApplication"
@@ -170,6 +171,12 @@
             android:theme="@style/NormalActivity"
             android:configChanges="screenSize|uiMode|orientation"
             android:screenOrientation="unspecified"/>
+
+        <activity
+          android:name="com.hippo.nimingban.ui.QRCodeScanActivity"
+          android:theme="@style/NormalActivity"
+          android:configChanges="screenSize|uiMode|orientation"
+          android:screenOrientation="unspecified"/>
 
         <provider
           android:name="com.hippo.nimingban.content.UniversalProvider"

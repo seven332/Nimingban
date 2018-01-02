@@ -24,6 +24,11 @@
         android:title="@string/main_ac_cookies"/>
 
     <Preference
+        android:key="add_cookies"
+        android:title="@string/main_add_cookies"
+        android:summary="@string/main_add_cookies_summary"/>
+
+    <Preference
         android:key="save_cookies"
         android:title="@string/main_save_cookies"
         android:summary="@string/main_save_cookies_summary"/>
