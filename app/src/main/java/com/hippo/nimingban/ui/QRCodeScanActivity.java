@@ -20,22 +20,45 @@ package com.hippo.nimingban.ui;
  * Created by Hippo on 2018/1/1.
  */
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.view.View;
 import android.widget.Toast;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.RGBLuminanceSource;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
+import com.hippo.app.ProgressDialogBuilder;
+import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.ac.ACUrl;
 import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.unifile.UniFile;
 import java.net.HttpCookie;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONObject;
 
 public class QRCodeScanActivity extends TranslucentActivity implements QRCodeReaderView.OnQRCodeReadListener {
 
+  private static final int REQUEST_CODE_PICK_IMAGE = 0;
+
   private QRCodeReaderView qrCodeReaderView;
+
+  private AlertDialog progressDialog;
 
   @Override
   protected int getLightThemeResId() {
@@ -55,6 +78,19 @@ public class QRCodeScanActivity extends TranslucentActivity implements QRCodeRea
     qrCodeReaderView = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
     qrCodeReaderView.setOnQRCodeReadListener(this);
     qrCodeReaderView.setBackCamera();
+
+    findViewById(R.id.choose_pic).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        try {
+          startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+        } catch (Exception e) {
+          // Ignore
+        }
+      }
+    });
   }
 
   @Override
@@ -70,11 +106,82 @@ public class QRCodeScanActivity extends TranslucentActivity implements QRCodeRea
   }
 
   @Override
-  public void onQRCodeRead(String text, PointF[] points) {
-    if (isFinishing()) {
-      return;
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == REQUEST_CODE_PICK_IMAGE) {
+      if (resultCode == RESULT_OK && data.getData() != null) {
+        scanImage(data.getData());
+      }
+    } else {
+      super.onActivityResult(requestCode, resultCode, data);
     }
+  }
 
+  @SuppressLint("StaticFieldLeak")
+  private void scanImage(final Uri uri) {
+    if (progressDialog != null) return;
+    progressDialog = new ProgressDialogBuilder(this)
+        .setTitle(R.string.please_wait)
+        .setMessage(R.string.qr_scan_processing)
+        .setCancelable(false)
+        .show();
+
+    new AsyncTask<Void, Void, String>() {
+      @Override
+      protected String doInBackground(Void... voids) {
+        UniFile file = UniFile.fromUri(QRCodeScanActivity.this, uri);
+        if (file == null) return null;
+
+        try {
+          // ZXing can't process large image
+          Bitmap bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), 1024, 1024);
+          if (bitmap == null) return null;
+
+          int width = bitmap.getWidth();
+          int height = bitmap.getHeight();
+          int[] pixels = new int[width * height];
+          bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+          bitmap.recycle();
+
+          RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
+          final HybridBinarizer hybBin = new HybridBinarizer(source);
+          final BinaryBitmap bBitmap = new BinaryBitmap(hybBin);
+
+          Map<DecodeHintType, Boolean> hints = new HashMap<>();
+          hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+          QRCodeReader reader = new QRCodeReader();
+          Result result = reader.decode(bBitmap, hints);
+
+          return result.getText();
+        } catch (Exception e) {
+          e.printStackTrace();
+          return null;
+        }
+      }
+
+      @Override
+      protected void onPostExecute(String text) {
+        if (progressDialog != null) {
+          progressDialog.dismiss();
+          progressDialog = null;
+        }
+
+        if (text != null) {
+          processCookieText(text);
+        } else {
+          Toast.makeText(QRCodeScanActivity.this, R.string.qr_scan_invalid, Toast.LENGTH_SHORT).show();
+        }
+      }
+    }.execute();
+  }
+
+  @Override
+  public void onQRCodeRead(String text, PointF[] points) {
+    if (!isFinishing()) {
+      processCookieText(text);
+    }
+  }
+
+  private void processCookieText(String text) {
     try {
       JSONObject jo = new JSONObject(text);
       String userhash = jo.getString("cookie");

@@ -206,6 +206,8 @@
     <string name="cant_save_image">Failed to save the image. </string>
 
     <string name="qr_scan_tip">Align the cookie QR code</string>
+    <string name="qr_scan_pic">Choose QR code from Album</string>
+    <string name="qr_scan_processing">Processing…</string>
     <string name="qr_scan_succeed">Cookie added!</string>
     <string name="qr_scan_invalid">Invalid cookie QR code</string>
 

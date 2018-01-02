@@ -15,21 +15,36 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  android:orientation="vertical">
 
-  <com.dlazaro66.qrcodereaderview.QRCodeReaderView
-    android:id="@+id/qrdecoderview"
+  <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="0dp"
+    android:layout_weight="1">
 
-  <TextView
-    android:layout_width="wrap_content"
+    <com.dlazaro66.qrcodereaderview.QRCodeReaderView
+      android:id="@+id/qrdecoderview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:text="@string/qr_scan_tip"
+      android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
+
+  </FrameLayout>
+
+  <Button
+    android:id="@+id/choose_pic"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:text="@string/qr_scan_tip"
-    android:textColor="@android:color/white"/>
+    android:text="@string/qr_scan_pic"
+    style="@style/Widget.AppCompat.Button.Borderless"/>
 
-</FrameLayout>
+</LinearLayout>

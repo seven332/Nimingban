@@ -199,6 +199,8 @@
     <string name="cant_save_image">无法保存图片</string>
 
     <string name="qr_scan_tip">请对准饼干二维码</string>
+    <string name="qr_scan_pic">从图片中读取二维码</string>
+    <string name="qr_scan_processing">处理中…</string>
     <string name="qr_scan_succeed">添加饼干成功！</string>
     <string name="qr_scan_invalid">无效的饼干二维码</string>
 
