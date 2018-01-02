@@ -128,7 +128,9 @@
     <string name="image_search">搜图</string>
 
     <string name="no_cookies">没有 Cookies</string>
-    <string name="no_cookies_ac">似乎你没有饼干。尝试获取饼干？</string>
+    <string name="no_cookies_ac">似乎你没有饼干。要来注册并获取饼干？</string>
+    <string name="register">注册</string>
+    <string name="add_cookies">添加饼干</string>
     <string name="i_dont_care">我不在意</string>
     <string name="getting_cookies">获取饼干中…</string>
     <string name="got_cookies">拿到饼干了！</string>

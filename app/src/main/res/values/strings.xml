@@ -129,6 +129,8 @@
 
     <string name="no_cookies">No cookies</string>
     <string name="no_cookies_ac">Seems that you don\'t have cookie of AC Nimingban. Get cookie now?</string>
+    <string name="register">Register</string>
+    <string name="add_cookies">Add cookies</string>
     <string name="i_dont_care">I don\'t care</string>
     <string name="getting_cookies">Trying to get Cookie…</string>
     <string name="got_cookies">Got it! </string>

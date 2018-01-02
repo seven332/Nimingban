@@ -53,7 +53,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.hippo.app.ProgressDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.SimpleHolder;
@@ -77,12 +76,14 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.ui.DoodleActivity;
 import com.hippo.nimingban.ui.DraftActivity;
 import com.hippo.nimingban.ui.GalleryActivity2;
+import com.hippo.nimingban.ui.QRCodeScanActivity;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.OpenUrlHelper;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
-import com.hippo.nimingban.widget.NMBEditText;
 import com.hippo.nimingban.widget.FontTextView;
+import com.hippo.nimingban.widget.NMBEditText;
 import com.hippo.ripple.Ripple;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
@@ -93,7 +94,6 @@ import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -743,14 +743,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
     }
 
     private void getCookies() {
-        showProgressDialog(R.string.getting_cookies);
-
-        NMBRequest request = new NMBRequest();
-        mNMBRequest = request;
-        request.setSite(mSite);
-        request.setMethod(NMBClient.METHOD_GET_COOKIE);
-        request.setCallback(new GetCookieListener());
-        mNMBClient.execute(request);
+        String url = "http://adnmb.com/Member/User/Index/sendRegister.html";
+        OpenUrlHelper.openUrl(getActivity(), url, false);
     }
 
     private void tryGettingCookies() {
@@ -761,6 +755,10 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
                     case DialogInterface.BUTTON_POSITIVE:
                         getCookies();
                         break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        Intent intent = new Intent(getActivity(), QRCodeScanActivity.class);
+                        startActivity(intent);
+                        break;
                     case DialogInterface.BUTTON_NEUTRAL:
                         doAction();
                         break;
@@ -770,8 +768,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
         new AlertDialog.Builder(getContext()).setTitle(R.string.no_cookies)
                 .setMessage(R.string.no_cookies_ac)
-                .setPositiveButton(android.R.string.ok, listener)
-                .setNegativeButton(android.R.string.cancel, listener)
+                .setPositiveButton(R.string.register, listener)
+                .setNegativeButton(R.string.add_cookies, listener)
                 .setNeutralButton(R.string.i_dont_care, listener).show();
     }
 
