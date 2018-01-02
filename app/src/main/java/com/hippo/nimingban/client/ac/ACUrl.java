@@ -23,7 +23,7 @@ public class ACUrl {
 
     public static final String APP_ID = "nimingban";
 
-    public static final String DOMAIN = "adnmb.com";
+    public static final String DOMAIN = "adnmb1.com";
 
     public static final String HOST = "http://" + DOMAIN;
 
