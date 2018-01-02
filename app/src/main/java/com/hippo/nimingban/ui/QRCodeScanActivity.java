@@ -20,13 +20,18 @@ package com.hippo.nimingban.ui;
  * Created by Hippo on 2018/1/1.
  */
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
@@ -46,15 +51,18 @@ import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.unifile.UniFile;
+import org.json.JSONObject;
 import java.net.HttpCookie;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.json.JSONObject;
 
-public class QRCodeScanActivity extends TranslucentActivity implements QRCodeReaderView.OnQRCodeReadListener {
+public class QRCodeScanActivity extends TranslucentActivity
+        implements QRCodeReaderView.OnQRCodeReadListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
   private static final int REQUEST_CODE_PICK_IMAGE = 0;
+  private static final int REQUEST_CODE_CAMERA = 0;
 
   private QRCodeReaderView qrCodeReaderView;
 
@@ -91,6 +99,25 @@ public class QRCodeScanActivity extends TranslucentActivity implements QRCodeRea
         }
       }
     });
+
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
+        PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this,
+          new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == REQUEST_CODE_CAMERA) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        recreate();
+      } else {
+        Toast.makeText(this, R.string.main_add_cookies_denied, Toast.LENGTH_SHORT).show();
+      }
+    } else {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
   }
 
   @Override
