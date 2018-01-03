@@ -37,9 +37,11 @@ import android.view.View;
 import android.widget.Toast;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FormatException;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.RGBLuminanceSource;
-import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.hippo.app.ProgressDialogBuilder;
@@ -158,30 +160,35 @@ public class QRCodeScanActivity extends TranslucentActivity
         UniFile file = UniFile.fromUri(QRCodeScanActivity.this, uri);
         if (file == null) return null;
 
+        // ZXing can't process large image
+        Bitmap bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), 1024, 1024);
+        if (bitmap == null) return null;
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        bitmap.recycle();
+
+        RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
+        final HybridBinarizer hybBin = new HybridBinarizer(source);
+        final BinaryBitmap bBitmap = new BinaryBitmap(hybBin);
+
+        QRCodeReader reader = new QRCodeReader();
+        Map<DecodeHintType, Boolean> hints = new HashMap<>();
+        hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+
         try {
-          // ZXing can't process large image
-          Bitmap bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), 1024, 1024);
-          if (bitmap == null) return null;
-
-          int width = bitmap.getWidth();
-          int height = bitmap.getHeight();
-          int[] pixels = new int[width * height];
-          bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-          bitmap.recycle();
-
-          RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
-          final HybridBinarizer hybBin = new HybridBinarizer(source);
-          final BinaryBitmap bBitmap = new BinaryBitmap(hybBin);
-
-          Map<DecodeHintType, Boolean> hints = new HashMap<>();
-          hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
-          QRCodeReader reader = new QRCodeReader();
-          Result result = reader.decode(bBitmap, hints);
-
-          return result.getText();
-        } catch (Exception e) {
-          e.printStackTrace();
-          return null;
+          return reader.decode(bBitmap, hints).getText();
+        } catch (NotFoundException | FormatException | ChecksumException e) {
+          // Try PURE_BARCODE
+          hints.put(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
+          reader.reset();
+          try {
+            return reader.decode(bBitmap, hints).getText();
+          } catch (NotFoundException | FormatException | ChecksumException ee) {
+            return null;
+          }
         }
       }
 
