@@ -105,6 +105,11 @@ public class ACFeed extends Post {
     }
 
     @Override
+    public String getNMBFid() {
+        return fid;
+    }
+
+    @Override
     public String getNMBPostId() {
         return id;
     }

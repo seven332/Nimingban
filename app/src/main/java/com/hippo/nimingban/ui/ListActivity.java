@@ -78,6 +78,7 @@ import com.hippo.nimingban.client.data.Forum;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.nimingban.client.data.UpdateStatus;
+import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.LinkMovementMethod2;
@@ -1087,7 +1088,12 @@ public final class ListActivity extends AbsActivity
         public void onBindViewHolder(ListHolder holder, int position) {
             Post post = mPostHelper.getDataAt(position);
             holder.leftText.setText(post.getNMBDisplayUsername());
-            holder.centerText.setText("No." + post.getNMBId());
+            ACForumRaw forum = DB.getACForumForForumid(post.getNMBFid());
+            if (forum != null) {
+                holder.centerText.setText(forum.getDisplayname());
+            } else {
+                holder.centerText.setText("No." + post.getNMBId());
+            }
             holder.rightText.setText(ReadableTime.getDisplayTime(post.getNMBTime()));
             holder.content.setText(post.getNMBDisplayContent());
             holder.bottomText.setText(post.getNMBReplyDisplayCount());

@@ -18,6 +18,8 @@ package com.hippo.nimingban.client.data;
 
 public abstract class Post extends Reply {
 
+    public abstract String getNMBFid();
+
     public abstract int getNMBReplyCount();
 
     public abstract CharSequence getNMBReplyDisplayCount();
