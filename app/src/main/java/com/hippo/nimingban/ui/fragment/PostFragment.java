@@ -213,10 +213,12 @@ public class PostFragment extends BaseFragment
         ViewGroup contentView = (ViewGroup) inflater.inflate(R.layout.fragment_post, contentPanel, true);
 
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        // I like hardcode
+        mToolbar.setTitle("A岛·adnmb.com");
         if (mId != null) {
-            mToolbar.setTitle(mSite.getPostTitle(getContext(), mId));
+            mToolbar.setSubtitle(mSite.getPostTitle(getContext(), mId));
         } else {
-            mToolbar.setTitle(getString(R.string.thread));
+            mToolbar.setSubtitle(getString(R.string.thread));
         }
         mToolbar.setNavigationIcon(DrawableManager.getDrawable(getContext(), R.drawable.v_arrow_left_dark_x24));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -959,7 +961,7 @@ public class PostFragment extends BaseFragment
         public void onSuccess(ACReference result) {
             mReplyId = null;
             mId = result.postId;
-            mToolbar.setTitle(mSite.getPostTitle(getContext(), mId));
+            mToolbar.setSubtitle(mSite.getPostTitle(getContext(), mId));
             mReplyHelper.refresh();
         }
 

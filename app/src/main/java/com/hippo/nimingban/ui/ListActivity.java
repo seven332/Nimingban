@@ -131,6 +131,7 @@ public final class ListActivity extends AbsActivity
 
     private NMBClient mNMBClient;
 
+    private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private ContentLayout mContentLayout;
     private EasyRecyclerView mRecyclerView;
@@ -176,7 +177,7 @@ public final class ListActivity extends AbsActivity
 
         mNMBClient = NMBApplication.getNMBClient(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mContentLayout = (ContentLayout) mDrawerLayout.findViewById(R.id.content_layout);
         mRecyclerView = mContentLayout.getRecyclerView();
@@ -191,14 +192,16 @@ public final class ListActivity extends AbsActivity
                 return true;
             }
         });
-        toolbar.setOnTouchListener(new View.OnTouchListener() {
+        mToolbar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 gestureDetector.onTouchEvent(event);
                 return true;
             }
         });
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
+        // I like hardcode
+        setTitle("A岛·adnmb.com");
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
@@ -853,9 +856,9 @@ public final class ListActivity extends AbsActivity
 
     private void updateTitleByForum(Forum forum) {
         if (forum != null) {
-            setTitle(forum.getNMBDisplayname());
+            mToolbar.setSubtitle(forum.getNMBDisplayname());
         } else {
-            setTitle(getString(R.string.app_name));
+            mToolbar.setSubtitle(null);
         }
     }
 
