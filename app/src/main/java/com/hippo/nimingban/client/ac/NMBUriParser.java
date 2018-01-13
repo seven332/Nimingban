@@ -31,7 +31,9 @@ public final class NMBUriParser {
     private static final String[] AC_HOSTS = {
             "h.nimingban.com",
             "h.acfun.tv",
-            "hacfun.tv"
+            "hacfun.tv",
+            "adnmb.com",
+            "adnmb1.com",
     };
 
     private static final Pattern ID_PATTERN = Pattern.compile("^(?:/m)?/t/(\\d+)");

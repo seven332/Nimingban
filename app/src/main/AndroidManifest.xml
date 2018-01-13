@@ -76,6 +76,8 @@
                 <data android:host="h.nimingban.com"/>
                 <data android:host="h.acfun.tv"/>
                 <data android:host="hacfun.tv"/>
+                <data android:host="adnmb.com"/>
+                <data android:host="adnmb1.com"/>
                 <data android:pathPrefix="/t/"/>
                 <data android:pathPrefix="/m/t/"/>
             </intent-filter>
