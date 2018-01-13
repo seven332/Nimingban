@@ -20,22 +20,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_rule"
-        android:title="@string/rule"
-        android:icon="@drawable/v_notice_outline_dark_x24"
-        app:showAsAction="always"/>
-
-    <item
         android:id="@+id/action_create_post"
         android:title="@string/create_post"
         android:icon="@drawable/v_message_add_outline_dark_x24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_refresh"
-        android:title="@string/refresh"
-        android:icon="@drawable/v_refresh_dark_x24"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/action_rule"
+        android:title="@string/rule"
+        android:icon="@drawable/v_notice_outline_dark_x24"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_sort_forums"

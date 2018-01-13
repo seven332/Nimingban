@@ -23,36 +23,36 @@
         android:id="@+id/action_reply"
         android:title="@string/reply"
         android:icon="@drawable/v_reply_dark_x24"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_go_to"
         android:title="@string/go_to"
         android:icon="@drawable/v_go_to_dark_x24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_add_feed"
         android:title="@string/add_feed"
         android:icon="@drawable/v_board_add_dark_x24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_remove_feed"
         android:title="@string/remove_feed"
         android:icon="@drawable/v_board_remove_dark_x24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_share"
         android:title="@string/share"
         android:icon="@drawable/v_share_dark_x24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_open_in_other_app"
         android:title="@string/open_in_other_app"
         android:icon="@drawable/v_google_chrome_dark_x24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
 </menu>
