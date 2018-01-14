@@ -200,7 +200,7 @@ public final class ListActivity extends AbsActivity
         });
         setSupportActionBar(mToolbar);
         // I like hardcode
-        setTitle("A岛·adnmb.com");
+        mToolbar.setSubtitle("A岛·adnmb.com");
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
@@ -850,9 +850,9 @@ public final class ListActivity extends AbsActivity
 
     private void updateTitleByForum(Forum forum) {
         if (forum != null) {
-            mToolbar.setSubtitle(forum.getNMBDisplayname());
+            setTitle(forum.getNMBDisplayname());
         } else {
-            mToolbar.setSubtitle(null);
+            setTitle(null);
         }
     }
 
