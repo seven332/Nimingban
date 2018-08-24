@@ -395,7 +395,7 @@ public final class Settings {
 
     public static final String[] ICON_ACTIVITY_ARRAY = {
             "com.hippo.nimingban.ui.ListActivity",
-            "com.hippo.nimingban.ui.ListActivity-ibuki",
+            "com.hippo.nimingban.ui.ListActivityIbuki",
     };
 
     public static String getDefaultIconActivity() {

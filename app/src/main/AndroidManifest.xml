@@ -49,7 +49,7 @@
         </activity>
 
         <activity-alias
-            android:name="com.hippo.nimingban.ui.ListActivity-ibuki"
+            android:name="com.hippo.nimingban.ui.ListActivityIbuki"
             android:targetActivity="com.hippo.nimingban.ui.ListActivity"
             android:icon="@mipmap/ic_launcher_ibuki"
             android:enabled="false">
