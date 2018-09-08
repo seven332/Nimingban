@@ -100,6 +100,11 @@
     <string name="text_to_image">生成文字图片</string>
     <string name="take_photo">拍个照</string>
 
+    <string name="ignore_post">永久屏蔽此串</string>
+
+    <string name="ignore_post_confirm_title">你确定要永久屏蔽此串吗？</string>
+    <string name="ignore_post_confirm_message">今后你只能通过输入此串串号进入</string>
+
     <string name="comment_copied_clipboard">评论文字已复制到剪贴板</string>
 
     <string name="cant_get_the_reference">无法找到引用</string>
@@ -271,6 +276,9 @@
     <string name="main_fix_image_urls">修正图片链接</string>
     <string name="main_fix_image_urls_summary_on">使用默认图片链接</string>
     <string name="main_fix_image_urls_summary_off">通过 API 获取图片链接。若图片加载失败，请启用该项。</string>
+    <string name="main_restore_ignored_post">恢复所有已屏蔽的串</string>
+    <string name="main_restore_ignored_post_summary">你之前所屏蔽的串将会重新出现</string>
+    <string name="main_restore_ignored_post_successfully">已恢复所有被屏蔽的串</string>
     <string name="main_analysis">启用数据统计</string>
     <string name="main_about_analysis">关于数据统计</string>
     <string name="main_author">作者</string>

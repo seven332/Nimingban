@@ -33,6 +33,8 @@ import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.client.ac.data.ACPost;
+import com.hippo.nimingban.client.data.Post;
 import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.widget.ProgressView;

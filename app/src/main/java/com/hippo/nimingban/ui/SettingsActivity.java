@@ -444,6 +444,7 @@ public class SettingsActivity extends AbsPreferenceActivity
         private static final String KEY_SAVE_COOKIES = "save_cookies";
         private static final String KEY_RESTORE_COOKIES = "restore_cookies";
         private static final String KEY_APP_ICON = "app_icon";
+        private static final String KEY_RESTORE_IGNORED_POSTS = "restore_ignored_posts";
         private static final String KEY_ABOUT_ANALYSIS = "about_analysis";
 
         private Preference mACCookies;
@@ -454,6 +455,7 @@ public class SettingsActivity extends AbsPreferenceActivity
         private Preference mImageSaveLocation;
         private Preference mChaosLevel;
         private IconListPreference mAppIcon;
+        private Preference mRestoreIgnoredPosts;
         private Preference mAboutAnalysis;
 
         private long mMaxAgeDiff = 0;
@@ -507,6 +509,7 @@ public class SettingsActivity extends AbsPreferenceActivity
             mImageSaveLocation = findPreference(Settings.KEY_IMAGE_SAVE_LOACTION);
             mChaosLevel = findPreference(Settings.KEY_CHAOS_LEVEL);
             mAppIcon = (IconListPreference) findPreference(KEY_APP_ICON);
+            mRestoreIgnoredPosts = findPreference(KEY_RESTORE_IGNORED_POSTS);
             mAboutAnalysis = findPreference(KEY_ABOUT_ANALYSIS);
 
             mACCookies.setOnPreferenceClickListener(this);
@@ -515,6 +518,7 @@ public class SettingsActivity extends AbsPreferenceActivity
             mRestoreCookies.setOnPreferenceClickListener(this);
             mFeedId.setOnPreferenceClickListener(this);
             mImageSaveLocation.setOnPreferenceClickListener(this);
+            mRestoreIgnoredPosts.setOnPreferenceClickListener(this);
             mAboutAnalysis.setOnPreferenceClickListener(this);
 
             mChaosLevel.setOnPreferenceChangeListener(this);
@@ -1012,6 +1016,10 @@ public class SettingsActivity extends AbsPreferenceActivity
                 } else {
                     showDirPickerDialogL();
                 }
+            } else if (KEY_RESTORE_IGNORED_POSTS.equals(key)) {
+                // TODO: Need dialog?
+                Settings.resetIgnoredPosts();
+                Toast.makeText(getActivity(), R.string.main_restore_ignored_post_successfully, Toast.LENGTH_SHORT).show();
             } else if (KEY_ABOUT_ANALYSIS.equals(key)) {
                 try {
                     CharSequence message = Html.fromHtml(IOUtils.readString(

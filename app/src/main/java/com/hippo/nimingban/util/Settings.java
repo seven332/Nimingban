@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.ArraySet;
 
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.unifile.UniFile;
@@ -40,6 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Settings {
 
@@ -92,6 +95,15 @@ public final class Settings {
 
     public static void putString(String key, String value) {
         sSettingsPre.edit().putString(key, value).apply();
+    }
+
+    public static Set<String> getStringSet(String key, Set<String> defValue) {
+        return sSettingsPre.getStringSet(key, defValue);
+    }
+
+    public static void putStringSet(String key, Set<String> value) {
+        sSettingsPre.edit().remove(key).apply(); // See: https://bon-app-etit.blogspot.com/2013/08/android-bug-stringset-in.html
+        sSettingsPre.edit().putStringSet(key, value).apply();
     }
 
     public static int getIntFromStr(String key, int defValue) {
@@ -449,6 +461,31 @@ public final class Settings {
     @SuppressLint("CommitPrefEdits")
     public static void putCrashFilename(String value) {
         sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
+    }
+
+    public static final String KEY_IGNORED_POSTS = "ignored_posts";
+    public static final Set<String> DEFAULT_IGNORED_POSTS = new HashSet<>();
+
+    public static Set<String> getIgnoredPosts() {
+        return getStringSet(KEY_IGNORED_POSTS, DEFAULT_IGNORED_POSTS);
+    }
+
+    public static void putIgnoredPosts(String id) {
+        if (checkPostIgnored(id)) // To prevent unexpected bug
+            return;
+
+        Set<String> set = getIgnoredPosts();
+        set.add(id);
+        putStringSet(KEY_IGNORED_POSTS, set);
+    }
+
+    public static boolean checkPostIgnored(String id) {
+        Set<String> set = getIgnoredPosts();
+        return set.contains(id);
+    }
+
+    public static void resetIgnoredPosts() {
+        putStringSet(KEY_IGNORED_POSTS, DEFAULT_IGNORED_POSTS);
     }
 
     /**

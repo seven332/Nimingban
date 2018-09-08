@@ -30,6 +30,11 @@
         <item>@string/take_photo</item>
     </string-array>
 
+    <string-array name="post_dialog">
+        <item>@string/report</item>
+        <item>@string/ignore_post</item>
+    </string-array>
+
     <string-array name="image_loading_strategy_entries">
         <item>@string/image_loading_strategy_all</item>
         <item>@string/image_loading_strategy_wifi</item>

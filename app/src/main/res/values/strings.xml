@@ -100,6 +100,11 @@
     <string name="text_to_image">Text to image</string>
     <string name="take_photo">Take a photo</string>
 
+    <string name="ignore_post">Ignore this post</string>
+
+    <string name="ignore_post_confirm_title">Are you sure want to ignore this post?</string>
+    <string name="ignore_post_confirm_message">After ignored, you can access it from enter post id only.</string>
+
     <string name="comment_copied_clipboard">Copied to clipboard</string>
 
     <string name="cant_get_the_reference">Can\'t get the reference</string>
@@ -278,6 +283,9 @@
     <string name="main_fix_image_urls">Fix image URLs</string>
     <string name="main_fix_image_urls_summary_on">Use default image URLs</string>
     <string name="main_fix_image_urls_summary_off">Get image URLs from the API. Enable it if loading images failed</string>
+    <string name="main_restore_ignored_post">Restore all ignored posts</string>
+    <string name="main_restore_ignored_post_summary">The posts you ignored will redisplayed</string>
+    <string name="main_restore_ignored_post_success">Restoring successful</string>
     <string name="main_analysis">Enable data analysis</string>
     <string name="main_about_analysis">About data analysis</string>
     <string name="main_author">Author</string>
