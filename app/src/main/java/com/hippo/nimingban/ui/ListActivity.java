@@ -269,6 +269,47 @@ public final class ListActivity extends AbsActivity
                 this, ResourcesUtils.getAttrBoolean(this, R.attr.dark)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.setOnItemClickListener(new ClickPostListener());
+        mRecyclerView.setOnItemLongClickListener(new EasyRecyclerView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
+                // showDialog start
+                final Post post = mPostHelper.getDataAt(position);
+
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                Intent intent = new Intent(ListActivity.this, TypeSendActivity.class);
+                                intent.setAction(TypeSendActivity.ACTION_CREATE_POST);
+                                intent.putExtra(TypeSendActivity.KEY_SITE, mCurrentForum.getNMBSite().getId());
+                                intent.putExtra(TypeSendActivity.KEY_ID, ACSite.getInstance().getReportForumId());
+                                intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + post.getNMBPostId() + "\n");
+                                startActivity(intent);
+                                break;
+                            case 1:
+                                new AlertDialog.Builder(ListActivity.this)
+                                        .setTitle(R.string.ignore_post_confirm_title)
+                                        .setMessage(R.string.ignore_post_confirm_message)
+                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                Settings.putIgnoredPosts(post.getNMBPostId());
+                                                mPostHelper.refresh(); // FIXME: May have more prefect resolution.
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, null)
+                                        .show();
+                                break;
+                        }
+                    }
+                };
+
+                new AlertDialog.Builder(ListActivity.this).setItems(R.array.post_dialog, listener).show();
+                // showDialog end
+                return true;
+            }
+        });
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
         mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -1255,6 +1296,14 @@ public final class ListActivity extends AbsActivity
                     mPostHelper.setPages(mTaskPage);
                     mPostHelper.onGetEmptyData(mTaskId);
                 } else {
+                    // Remove ignored posts
+                    Iterator<Post> postIterator = result.iterator();
+                    while (postIterator.hasNext()) {
+                        Post post = postIterator.next();
+                        if (Settings.checkPostIgnored(post.getNMBPostId()))
+                            postIterator.remove();
+                    }
+
                     mPostHelper.setPages(Integer.MAX_VALUE);
                     mPostHelper.onGetPageData(mTaskId, result);
                 }

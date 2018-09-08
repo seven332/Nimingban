@@ -83,6 +83,11 @@
         android:defaultValue="0"
         android:widgetLayout="@layout/preference_widget_icon_list"/>
 
+    <Preference
+        android:key="restore_ignored_posts"
+        android:title="@string/main_restore_ignored_post"
+        android:summary="@string/main_restore_ignored_post_summary"/>
+
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:key="analysis"
