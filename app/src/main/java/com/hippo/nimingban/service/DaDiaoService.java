@@ -26,7 +26,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 
 import com.hippo.nimingban.R;
 import com.hippo.yorozuya.SimpleHandler;

@@ -28,7 +28,6 @@ import java.util.List;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 
 public class CookieDBJar implements CookieJar {
 
@@ -86,7 +85,7 @@ public class CookieDBJar implements CookieJar {
     }
 
     @Override
-    public List<Cookie> loadForRequest(HttpUrl url, Request request) {
+    public List<Cookie> loadForRequest(HttpUrl url) {
         List<HttpCookie> httpCookies = mCookieStore.get(url.url());
         List<Cookie> result = new ArrayList<>(httpCookies.size());
 
