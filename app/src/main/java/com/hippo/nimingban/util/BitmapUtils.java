@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
@@ -96,6 +97,7 @@ public class BitmapUtils {
             }
 
             options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
             if (justCalc) {
                 return null;
@@ -125,5 +127,24 @@ public class BitmapUtils {
      */
     public static Bitmap decodeStream(@NonNull InputStreamPipe isp, int maxWidth, int maxHeight) {
         return decodeStream(isp, maxWidth, maxHeight, -1, false, false, null);
+    }
+
+    /**
+     * Rotate the pixels clockwise
+     */
+    public static int[] rotate(int[] pixels, int width, int height, @Nullable int[] newPixels) {
+        newPixels = newPixels == null ? new int[width * height] : newPixels;
+
+        for (int i = 0, n = width * height; i < n; i++) {
+            int x = i % width;
+            int y = i / width;
+
+            int newX = height - 1 - y;
+            int newY = x;
+
+            newPixels[newY * height + newX] = pixels[i];
+        }
+
+        return newPixels;
     }
 }

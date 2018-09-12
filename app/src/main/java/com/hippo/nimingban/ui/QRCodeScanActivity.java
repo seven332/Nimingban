@@ -170,26 +170,40 @@ public class QRCodeScanActivity extends TranslucentActivity
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
         bitmap.recycle();
 
-        RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
-        final HybridBinarizer hybBin = new HybridBinarizer(source);
-        final BinaryBitmap bBitmap = new BinaryBitmap(hybBin);
+        int[] newPixels = null;
+        for (int i = 0; i < 4; i++) {
+          if (i > 0) {
+            newPixels = BitmapUtils.rotate(pixels, width, height, newPixels);
+            int temp = width;
+            width = height;
+            height = temp;
+            int[] tempPixels = pixels;
+            pixels = newPixels;
+            newPixels = tempPixels;
+          }
 
-        QRCodeReader reader = new QRCodeReader();
-        Map<DecodeHintType, Boolean> hints = new HashMap<>();
-        hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+          RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
+          final HybridBinarizer hybBin = new HybridBinarizer(source);
+          final BinaryBitmap bBitmap = new BinaryBitmap(hybBin);
 
-        try {
-          return reader.decode(bBitmap, hints).getText();
-        } catch (NotFoundException | FormatException | ChecksumException e) {
-          // Try PURE_BARCODE
-          hints.put(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
-          reader.reset();
+          QRCodeReader reader = new QRCodeReader();
+          Map<DecodeHintType, Boolean> hints = new HashMap<>();
+
           try {
             return reader.decode(bBitmap, hints).getText();
-          } catch (NotFoundException | FormatException | ChecksumException ee) {
-            return null;
+          } catch (NotFoundException | FormatException | ChecksumException e) {
+            // Try PURE_BARCODE
+            hints.put(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
+            reader.reset();
+            try {
+              return reader.decode(bBitmap, hints).getText();
+            } catch (NotFoundException | FormatException | ChecksumException ee) {
+              // pass
+            }
           }
         }
+
+        return null;
       }
 
       @Override
