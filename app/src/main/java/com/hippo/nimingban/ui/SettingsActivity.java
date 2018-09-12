@@ -68,6 +68,7 @@ import com.hippo.nimingban.service.DaDiaoService;
 import com.hippo.nimingban.util.CountDownTimerEx;
 import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.OpenUrlHelper;
+import com.hippo.nimingban.util.PostIgnoreUtils;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.FontTextView;
@@ -1018,7 +1019,7 @@ public class SettingsActivity extends AbsPreferenceActivity
                 }
             } else if (KEY_RESTORE_IGNORED_POSTS.equals(key)) {
                 // TODO: Need dialog?
-                Settings.resetIgnoredPosts();
+                PostIgnoreUtils.INSTANCE.resetIgnoredPosts();
                 Toast.makeText(getActivity(), R.string.main_restore_ignored_post_successfully, Toast.LENGTH_SHORT).show();
             } else if (KEY_ABOUT_ANALYSIS.equals(key)) {
                 try {
