@@ -82,6 +82,7 @@ import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
 import com.hippo.nimingban.util.LinkMovementMethod2;
+import com.hippo.nimingban.util.PostIgnoreUtils;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -429,7 +430,7 @@ public final class ListActivity extends AbsActivity
                                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        Settings.putIgnoredPosts(post.getNMBPostId());
+                                        PostIgnoreUtils.INSTANCE.putIgnoredPost(post.getNMBPostId());
                                         mPostHelper.removeAt(position);
                                     }
                                 })
@@ -1303,7 +1304,7 @@ public final class ListActivity extends AbsActivity
                     Iterator<Post> postIterator = result.iterator();
                     while (postIterator.hasNext()) {
                         Post post = postIterator.next();
-                        if (Settings.checkPostIgnored(post.getNMBPostId()))
+                        if (PostIgnoreUtils.INSTANCE.checkPostIgnored(post.getNMBPostId()))
                             postIterator.remove();
                     }
 

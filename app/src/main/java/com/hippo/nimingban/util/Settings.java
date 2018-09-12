@@ -463,31 +463,6 @@ public final class Settings {
         sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
     }
 
-    public static final String KEY_IGNORED_POSTS = "ignored_posts";
-    public static final Set<String> DEFAULT_IGNORED_POSTS = new HashSet<>();
-
-    public static Set<String> getIgnoredPosts() {
-        return getStringSet(KEY_IGNORED_POSTS, DEFAULT_IGNORED_POSTS);
-    }
-
-    public static void putIgnoredPosts(String id) {
-        if (checkPostIgnored(id)) // To prevent unexpected bug
-            return;
-
-        Set<String> set = getIgnoredPosts();
-        set.add(id);
-        putStringSet(KEY_IGNORED_POSTS, set);
-    }
-
-    public static boolean checkPostIgnored(String id) {
-        Set<String> set = getIgnoredPosts();
-        return set.contains(id);
-    }
-
-    public static void resetIgnoredPosts() {
-        putStringSet(KEY_IGNORED_POSTS, DEFAULT_IGNORED_POSTS);
-    }
-
     /**
      * http://stackoverflow.com/questions/332079
      *
