@@ -203,7 +203,7 @@
     <string name="wx_add_cookie_invalid">无效的返回值</string>
     <string name="wx_add_cookie_empty">未找到饼干</string>
     <string name="wx_add_cookie_succeed">添加饼干成功！</string>
-    <string name="wx_add_cookie_succeed_multi">一块饼干添加成功！</string>
+    <string name="wx_add_cookie_succeed_multi">已添加第一块饼干</string>
 
     <string name="qr_scan_tip">请对准饼干二维码</string>
     <string name="qr_scan_pic">从图片中读取二维码</string>
