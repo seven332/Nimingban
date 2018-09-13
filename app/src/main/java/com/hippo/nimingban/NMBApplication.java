@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -25,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -41,6 +43,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
+import com.hippo.nimingban.ui.BringToForegroundActivity;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
@@ -62,8 +65,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpCookie;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -87,6 +93,8 @@ public final class NMBApplication extends Application
     private OkHttpClient mOkHttpClient;
 
     private boolean mConnectedWifi;
+
+    private List<WeakReference<Activity>> mActivities = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -123,8 +131,36 @@ public final class NMBApplication extends Application
 
         // Theme
         setTheme(Settings.getDarkTheme() ? R.style.AppTheme_Dark : R.style.AppTheme);
-
         Messenger.getInstance().register(Constants.MESSENGER_ID_CHANGE_THEME, this);
+
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                mActivities.add(new WeakReference<>(activity));
+            }
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                Iterator<WeakReference<Activity>> iterator = mActivities.iterator();
+                while (iterator.hasNext()) {
+                    WeakReference<Activity> reference = iterator.next();
+                    Activity a = reference.get();
+                    // Remove current activity and null
+                    if (a == null || a == activity) {
+                        iterator.remove();
+                    }
+                }
+            }
+            @Override
+            public void onActivityStarted(Activity activity) {}
+            @Override
+            public void onActivityResumed(Activity activity) {}
+            @Override
+            public void onActivityPaused(Activity activity) {}
+            @Override
+            public void onActivityStopped(Activity activity) {}
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+        });
 
         try {
             update();
@@ -242,6 +278,17 @@ public final class NMBApplication extends Application
             newCookie.setVersion(oldCookie.getVersion());
 
             cookieStore.add(url, newCookie);
+        }
+    }
+
+    public void bringActivitiesToForeground() {
+        int i = mActivities.size();
+        while (--i >= 0) {
+            Activity activity = mActivities.get(i).get();
+            if (activity != null && !"com.hippo.nimingban.wxapi.WXEntryActivity".equals(activity.getClass().getName())) {
+                Intent intent = new Intent(activity, BringToForegroundActivity.class);
+                activity.startActivity(intent);
+            }
         }
     }
 

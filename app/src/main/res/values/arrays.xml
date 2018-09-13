@@ -42,6 +42,11 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="add_cookies">
+        <item>@string/main_add_cookies_scan</item>
+        <item>@string/main_add_cookies_wechat</item>
+    </string-array>
+
     <string-array name="chaos_level_entries">
         <item>@string/chaos_level_sane</item>
         <item>@string/chaos_level_relatively_chaotic</item>
