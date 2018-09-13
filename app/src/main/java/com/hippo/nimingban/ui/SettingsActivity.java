@@ -970,7 +970,7 @@ public class SettingsActivity extends AbsPreferenceActivity
                                         WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
                                         req.userName = "gh_f8c1b9909e51";
                                         req.path = "pages/index/index?mode=cookie";
-                                        req.miniprogramType = WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_TEST;
+                                        req.miniprogramType = WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE;
                                         wxApi.sendReq(req);
                                         break;
                                 }
