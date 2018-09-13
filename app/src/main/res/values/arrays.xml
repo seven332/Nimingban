@@ -47,6 +47,11 @@
         <item>@string/main_add_cookies_wechat</item>
     </string-array>
 
+    <string-array name="register_methods">
+        <item>@string/register_web</item>
+        <item>@string/register_wechat</item>
+    </string-array>
+
     <string-array name="chaos_level_entries">
         <item>@string/chaos_level_sane</item>
         <item>@string/chaos_level_relatively_chaotic</item>

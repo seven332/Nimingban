@@ -211,6 +211,9 @@
     <string name="qr_scan_succeed">添加饼干成功！</string>
     <string name="qr_scan_invalid">无效的饼干二维码</string>
 
+    <string name="register_web">网页</string>
+    <string name="register_wechat">微信</string>
+
     <string name="settings">设置</string>
     <string name="display_settings_title">显示</string>
     <string name="config_settings_title">配置</string>
