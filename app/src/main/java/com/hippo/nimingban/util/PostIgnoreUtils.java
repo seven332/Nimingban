@@ -34,9 +34,9 @@ public class PostIgnoreUtils {
 
         while (iterator.hasNext()) {
             String key = iterator.next();
-            mHashMap.get(key);
             if (key.equals(id)) {
                 flag = true;
+                mHashMap.get(key);
                 break;
             }
         }
