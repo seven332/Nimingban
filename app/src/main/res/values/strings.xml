@@ -40,7 +40,7 @@
     <string name="click_eye_icon">Click an eye icon to hide/show the forum</string>
     <string name="modify_forum_title">Click a forum title to modify it</string>
     <string name="swipe_forum_remove">Swipe a forum to remove it</string>
-    <string name="drag_green_block_exchange">Drag a green block to exchange forums</string>
+    <string name="drag_four_bars_exchange">Drag four bars to exchange forums</string>
     <string name="click_refresh_icon_update_list">Click the refresh icon to update forum list</string>
     <string name="click_add_icon_add_forum">Click the add icon to add a custom forum</string>
 

@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.client.data;
 
+import com.hippo.text.Html;
+
 public class DisplayForum extends Forum {
 
     public Site site;
@@ -24,6 +26,9 @@ public class DisplayForum extends Forum {
     public int priority;
     public boolean visibility;
     public String msg;
+    public boolean official;
+
+    private CharSequence name;
 
     @Override
     public String toString() {
@@ -43,7 +48,14 @@ public class DisplayForum extends Forum {
 
     @Override
     public CharSequence getNMBDisplayname() {
-        return displayname;
+        if (name == null) {
+            if (displayname == null) {
+                name = "Forum";
+            } else {
+                name = Html.fromHtml(displayname);
+            }
+        }
+        return name;
     }
 
     @Override

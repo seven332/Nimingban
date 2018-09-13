@@ -111,9 +111,11 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -158,6 +160,8 @@ public final class ListActivity extends AbsActivity
     private long mPressBackTime = 0;
 
     private List<WeakReference<ListHolder>> mListHolderList = new LinkedList<>();
+
+    private Map<String, CharSequence> mForumNames = new HashMap<>();
 
     @Override
     protected int getLightThemeResId() {
@@ -1087,7 +1091,17 @@ public final class ListActivity extends AbsActivity
             holder.leftText.setText(post.getNMBDisplayUsername());
             ACForumRaw forum = DB.getACForumForForumid(post.getNMBFid());
             if (forum != null) {
-                holder.centerText.setText(forum.getDisplayname());
+                String displayName = forum.getDisplayname();
+                CharSequence name = mForumNames.get(displayName);
+                if (name == null) {
+                    if (displayName == null) {
+                        name = "Forum";
+                    } else {
+                        name = Html.fromHtml(displayName);
+                    }
+                    mForumNames.put(displayName, name);
+                }
+                holder.centerText.setText(name);
             } else {
                 holder.centerText.setText("No." + post.getNMBId());
             }
