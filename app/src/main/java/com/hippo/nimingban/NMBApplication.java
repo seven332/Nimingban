@@ -39,6 +39,8 @@ import com.hippo.nimingban.client.NMBDns;
 import com.hippo.nimingban.client.NMBInterceptor;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACCdnPath;
+import com.hippo.nimingban.client.ac.data.ACForum;
+import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
@@ -70,6 +72,7 @@ import java.net.HttpCookie;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -177,6 +180,7 @@ public final class NMBApplication extends Application
 
     private void start() {
         updateACCdnPath();
+        updateACForums();
     }
 
     private void readACCdnPathFromFile() {
@@ -229,6 +233,27 @@ public final class NMBApplication extends Application
             @Override
             public void onCancel() {
             }
+        });
+        getNMBClient(this).execute(request);
+    }
+
+    private void updateACForums() {
+        NMBRequest request = new NMBRequest();
+        request.setSite(ACSite.getInstance());
+        request.setMethod(NMBClient.METHOD_GET_FORUM_LIST);
+        request.setCallback(new NMBClient.Callback<List<ACForumGroup>>(){
+            @Override
+            public void onSuccess(List<ACForumGroup> result) {
+                List<ACForum> list = new LinkedList<>();
+                for (ACForumGroup forumGroup : result) {
+                    list.addAll(forumGroup.forums);
+                }
+                DB.setACForums(list);
+            }
+            @Override
+            public void onFailure(Exception e) { }
+            @Override
+            public void onCancel() { }
         });
         getNMBClient(this).execute(request);
     }
