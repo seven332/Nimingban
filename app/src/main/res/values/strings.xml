@@ -285,7 +285,7 @@
     <string name="main_fix_image_urls_summary_off">Get image URLs from the API. Enable it if loading images failed</string>
     <string name="main_restore_ignored_post">Restore all ignored posts</string>
     <string name="main_restore_ignored_post_summary">The posts you ignored will redisplayed</string>
-    <string name="main_restore_ignored_post_success">Restoring successful</string>
+    <string name="main_restore_ignored_post_successfully">Restoring successful</string>
     <string name="main_analysis">Enable data analysis</string>
     <string name="main_about_analysis">About data analysis</string>
     <string name="main_author">Author</string>
