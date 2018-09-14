@@ -204,12 +204,12 @@ public final class DB {
         return name;
     }
 
-    private static ACForumRaw toACForumRaw(ACForum forum, int priority) {
+    private static ACForumRaw toACForumRaw(ACForum forum, int priority, boolean visibility) {
         ACForumRaw raw = new ACForumRaw();
         raw.setDisplayname(getACForumName(forum));
         raw.setForumid(forum.id);
         raw.setPriority(priority);
-        raw.setVisibility(true);
+        raw.setVisibility(visibility);
         raw.setMsg(forum.msg);
         raw.setOfficial(true);
         return raw;
@@ -231,7 +231,7 @@ public final class DB {
             for (int j = 0, m = currentList.size(); j < m; j++) {
                 ACForumRaw raw = currentList.get(j);
                 if (ObjectUtils.equal(forum.id, raw.getForumid())) {
-                    newList.add(toACForumRaw(forum, raw.getPriority()));
+                    newList.add(toACForumRaw(forum, raw.getPriority(), raw.getVisibility()));
                     addList.remove(i);
                     i--;
                     n--;
@@ -242,7 +242,7 @@ public final class DB {
 
         int i = getACForumMaxPriority() + 1;
         for (ACForum forum : addList) {
-            newList.add(toACForumRaw(forum, i));
+            newList.add(toACForumRaw(forum, i, true));
             i++;
         }
 
