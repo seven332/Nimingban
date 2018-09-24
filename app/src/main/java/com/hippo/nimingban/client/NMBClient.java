@@ -82,7 +82,7 @@ public class NMBClient {
     private final OkHttpClient mOkHttpClient;
 
     public NMBClient(Context context) {
-        int poolSize = 3;
+        int poolSize = 5;
         BlockingQueue<Runnable> requestWorkQueue = new LinkedBlockingQueue<>();
         ThreadFactory threadFactory = new PriorityThreadFactory(TAG,
                 android.os.Process.THREAD_PRIORITY_BACKGROUND);
