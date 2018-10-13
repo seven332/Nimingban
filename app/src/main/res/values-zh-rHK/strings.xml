@@ -1,0 +1,383 @@
+<!--
+  ~ Copyright 2015 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <string name="app_name">匿名版</string>
+
+    <string name="drawer_open">打開抽屜</string>
+    <string name="drawer_close">關閉抽屜</string>
+
+    <string name="data_analysis">數據統計</string>
+    <string name="agree">同意</string>
+    <string name="disagree">不同意</string>
+
+    <string name="it_is_important">這很重要</string>
+    <string name="crash_tip">上次該應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用户體驗？（以電子郵件的形式發送）</string>
+
+    <string name="cant_make_sure_image_save_location">似乎圖片存儲位置用不了了，需要重新設置</string>
+
+    <string name="swipe_toolbar_hide_show">上下滑動標題欄來隱藏或顯示回覆界面</string>
+
+    <string name="swipe_right_open_menu">右滑打開菜單</string>
+    <string name="swipe_left_open_forum_list">左滑打開板塊</string>
+    <string name="double_click_toolbar_refresh">雙擊 toolbar 刷新</string>
+    <string name="get_it">知道了</string>
+
+    <string name="click_eye_icon">點擊眼睛圖標隱藏/顯示板塊</string>
+    <string name="modify_forum_title">點擊板塊名稱以修改</string>
+    <string name="swipe_forum_remove">滑動板塊以刪除</string>
+    <string name="drag_four_bars_exchange">拖動四道槓方塊交換板塊</string>
+    <string name="click_refresh_icon_update_list">點擊刷新圖標更新板塊列表</string>
+    <string name="click_add_icon_add_forum">點擊添加圖標添加自定義版塊</string>
+
+    <string name="notice">通知</string>
+
+    <string name="thread">串</string>
+
+    <string name="common_posts">常用串</string>
+
+    <string name="let_there_light">要有光</string>
+    <string name="let_there_dark">要有暗</string>
+
+    <string name="press_twice_exit">再按一下退出</string>
+
+    <string name="please_wait">請稍後</string>
+
+    <string name="no_post">沒有找到串</string>
+
+    <string name="refresh">刷新</string>
+
+    <string name="add">添加</string>
+
+    <string name="converting">轉化中…</string>
+
+    <string name="reply">回覆</string>
+    <string name="go_to">跳頁</string>
+    <string name="go_to_error_out_of_range">目標頁數在範圍外</string>
+
+    <string name="lucky">哈哈</string>
+    <string name="go_to_post">去串</string>
+    <string name="keyword_empty">關鍵字為空</string>
+    <string name="not_found">啥都找不到</string>
+    <string name="search_title">搜索 - %s</string>
+
+    <string name="add_feed">添加訂閲</string>
+    <string name="remove_feed">刪除訂閲</string>
+    <string name="add_feed_successfully">添加訂閲成功</string>
+    <string name="add_feed_failed">添加訂閲失敗</string>
+    <string name="remove_feed_successfully">刪除訂閲成功</string>
+    <string name="remove_feed_failed">刪除訂閲失敗</string>
+
+    <string name="share">分享</string>
+    <string name="open_in_other_app">在其他應用打開</string>
+
+    <string name="feed">訂閲</string>
+    <string name="no_feed">沒有訂閲</string>
+    <string name="feed_deleted">已刪除一條訂閲</string>
+
+    <string name="search">搜索</string>
+
+    <string name="reply_to_comment">回覆評論</string>
+    <string name="copy_comment_text">複製評論文字</string>
+    <string name="send_comment_text">分享評論文字</string>
+    <string name="report_comment">舉報評論</string>
+
+    <string name="select_image">選擇圖片</string>
+    <string name="text_to_image">生成文字圖片</string>
+    <string name="take_photo">拍個照</string>
+
+    <string name="ignore_post">永久屏蔽此串</string>
+
+    <string name="ignore_post_confirm_title">你確定要屏蔽此串嗎？</string>
+    <string name="ignore_post_confirm_message">今後你只能通過輸入此串串號進入</string>
+
+    <string name="comment_copied_clipboard">評論文字已複製到剪貼板</string>
+
+    <string name="cant_get_the_reference">無法找到引用</string>
+    <string name="show_thread">顯示原串</string>
+
+    <string name="rule">版規</string>
+
+    <string name="report">舉報</string>
+    <string name="report_tip">你將把這個串發送至值班室</string>
+    <string name="create_post">發串</string>
+    <string name="cant_find_the_forum">找不到 id 為 %s 的板塊</string>
+    <string name="save_text_draft">把你輸入的文字保存為草稿？</string>
+    <string name="save">保存</string>
+    <string name="dont_save">不保存</string>
+    <string name="create_text_image">你輸入的文字中含有非法詞語，要創建文字圖片麼？</string>
+    <string name="start_creating_post">開始發串</string>
+    <string name="create_post_successfully">發串成功</string>
+    <string name="create_post_failed">貌似發串失敗，文字已保存為草稿</string>
+    <string name="start_reply">開始回覆</string>
+    <string name="reply_successfully">回覆成功</string>
+    <string name="reply_failed">貌似回覆失敗，文字已保存為草稿</string>
+
+    <string name="select_picture">選擇圖片</string>
+
+    <string name="gallery">圖片欣賞</string>
+    <string name="image_search">搜圖</string>
+
+    <string name="no_cookies">沒有 Cookies</string>
+    <string name="no_cookies_ac">似乎你沒有餅乾。要來註冊並獲取餅乾？</string>
+    <string name="register">註冊</string>
+    <string name="add_cookies">添加餅乾</string>
+    <string name="i_dont_care">我不在意</string>
+    <string name="getting_cookies">獲取餅乾中…</string>
+    <string name="got_cookies">拿到餅乾了！</string>
+    <string name="cant_get_cookies">未獲取餅乾</string>
+
+    <string name="em_timeout">超時</string>
+    <string name="em_unknown_host">未知主機</string>
+    <string name="em_response_code">非預期響應碼: %d</string>
+    <string name="em_redirection">太多重定向</string>
+    <string name="em_socket">網絡錯誤</string>
+    <string name="em_unknown">奇怪的錯誤</string>
+
+    <string name="em_cant_find_activity">找不到對應的應用</string>
+
+    <string name="undo">撤銷</string>
+
+    <string name="draft">草稿</string>
+    <string name="draft_copied_clipboard">草稿文本已複製到剪切板</string>
+    <string name="no_draft">沒有草稿</string>
+    <string name="draft_deleted">已刪除一張草稿</string>
+
+    <string name="record">記錄</string>
+    <string name="no_record">沒有記錄</string>
+    <string name="record_deleted">已刪除一條記錄</string>
+
+    <string name="from_the_future">來自未來</string>
+    <string name="just_now">剛剛</string>
+    <plurals name="some_minutes_ago">
+        <item quantity="other">%d 分鐘前</item>
+    </plurals>
+    <plurals name="some_hours_ago">
+        <item quantity="other">%d 小時前</item>
+    </plurals>
+    <string name="yesterday">昨天</string>
+    <string name="some_days_ago">%d 天前</string>
+
+    <plurals name="second">
+        <item quantity="other">秒</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="other">分</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="other">時</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="other">天</item>
+    </plurals>
+    <plurals name="year">
+        <item quantity="other">年</item>
+    </plurals>
+
+    <string name="cant_find_forum">找不到任何板塊</string>
+    <string name="more_writable_items">更多可填寫項</string>
+    <string name="type_send_name">名稱</string>
+    <string name="type_send_email">E-mail</string>
+    <string name="type_send_title">標題</string>
+    <string name="type_send_watermark">水印</string>
+
+    <string name="doodle">塗鴉</string>
+    <string name="save_doodle">保存塗鴉？</string>
+    <string name="cant_create_image_file">無法保存圖片文件</string>
+    <string name="saving">保存中…</string>
+    <string name="save_successfully">保存成功</string>
+    <string name="save_failed">保存失敗</string>
+
+    <string name="share_image">分享圖片</string>
+    <string name="cant_save_image">無法保存圖片</string>
+
+    <string name="wx_add_cookie_invalid">無效的返回值</string>
+    <string name="wx_add_cookie_empty">未找到餅乾</string>
+    <string name="wx_add_cookie_succeed">添加餅乾成功！</string>
+    <string name="wx_add_cookie_succeed_multi">已添加第一塊餅乾</string>
+
+    <string name="qr_scan_tip">請對準餅乾二維碼</string>
+    <string name="qr_scan_pic">從圖片中讀取二維碼</string>
+    <string name="qr_scan_processing">處理中…</string>
+    <string name="qr_scan_succeed">添加餅乾成功！</string>
+    <string name="qr_scan_invalid">無效的餅乾二維碼</string>
+
+    <string name="register_web">網頁</string>
+    <string name="register_wechat">微信</string>
+
+    <string name="settings">設置</string>
+    <string name="display_settings_title">顯示</string>
+    <string name="config_settings_title">配置</string>
+    <string name="info_settings_title">關於</string>
+    <string name="main_dark_theme">夜間模式</string>
+    <string name="main_pretty_time">顯示易讀時間</string>
+    <string name="main_image_loading_strategy">圖片加載策略</string>
+    <string name="main_image_loading_strategy_2">無圖是啥</string>
+    <string name="main_image_loading_strategy_2_summary_off">無圖就是無圖</string>
+    <string name="main_image_loading_strategy_2_summary_on">無圖是指嘗試從緩存中加載，長按從網絡中加載</string>
+    <string name="main_chaos_level">混亂等級</string>
+    <string name="chaos_level_sane">理智 — 所見即所能見</string>
+    <string name="chaos_level_relatively_chaotic">相對混亂 — 僅串中可辨</string>
+    <string name="chaos_level_absolutely_chaotic">絕對混亂 — 皆不可辨</string>
+    <string name="main_color_status_bar">彩色狀態欄</string>
+    <string name="main_color_status_bar_summary_off">狀態欄的背景色為默認顏色。這可能解決兼容性問題</string>
+    <string name="main_color_status_bar_summary_on">狀態欄的背景色為主題色。這可能導致兼容性問題</string>
+    <string name="main_color_status_bar_summary_disable">僅在 Android 4.4 下有效</string>
+    <string name="main_fix_emoji_display">修正顏文字顯示</string>
+    <string name="main_fix_emoji_display_summary_off">使用系統默認字體</string>
+    <string name="main_fix_emoji_display_summary_on">使用內置字體</string>
+    <string name="main_pretty_time_summary">顯示 %1$s 而不是 %2$s</string>
+    <string name="main_text_format">字體大小與行間距</string>
+    <string name="main_text_format_summary">字體大小：%1$d\n行間距：%2$d</string>
+    <string name="main_dynamic_comments">動態回覆</string>
+    <string name="main_dynamic_comments_summary_on">在列表裏串內容下方動態顯示最近回覆</string>
+    <string name="main_dynamic_comments_summary_off">不動態顯示回覆</string>
+    <string name="main_fast_scroller">顯示滑條</string>
+    <string name="main_fast_scroller_summary_on">在列表右側顯示滑條</string>
+    <string name="main_fast_scroller_summary_off">不顯示滑條</string>
+    <string name="main_ac_cookies">餅乾</string>
+    <string name="main_ac_cookies_summary_no">理論上來説，你沒有餅乾</string>
+    <string name="main_ac_cookies_summary_valid">理論上來説，你的餅乾將在 %s 後失效</string>
+    <string name="main_ac_cookies_summary_forever">理論上來説，你擁有永恆的餅乾</string>
+    <string name="main_add_cookies">添加餅乾</string>
+    <string name="main_add_cookies_scan">掃碼</string>
+    <string name="main_add_cookies_wechat">微信</string>
+    <string name="main_add_cookies_summary">通過掃碼或微信來添加餅乾</string>
+    <string name="main_add_cookies_denied">不讓用相機就無法掃描</string>
+    <string name="main_save_cookies">保存餅乾</string>
+    <string name="main_save_cookies_summary">保存餅乾至外置存儲器</string>
+    <string name="main_restore_cookies">恢復餅乾</string>
+    <string name="main_restore_cookies_summary">從外置存儲器的餅乾文件中恢復餅乾</string>
+    <string name="main_watermark">水印</string>
+    <string name="main_watermark_summary_on">在你上傳的圖片中顯示水印</string>
+    <string name="main_watermark_summary_off">不在你上傳的圖片中顯示水印</string>
+    <string name="main_feed_id">訂閲 ID</string>
+    <string name="main_feed_id_summary">你的訂閲 ID 是 %s</string>
+    <string name="main_save_image_auto">自動存圖</string>
+    <string name="main_save_image_auto_summary_on">自動存儲圖片</string>
+    <string name="main_save_image_auto_summary_off">點擊保存按鈕才會存圖</string>
+    <string name="main_image_save_location">圖片存儲路徑</string>
+    <string name="main_image_save_locatio_summary_invalid">@string/cant_get_image_save_location</string>
+    <string name="main_app_icon">應用圖標（也許需要重啟）</string>
+    <string name="main_fix_image_urls">修正圖片鏈接</string>
+    <string name="main_fix_image_urls_summary_on">使用默認圖片鏈接</string>
+    <string name="main_fix_image_urls_summary_off">通過 API 獲取圖片鏈接。若圖片加載失敗，請啟用該項。</string>
+    <string name="main_restore_ignored_post">恢復所有已屏蔽的串</string>
+    <string name="main_restore_ignored_post_summary">你之前所屏蔽的串將會重新出現</string>
+    <string name="main_restore_ignored_post_successfully">已恢復所有被屏蔽的串</string>
+    <string name="main_analysis">啟用數據統計</string>
+    <string name="main_about_analysis">關於數據統計</string>
+    <string name="main_author">作者</string>
+    <string name="main_source">源碼</string>
+    <string name="main_notice">通知文檔</string>
+    <string name="main_version">版本</string>
+    <string name="main_release_notes">更新日誌</string>
+    <string name="main_dump_logcat">導出 Logcat</string>
+    <string name="main_dump_logcat_summary">ฅ&lt;(ΦωΦ)&gt;ฅ&#160;&#160;&#160;&#160;喵喵~~</string>
+    <string name="main_help_nimingban">幫助匿名版</string>
+    <string name="main_help_nimingban_summary">瞭解如何幫助匿名版做得更好</string>
+    <string name="main_help">幫助</string>
+    <string name="main_help_summary">如果你還不知道，直接問開發者吧</string>
+    <string name="main_donate">捐贈</string>
+
+    <string name="app_new_icon_title">新圖標</string>
+    <string name="app_new_icon_msg">(＾o＾)ﾉ\n匿名版有了新的圖標設計，可至 設置->配置->應用圖標 更換。\n\n如果你有好的圖標設計也可以與開發者聯繫。</string>
+
+    <string name="text_format">文本格式</string>
+    <string name="font_size">字體大小</string>
+    <string name="line_spacing">行間距</string>
+
+    <string name="invalid_feed_id">無效的訂閲 ID</string>
+    <string name="mac_addr">Mac 地址</string>
+    <string name="random">隨機</string>
+
+    <string name="image_loading_strategy_all">儘管加載</string>
+    <string name="image_loading_strategy_wifi">只限 Wi-Fi</string>
+    <string name="image_loading_strategy_no">無圖</string>
+
+    <string name="save_cookies_failed">保存餅乾失敗</string>
+    <string name="save_cookies_to">保存餅乾至 %s</string>
+
+    <string name="clear_cookies">請問您今天要清除餅乾嗎？</string>
+    <string name="restore_cookies_successfully">恢復餅乾成功</string>
+    <string name="clear_cookies_successfully">清除餅乾成功</string>
+    <string name="not_valid_cookie_file">這不是有效餅乾文件</string>
+    <string name="cant_find_cookie_file">找不到餅乾文件</string>
+    <string name="select_cookie_file">選擇餅乾文件</string>
+
+    <string name="write_storage_permission_tip">如果你拒絕了權限請求也許應用在運行過程中會出錯</string>
+
+    <string name="you_rejected_me">拒絕讓人傷心</string>
+
+    <string name="dir_picker">選擇文件夾</string>
+    <string name="directory_not_writable">該文件夾不可寫</string>
+    <string name="cant_get_image_save_location">無法獲取圖片存儲路徑</string>
+    <string name="dir_picker_permission_tip">你只有同意了權限請求才能瀏覽目錄</string>
+
+    <string name="pick_dir_kk">在 KitKat 中你無法把數據寫入外置 SD 卡，除非你做了奇怪的事情</string>
+    <string name="pick_dir_l">Lollipop 提供了新的寫入外置 SD 卡的 API。如果你想把圖片存儲路徑設置到外置 SD 卡上，點擊 \"文檔\" 按鈕</string>
+
+    <string name="document">文檔</string>
+
+    <string name="text_format_preview">我能吞下大雕而不傷身體\n我能吞下黑妹而不傷身體\n我能吞下蘆葦而不傷身體</string>
+
+    <string name="cant_open_notice">無法打開通知文檔</string>
+
+    <string name="da_diao_service">大雕</string>
+    <string name="da_diao_tip">不要再點啦！(&gt;д&lt;)</string>
+
+    <string name="dump_logcat_failed">導出 logcat 失敗</string>
+    <string name="dump_logcat_to">導出 logcat 至 %s</string>
+
+    <string name="help_nimingban_title">幫助匿名版做得更好</string>
+    <string name="help_nimingban_message">你可以幫助匿名版做得更好！\n(＾o＾)ﾉ\n\n如果匿名版突然崩潰了，一般來説在下次啟動的時候會請求通過電子郵件發送錯誤日誌。錯誤日誌對應用的維護與優化有很大幫助，如果你在當時不能發送電子郵件，可以在其他方便的時候發送。錯誤日誌位於 &lt;內置 SD 卡&gt;/nmb/crash 。\n\n如果沒有提示發送錯誤日誌，或者你認為應用運行有問題，你可以點擊該項上方的“導出 logcat”，將 logcat 通過電子郵件發送給開發者。這也可以幫助開發者解決你所提出的問題。</string>
+
+    <string name="donate_explain">你的捐贈能幫助我開發更多更好的應用。\n\n支付寶：seven332#163.com</string>
+
+    <string name="forum">板塊</string>
+    <string name="sort_forums">板塊排序</string>
+    <string name="no_forum">找不到任何板塊</string>
+    <string name="refreshing_forum_list">刷新板塊中</string>
+    <string name="refresh_forum_list_failed">刷新板塊失敗</string>
+    <string name="forum_name">名稱</string>
+    <string name="forum_id">Id</string>
+    <string name="name_id_cant_empty">名稱和 id 不能為空</string>
+    <string name="forum_id_exists">該 id 已存在，其板塊名稱為 %s</string>
+    <string name="add_forum">添加板塊</string>
+    <string name="modify_forum">修改板塊</string>
+
+    <string name="version">版本</string>
+    <string name="size">大小</string>
+    <string name="download_update">下載更新</string>
+    <string name="download">下載</string>
+    <string name="downloading_update">下載更新中</string>
+    <string name="download_update_failde">下載更新失敗</string>
+
+    <string name="network_receiver">網絡監視器</string>
+
+    <string name="ideographic_space">全角空格</string>
+
+    <string name="image_search_google">谷歌</string>
+    <string name="image_search_baidu">百度</string>
+    <string name="image_search_sogou">搜狗</string>
+    <string name="image_search_tineye">TinEye</string>
+    <string name="image_search_whatanime">What Anime</string>
+    <string name="image_search_saucenao">SauceNAO</string>
+    <string name="image_search_iqdb">Iqdb</string>
+    <string name="image_search_iqdb_3d">Iqdb 3D</string>
+
+</resources>
