@@ -44,18 +44,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.alibaba.fastjson.JSON;
 import com.hippo.nimingban.Constants;
 import com.hippo.nimingban.NMBAppConfig;
@@ -65,6 +61,7 @@ import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.network.TransportableHttpCookie;
 import com.hippo.nimingban.service.DaDiaoService;
+import com.hippo.nimingban.ui.fragment.PrettyPreferenceActivity;
 import com.hippo.nimingban.util.CountDownTimerEx;
 import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.OpenUrlHelper;
@@ -89,13 +86,11 @@ import com.hippo.yorozuya.NumberUtils;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -103,7 +98,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SettingsActivity extends AbsPreferenceActivity
+public class SettingsActivity extends PrettyPreferenceActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final int REQUEST_CODE_FRAGMENT = 0;
@@ -125,80 +120,10 @@ public class SettingsActivity extends AbsPreferenceActivity
         return R.style.AppTheme_Dark;
     }
 
-    private class FakeLayoutInflater extends LayoutInflater {
-
-        private LayoutInflater mInflater;
-
-        protected FakeLayoutInflater(LayoutInflater inflater) {
-            super(null);
-            mInflater = inflater;
-        }
-
-        @Override
-        public LayoutInflater cloneInContext(Context newContext) {
-            return null;
-        }
-
-        @Override
-        public View inflate(int resource, ViewGroup root, boolean attachToRoot) {
-            return mInflater.inflate(R.layout.item_preference_header, root, attachToRoot);
-        }
-    }
-
-    private void replaceHeaderLayoutResId() {
-        try {
-            ListAdapter adapter = getListAdapter();
-            Class headerAdapterClazz = Class.forName("android.preference.PreferenceActivity$HeaderAdapter");
-            if (!headerAdapterClazz.isInstance(adapter)) {
-                return;
-            }
-
-            boolean ok = false;
-
-            try {
-                Field field = headerAdapterClazz.getDeclaredField("mLayoutResId");
-                field.setAccessible(true);
-                field.setInt(adapter, R.layout.item_preference_header);
-
-                ok = true;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-
-            if (!ok) {
-                try {
-                    Field field = headerAdapterClazz.getDeclaredField("mInflater");
-                    field.setAccessible(true);
-                    field.set(adapter, new FakeLayoutInflater((LayoutInflater) field.get(adapter)));
-
-                    ok = true;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (ClassCastException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (ok) {
-                getListView().setDivider(getResources().getDrawable(R.drawable.transparent));
-                getListView().setDividerHeight(0);
-            }
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
-
-        replaceHeaderLayoutResId();
     }
 
     @Override
