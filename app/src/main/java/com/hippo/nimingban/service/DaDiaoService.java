@@ -17,6 +17,7 @@
 package com.hippo.nimingban.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -99,8 +101,20 @@ public class DaDiaoService extends Service {
             if (mPlaying == 0) {
                 mOriginalVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
+                String channelId = getPackageName()+".DA_DIAO";
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationManager notifyManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notifyManager.createNotificationChannel(
+                            new NotificationChannel(
+                                    channelId,
+                                    getString(R.string.download_update),
+                                    NotificationManager.IMPORTANCE_LOW));
+                }
+
                 // startForeground
-                Notification notification = new NotificationCompat.Builder(this)
+                Notification notification = new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notification_devil)
                         .setContentTitle(getString(R.string.da_diao_service))
                         .setAutoCancel(false)
@@ -108,6 +122,7 @@ public class DaDiaoService extends Service {
                         .setColor(getResources().getColor(R.color.colorPrimary))
                         .setPriority(NotificationCompat.PRIORITY_MIN)
                         .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                        .setChannelId(channelId)
                         .build();
                 startForeground(NOTIFICATION_ID, notification);
             }

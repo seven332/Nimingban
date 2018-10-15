@@ -17,6 +17,7 @@
 package com.hippo.nimingban.client;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -132,12 +133,22 @@ public final class UpdateHelper {
             mNotifyManager = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            mDownloadingBuilder = new NotificationCompat.Builder(context);
+            String channelId = context.getPackageName()+".UPDATE";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mNotifyManager.createNotificationChannel(
+                        new NotificationChannel(
+                                channelId,
+                                context.getString(R.string.download_update),
+                                NotificationManager.IMPORTANCE_LOW));
+            }
+
+            mDownloadingBuilder = new NotificationCompat.Builder(context, channelId);
             mDownloadingBuilder.setContentTitle(context.getString(R.string.downloading_update))
                     .setSmallIcon(android.R.drawable.stat_sys_download)
                     .setOngoing(true)
                     .setAutoCancel(false)
-                    .setProgress(0, 0, true);
+                    .setProgress(0, 0, true)
+                    .setChannelId(channelId);
 
             mNotifyManager.notify(NOTIFY_ID_DOWNLOADING, mDownloadingBuilder.build());
 
