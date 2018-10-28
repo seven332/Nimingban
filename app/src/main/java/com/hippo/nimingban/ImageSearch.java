@@ -32,7 +32,7 @@ public final class ImageSearch {
     private static final String IMAGE_SEARCH_URL_BAIDU = "https://image.baidu.com/wiseshitu?queryImageUrl=";
     private static final String IMAGE_SEARCH_URL_SOGOU = "http://pic.sogou.com/ris?query=";
     private static final String IMAGE_SEARCH_URL_TINEYE = "http://tineye.com/search/?url=";
-    private static final String IMAGE_SEARCH_URL_WHATANIME = "https://whatanime.ga/?url=";
+    private static final String IMAGE_SEARCH_URL_WHATANIME = "https://trace.moe/?url=";
     private static final String IMAGE_SEARCH_URL_SAUCENAO = "http://saucenao.com/search.php?db=999&url=";
     private static final String IMAGE_SEARCH_URL_IQDB = "http://www.iqdb.org/?url=";
     private static final String IMAGE_SEARCH_URL_IQDB_3D = "http://3d.iqdb.org/?url=";
