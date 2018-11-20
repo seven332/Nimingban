@@ -138,7 +138,7 @@ public final class ACItemUtils {
                 continue;
             }
 
-            URLSpan urlSpan = new URLSpan("http://www.acfun.tv/v/" + m.group(0));
+            URLSpan urlSpan = new URLSpan("http://www.acfun.cn/v/" + m.group(0));
             spannable.setSpan(urlSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
