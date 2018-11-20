@@ -463,6 +463,17 @@ public final class Settings {
         sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
     }
 
+    public static final String KEY_HTTPS_ENABLED = "https_enabled";
+    public static final boolean VALUE_HTTPS_ENABLED = true;
+
+    public static boolean getHttpsEnabled() {
+        return getBoolean(KEY_HTTPS_ENABLED, VALUE_HTTPS_ENABLED);
+    }
+
+    public static void putHttpsEnabled(boolean value) {
+        putBoolean(KEY_HTTPS_ENABLED, value);
+    }
+
     /**
      * http://stackoverflow.com/questions/332079
      *

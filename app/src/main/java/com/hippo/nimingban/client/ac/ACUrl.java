@@ -16,6 +16,8 @@
 
 package com.hippo.nimingban.client.ac;
 
+import com.hippo.nimingban.util.Settings;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -25,7 +27,9 @@ public class ACUrl {
 
     public static final String DOMAIN = "adnmb1.com";
 
-    public static final String HOST = "https://" + DOMAIN;
+    public static final String PROTOCOL = Settings.getHttpsEnabled() ? "https" : "http";
+
+    public static final String HOST = PROTOCOL + "://" + DOMAIN;
 
     public static final String API_POST_LIST = HOST + "/Api/showf?appid=" + APP_ID;
 

@@ -279,6 +279,8 @@
     <string name="main_restore_ignored_post">恢復所有已屏蔽的串</string>
     <string name="main_restore_ignored_post_summary">你之前所屏蔽的串將會重新出現</string>
     <string name="main_restore_ignored_post_successfully">已恢復所有被屏蔽的串</string>
+    <string name="main_enable_https">啓用HTTPS連接（需要重啓應用）</string>
+    <string name="main_enable_https_summary">如果遇到了連接問題，可嘗試關閉此選項</string>
     <string name="main_analysis">啟用數據統計</string>
     <string name="main_about_analysis">關於數據統計</string>
     <string name="main_author">作者</string>
