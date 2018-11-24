@@ -123,7 +123,7 @@ public final class ACEngine {
     }
 
     public static Call prepareGetCookie(OkHttpClient okHttpClient) {
-        String url = ACUrl.API_GET_COOKIE;
+        String url = ACUrl.getHost() + ACUrl.API_GET_COOKIE;
         Log.d(TAG, url);
         Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
@@ -147,7 +147,7 @@ public final class ACEngine {
     }
 
     public static Call prepareGetCdnPath(OkHttpClient okHttpClient) {
-        String url = ACUrl.API_GET_CDN_PATH;
+        String url = ACUrl.getHost() + ACUrl.API_GET_CDN_PATH;
         Log.d(TAG, url);
         Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
@@ -166,7 +166,7 @@ public final class ACEngine {
     }
 
     public static Call prepareGetCommonPosts(OkHttpClient okHttpClient) {
-        String url = ACUrl.API_COMMON_POSTS;
+        String url = ACUrl.getHost() + ACUrl.API_COMMON_POSTS;
         Log.d(TAG, url);
         Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
@@ -190,7 +190,7 @@ public final class ACEngine {
     }
 
     public static Call prepareGetForumList(OkHttpClient okHttpClient) {
-        String url = ACUrl.API_GET_FORUM_LIST;
+        String url = ACUrl.getHost() + ACUrl.API_GET_FORUM_LIST;
         Log.d(TAG, url);
         Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
@@ -283,7 +283,7 @@ public final class ACEngine {
             body = response.body().string();
 
             ACReference reference = new ACReference();
-            Document doc = Jsoup.parse(body, ACUrl.HOST + "/");
+            Document doc = Jsoup.parse(body, ACUrl.getHost() + "/");
             List<Element> elements = doc.getAllElements();
             for (Element element : elements) {
                 String className = element.className();
@@ -397,7 +397,7 @@ public final class ACEngine {
                     RequestBody.create(mediaType, bytes));
         }
 
-        String url = ACUrl.API_REPLY;
+        String url = ACUrl.getHost() + ACUrl.API_REPLY;
         Log.d(TAG, url);
         Request request = new Request.Builder()
                 .url(url)
@@ -579,7 +579,7 @@ public final class ACEngine {
                     RequestBody.create(mediaType, bytes));
         }
 
-        String url = ACUrl.API_CREATE_POST;
+        String url = ACUrl.getHost() + ACUrl.API_CREATE_POST;
         Log.d(TAG, url);
         Request request = new Request.Builder()
                 .url(url)

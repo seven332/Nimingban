@@ -838,7 +838,7 @@ public final class ListActivity extends AbsActivity
                 // It might be relative path
                 try {
                     // Use absolute url
-                    absoluteUrl = new URL(new URL(ACUrl.HOST), url);
+                    absoluteUrl = new URL(new URL(ACUrl.getHost()), url);
                     int start = spannable.getSpanStart(urlSpan);
                     int end = spannable.getSpanEnd(urlSpan);
                     spannable.removeSpan(urlSpan);

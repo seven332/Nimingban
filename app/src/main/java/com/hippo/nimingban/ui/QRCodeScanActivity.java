@@ -243,7 +243,7 @@ public class QRCodeScanActivity extends TranslucentActivity
       cookie.setMaxAge(-1);
 
       SimpleCookieStore store = NMBApplication.getSimpleCookieStore(this);
-      store.add(new URL(ACUrl.HOST), cookie);
+      store.add(new URL(ACUrl.getHost()), cookie);
 
       Toast.makeText(this, R.string.qr_scan_succeed, Toast.LENGTH_SHORT).show();
       finish();
