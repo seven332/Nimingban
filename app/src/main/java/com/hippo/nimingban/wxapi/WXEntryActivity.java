@@ -89,7 +89,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
             cookie.setMaxAge(-1);
 
             SimpleCookieStore store = NMBApplication.getSimpleCookieStore(this);
-            store.add(new URL(ACUrl.HOST), cookie);
+            store.add(new URL(ACUrl.getHost()), cookie);
 
             return json.length() > 1 ? R.string.wx_add_cookie_succeed_multi : R.string.wx_add_cookie_succeed;
         } catch (Exception e) {

@@ -264,9 +264,9 @@ public final class ACItemUtils {
                     String href = attributes.getValue("", "href");
                     if (!href.startsWith("http")) {
                         if (href.startsWith("/")){
-                            href = ACUrl.HOST + href;
+                            href = ACUrl.getHost() + href;
                         } else {
-                            href = ACUrl.HOST + '/' + href;
+                            href = ACUrl.getHost() + '/' + href;
                         }
                     }
                     int len = output.length();

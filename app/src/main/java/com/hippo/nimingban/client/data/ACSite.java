@@ -39,7 +39,7 @@ public class ACSite extends Site {
 
     private static final String TAG = ACSite.class.getSimpleName();
 
-    private static final String DEFAULT_PICTURE_PREFIX = ACUrl.HOST + "/Public/Upload/";
+    private static final String DEFAULT_PICTURE_PREFIX = ACUrl.getHost() + "/Public/Upload/";
 
     private URL mSiteUrl;
 
@@ -60,7 +60,7 @@ public class ACSite extends Site {
 
     private ACSite() {
         try {
-            mSiteUrl = new URL(ACUrl.HOST);
+            mSiteUrl = new URL(ACUrl.getHost());
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }

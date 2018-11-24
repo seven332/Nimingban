@@ -279,7 +279,7 @@
     <string name="main_restore_ignored_post">恢复所有已屏蔽的串</string>
     <string name="main_restore_ignored_post_summary">你之前所屏蔽的串将会重新出现</string>
     <string name="main_restore_ignored_post_successfully">已恢复所有被屏蔽的串</string>
-    <string name="main_enable_https">启用HTTPS连接（需要重启应用）</string>
+    <string name="main_enable_https">启用HTTPS连接</string>
     <string name="main_enable_https_summary">如果遇到了连接问题，可尝试关闭此选项</string>
     <string name="main_analysis">启用数据统计</string>
     <string name="main_about_analysis">关于数据统计</string>

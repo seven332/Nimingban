@@ -656,7 +656,7 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
         SimpleCookieStore cookieStore = NMBApplication.getSimpleCookieStore(getContext());
         URL url;
         try {
-            url = new URL(ACUrl.HOST);
+            url = new URL(ACUrl.getHost());
         } catch (MalformedURLException e) {
             // WTF ?
             return true;
