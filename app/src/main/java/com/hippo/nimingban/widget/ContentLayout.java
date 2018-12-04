@@ -398,6 +398,44 @@ public class ContentLayout extends FrameLayout {
             mRefreshLayout.setFooterRefreshing(false);
         }
 
+        protected boolean shouldRemoveDuplications() {
+            return false;
+        }
+
+        protected boolean isTheSame(E d1, E d2) {
+            return false;
+        }
+
+        private boolean isDuplication(E d) {
+            for (E d2 : mData) {
+                if (isTheSame(d, d2)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private List<E> removeDuplications(List<E> data) {
+            if (!shouldRemoveDuplications()) {
+                return data;
+            }
+
+            List<E> newData = new ArrayList<>(data.size());
+
+            for (E d : data) {
+                if (!isDuplication(d)) {
+                    newData.add(d);
+                }
+            }
+
+            // At least keep one item
+            if (newData.isEmpty() && !data.isEmpty()) {
+                newData.add(data.get(0));
+            }
+
+            return newData;
+        }
+
         public void onGetPageData(int taskId, List<E> data) {
             if (mCurrentTaskId == taskId) {
                 showContent();
@@ -420,6 +458,7 @@ public class ContentLayout extends FrameLayout {
                         break;
                     case TYPE_PRE_PAGE:
                     case TYPE_PRE_PAGE_KEEP_POS:
+                        data = removeDuplications(data);
                         mData.addAll(0, data);
                         notifyItemRangeInserted(0, data.size());
 
@@ -443,6 +482,7 @@ public class ContentLayout extends FrameLayout {
                         break;
                     case TYPE_NEXT_PAGE:
                     case TYPE_NEXT_PAGE_KEEP_POS:
+                        data = removeDuplications(data);
                         dataSize = data.size();
                         int oldDataSize = mData.size();
                         mData.addAll(data);
@@ -486,6 +526,7 @@ public class ContentLayout extends FrameLayout {
                         int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);
                         int oldIndexEnd = mPageDivider.get(mCurrentTaskPage - mStartPage);
                         mData.subList(oldIndexStart, oldIndexEnd).clear();
+                        data = removeDuplications(data);
                         int newIndexStart = oldIndexStart;
                         int newIndexEnd = newIndexStart + data.size();
                         mData.addAll(oldIndexStart, data);

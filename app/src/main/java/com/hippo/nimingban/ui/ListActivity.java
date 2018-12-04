@@ -1267,6 +1267,16 @@ public final class ListActivity extends AbsActivity
         }
 
         @Override
+        protected boolean shouldRemoveDuplications() {
+            return true;
+        }
+
+        @Override
+        protected boolean isTheSame(Post d1, Post d2) {
+            return ObjectUtils.equal(d1.getNMBId(), d2.getNMBId());
+        }
+
+        @Override
         protected void getPageData(int taskId, int type, int page) {
             if (mNMBRequest != null) {
                 mNMBRequest.cancel();
