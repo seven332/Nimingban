@@ -29,13 +29,11 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
-
 import com.hippo.network.DownloadClient;
 import com.hippo.network.DownloadRequest;
 import com.hippo.nimingban.NMBAppConfig;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
-import com.hippo.nimingban.client.data.DiscUrl;
 import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.content.UpdateApkProvider;
 import com.hippo.nimingban.util.OpenUrlHelper;
@@ -45,9 +43,7 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.TextUtils2;
 import com.hippo.util.Timer;
 import com.hippo.yorozuya.FileUtils;
-
 import java.io.File;
-import java.util.List;
 
 public final class UpdateHelper {
 
@@ -82,14 +78,36 @@ public final class UpdateHelper {
                 .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        downloadApk(activity, status.apkUrl, status.discUrl, status.failedUrl,
-                                "nimingban-" + status.versionName + ".apk");
+                        showSelectDialog(activity, status);
                     }
                 })
                 .show();
     }
 
-    public static void downloadApk(Context context, String url, List<DiscUrl> discUrls, String failedUrl, String filename) {
+    private static void showSelectDialog(final Activity activity, final UpdateStatus status) {
+        final String[] items = new String[1 + status.discUrls.size()];
+        int index = 0;
+        items[index++] = activity.getString(R.string.direct_download);
+        for (String disc : status.discUrls.keySet()) {
+            items[index++] = disc;
+        }
+
+        new AlertDialog.Builder(activity)
+            .setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == 0) {
+                        downloadApk(activity, status.apkUrl, status.failedUrl,
+                            "nimingban-" + status.versionName + ".apk");
+                    } else {
+                        OpenUrlHelper.openUrl(activity, status.discUrls.get(items[which]), false);
+                    }
+                }
+            })
+            .show();
+    }
+
+    public static void downloadApk(Context context, String url, String failedUrl, String filename) {
         if (sUpdating) {
             return;
         }

@@ -372,6 +372,7 @@
 
     <string name="version">Version</string>
     <string name="size">Size</string>
+    <string name="direct_download">Direct download</string>
     <string name="download_update">Download update</string>
     <string name="download">Download</string>
     <string name="downloading_update">Downloading update…</string>

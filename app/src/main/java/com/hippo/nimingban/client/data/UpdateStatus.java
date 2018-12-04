@@ -16,7 +16,7 @@
 
 package com.hippo.nimingban.client.data;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 public class UpdateStatus {
 
@@ -25,12 +25,12 @@ public class UpdateStatus {
     public String info;
     public long size;
     public String apkUrl;
-    public List<DiscUrl> discUrl;
+    public LinkedHashMap<String, String> discUrls;
     public String failedUrl;
 
     @Override
     public String toString() {
         return "versionCode = " + versionCode + ", versionName = " + versionName + ", info = " + info +
-                ", size = " + size + ", apkUrl = " + apkUrl + ", discUrl = " + discUrl + ", failedUrl = " + failedUrl;
+                ", size = " + size + ", apkUrl = " + apkUrl + ", discUrls = " + discUrls + ", failedUrl = " + failedUrl;
     }
 }
