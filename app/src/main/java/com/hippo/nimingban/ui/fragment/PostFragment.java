@@ -1002,7 +1002,13 @@ public class PostFragment extends BaseFragment
 
                 List<Reply> replies = result.second;
                 if (mPage == 0) {
-                    mPageSize = replies.size();
+                    mPageSize = 0;
+                    for (Reply reply : replies) {
+                        // Remove ad
+                        if (!reply.getNMBId().equals("9999999")) {
+                            mPageSize++;
+                        }
+                    }
                     replies.add(0, post);
                 }
 
@@ -1015,13 +1021,7 @@ public class PostFragment extends BaseFragment
                     mReplyHelper.onGetPageData(mTaskId, replies);
                 }
 
-                if (!empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH ||
-                        mTaskType == ContentLayout.ContentHelper.TYPE_SOMEWHERE) &&
-                        mReplyHelper.size() == post.getNMBReplyCount() + 1) { // post is in data, so +1
-                    mReplyHelper.setPages(mPage + 1); // this is the last page
-                } else if (mPageSize == 0) {
+                if (mPageSize == 0) {
                     mReplyHelper.setPages(1); // Only post, no reply
                 } else if (empty && (mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE ||
                         mTaskType == ContentLayout.ContentHelper.TYPE_NEXT_PAGE_KEEP_POS)) {
