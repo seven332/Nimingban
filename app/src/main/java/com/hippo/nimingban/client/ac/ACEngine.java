@@ -166,7 +166,7 @@ public final class ACEngine {
     }
 
     public static Call prepareGetCommonPosts(OkHttpClient okHttpClient) {
-        String url = ACUrl.getHost() + ACUrl.API_COMMON_POSTS;
+        String url = ACUrl.API_COMMON_POSTS;
         Log.d(TAG, url);
         Request request = new Request.Builder().url(url).build();
         return okHttpClient.newCall(request);
