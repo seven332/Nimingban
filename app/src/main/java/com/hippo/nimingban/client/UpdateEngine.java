@@ -32,7 +32,7 @@ public final class UpdateEngine {
 
     private static final String TAG = UpdateEngine.class.getSimpleName();
 
-    private static final String UPDATE_URL = "http://nimingban.herokuapp.com/update2";
+    private static final String UPDATE_URL = "http://cover.acfunwiki.org/nimingban-update.json";
 
     public static Call prepareUpdate(OkHttpClient okHttpClient) {
         String url = UPDATE_URL;
