@@ -101,6 +101,10 @@ public class NMBClient {
         }
     }
 
+    public void execute(AsyncTask<?, ?, ?> task) {
+        task.executeOnExecutor(mRequestThreadPool);
+    }
+
     public class Task extends AsyncTask<Object, Void, Object> {
 
         private int mMethod;

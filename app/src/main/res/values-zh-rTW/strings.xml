@@ -279,8 +279,10 @@
     <string name="main_restore_ignored_post">恢復所有已遮蔽的串</string>
     <string name="main_restore_ignored_post_summary">你之前所遮蔽的串將會重新出現</string>
     <string name="main_restore_ignored_post_successfully">已恢復所有被遮蔽的串</string>
-    <string name="main_enable_https">啓用HTTPS連接</string>
-    <string name="main_enable_https_summary">如果遇到了連接問題，可嘗試關閉此選項</string>
+    <string name="main_enable_customized_ac_host">啟用自定義 host</string>
+    <string name="main_customized_ac_host">自定義 host</string>
+    <string name="main_customized_ac_host_hint">Host</string>
+    <string name="main_customized_ac_host_invalid">無效的 host</string>
     <string name="main_analysis">啟用資料統計</string>
     <string name="main_about_analysis">關於資料統計</string>
     <string name="main_author">作者</string>

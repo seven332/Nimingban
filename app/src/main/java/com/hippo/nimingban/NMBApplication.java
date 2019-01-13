@@ -16,6 +16,7 @@
 
 package com.hippo.nimingban;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -26,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.NonNull;
@@ -76,7 +78,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public final class NMBApplication extends Application
         implements Thread.UncaughtExceptionHandler, Messenger.Receiver, Runnable {
@@ -181,6 +186,7 @@ public final class NMBApplication extends Application
     private void start() {
         updateACCdnPath();
         updateACForums();
+        updateACHost();
     }
 
     private void readACCdnPathFromFile() {
@@ -256,6 +262,46 @@ public final class NMBApplication extends Application
             public void onCancel() { }
         });
         getNMBClient(this).execute(request);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void updateACHost() {
+        getNMBClient(this).execute(new AsyncTask<Object, Object, String>() {
+            @Override
+            protected String doInBackground(Object... objects) {
+                OkHttpClient client = getOkHttpClient(NMBApplication.this);
+                Request request = new Request.Builder().url("http://adnmb.com").build();
+                Call call = client.newCall(request);
+                try {
+                    Response response = call.execute();
+                    String url = response.request().url().toString();
+                    response.close();
+
+                    // Find third '/', make url like http://adnmb.com
+                    int count = 0;
+                    for (int i = 0, n = url.length(); i < n; i++) {
+                        if (url.charAt(i) == '/') {
+                            count++;
+                        }
+                        if (count == 3) {
+                            url = url.substring(0, i);
+                            break;
+                        }
+                    }
+
+                    return url;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String host) {
+                Log.d(TAG, "ac host = " + host);
+                Settings.putAcHost(host);
+            }
+        });
     }
 
     private void update() throws PackageManager.NameNotFoundException {

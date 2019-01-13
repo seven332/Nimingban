@@ -286,8 +286,10 @@
     <string name="main_restore_ignored_post">Restore all ignored posts</string>
     <string name="main_restore_ignored_post_summary">The posts you ignored will redisplayed</string>
     <string name="main_restore_ignored_post_successfully">Restoring successful</string>
-    <string name="main_enable_https">Enable HTTPS connection</string>
-    <string name="main_enable_https_summary">Try to disable this if some connection errors occurred</string>
+    <string name="main_enable_customized_ac_host">Enable customized host</string>
+    <string name="main_customized_ac_host">Customized host</string>
+    <string name="main_customized_ac_host_hint">Host</string>
+    <string name="main_customized_ac_host_invalid">Invalid host</string>
     <string name="main_analysis">Enable data analysis</string>
     <string name="main_about_analysis">About data analysis</string>
     <string name="main_author">Author</string>

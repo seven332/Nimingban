@@ -90,11 +90,16 @@
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
-        android:key="https_enabled"
-        android:title="@string/main_enable_https"
-        android:summary="@string/main_enable_https_summary"
-        android:defaultValue="true"
+        android:key="enable_customized_ac_host"
+        android:title="@string/main_enable_customized_ac_host"
+        android:defaultValue="false"
         android:widgetLayout="@layout/preference_widget_fixed_switch" />
+
+    <com.hippo.nimingban.preference.HostPreference
+        style="?android:attr/preferenceStyle"
+        android:key="customized_ac_host"
+        android:title="@string/main_customized_ac_host"
+        android:dependency="enable_customized_ac_host"/>
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
