@@ -98,7 +98,7 @@ dependencies {
     implementation 'com.github.seven332:ripple:0.1.1'
     implementation 'com.github.seven332:swipeback:0.1.1'
     implementation 'com.github.seven332:unifile:0.1.4'
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.6'
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     implementation 'org.greenrobot:greendao:2.2.1'
