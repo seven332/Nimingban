@@ -38,6 +38,7 @@ import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
+import com.hippo.nimingban.util.PostIgnoreUtils;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -435,6 +436,13 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
                 mSearchHelper.onGetEmptyData(mTaskId);
                 mSearchHelper.setPages(mPage);
             } else {
+                Iterator<ACSearchItem> itemIterator = result.iterator();
+                while (itemIterator.hasNext()) {
+                    ACSearchItem item = itemIterator.next();
+                    if (PostIgnoreUtils.INSTANCE.checkPostIgnored(item.getNMBPostId()))
+                        itemIterator.remove();
+                }
+
                 mSearchHelper.onGetPageData(mTaskId, result);
                 mSearchHelper.setPages(Integer.MAX_VALUE);
             }

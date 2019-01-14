@@ -105,6 +105,9 @@
 
     <string name="ignore_post_confirm_title">你确定要屏蔽此串吗？</string>
     <string name="ignore_post_confirm_message">今后你只能通过输入此串串号进入</string>
+    <string name="ignore_post_confirm_message_strict">今后除非你通过设置取消屏蔽所有串，否则将无法再次访问</string>
+
+    <string name="ignore_post_message">此串已被你屏蔽</string>
 
     <string name="comment_copied_clipboard">评论文字已复制到剪贴板</string>
 
@@ -278,6 +281,9 @@
     <string name="main_fix_image_urls">修正图片链接</string>
     <string name="main_fix_image_urls_summary_on">使用默认图片链接</string>
     <string name="main_fix_image_urls_summary_off">通过 API 获取图片链接。若图片加载失败，请启用该项。</string>
+    <string name="main_strict_ignore_post_mode">严格屏蔽模式</string>
+    <string name="main_strict_ignore_post_mode_summary_on">你将无法访问被屏蔽的串</string>
+    <string name="main_strict_ignore_post_mode_summary_off">你仍可通过输入串号的方法访问被屏蔽的串</string>
     <string name="main_restore_ignored_post">恢复所有已屏蔽的串</string>
     <string name="main_restore_ignored_post_summary">你之前所屏蔽的串将会重新出现</string>
     <string name="main_restore_ignored_post_successfully">已恢复所有被屏蔽的串</string>
