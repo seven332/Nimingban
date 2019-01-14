@@ -83,6 +83,15 @@
         android:defaultValue="0"
         android:widgetLayout="@layout/preference_widget_icon_list"/>
 
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:key="strict_ignore_post_mode"
+        android:title="@string/main_strict_ignore_post_mode"
+        app:summaryOn="@string/main_strict_ignore_post_mode_summary_on"
+        app:summaryOff="@string/main_strict_ignore_post_mode_summary_off"
+        android:defaultValue="false"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
+
     <Preference
         android:key="restore_ignored_posts"
         android:title="@string/main_restore_ignored_post"

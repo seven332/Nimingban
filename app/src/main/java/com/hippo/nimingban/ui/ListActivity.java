@@ -424,7 +424,7 @@ public final class ListActivity extends AbsActivity
                 switch (i) {
                     case 0:
                         Intent intent = new Intent(ListActivity.this, TypeSendActivity.class);
-                        intent.setAction(TypeSendActivity.ACTION_CREATE_POST);
+                        intent.setAction(TypeSendActivity.ACTION_REPORT);
                         intent.putExtra(TypeSendActivity.KEY_SITE, mCurrentForum.getNMBSite().getId());
                         intent.putExtra(TypeSendActivity.KEY_ID, mCurrentForum.getNMBSite().getReportForumId());
                         intent.putExtra(TypeSendActivity.KEY_TEXT, ">>No." + post.getNMBPostId() + "\n");
@@ -433,7 +433,7 @@ public final class ListActivity extends AbsActivity
                     case 1:
                         new AlertDialog.Builder(ListActivity.this)
                                 .setTitle(R.string.ignore_post_confirm_title)
-                                .setMessage(R.string.ignore_post_confirm_message)
+                                .setMessage(Settings.getEnableStrictIgnoreMode() ? R.string.ignore_post_confirm_message_strict : R.string.ignore_post_confirm_message)
                                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
