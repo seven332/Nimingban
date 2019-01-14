@@ -66,6 +66,7 @@ import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.ui.GalleryActivity2;
 import com.hippo.nimingban.ui.PostActivity;
 import com.hippo.nimingban.util.OpenUrlHelper;
+import com.hippo.nimingban.util.PostIgnoreUtils;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.nimingban.widget.ContentLayout;
@@ -143,6 +144,8 @@ public class PostFragment extends BaseFragment
     private List<WeakReference<ReplyHolder>> mHolderList = new LinkedList<>();
 
     private Callback mCallback;
+
+    private boolean isLoaded;
 
     public void setCallback(Callback callback) {
         mCallback = callback;
@@ -270,6 +273,8 @@ public class PostFragment extends BaseFragment
         Messenger.getInstance().register(Constants.MESSENGER_ID_REPLY, this);
         Messenger.getInstance().register(Constants.MESSENGER_ID_FAST_SCROLLER, this);
 
+        isLoaded = false;
+
         return view;
     }
 
@@ -360,6 +365,8 @@ public class PostFragment extends BaseFragment
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        if (!isLoaded) return true;
+
         switch (item.getItemId()) {
             case R.id.action_go_to:
                 int pages = mReplyHelper.getPages();
@@ -614,6 +621,18 @@ public class PostFragment extends BaseFragment
                         startActivity(intent);
                     }
                 });
+            }
+
+            // TODO: Need getting rid of unwanted requests (example: post image thumbnail)
+            if (Settings.getEnableStrictIgnoreMode() && PostIgnoreUtils.INSTANCE.checkPostIgnored(postId)) {
+                mLeftText.setText("");
+                mCenterText.setText("No.9999999");
+                mRightText.setText(R.string.from_the_future);
+                mThumb.setVisibility(View.GONE);
+                mThumb.unload();
+                mContent.setText(R.string.ignore_post_message);
+                mButton.setVisibility(View.GONE);
+                mButton.setOnClickListener(null);
             }
 
             mRequest = null;
@@ -944,6 +963,12 @@ public class PostFragment extends BaseFragment
                 request.setCallback(new GetPostIdFromReferenceListener());
                 mNMBClient.execute(request);
             } else {
+                if (Settings.getEnableStrictIgnoreMode() && PostIgnoreUtils.INSTANCE.checkPostIgnored(mId)) {
+                    isLoaded = false;
+                    mReplyHelper.showText(getString(R.string.ignore_post_message));
+                    return;
+                }
+
                 NMBRequest request = new NMBRequest();
                 mNMBRequest = request;
                 request.setSite(mSite);
@@ -959,6 +984,12 @@ public class PostFragment extends BaseFragment
 
         @Override
         public void onSuccess(ACReference result) {
+            if (Settings.getEnableStrictIgnoreMode() && PostIgnoreUtils.INSTANCE.checkPostIgnored(result.postId)) {
+                isLoaded = false;
+                mReplyHelper.showText(getString(R.string.ignore_post_message));
+                return;
+            }
+
             mReplyId = null;
             mId = result.postId;
             mToolbar.setTitle(mSite.getPostTitle(getContext(), mId));
@@ -1043,6 +1074,8 @@ public class PostFragment extends BaseFragment
                         mReplyHelper.setPages(Integer.MAX_VALUE); // Keep going
                     }
                 }
+
+                isLoaded = true;
             }
             // Clear
             mRequest = null;
@@ -1057,6 +1090,8 @@ public class PostFragment extends BaseFragment
                 mNMBRequest = null;
 
                 mReplyHelper.onGetExpection(mTaskId, e);
+
+                isLoaded = false;
             }
             // Clear
             mRequest = null;
@@ -1069,6 +1104,8 @@ public class PostFragment extends BaseFragment
 
                 // Clear
                 mNMBRequest = null;
+
+                isLoaded = false;
             }
             // Clear
             mRequest = null;

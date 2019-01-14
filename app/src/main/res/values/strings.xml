@@ -104,6 +104,9 @@
 
     <string name="ignore_post_confirm_title">Are you sure want to ignore this post?</string>
     <string name="ignore_post_confirm_message">After ignored, you can access it from enter post id only.</string>
+    <string name="ignore_post_confirm_message_strict">After ignored, you can\'t access these posts unless you restored all ignored posts.</string>
+
+    <string name="ignore_post_message">This post has been ignored</string>
 
     <string name="comment_copied_clipboard">Copied to clipboard</string>
 
@@ -283,6 +286,9 @@
     <string name="main_fix_image_urls">Fix image URLs</string>
     <string name="main_fix_image_urls_summary_on">Use default image URLs</string>
     <string name="main_fix_image_urls_summary_off">Get image URLs from the API. Enable it if loading images failed</string>
+    <string name="main_strict_ignore_post_mode">Strict ignore post mode</string>
+    <string name="main_strict_ignore_post_mode_summary_on">You can\'t access ignored posts anymore</string>
+    <string name="main_strict_ignore_post_mode_summary_off">You still can access ignored posts using go to post id</string>
     <string name="main_restore_ignored_post">Restore all ignored posts</string>
     <string name="main_restore_ignored_post_summary">The posts you ignored will redisplayed</string>
     <string name="main_restore_ignored_post_successfully">Restoring successful</string>

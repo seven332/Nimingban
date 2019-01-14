@@ -104,6 +104,9 @@
 
     <string name="ignore_post_confirm_title">你確定要屏蔽此串嗎？</string>
     <string name="ignore_post_confirm_message">今後你只能通過輸入此串串號進入</string>
+    <string name="ignore_post_confirm_message_strict">今後除非你通過設置取消屏蔽所有串，否則將無法再次訪問</string>
+
+    <string name="ignore_post_message">此串已被你屏蔽</string>
 
     <string name="comment_copied_clipboard">評論文字已複製到剪貼板</string>
 
@@ -276,6 +279,9 @@
     <string name="main_fix_image_urls">修正圖片鏈接</string>
     <string name="main_fix_image_urls_summary_on">使用默認圖片鏈接</string>
     <string name="main_fix_image_urls_summary_off">通過 API 獲取圖片鏈接。若圖片加載失敗，請啟用該項。</string>
+    <string name="main_strict_ignore_post_mode">嚴格屏蔽模式</string>
+    <string name="main_strict_ignore_post_mode_summary_on">你將無法訪問被屏蔽的串</string>
+    <string name="main_strict_ignore_post_mode_summary_off">你仍可通過輸入串號的方式訪問被屏蔽的串</string>
     <string name="main_restore_ignored_post">恢復所有已屏蔽的串</string>
     <string name="main_restore_ignored_post_summary">你之前所屏蔽的串將會重新出現</string>
     <string name="main_restore_ignored_post_successfully">已恢復所有被屏蔽的串</string>

@@ -488,6 +488,13 @@ public final class Settings {
         putString(KEY_CUSTOMIZED_AC_HOST, value);
     }
 
+    public static final String KEY_STRICT_IGNORE_MODE = "strict_ignore_post_mode";
+    public static final boolean VALUE_STRICT_IGNORE_MODE = false;
+
+    public static boolean getEnableStrictIgnoreMode() {
+        return getBoolean(KEY_STRICT_IGNORE_MODE, VALUE_STRICT_IGNORE_MODE);
+    }
+
     /**
      * http://stackoverflow.com/questions/332079
      *
