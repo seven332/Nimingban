@@ -72,6 +72,7 @@
     <string name="lucky">Haha</string>
     <string name="go_to_post">Go to thread</string>
     <string name="keyword_empty">Keyword is empty</string>
+    <string name="invalid_post_id">Thread id is not valid</string>
     <string name="not_found">Nobody here but us chickens</string>
     <string name="search_title">Search - %s</string>
 
