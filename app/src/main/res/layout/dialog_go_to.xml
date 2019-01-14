@@ -22,28 +22,43 @@
     android:paddingTop="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/start"
-        android:layout_width="32dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_horizontal"/>
+        android:orientation="horizontal">
 
-    <com.hippo.widget.Slider
-        android:id="@+id/slider"
-        style="@style/Slider"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/start"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"/>
 
-    <TextView
-        android:id="@+id/end"
-        android:layout_width="32dp"
+        <com.hippo.widget.Slider
+            android:id="@+id/slider"
+            style="@style/Slider"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/end"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/page_input"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:inputType="number" />
 
 </LinearLayout>
