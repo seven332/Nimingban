@@ -19,22 +19,18 @@ package com.hippo.nimingban.client;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import com.alibaba.fastjson.JSON;
 import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.client.ac.ACEngine;
 import com.hippo.nimingban.client.ac.data.ACPostStruct;
 import com.hippo.nimingban.client.ac.data.ACReplyStruct;
 import com.hippo.nimingban.client.data.Site;
+import com.hippo.nimingban.util.FixedThreadPoolExecutor;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -82,12 +78,10 @@ public class NMBClient {
     private final OkHttpClient mOkHttpClient;
 
     public NMBClient(Context context) {
-        int poolSize = 3;
-        BlockingQueue<Runnable> requestWorkQueue = new LinkedBlockingQueue<>();
         ThreadFactory threadFactory = new PriorityThreadFactory(TAG,
                 android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        mRequestThreadPool = new ThreadPoolExecutor(poolSize, Integer.MAX_VALUE,
-                1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
+        mRequestThreadPool = FixedThreadPoolExecutor.newInstance(
+            3, 32, 1L, TimeUnit.SECONDS, threadFactory);
         mOkHttpClient = NMBApplication.getOkHttpClient(context);
     }
 
