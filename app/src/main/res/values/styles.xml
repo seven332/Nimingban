@@ -48,7 +48,7 @@
     <style name="Slider">
         <item name="thickness">2dp</item>
         <item name="radius">6dp</item>
-        <item name="color">?attr/colorPrimary</item>
+        <item name="color">?attr/colorAccent</item>
         <item name="textColor">@android:color/white</item>
         <item name="textSize">12sp</item>
         <item name="dark">?attr/dark</item>
