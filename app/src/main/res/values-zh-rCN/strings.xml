@@ -72,6 +72,7 @@
     <string name="lucky">哈哈</string>
     <string name="go_to_post">去串</string>
     <string name="keyword_empty">关键字为空</string>
+    <string name="invalid_post_id">不是有效的串号</string>
     <string name="not_found">啥都找不到</string>
     <string name="search_title">搜索 - %s</string>
 

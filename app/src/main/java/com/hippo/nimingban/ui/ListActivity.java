@@ -1021,6 +1021,10 @@ public final class ListActivity extends AbsActivity
                 startActivity(intent);
                 mDialog.dismiss();
             } else if (mNeutral == v) {
+                if (!TextUtils.isDigitsOnly(keyword)) {
+                    Toast.makeText(ListActivity.this, R.string.invalid_post_id, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(ListActivity.this, PostActivity.class);
                 intent.setAction(PostActivity.ACTION_SITE_REPLY_ID);
                 intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
