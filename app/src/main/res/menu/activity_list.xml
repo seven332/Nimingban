@@ -32,6 +32,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_notice"
+        android:title="@string/notice"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_sort_forums"
         android:title="@string/sort_forums"
         android:icon="@drawable/v_sort_dark_x24"

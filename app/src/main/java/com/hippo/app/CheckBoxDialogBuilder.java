@@ -28,18 +28,25 @@ import com.hippo.nimingban.R;
 
 public class CheckBoxDialogBuilder extends AlertDialog.Builder {
 
+    private final boolean mShowCheckbox;
     private final CheckBox mCheckBox;
 
     @SuppressLint("InflateParams")
-    public CheckBoxDialogBuilder(Context context, CharSequence message, String checkText, boolean checked) {
+    public CheckBoxDialogBuilder(Context context, CharSequence message, String checkText, boolean showCheckbox, boolean checked) {
         super(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_checkbox_builder, null);
         setView(view);
         TextView messageView = (TextView) view.findViewById(R.id.message);
+        mShowCheckbox = showCheckbox;
         mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
         messageView.setText(message);
         mCheckBox.setText(checkText);
         mCheckBox.setChecked(checked);
+        if (!showCheckbox) mCheckBox.setVisibility(View.GONE);
+    }
+
+    public boolean isShowCheckbox() {
+        return mShowCheckbox;
     }
 
     public boolean isChecked() {
