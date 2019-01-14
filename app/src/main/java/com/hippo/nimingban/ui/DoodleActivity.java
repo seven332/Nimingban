@@ -288,6 +288,8 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
         public void onClick(DialogInterface dialog, int which) {
             if (DialogInterface.BUTTON_POSITIVE == which) {
                 mDoodleView.setPaintColor(mView.getColor());
+            } else if (DialogInterface.BUTTON_NEUTRAL == which) {
+                mDoodleView.setPaintColor(ResourcesUtils.getAttrColor(DoodleActivity.this, R.attr.colorPureInverse));
             }
         }
     }
@@ -298,6 +300,7 @@ public final class DoodleActivity extends TranslucentActivity implements View.On
                 .setView(helper.getView())
                 .setPositiveButton(android.R.string.ok, helper)
                 .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton(R.string.doodle_reset_color, helper)
                 .show();
     }
 

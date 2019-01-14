@@ -197,6 +197,7 @@
     <string name="type_send_watermark">水印</string>
 
     <string name="doodle">塗鴉</string>
+    <string name="doodle_reset_color">重設</string>
     <string name="save_doodle">儲存塗鴉？</string>
     <string name="cant_create_image_file">無法儲存圖片檔案</string>
     <string name="saving">儲存中…</string>
