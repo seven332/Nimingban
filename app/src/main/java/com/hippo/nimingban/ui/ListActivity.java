@@ -1002,7 +1002,7 @@ public final class ListActivity extends AbsActivity
                 Intent intent = new Intent(ListActivity.this, PostActivity.class);
                 intent.setAction(PostActivity.ACTION_SITE_REPLY_ID);
                 intent.putExtra(PostActivity.KEY_SITE, ACSite.getInstance().getId());
-                intent.putExtra(PostActivity.KEY_ID, Integer.toString(MathUtils.random(1, 6666667))); // TODO how to get the max id
+                intent.putExtra(PostActivity.KEY_ID, Integer.toString(MathUtils.random(1, 16000000))); // TODO how to get the max id
                 startActivity(intent);
                 mDialog.dismiss();
                 return;
