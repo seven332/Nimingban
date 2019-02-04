@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.query.LazyList;
+import de.greenrobot.dao.query.QueryBuilder;
 
 public final class DB {
 
@@ -82,6 +83,9 @@ public final class DB {
                 case 4:
                     db.execSQL("ALTER TABLE '" + ACForumDao.TABLENAME + "' ADD COLUMN '" +
                             ACForumDao.Properties.Official.columnName + "' INTEGER DEFAULT 0");
+                case 5:
+                    db.execSQL("ALTER TABLE '" + ACForumDao.TABLENAME + "' ADD COLUMN '" +
+                            ACForumDao.Properties.Frequency.columnName + "' INTEGER DEFAULT 0");
             }
         }
 
@@ -173,9 +177,14 @@ public final class DB {
         }
     }
 
-    public static List<DisplayForum> getACForums(boolean onlyVisible) {
+    public static List<DisplayForum> getACForums(boolean onlyVisible, boolean autoSorting) {
         ACForumDao dao = sDaoSession.getACForumDao();
-        List<ACForumRaw> list = dao.queryBuilder().orderAsc(ACForumDao.Properties.Priority).list();
+        QueryBuilder<ACForumRaw> query = dao.queryBuilder();
+        if (autoSorting) {
+            query = query.orderDesc(ACForumDao.Properties.Frequency);
+        }
+        query = query.orderAsc(ACForumDao.Properties.Priority);
+        List<ACForumRaw> list = query.list();
         List<DisplayForum> result = new ArrayList<>();
         for (ACForumRaw raw : list) {
             if (onlyVisible && !raw.getVisibility()) {
@@ -362,5 +371,10 @@ public final class DB {
         }
 
         dao.insertInTx(insertList);
+    }
+
+    public static void setACForumFrequency(ACForumRaw raw, int freq) {
+        raw.setFrequency(freq);
+        sDaoSession.getACForumDao().update(raw);
     }
 }

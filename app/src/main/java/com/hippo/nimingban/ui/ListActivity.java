@@ -704,7 +704,8 @@ public final class ListActivity extends AbsActivity
 
     private void updateForums(boolean firstTime) {
         Forum currentForum = mCurrentForum;
-        List<DisplayForum> forums = DB.getACForums(true); // TODO DB.getForums
+        boolean sorting = Settings.getForumAutoSorting();
+        List<DisplayForum> forums = DB.getACForums(true, sorting); // TODO DB.getForums
         mRightDrawer.setForums(forums);
 
         // Try to find the same forum

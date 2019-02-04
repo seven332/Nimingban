@@ -168,6 +168,12 @@ public final class Settings {
     public static final String KEY_ANALYSIS = "analysis";
     public static final boolean DEFAULT_ANALYSIS = false;
 
+    public static final String KEY_FORUM_AUTO_SORTING = "forum_auto_sorting";
+    public static final boolean DEFAULT_FORUM_AUTO_SORTING = true;
+
+    public static final String KEY_LAST_FORUM_AGING = "last_forum_aging";
+    public static final long DEFAULT_LAST_FORUM_AGING = 0;
+
     public static boolean getDarkTheme() {
         return getBoolean(KEY_DARK_THEME, DEFAULT_DARK_THEME);
     }
@@ -366,6 +372,22 @@ public final class Settings {
 
     public static void putAnalysis(boolean value) {
         putBoolean(KEY_ANALYSIS, value);
+    }
+
+    public static boolean getForumAutoSorting() {
+        return getBoolean(KEY_FORUM_AUTO_SORTING, DEFAULT_FORUM_AUTO_SORTING);
+    }
+
+    public static void putForumAutoSorting(boolean value) {
+        putBoolean(KEY_FORUM_AUTO_SORTING, value);
+    }
+
+    public static long getLastForumAging() {
+        return getLong(KEY_LAST_FORUM_AGING, DEFAULT_LAST_FORUM_AGING);
+    }
+
+    public static void setLastForumAging(long value) {
+        putLong(KEY_LAST_FORUM_AGING, value);
     }
 
     private static final String KEY_VERSION_CODE = "version_code";
