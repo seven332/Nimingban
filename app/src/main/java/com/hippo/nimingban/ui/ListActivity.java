@@ -957,6 +957,10 @@ public final class ListActivity extends AbsActivity
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
+
+        ACForumRaw raw = DB.getACForumForForumid(forum.getNMBId());
+        Integer freq = raw.getFrequency();
+        DB.setACForumFrequency(raw, freq == null ? 1 : freq + 1);
     }
 
     @Override
