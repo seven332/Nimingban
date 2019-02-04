@@ -391,5 +391,8 @@
     <string name="image_search_saucenao">SauceNAO</string>
     <string name="image_search_iqdb">Iqdb</string>
     <string name="image_search_iqdb_3d">Iqdb 3D</string>
+    <string name="main_forum_auto_sorting">自动排序</string>
+    <string name="main_forum_auto_sorting_summary_on">根据访问频率对板块排序</string>
+    <string name="main_forum_auto_sorting_summary_off">按照指定顺序</string>
 
 </resources>

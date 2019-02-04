@@ -399,5 +399,8 @@
     <string name="image_search_saucenao">SauceNAO</string>
     <string name="image_search_iqdb">Iqdb</string>
     <string name="image_search_iqdb_3d">Iqdb 3D</string>
+    <string name="main_forum_auto_sorting">Auto Sorting</string>
+    <string name="main_forum_auto_sorting_summary_on">Sort forums by frequency</string>
+    <string name="main_forum_auto_sorting_summary_off">Fixed forum order</string>
 
 </resources>

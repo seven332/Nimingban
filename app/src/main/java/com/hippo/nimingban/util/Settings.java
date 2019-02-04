@@ -169,7 +169,7 @@ public final class Settings {
     public static final boolean DEFAULT_ANALYSIS = false;
 
     public static final String KEY_FORUM_AUTO_SORTING = "forum_auto_sorting";
-    public static final boolean DEFAULT_FORUM_AUTO_SORTING = true;
+    public static final boolean DEFAULT_FORUM_AUTO_SORTING = false;
 
     public static final String KEY_LAST_FORUM_AGING = "last_forum_aging";
     public static final long DEFAULT_LAST_FORUM_AGING = 0;
