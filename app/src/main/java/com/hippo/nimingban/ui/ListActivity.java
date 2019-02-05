@@ -81,6 +81,7 @@ import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ForumAutoSortingUtils;
 import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.PostIgnoreUtils;
 import com.hippo.nimingban.util.ReadableTime;
@@ -958,9 +959,7 @@ public final class ListActivity extends AbsActivity
             mPostHelper.refresh();
         }
 
-        ACForumRaw raw = DB.getACForumForForumid(forum.getNMBId());
-        Integer freq = raw.getFrequency();
-        DB.setACForumFrequency(raw, freq == null ? 1 : freq + 1);
+        ForumAutoSortingUtils.addACForumFrequency(forum);
     }
 
     @Override

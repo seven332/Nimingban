@@ -44,7 +44,6 @@ import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.client.ac.data.ACForum;
 import com.hippo.nimingban.client.ac.data.ACForumGroup;
 import com.hippo.nimingban.client.data.ACSite;
-import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.network.HttpCookieDB;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
@@ -52,6 +51,7 @@ import com.hippo.nimingban.ui.BringToForegroundActivity;
 import com.hippo.nimingban.util.BitmapUtils;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ForumAutoSortingUtils;
 import com.hippo.nimingban.util.ReadableTime;
 import com.hippo.nimingban.util.ResImageGetter;
 import com.hippo.nimingban.util.Settings;
@@ -79,7 +79,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.dao.query.LazyList;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -189,7 +188,7 @@ public final class NMBApplication extends Application
         updateACCdnPath();
         updateACForums();
         updateACHost();
-        ageACForumFrequency();
+        ForumAutoSortingUtils.ageACForumFrequency();
     }
 
     private void readACCdnPathFromFile() {
@@ -305,24 +304,6 @@ public final class NMBApplication extends Application
                 Settings.putAcHost(host);
             }
         });
-    }
-
-    private void ageACForumFrequency() {
-        long lastForumAging = Settings.getLastForumAging();
-        long time = System.currentTimeMillis();
-        if (time - lastForumAging > 24 * 60 * 60 * 1000) { // 24 hr * 60 min * 60 sec * 1000 milli
-            LazyList<ACForumRaw> forums = DB.getACForumLazyList();
-            for (ACForumRaw raw: forums) {
-                Integer freq = raw.getFrequency();
-                if (freq == null) { // new forum or first run
-                    freq = 0;
-                } else if (freq >= 2) { // bypass freq == 1 so that visited forums are always before unvisited ones.
-                    freq /= 2;
-                }
-                DB.setACForumFrequency(raw, freq);
-            }
-            Settings.setLastForumAging(time);
-        }
     }
 
     private void update() throws PackageManager.NameNotFoundException {
