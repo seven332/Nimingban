@@ -247,7 +247,7 @@ public final class ListActivity extends AbsActivity
                     setMenuItemVisible(mRule, false);
                     setMenuItemVisible(mNotice, false);
                     setMenuItemVisible(mCreatePost, false);
-                    setMenuItemVisible(mSortForumsMenu, true);
+                    setMenuItemVisible(mSortForumsMenu, !Settings.getForumAutoSorting());
                 }
             }
         };
