@@ -52,6 +52,7 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.data.Site;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ForumAutoSortingUtils;
 import com.hippo.nimingban.util.Settings;
 import com.hippo.text.Html;
 import com.hippo.util.DrawableManager;
@@ -193,7 +194,9 @@ public class SortForumsActivity extends TranslucentActivity {
                 .setOnDissmisListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                    if (!Settings.getForumAutoSorting()) {
                         showFourBarsGuide();
+                    }
                     }
                 }).show();
     }
@@ -275,7 +278,7 @@ public class SortForumsActivity extends TranslucentActivity {
     }
 
     private void updateLazyList(boolean animation) {
-        LazyList<ACForumRaw> lazyList = DB.getACForumLazyList();
+        LazyList<ACForumRaw> lazyList = DB.getACForumLazyList(Settings.getForumAutoSorting());
         if (mLazyList != null) {
             mLazyList.close();
             mForumNames.clear();
@@ -291,6 +294,7 @@ public class SortForumsActivity extends TranslucentActivity {
         public ImageView visibility;
         public TextView forum;
         public View dragHandler;
+        public ImageView pinning;
 
         public ForumHolder(View itemView) {
             super(itemView);
@@ -299,16 +303,31 @@ public class SortForumsActivity extends TranslucentActivity {
             visibility = (ImageView) itemView.findViewById(R.id.visibility);
             forum = (TextView) itemView.findViewById(R.id.forum);
             dragHandler = itemView.findViewById(R.id.drag_handler);
+            pinning = itemView.findViewById(R.id.pinning);
 
             visibility.setOnClickListener(this);
             forum.setOnClickListener(this);
+            pinning.setOnClickListener(this);
 
-            StateListDrawable drawable = new StateListDrawable();
-            drawable.addState(new int[]{android.R.attr.state_activated},
+            if (Settings.getForumAutoSorting()) {
+                dragHandler.setVisibility(View.GONE);
+            } else {
+                pinning.setVisibility(View.GONE);
+            }
+
+            StateListDrawable visibilityDrawable = new StateListDrawable();
+            visibilityDrawable.addState(new int[]{android.R.attr.state_activated},
                     DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_on_x24));
-            drawable.addState(new int[]{},
+            visibilityDrawable.addState(new int[]{},
                     DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_off_x24));
-            visibility.setImageDrawable(drawable);
+            visibility.setImageDrawable(visibilityDrawable);
+
+            StateListDrawable pinningDrawable = new StateListDrawable();
+            pinningDrawable.addState(new int[]{android.R.attr.state_activated},
+                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_star_x24));
+            pinningDrawable.addState(new int[]{},
+                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_star_border_x24));
+            pinning.setImageDrawable(pinningDrawable);
         }
 
         @Override
@@ -323,6 +342,34 @@ public class SortForumsActivity extends TranslucentActivity {
                     visibility.setActivated(raw.getVisibility());
 
                     mNeedUpdate = true;
+                } else if (pinning == v) {
+                    List<ACForumRaw> changed = new ArrayList<>();
+                    ACForumRaw clicked = mLazyList.get(position);
+                    boolean isClickedPinned = ForumAutoSortingUtils.isACForumPinned(clicked);
+
+                    ACForumRaw first = mLazyList.get(0);
+                    if (!isClickedPinned && ForumAutoSortingUtils.isACForumPinned(first)) {
+                        // unpin the first if it's been pinned already
+                        ForumAutoSortingUtils.unpinACForum(first);
+                        changed.add(first);
+                        // remove the star
+                        ForumHolder holder = (ForumHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+                        holder.pinning.setActivated(false);
+                    }
+
+                    if (!isClickedPinned) {
+                        ForumAutoSortingUtils.pinACForum(clicked);
+                    } else {
+                        ForumAutoSortingUtils.unpinACForum(clicked);
+                    }
+                    changed.add(clicked);
+                    pinning.setActivated(!isClickedPinned);
+
+                    DB.updateACForum(changed);
+                    updateLazyList(true);
+                    mNeedUpdate = true;
+
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         }
@@ -346,6 +393,7 @@ public class SortForumsActivity extends TranslucentActivity {
         public void onBindViewHolder(ForumHolder holder, int position) {
             ACForumRaw raw = mLazyList.get(position);
             holder.visibility.setActivated(raw.getVisibility());
+            holder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
 
             CharSequence name = mForumNames.get(position);
             if (name == null) {

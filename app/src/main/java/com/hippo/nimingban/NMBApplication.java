@@ -188,7 +188,13 @@ public final class NMBApplication extends Application
         updateACCdnPath();
         updateACForums();
         updateACHost();
-        ForumAutoSortingUtils.ageACForumFrequency();
+
+        long lastForumAging = Settings.getLastForumAging();
+        long time = System.currentTimeMillis();
+        if (time - lastForumAging > 24 * 60 * 60 * 1000) { // 24 hr * 60 min * 60 sec * 1000 milli
+            ForumAutoSortingUtils.ageACForumFrequency();
+            Settings.setLastForumAging(time);
+        }
     }
 
     private void readACCdnPathFromFile() {
