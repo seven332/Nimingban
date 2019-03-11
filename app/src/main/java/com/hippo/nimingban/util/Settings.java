@@ -447,6 +447,28 @@ public final class Settings {
         putBoolean(KEY_GUIDE_SORT_FORUMS_ACTIVITY, value);
     }
 
+    public static final String KEY_GUIDE_SORTING_FOUR_BARS = "guide_sorting_four_bars";
+    public static final boolean VALUE_GUIDE_SORTING_FOUR_BARS = true;
+
+    public static boolean getGuideSortingFourBars() {
+        return getBoolean(KEY_GUIDE_SORTING_FOUR_BARS, VALUE_GUIDE_SORTING_FOUR_BARS);
+    }
+
+    public static void putGuideSortingFourBars(boolean value) {
+        putBoolean(KEY_GUIDE_SORTING_FOUR_BARS, value);
+    }
+
+    public static final String KEY_GUIDE_PINNING_STAR = "guide_pinning_star";
+    public static final boolean VALUE_GUIDE_PINNING_STAR = true;
+
+    public static boolean getGuidePinningStar() {
+        return getBoolean(KEY_GUIDE_PINNING_STAR, VALUE_GUIDE_PINNING_STAR);
+    }
+
+    public static void putGuidePinningStar(boolean value) {
+        putBoolean(KEY_GUIDE_PINNING_STAR, value);
+    }
+
     public static final String KEY_GUIDE_TYPE_SEND = "guide_type_send";
     public static final boolean VALUE_GUIDE_TYPE_SEND = true;
 

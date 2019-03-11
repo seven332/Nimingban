@@ -178,6 +178,9 @@ public class SortForumsActivity extends TranslucentActivity {
 
         if (Settings.getGuideSortForumsActivity()) {
             showEyeGuide();
+        } else {
+            // Eye guide was shown
+            tryShowSecondGuide();
         }
     }
 
@@ -194,11 +197,18 @@ public class SortForumsActivity extends TranslucentActivity {
                 .setOnDissmisListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    if (!Settings.getForumAutoSorting()) {
-                        showFourBarsGuide();
-                    }
+                        tryShowSecondGuide();
+                        Settings.putGuideSortForumsActivity(false);
                     }
                 }).show();
+    }
+
+    private void tryShowSecondGuide() {
+        if (Settings.getGuidePinningStar() && Settings.getForumAutoSorting()) {
+            showStarGuide();
+        } else if (Settings.getGuideSortingFourBars() && !Settings.getForumAutoSorting()) {
+            showFourBarsGuide();
+        }
     }
 
     private void showFourBarsGuide() {
@@ -214,7 +224,25 @@ public class SortForumsActivity extends TranslucentActivity {
                 .setOnDissmisListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Settings.putGuideSortForumsActivity(false);
+                        Settings.putGuideSortingFourBars(false);
+                    }
+                }).show();
+    }
+
+    private void showStarGuide() {
+        new GuideHelper.Builder(this)
+                .setColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
+                .setPadding(LayoutUtils.dp2pix(this, 16))
+                .setPaddingTop(LayoutUtils.dp2pix(this, 56))
+                .setPaddingBottom(LayoutUtils.dp2pix(this, 56))
+                .setMessagePosition(Gravity.RIGHT)
+                .setMessage(getString(R.string.click_star_icon_pin))
+                .setButton(getString(R.string.get_it))
+                .setBackgroundColor(0x73000000)
+                .setOnDissmisListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Settings.putGuidePinningStar(false);
                     }
                 }).show();
     }

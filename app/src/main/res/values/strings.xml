@@ -402,5 +402,6 @@
     <string name="main_forum_auto_sorting">Forum Auto Sorting (restart required)</string>
     <string name="main_forum_auto_sorting_summary_on">Sort forums by frequency</string>
     <string name="main_forum_auto_sorting_summary_off">Fixed forum order</string>
+    <string name="click_star_icon_pin">Click the star to pin a favorite forum on the top</string>
 
 </resources>
