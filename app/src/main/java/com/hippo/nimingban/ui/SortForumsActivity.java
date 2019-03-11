@@ -354,6 +354,9 @@ public class SortForumsActivity extends TranslucentActivity {
                         changed.add(first);
                         // remove the star
                         ForumHolder holder = (ForumHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+                        if (holder == null) {
+                            return;
+                        }
                         holder.pinning.setActivated(false);
                     }
 
