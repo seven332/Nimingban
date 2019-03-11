@@ -151,6 +151,11 @@ public final class DB {
             raw.setOfficial(true);
             raw.setFrequency(0);
             dao.insert(raw);
+
+            if (AC_FORUM_ID_ARRAY[i].equals("-1")) {
+                // hardcode: -1 is the timeline id
+                ForumAutoSortingUtils.pinACForum(raw);
+            }
         }
     }
 

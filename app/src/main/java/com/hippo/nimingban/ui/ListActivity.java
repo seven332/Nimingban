@@ -701,6 +701,7 @@ public final class ListActivity extends AbsActivity
         mCurrentForum = forum;
         mRightDrawer.setActivatedForum(forum);
         updateTitleByForum(mCurrentForum);
+        ForumAutoSortingUtils.addACForumFrequency(forum);
     }
 
     private void updateForums(boolean firstTime) {
@@ -958,8 +959,6 @@ public final class ListActivity extends AbsActivity
             mDrawerLayout.closeDrawer(Gravity.RIGHT);
             mPostHelper.refresh();
         }
-
-        ForumAutoSortingUtils.addACForumFrequency(forum);
     }
 
     @Override
