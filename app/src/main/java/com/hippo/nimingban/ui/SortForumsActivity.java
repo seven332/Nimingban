@@ -24,10 +24,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -67,13 +69,16 @@ import java.util.Map;
 
 import de.greenrobot.dao.query.LazyList;
 
-public class SortForumsActivity extends TranslucentActivity {
+public class SortForumsActivity extends TranslucentActivity implements CompoundButton.OnCheckedChangeListener {
 
     public static final String KEY_SITE = "site";
 
     private Site mSite;
 
+    private boolean mAutoSorting = Settings.getForumAutoSorting();
+
     private View mTip;
+    private SwitchCompat mAutoSortingSwitch;
     private EasyRecyclerView mRecyclerView;
     private ViewTransition mViewTransition;
 
@@ -131,11 +136,15 @@ public class SortForumsActivity extends TranslucentActivity {
         setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);
+        mAutoSortingSwitch = findViewById(R.id.auto_sorting_switch);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mViewTransition = new ViewTransition(mTip, mRecyclerView);
 
         // Layout Manager
         mLayoutManager = new LinearLayoutManager(this);
+
+        mAutoSortingSwitch.setChecked(mAutoSorting);
+        mAutoSortingSwitch.setOnCheckedChangeListener(this);
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
         mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
@@ -204,9 +213,9 @@ public class SortForumsActivity extends TranslucentActivity {
     }
 
     private void tryShowSecondGuide() {
-        if (Settings.getGuidePinningStar() && Settings.getForumAutoSorting()) {
+        if (Settings.getGuidePinningStar() && mAutoSorting) {
             showStarGuide();
-        } else if (Settings.getGuideSortingFourBars() && !Settings.getForumAutoSorting()) {
+        } else if (Settings.getGuideSortingFourBars() && !mAutoSorting) {
             showFourBarsGuide();
         }
     }
@@ -306,7 +315,7 @@ public class SortForumsActivity extends TranslucentActivity {
     }
 
     private void updateLazyList(boolean animation) {
-        LazyList<ACForumRaw> lazyList = DB.getACForumLazyList(Settings.getForumAutoSorting());
+        LazyList<ACForumRaw> lazyList = DB.getACForumLazyList(mAutoSorting);
         if (mLazyList != null) {
             mLazyList.close();
             mForumNames.clear();
@@ -314,6 +323,22 @@ public class SortForumsActivity extends TranslucentActivity {
         mLazyList = lazyList;
 
         mViewTransition.showView(mLazyList.isEmpty() ? 0 : 1, animation);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (mAutoSortingSwitch == buttonView) {
+            mAutoSorting = isChecked;
+            Settings.putForumAutoSorting(isChecked);
+
+            // update the list to sort them according to the present setting
+            updateLazyList(false);
+            // the list could be dramatically different so update them all
+            mAdapter.notifyDataSetChanged();
+
+            // show guide
+            tryShowSecondGuide();
+        }
     }
 
     private class ForumHolder extends AbstractDraggableSwipeableItemViewHolder implements View.OnClickListener {
@@ -336,12 +361,6 @@ public class SortForumsActivity extends TranslucentActivity {
             visibility.setOnClickListener(this);
             forum.setOnClickListener(this);
             pinning.setOnClickListener(this);
-
-            if (Settings.getForumAutoSorting()) {
-                dragHandler.setVisibility(View.GONE);
-            } else {
-                pinning.setVisibility(View.GONE);
-            }
 
             StateListDrawable visibilityDrawable = new StateListDrawable();
             visibilityDrawable.addState(new int[]{android.R.attr.state_activated},
@@ -380,12 +399,6 @@ public class SortForumsActivity extends TranslucentActivity {
                         // unpin the first if it's been pinned already
                         ForumAutoSortingUtils.unpinACForum(first);
                         changed.add(first);
-                        // remove the star
-                        ForumHolder holder = (ForumHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
-                        if (holder == null) {
-                            return;
-                        }
-                        holder.pinning.setActivated(false);
                     }
 
                     if (!isClickedPinned) {
@@ -394,12 +407,12 @@ public class SortForumsActivity extends TranslucentActivity {
                         ForumAutoSortingUtils.unpinACForum(clicked);
                     }
                     changed.add(clicked);
-                    pinning.setActivated(!isClickedPinned);
 
                     DB.updateACForum(changed);
                     updateLazyList(true);
                     mNeedUpdate = true;
 
+                    // don't know where the previous top will go, so update all the list
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -424,7 +437,14 @@ public class SortForumsActivity extends TranslucentActivity {
         public void onBindViewHolder(ForumHolder holder, int position) {
             ACForumRaw raw = mLazyList.get(position);
             holder.visibility.setActivated(raw.getVisibility());
-            holder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
+            if (mAutoSorting) {
+                holder.dragHandler.setVisibility(View.GONE);
+                holder.pinning.setVisibility(View.VISIBLE);
+                holder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
+            } else {
+                holder.pinning.setVisibility(View.GONE);
+                holder.dragHandler.setVisibility(View.VISIBLE);
+            }
 
             CharSequence name = mForumNames.get(position);
             if (name == null) {

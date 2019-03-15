@@ -46,15 +46,41 @@
 
     </LinearLayout>
 
-    <com.hippo.easyrecyclerview.EasyRecyclerView
-        android:id="@+id/recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/single_item_padding_horizontal"
-        android:paddingRight="@dimen/single_item_padding_horizontal"
-        android:paddingTop="@dimen/keyline_margin_vertical"
-        android:paddingBottom="@dimen/keyline_margin_vertical"
-        android:clipChildren="false"
-        android:clipToPadding="false"/>
+        android:orientation="vertical">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/auto_sorting_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/keyline_margin_vertical"
+            android:paddingBottom="@dimen/keyline_margin_vertical"
+            android:paddingLeft="@dimen/single_item_padding_horizontal"
+            android:paddingRight="@dimen/single_item_padding_horizontal"
+            android:text="@string/main_forum_auto_sorting" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.hippo.easyrecyclerview.EasyRecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/single_item_padding_horizontal"
+                android:paddingRight="@dimen/single_item_padding_horizontal"
+                android:paddingBottom="@dimen/keyline_margin_vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/shadow_bottom"/>
+
+        </FrameLayout>
+    </LinearLayout>
 
 </FrameLayout>

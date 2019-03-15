@@ -112,15 +112,6 @@
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
-        android:key="forum_auto_sorting"
-        android:title="@string/main_forum_auto_sorting"
-        app:summaryOn="@string/main_forum_auto_sorting_summary_on"
-        app:summaryOff="@string/main_forum_auto_sorting_summary_off"
-        android:defaultValue="false"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"/>
-
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
         android:key="analysis"
         android:title="@string/main_analysis"
         android:widgetLayout="@layout/preference_widget_fixed_switch"/>
