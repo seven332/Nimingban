@@ -391,7 +391,7 @@
     <string name="image_search_saucenao">SauceNAO</string>
     <string name="image_search_iqdb">Iqdb</string>
     <string name="image_search_iqdb_3d">Iqdb 3D</string>
-    <string name="main_forum_auto_sorting">板塊自動排序（需要重啓應用）</string>
+    <string name="main_forum_auto_sorting">板塊自動排序</string>
     <string name="main_forum_auto_sorting_summary_on">根據訪問頻率對板塊排序</string>
     <string name="main_forum_auto_sorting_summary_off">按照指定順序</string>
     <string name="click_star_icon_pin">選擇一個板塊置頂</string>

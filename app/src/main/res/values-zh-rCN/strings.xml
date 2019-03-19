@@ -391,7 +391,7 @@
     <string name="image_search_saucenao">SauceNAO</string>
     <string name="image_search_iqdb">Iqdb</string>
     <string name="image_search_iqdb_3d">Iqdb 3D</string>
-    <string name="main_forum_auto_sorting">板块自动排序（需要重启应用）</string>
+    <string name="main_forum_auto_sorting">板块自动排序</string>
     <string name="main_forum_auto_sorting_summary_on">根据访问频率对板块排序</string>
     <string name="main_forum_auto_sorting_summary_off">按照指定顺序</string>
     <string name="click_star_icon_pin">选择一个板块置顶</string>

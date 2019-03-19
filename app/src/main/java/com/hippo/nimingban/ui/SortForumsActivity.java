@@ -338,6 +338,8 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
 
             // show guide
             tryShowSecondGuide();
+
+            mNeedUpdate = true;
         }
     }
 
