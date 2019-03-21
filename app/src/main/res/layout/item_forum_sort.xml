@@ -39,6 +39,11 @@
                 android:layout_height="48dp"
                 android:padding="12dp"/>
 
+            <Switch
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/auto_sorting_switch"/>
+
             <TextView
                 android:id="@+id/forum"
                 android:layout_width="0dp"

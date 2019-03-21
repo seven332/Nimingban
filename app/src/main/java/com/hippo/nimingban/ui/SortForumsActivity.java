@@ -320,40 +320,59 @@ public class SortForumsActivity extends TranslucentActivity {
         mViewTransition.showView(mLazyList.isEmpty() ? 0 : 1, animation);
     }
 
-    private class ForumHolder extends AbstractDraggableSwipeableItemViewHolder implements View.OnClickListener {
+    private static final int TYPE_FORUM = 0;
+    private static final int TYPE_SWITCH = 1;
+
+    private class ForumHolder extends AbstractDraggableSwipeableItemViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
         public View swipeHandler;
         public ImageView visibility;
+        public Switch autoSortingSwitch;
         public TextView forum;
         public View dragHandler;
         public ImageView pinning;
 
-        public ForumHolder(View itemView) {
+        public ForumHolder(View itemView, int viewType) {
             super(itemView);
 
             swipeHandler = itemView.findViewById(R.id.swipe_handler);
             visibility = (ImageView) itemView.findViewById(R.id.visibility);
+            autoSortingSwitch = itemView.findViewById(R.id.auto_sorting_switch);
             forum = (TextView) itemView.findViewById(R.id.forum);
             dragHandler = itemView.findViewById(R.id.drag_handler);
             pinning = itemView.findViewById(R.id.pinning);
 
-            visibility.setOnClickListener(this);
-            forum.setOnClickListener(this);
-            pinning.setOnClickListener(this);
+            if (viewType == TYPE_FORUM) {
+                autoSortingSwitch.setVisibility(View.GONE);
 
-            StateListDrawable visibilityDrawable = new StateListDrawable();
-            visibilityDrawable.addState(new int[]{android.R.attr.state_activated},
-                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_on_x24));
-            visibilityDrawable.addState(new int[]{},
-                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_off_x24));
-            visibility.setImageDrawable(visibilityDrawable);
+                visibility.setOnClickListener(this);
+                forum.setOnClickListener(this);
+                pinning.setOnClickListener(this);
 
-            StateListDrawable pinningDrawable = new StateListDrawable();
-            pinningDrawable.addState(new int[]{android.R.attr.state_activated},
-                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_star_x24));
-            pinningDrawable.addState(new int[]{},
-                    DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_star_border_x24));
-            pinning.setImageDrawable(pinningDrawable);
+                StateListDrawable visibilityDrawable = new StateListDrawable();
+                visibilityDrawable.addState(new int[]{android.R.attr.state_activated},
+                        DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_on_x24));
+                visibilityDrawable.addState(new int[]{},
+                        DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_eye_off_x24));
+                visibility.setImageDrawable(visibilityDrawable);
+
+                StateListDrawable pinningDrawable = new StateListDrawable();
+                pinningDrawable.addState(new int[]{android.R.attr.state_activated},
+                        DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_star_x24));
+                pinningDrawable.addState(new int[]{},
+                        DrawableManager.getDrawable(SortForumsActivity.this, R.drawable.v_star_border_x24));
+                pinning.setImageDrawable(pinningDrawable);
+            } else if (viewType == TYPE_SWITCH) {
+                visibility.setVisibility(View.GONE);
+                dragHandler.setVisibility(View.GONE);
+                pinning.setVisibility(View.GONE);
+
+                autoSortingSwitch.setChecked(mAutoSorting);
+                forum.setText(R.string.main_forum_auto_sorting);
+
+                autoSortingSwitch.setOnCheckedChangeListener(this);
+                forum.setOnClickListener(this);
+            }
         }
 
         @Override
@@ -388,11 +407,15 @@ public class SortForumsActivity extends TranslucentActivity {
                     changed.add(clicked);
 
                     DB.updateACForum(changed);
-                    updateLazyList(true);
+                    updateLazyList(false);
                     mNeedUpdate = true;
 
                     // don't know where the previous top will go, so update all the list
                     mAdapter.notifyDataSetChanged();
+                }
+            } else if (position == 0) {
+                if (forum == v) {
+                    autoSortingSwitch.performClick();
                 }
             }
         }
@@ -400,27 +423,6 @@ public class SortForumsActivity extends TranslucentActivity {
         @Override
         public View getSwipeableContainerView() {
             return swipeHandler;
-        }
-    }
-    
-    private class AutoSortingSwitchHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
-        public Switch autoSortingSwitch;
-        public TextView autoSortingText;
-
-        public AutoSortingSwitchHolder(View itemView) {
-            super(itemView);
-
-            autoSortingSwitch = itemView.findViewById(R.id.auto_sorting_switch);
-            autoSortingSwitch.setChecked(mAutoSorting);
-            autoSortingSwitch.setOnCheckedChangeListener(this);
-
-            autoSortingText = itemView.findViewById(R.id.auto_sorting_text);
-            autoSortingText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    autoSortingSwitch.performClick();
-                }
-            });
         }
 
         @Override
@@ -442,36 +444,29 @@ public class SortForumsActivity extends TranslucentActivity {
         }
     }
 
-    private class ForumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+    private class ForumAdapter extends RecyclerView.Adapter<ForumHolder>
             implements DraggableItemAdapter<ForumHolder>,
             SwipeableItemAdapter<ForumHolder> {
 
-        private static final int TYPE_FORUM = 0;
-        private static final int TYPE_SWITCH = 1;
         private static final long ID_SWITCH = -0xffL;
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (viewType == TYPE_FORUM) {
-                return new ForumHolder(getLayoutInflater().inflate(R.layout.item_forum_sort, parent, false));
-            } else {
-                return new AutoSortingSwitchHolder(getLayoutInflater().inflate(R.layout.item_auto_sorting_switch, parent, false));
-            }
+        public ForumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ForumHolder(getLayoutInflater().inflate(R.layout.item_forum_sort, parent, false), viewType);
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if (position > 0 && holder instanceof ForumHolder) {
+        public void onBindViewHolder(ForumHolder holder, int position) {
+            if (position > 0) {
                 ACForumRaw raw = mLazyList.get(position - 1);
-                ForumHolder forumHolder = (ForumHolder) holder;
-                forumHolder.visibility.setActivated(raw.getVisibility());
+                holder.visibility.setActivated(raw.getVisibility());
                 if (mAutoSorting) {
-                    forumHolder.dragHandler.setVisibility(View.GONE);
-                    forumHolder.pinning.setVisibility(View.VISIBLE);
-                    forumHolder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
+                    holder.dragHandler.setVisibility(View.GONE);
+                    holder.pinning.setVisibility(View.VISIBLE);
+                    holder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
                 } else {
-                    forumHolder.pinning.setVisibility(View.GONE);
-                    forumHolder.dragHandler.setVisibility(View.VISIBLE);
+                    holder.pinning.setVisibility(View.GONE);
+                    holder.dragHandler.setVisibility(View.VISIBLE);
                 }
 
                 CharSequence name = mForumNames.get(position);
@@ -483,7 +478,7 @@ public class SortForumsActivity extends TranslucentActivity {
                     }
                     mForumNames.put(position, name);
                 }
-                forumHolder.forum.setText(name);
+                holder.forum.setText(name);
             }
         }
 
@@ -512,7 +507,7 @@ public class SortForumsActivity extends TranslucentActivity {
 
         @Override
         public boolean onCheckCanStartDrag(ForumHolder holder, int position, int x, int y) {
-            return ViewUtils.isViewUnder(holder.dragHandler, x, y, 0);
+            return position != 0 && ViewUtils.isViewUnder(holder.dragHandler, x, y, 0);
         }
 
         @Override
@@ -558,7 +553,7 @@ public class SortForumsActivity extends TranslucentActivity {
 
         @Override
         public int onGetSwipeReactionType(ForumHolder holder, int position, int x, int y) {
-            if (mLazyList.get(position - 1).getOfficial()) {
+            if (position == 0 || mLazyList.get(position - 1).getOfficial()) {
                 return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_ANY;
             } else {
                 return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
@@ -602,9 +597,9 @@ public class SortForumsActivity extends TranslucentActivity {
             super.onPerformAction();
 
             final int position = mPosition;
-            final ACForumRaw raw = mLazyList.get(position);
+            final ACForumRaw raw = mLazyList.get(position - 1);
             if (raw != null) {
-                DB.removeACForum(mLazyList.get(position));
+                DB.removeACForum(mLazyList.get(position - 1));
                 updateLazyList(true);
                 mAdapter.notifyItemRemoved(position);
                 mNeedUpdate = true;
