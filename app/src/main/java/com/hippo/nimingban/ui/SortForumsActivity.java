@@ -24,13 +24,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
@@ -69,7 +69,7 @@ import java.util.Map;
 
 import de.greenrobot.dao.query.LazyList;
 
-public class SortForumsActivity extends TranslucentActivity implements CompoundButton.OnCheckedChangeListener {
+public class SortForumsActivity extends TranslucentActivity {
 
     public static final String KEY_SITE = "site";
 
@@ -78,7 +78,6 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
     private boolean mAutoSorting = Settings.getForumAutoSorting();
 
     private View mTip;
-    private SwitchCompat mAutoSortingSwitch;
     private EasyRecyclerView mRecyclerView;
     private ViewTransition mViewTransition;
 
@@ -136,15 +135,11 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
         setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         mTip = findViewById(R.id.tip);
-        mAutoSortingSwitch = findViewById(R.id.auto_sorting_switch);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mViewTransition = new ViewTransition(mTip, mRecyclerView);
 
         // Layout Manager
         mLayoutManager = new LinearLayoutManager(this);
-
-        mAutoSortingSwitch.setChecked(mAutoSorting);
-        mAutoSortingSwitch.setOnCheckedChangeListener(this);
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
         mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
@@ -325,24 +320,6 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
         mViewTransition.showView(mLazyList.isEmpty() ? 0 : 1, animation);
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (mAutoSortingSwitch == buttonView) {
-            mAutoSorting = isChecked;
-            Settings.putForumAutoSorting(isChecked);
-
-            // update the list to sort them according to the present setting
-            updateLazyList(false);
-            // the list could be dramatically different so update them all
-            mAdapter.notifyDataSetChanged();
-
-            // show guide
-            tryShowSecondGuide();
-
-            mNeedUpdate = true;
-        }
-    }
-
     private class ForumHolder extends AbstractDraggableSwipeableItemViewHolder implements View.OnClickListener {
 
         public View swipeHandler;
@@ -382,9 +359,9 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
         @Override
         public void onClick(@NonNull View v) {
             int position = getAdapterPosition();
-            if (position >= 0 && position < mLazyList.size()) {
+            if (position > 0 && position <= mLazyList.size()) {
                 if (visibility == v) {
-                    ACForumRaw raw = mLazyList.get(position);
+                    ACForumRaw raw = mLazyList.get(position - 1);
                     DB.setACForumVisibility(raw, !raw.getVisibility());
 
                     // Update UI
@@ -393,7 +370,7 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
                     mNeedUpdate = true;
                 } else if (pinning == v) {
                     List<ACForumRaw> changed = new ArrayList<>();
-                    ACForumRaw clicked = mLazyList.get(position);
+                    ACForumRaw clicked = mLazyList.get(position - 1);
                     boolean isClickedPinned = ForumAutoSortingUtils.isACForumPinned(clicked);
 
                     ACForumRaw first = mLazyList.get(0);
@@ -425,49 +402,112 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
             return swipeHandler;
         }
     }
+    
+    private class AutoSortingSwitchHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
+        public Switch autoSortingSwitch;
+        public TextView autoSortingText;
 
-    private class ForumAdapter extends RecyclerView.Adapter<ForumHolder>
-            implements DraggableItemAdapter<ForumHolder>,
-            SwipeableItemAdapter<ForumHolder> {
+        public AutoSortingSwitchHolder(View itemView) {
+            super(itemView);
 
-        @Override
-        public ForumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ForumHolder(getLayoutInflater().inflate(R.layout.item_forum_sort, parent, false));
+            autoSortingSwitch = itemView.findViewById(R.id.auto_sorting_switch);
+            autoSortingSwitch.setChecked(mAutoSorting);
+            autoSortingSwitch.setOnCheckedChangeListener(this);
+
+            autoSortingText = itemView.findViewById(R.id.auto_sorting_text);
+            autoSortingText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    autoSortingSwitch.performClick();
+                }
+            });
         }
 
         @Override
-        public void onBindViewHolder(ForumHolder holder, int position) {
-            ACForumRaw raw = mLazyList.get(position);
-            holder.visibility.setActivated(raw.getVisibility());
-            if (mAutoSorting) {
-                holder.dragHandler.setVisibility(View.GONE);
-                holder.pinning.setVisibility(View.VISIBLE);
-                holder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
-            } else {
-                holder.pinning.setVisibility(View.GONE);
-                holder.dragHandler.setVisibility(View.VISIBLE);
-            }
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (autoSortingSwitch == buttonView) {
+                mAutoSorting = isChecked;
+                Settings.putForumAutoSorting(isChecked);
 
-            CharSequence name = mForumNames.get(position);
-            if (name == null) {
-                if (raw.getDisplayname() == null) {
-                    name = "Forum";
-                } else {
-                    name = Html.fromHtml(raw.getDisplayname());
-                }
-                mForumNames.put(position, name);
+                // update the list to sort them according to the present setting
+                updateLazyList(false);
+                // the list could be dramatically different so update them all
+                mAdapter.notifyDataSetChanged();
+
+                // show guide
+                tryShowSecondGuide();
+
+                mNeedUpdate = true;
             }
-            holder.forum.setText(name);
+        }
+    }
+
+    private class ForumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+            implements DraggableItemAdapter<ForumHolder>,
+            SwipeableItemAdapter<ForumHolder> {
+
+        private static final int TYPE_FORUM = 0;
+        private static final int TYPE_SWITCH = 1;
+        private static final long ID_SWITCH = -0xffL;
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == TYPE_FORUM) {
+                return new ForumHolder(getLayoutInflater().inflate(R.layout.item_forum_sort, parent, false));
+            } else {
+                return new AutoSortingSwitchHolder(getLayoutInflater().inflate(R.layout.item_auto_sorting_switch, parent, false));
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (position > 0 && holder instanceof ForumHolder) {
+                ACForumRaw raw = mLazyList.get(position - 1);
+                ForumHolder forumHolder = (ForumHolder) holder;
+                forumHolder.visibility.setActivated(raw.getVisibility());
+                if (mAutoSorting) {
+                    forumHolder.dragHandler.setVisibility(View.GONE);
+                    forumHolder.pinning.setVisibility(View.VISIBLE);
+                    forumHolder.pinning.setActivated(ForumAutoSortingUtils.isACForumPinned(raw));
+                } else {
+                    forumHolder.pinning.setVisibility(View.GONE);
+                    forumHolder.dragHandler.setVisibility(View.VISIBLE);
+                }
+
+                CharSequence name = mForumNames.get(position);
+                if (name == null) {
+                    if (raw.getDisplayname() == null) {
+                        name = "Forum";
+                    } else {
+                        name = Html.fromHtml(raw.getDisplayname());
+                    }
+                    mForumNames.put(position, name);
+                }
+                forumHolder.forum.setText(name);
+            }
         }
 
         @Override
         public long getItemId(int position) {
-            return mLazyList.get(position).getId();
+            if (position > 0) {
+                return mLazyList.get(position - 1).getId();
+            } else {
+                return ID_SWITCH;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0) {
+                return TYPE_SWITCH;
+            } else {
+                return TYPE_FORUM;
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mLazyList.size();
+            return mLazyList.size() + 1;
         }
 
         @Override
@@ -477,7 +517,7 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
 
         @Override
         public ItemDraggableRange onGetItemDraggableRange(ForumHolder holder, int position) {
-            return null;
+            return new ItemDraggableRange(1, mLazyList.size());
         }
 
         @Override
@@ -489,11 +529,11 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
             List<ACForumRaw> changed = new ArrayList<>(Math.abs(fromPosition - toPosition) + 1);
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i <= toPosition; i++) {
-                    changed.add(mLazyList.get(i));
+                    changed.add(mLazyList.get(i - 1));
                 }
             } else {
                 for (int i = fromPosition; i >= toPosition; i--) {
-                    changed.add(mLazyList.get(i));
+                    changed.add(mLazyList.get(i - 1));
                 }
             }
 
@@ -518,7 +558,7 @@ public class SortForumsActivity extends TranslucentActivity implements CompoundB
 
         @Override
         public int onGetSwipeReactionType(ForumHolder holder, int position, int x, int y) {
-            if (mLazyList.get(position).getOfficial()) {
+            if (mLazyList.get(position - 1).getOfficial()) {
                 return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_ANY;
             } else {
                 return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
