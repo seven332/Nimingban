@@ -244,7 +244,8 @@ public final class TypeSendFragment extends BaseFragment implements View.OnClick
 
     private void prepareForCreatePost() {
         // Get all forums
-        mForums = DB.getACForums(false);
+        boolean sorting = Settings.getForumAutoSorting();
+        mForums = DB.getACForums(false, sorting);
         if (mForums.size() == 0) {
             // TODO error
         } else {

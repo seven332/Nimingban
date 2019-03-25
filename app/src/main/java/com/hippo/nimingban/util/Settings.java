@@ -168,6 +168,12 @@ public final class Settings {
     public static final String KEY_ANALYSIS = "analysis";
     public static final boolean DEFAULT_ANALYSIS = false;
 
+    public static final String KEY_FORUM_AUTO_SORTING = "forum_auto_sorting";
+    public static final boolean DEFAULT_FORUM_AUTO_SORTING = false;
+
+    public static final String KEY_LAST_FORUM_AGING = "last_forum_aging";
+    public static final long DEFAULT_LAST_FORUM_AGING = 0;
+
     public static boolean getDarkTheme() {
         return getBoolean(KEY_DARK_THEME, DEFAULT_DARK_THEME);
     }
@@ -368,6 +374,22 @@ public final class Settings {
         putBoolean(KEY_ANALYSIS, value);
     }
 
+    public static boolean getForumAutoSorting() {
+        return getBoolean(KEY_FORUM_AUTO_SORTING, DEFAULT_FORUM_AUTO_SORTING);
+    }
+
+    public static void putForumAutoSorting(boolean value) {
+        putBoolean(KEY_FORUM_AUTO_SORTING, value);
+    }
+
+    public static long getLastForumAging() {
+        return getLong(KEY_LAST_FORUM_AGING, DEFAULT_LAST_FORUM_AGING);
+    }
+
+    public static void setLastForumAging(long value) {
+        putLong(KEY_LAST_FORUM_AGING, value);
+    }
+
     private static final String KEY_VERSION_CODE = "version_code";
     private static final int DEFAULT_VERSION_CODE = 0;
 
@@ -423,6 +445,28 @@ public final class Settings {
 
     public static void putGuideSortForumsActivity(boolean value) {
         putBoolean(KEY_GUIDE_SORT_FORUMS_ACTIVITY, value);
+    }
+
+    public static final String KEY_GUIDE_SORTING_FOUR_BARS = "guide_sorting_four_bars";
+    public static final boolean VALUE_GUIDE_SORTING_FOUR_BARS = true;
+
+    public static boolean getGuideSortingFourBars() {
+        return getBoolean(KEY_GUIDE_SORTING_FOUR_BARS, VALUE_GUIDE_SORTING_FOUR_BARS);
+    }
+
+    public static void putGuideSortingFourBars(boolean value) {
+        putBoolean(KEY_GUIDE_SORTING_FOUR_BARS, value);
+    }
+
+    public static final String KEY_GUIDE_PINNING_STAR = "guide_pinning_star";
+    public static final boolean VALUE_GUIDE_PINNING_STAR = true;
+
+    public static boolean getGuidePinningStar() {
+        return getBoolean(KEY_GUIDE_PINNING_STAR, VALUE_GUIDE_PINNING_STAR);
+    }
+
+    public static void putGuidePinningStar(boolean value) {
+        putBoolean(KEY_GUIDE_PINNING_STAR, value);
     }
 
     public static final String KEY_GUIDE_TYPE_SEND = "guide_type_send";

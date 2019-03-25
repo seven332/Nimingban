@@ -81,6 +81,7 @@ import com.hippo.nimingban.client.data.UpdateStatus;
 import com.hippo.nimingban.dao.ACForumRaw;
 import com.hippo.nimingban.util.Crash;
 import com.hippo.nimingban.util.DB;
+import com.hippo.nimingban.util.ForumAutoSortingUtils;
 import com.hippo.nimingban.util.LinkMovementMethod2;
 import com.hippo.nimingban.util.PostIgnoreUtils;
 import com.hippo.nimingban.util.ReadableTime;
@@ -700,11 +701,13 @@ public final class ListActivity extends AbsActivity
         mCurrentForum = forum;
         mRightDrawer.setActivatedForum(forum);
         updateTitleByForum(mCurrentForum);
+        ForumAutoSortingUtils.addACForumFrequency(forum);
     }
 
     private void updateForums(boolean firstTime) {
         Forum currentForum = mCurrentForum;
-        List<DisplayForum> forums = DB.getACForums(true); // TODO DB.getForums
+        boolean sorting = Settings.getForumAutoSorting();
+        List<DisplayForum> forums = DB.getACForums(true, sorting); // TODO DB.getForums
         mRightDrawer.setForums(forums);
 
         // Try to find the same forum

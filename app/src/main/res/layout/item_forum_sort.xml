@@ -39,6 +39,11 @@
                 android:layout_height="48dp"
                 android:padding="12dp"/>
 
+            <Switch
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/auto_sorting_switch"/>
+
             <TextView
                 android:id="@+id/forum"
                 android:layout_width="0dp"
@@ -58,6 +63,12 @@
                 android:layout_height="48dp"
                 android:padding="12dp"
                 app:srcCompat="@drawable/v_reorder_x24"/>
+
+            <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/pinning"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"/>
 
         </LinearLayout>
 

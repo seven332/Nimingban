@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.query.LazyList;
+import de.greenrobot.dao.query.QueryBuilder;
 
 public final class DB {
 
@@ -82,6 +83,9 @@ public final class DB {
                 case 4:
                     db.execSQL("ALTER TABLE '" + ACForumDao.TABLENAME + "' ADD COLUMN '" +
                             ACForumDao.Properties.Official.columnName + "' INTEGER DEFAULT 0");
+                case 5:
+                    db.execSQL("ALTER TABLE '" + ACForumDao.TABLENAME + "' ADD COLUMN '" +
+                            ACForumDao.Properties.Frequency.columnName + "' INTEGER DEFAULT 0");
             }
         }
 
@@ -145,7 +149,13 @@ public final class DB {
             raw.setDisplayname(AC_FORUM_NAME_ARRAY[i]);
             raw.setVisibility(true);
             raw.setOfficial(true);
+            raw.setFrequency(0);
             dao.insert(raw);
+
+            if (AC_FORUM_ID_ARRAY[i].equals("-1")) {
+                // hardcode: -1 is the timeline id
+                ForumAutoSortingUtils.pinACForum(raw);
+            }
         }
     }
 
@@ -173,9 +183,14 @@ public final class DB {
         }
     }
 
-    public static List<DisplayForum> getACForums(boolean onlyVisible) {
+    public static List<DisplayForum> getACForums(boolean onlyVisible, boolean autoSorting) {
         ACForumDao dao = sDaoSession.getACForumDao();
-        List<ACForumRaw> list = dao.queryBuilder().orderAsc(ACForumDao.Properties.Priority).list();
+        QueryBuilder<ACForumRaw> query = dao.queryBuilder();
+        if (autoSorting) {
+            query = query.orderDesc(ACForumDao.Properties.Frequency);
+        }
+        query = query.orderAsc(ACForumDao.Properties.Priority);
+        List<ACForumRaw> list = query.list();
         List<DisplayForum> result = new ArrayList<>();
         for (ACForumRaw raw : list) {
             if (onlyVisible && !raw.getVisibility()) {
@@ -204,7 +219,7 @@ public final class DB {
         return name;
     }
 
-    private static ACForumRaw toACForumRaw(ACForum forum, int priority, boolean visibility) {
+    private static ACForumRaw toACForumRaw(ACForum forum, int priority, boolean visibility, int frequency) {
         ACForumRaw raw = new ACForumRaw();
         raw.setDisplayname(getACForumName(forum));
         raw.setForumid(forum.id);
@@ -212,6 +227,7 @@ public final class DB {
         raw.setVisibility(visibility);
         raw.setMsg(forum.msg);
         raw.setOfficial(true);
+        raw.setFrequency(frequency);
         return raw;
     }
 
@@ -231,7 +247,7 @@ public final class DB {
             for (int j = 0, m = currentList.size(); j < m; j++) {
                 ACForumRaw raw = currentList.get(j);
                 if (ObjectUtils.equal(forum.id, raw.getForumid())) {
-                    newList.add(toACForumRaw(forum, raw.getPriority(), raw.getVisibility()));
+                    newList.add(toACForumRaw(forum, raw.getPriority(), raw.getVisibility(), raw.getFrequency()));
                     addList.remove(i);
                     i--;
                     n--;
@@ -242,7 +258,7 @@ public final class DB {
 
         int i = getACForumMaxPriority() + 1;
         for (ACForum forum : addList) {
-            newList.add(toACForumRaw(forum, i, true));
+            newList.add(toACForumRaw(forum, i, true, 0));
             i++;
         }
 
@@ -278,8 +294,13 @@ public final class DB {
         sDaoSession.getACForumDao().update(raw);
     }
 
-    public static LazyList<ACForumRaw> getACForumLazyList() {
-        return sDaoSession.getACForumDao().queryBuilder().orderAsc(ACForumDao.Properties.Priority).listLazy();
+    public static LazyList<ACForumRaw> getACForumLazyList(boolean autoSorting) {
+        QueryBuilder<ACForumRaw> query = sDaoSession.getACForumDao().queryBuilder();
+        if (autoSorting) {
+            query = query.orderDesc(ACForumDao.Properties.Frequency);
+        }
+        query = query.orderAsc(ACForumDao.Properties.Priority);
+        return query.listLazy();
     }
 
     public static void setACForumVisibility(ACForumRaw raw, boolean visibility) {
@@ -362,5 +383,10 @@ public final class DB {
         }
 
         dao.insertInTx(insertList);
+    }
+
+    public static void setACForumFrequency(ACForumRaw raw, int freq) {
+        raw.setFrequency(freq);
+        sDaoSession.getACForumDao().update(raw);
     }
 }

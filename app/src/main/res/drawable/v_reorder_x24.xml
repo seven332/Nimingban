@@ -24,6 +24,6 @@
 
     <path
         android:pathData="@string/pd_reorder"
-        android:fillColor="@color/primary_drawable_light"/>
+        android:fillColor="?attr/colorDrawablePrimary"/>
 
 </vector>
