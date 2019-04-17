@@ -139,7 +139,7 @@ public class ACPost extends Post {
 
         mReplyCount = NumberUtils.parseIntSafely(replyCount, -1);
 
-        mContent = ACItemUtils.generateContent(content, sage, title, name, email);
+        mContent = ACItemUtils.generateContent(content, sage, title, name);
 
         if (!TextUtils.isEmpty(img)) {
             String ext2 = ext;

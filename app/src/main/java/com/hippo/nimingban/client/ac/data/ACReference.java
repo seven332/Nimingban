@@ -74,7 +74,7 @@ public class ACReference extends Reply {
             mUser = ACItemUtils.handleUser(Html.fromHtml(userId), getNMBPostId(), getNMBId());
         }
 
-        mContent = ACItemUtils.generateContent(content, "", title, "", email);
+        mContent = ACItemUtils.generateContent(content, "", title, "");
 
         if (!TextUtils.isEmpty(thumb)) {
             mThumbUrl = thumb;

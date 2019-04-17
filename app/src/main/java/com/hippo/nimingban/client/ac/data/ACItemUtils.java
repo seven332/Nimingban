@@ -155,9 +155,9 @@ public final class ACItemUtils {
         return charSequence;
     }
 
-    public static CharSequence generateContent(String content, String sage, String title, String name, String email) {
+    public static CharSequence generateContent(String content, String sage, String title, String name) {
         StringBuilder sb = new StringBuilder(44 + 11 + StringUtils.length(title) +
-                11 + StringUtils.length(name) + 11 + StringUtils.length(email) +
+                11 + StringUtils.length(name) +
                 StringUtils.length(content));
         if ("1".equals(sage)) {
             sb.append("<font color=\"red\"><b>SAGE</b></font><br><br>");
@@ -167,9 +167,6 @@ public final class ACItemUtils {
         }
         if (!TextUtils.isEmpty(name) && !NO_NAME.equals(name)) {
             sb.append("<b>").append(name).append("</b><br>");
-        }
-        if (!TextUtils.isEmpty(email)) {
-            sb.append("<b>").append(email).append("</b><br>");
         }
         sb.append(content);
 

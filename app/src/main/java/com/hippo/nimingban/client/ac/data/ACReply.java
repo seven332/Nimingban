@@ -75,7 +75,7 @@ public class ACReply extends Reply {
             mUser = ACItemUtils.handleUser(Html.fromHtml(userid), getNMBPostId(), getNMBId());
         }
 
-        mContent = ACItemUtils.generateContent(content, sage, title, name, email);
+        mContent = ACItemUtils.generateContent(content, sage, title, name);
 
         if (!TextUtils.isEmpty(img)) {
             String ext2 = ext;
