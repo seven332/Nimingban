@@ -158,7 +158,9 @@ public final class ACEngine {
         try {
             Response response = call.execute();
             body = response.body().string();
-            return JSON.parseArray(body, ACCdnPath.class);
+            List<ACCdnPath> cdn = JSON.parseArray(body, ACCdnPath.class);
+            Log.d(TAG, "cdn path: " + cdn);
+            return cdn;
         } catch (Exception e) {
             throwException(call, body, e);
             throw e;

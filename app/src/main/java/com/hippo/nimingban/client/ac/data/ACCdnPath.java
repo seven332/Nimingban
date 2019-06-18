@@ -18,8 +18,21 @@ package com.hippo.nimingban.client.ac.data;
 
 public class ACCdnPath {
 
-    public String url = "";
-    public float rate = 0.0f;
+    public static final String DEFAULT_CDN_PATH = "https://nmbimg.fastmirror.org/";
+    public static final String DEFAULT_CDN_HOST = "nmbimg.fastmirror.org";
+    public static final float DEFAULT_CDN_RATE = 0.5f;
+
+    public String url;
+    public float rate;
+
+    public ACCdnPath() {
+        this(DEFAULT_CDN_PATH, DEFAULT_CDN_RATE);
+    }
+
+    public ACCdnPath(String url, float rate) {
+        this.url = url;
+        this.rate = rate;
+    }
 
     @Override
     public String toString() {
