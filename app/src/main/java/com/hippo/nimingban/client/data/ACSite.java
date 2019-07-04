@@ -24,6 +24,7 @@ import com.hippo.nimingban.client.ac.data.ACCdnPath;
 import com.hippo.nimingban.network.HttpCookieWithId;
 import com.hippo.nimingban.network.SimpleCookieStore;
 import com.hippo.nimingban.util.Settings;
+import com.hippo.util.UrlUtils;
 import com.hippo.yorozuya.MathUtils;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
@@ -191,7 +192,7 @@ public class ACSite extends Site {
         ACCdnPath cdnPath;
 
         if (mCdnPathList != null && (cdnPath = getCdnPath()) != null) {
-            url = cdnPath.url + key;
+            url = UrlUtils.join(cdnPath.url, key);
         } else {
             url = DEFAULT_PICTURE_PREFIX + key;
         }
