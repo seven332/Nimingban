@@ -349,7 +349,7 @@
     <string name="cant_open_notice">無法打開通知文檔</string>
 
     <string name="da_diao_service">大雕</string>
-    <string name="da_diao_tip">不要再點啦！(&gt;д&lt;)</string>
+    <string name="da_diao_tip">再點的話，我就要叫了啊！(&gt;д&lt;)</string>
 
     <string name="dump_logcat_failed">導出 logcat 失敗</string>
     <string name="dump_logcat_to">導出 logcat 至 %s</string>
