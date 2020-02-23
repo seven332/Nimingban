@@ -20,10 +20,20 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.text.Spanned;
+import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import com.hippo.nimingban.client.ReferenceSpan;
+import com.hippo.nimingban.client.ac.data.ACItemUtils;
+import com.hippo.yorozuya.Utilities;
 
 public class LinkifyTextView extends FontTextView {
+
+    private static final Class<?>[] SUPPORTED_SPAN_TYPE = {
+        URLSpan.class,
+        ReferenceSpan.class,
+        ACItemUtils.HideSpan.class,
+    };
 
     private Object mCurrentSpan;
 
@@ -75,8 +85,11 @@ public class LinkifyTextView extends FontTextView {
 
                 Object[] spans = ((Spanned)getText()).getSpans(off, off, Object.class);
 
-                if (spans.length > 0) {
-                    mCurrentSpan = spans[0];
+                for (Object span : spans) {
+                    if (Utilities.contain(SUPPORTED_SPAN_TYPE, span.getClass())) {
+                        mCurrentSpan = span;
+                        break;
+                    }
                 }
             }
         }
