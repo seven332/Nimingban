@@ -27,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.easyrecyclerview.RawMarginItemDecoration;
@@ -36,6 +35,7 @@ import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
+import com.hippo.nimingban.client.ac.data.ACItemUtils;
 import com.hippo.nimingban.client.ac.data.ACSearchItem;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.util.PostIgnoreUtils;
@@ -49,12 +49,10 @@ import com.hippo.util.DrawableManager;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
-
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class SearchActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
@@ -325,7 +323,7 @@ public class SearchActivity extends TranslucentActivity implements EasyRecyclerV
             holder.leftText.setText(item.getNMBDisplayUsername());
             holder.centerText.setText("No." + item.getNMBId());
             holder.rightText.setText(ReadableTime.getDisplayTime(item.getNMBTime()));
-            holder.content.setText(item.getNMBDisplayContent());
+            ACItemUtils.setContentText(holder.content, item.getNMBDisplayContent());
 
             String thumbKey = item.getNMBThumbKey();
             String thumbUrl = item.getNMBThumbUrl();

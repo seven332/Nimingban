@@ -26,9 +26,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextSwitcher;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
-
 import com.hippo.nimingban.R;
+import com.hippo.nimingban.client.ac.data.ACItemUtils;
 import com.hippo.nimingban.client.data.Reply;
 import com.hippo.yorozuya.MathUtils;
 
@@ -97,7 +98,7 @@ public class MarqueeReplyView extends TextSwitcher {
         mCanUpdate = false;
         mShouldUpdate = false;
         if (replies != null && replies.length > 0) {
-            setCurrentText(replies[0].getNMBDisplayContent());
+            setCurrentText(ACItemUtils.updateContentText(replies[0].getNMBDisplayContent(), ((TextView)getCurrentView()).getTextColors().getDefaultColor()));
         } else {
             setCurrentText(null);
         }
@@ -110,7 +111,7 @@ public class MarqueeReplyView extends TextSwitcher {
 
         if (mCanUpdate && mShouldUpdate && canMarquee()) {
             mIndex = (mIndex + 1) % mReplies.length;
-            setText(mReplies[mIndex].getNMBDisplayContent());
+            setText(ACItemUtils.updateContentText(mReplies[mIndex].getNMBDisplayContent(), ((TextView)getCurrentView()).getTextColors().getDefaultColor()));
             nextMarquee();
         }
         mShouldUpdate = false;

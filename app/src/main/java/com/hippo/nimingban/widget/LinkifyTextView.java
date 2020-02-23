@@ -20,13 +20,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.text.Spanned;
-import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class LinkifyTextView extends FontTextView {
 
-    private ClickableSpan mCurrentSpan;
+    private Object mCurrentSpan;
 
     public LinkifyTextView(Context context) {
         super(context);
@@ -40,7 +39,7 @@ public class LinkifyTextView extends FontTextView {
         super(context, attrs, defStyleAttr);
     }
 
-    public ClickableSpan getCurrentSpan() {
+    public Object getCurrentSpan() {
         return mCurrentSpan;
     }
 
@@ -74,7 +73,7 @@ public class LinkifyTextView extends FontTextView {
                 int line = layout.getLineForVertical(y);
                 int off = layout.getOffsetForHorizontal(line, x);
 
-                ClickableSpan[] spans = ((Spanned)getText()).getSpans(off, off, ClickableSpan.class);
+                Object[] spans = ((Spanned)getText()).getSpans(off, off, Object.class);
 
                 if (spans.length > 0) {
                     mCurrentSpan = spans[0];

@@ -53,7 +53,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -70,6 +69,7 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.Notice;
 import com.hippo.nimingban.client.UpdateHelper;
 import com.hippo.nimingban.client.ac.ACUrl;
+import com.hippo.nimingban.client.ac.data.ACItemUtils;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.CommonPost;
 import com.hippo.nimingban.client.data.DisplayForum;
@@ -108,7 +108,6 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
@@ -118,7 +117,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public final class ListActivity extends AbsActivity
@@ -1159,7 +1157,7 @@ public final class ListActivity extends AbsActivity
                 holder.centerText.setText("No." + post.getNMBId());
             }
             holder.rightText.setText(ReadableTime.getDisplayTime(post.getNMBTime()));
-            holder.content.setText(post.getNMBDisplayContent());
+            ACItemUtils.setContentText(holder.content, post.getNMBDisplayContent());
             holder.bottomText.setText(post.getNMBReplyDisplayCount());
 
             View bottom = holder.bottom;

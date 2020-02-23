@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
@@ -47,6 +46,7 @@ import com.hippo.nimingban.NMBApplication;
 import com.hippo.nimingban.R;
 import com.hippo.nimingban.client.NMBClient;
 import com.hippo.nimingban.client.NMBRequest;
+import com.hippo.nimingban.client.ac.data.ACItemUtils;
 import com.hippo.nimingban.client.data.ACSite;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Site;
@@ -63,12 +63,10 @@ import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
-
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public final class FeedActivity extends TranslucentActivity implements EasyRecyclerView.OnItemClickListener {
@@ -371,7 +369,7 @@ public final class FeedActivity extends TranslucentActivity implements EasyRecyc
             holder.leftText.setText(post.getNMBDisplayUsername());
             holder.centerText.setText("No." + post.getNMBId());
             holder.rightText.setText(ReadableTime.getDisplayTime(post.getNMBTime()));
-            holder.content.setText(post.getNMBDisplayContent());
+            ACItemUtils.setContentText(holder.content, post.getNMBDisplayContent());
 
             String thumbKey = post.getNMBThumbKey();
             String thumbUrl = post.getNMBThumbUrl();

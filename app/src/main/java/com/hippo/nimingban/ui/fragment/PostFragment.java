@@ -39,7 +39,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
@@ -52,7 +51,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.effect.ViewTransition;
 import com.hippo.nimingban.Constants;
@@ -63,6 +61,7 @@ import com.hippo.nimingban.client.NMBRequest;
 import com.hippo.nimingban.client.NMBUrl;
 import com.hippo.nimingban.client.ReferenceSpan;
 import com.hippo.nimingban.client.ac.NMBUriParser;
+import com.hippo.nimingban.client.ac.data.ACItemUtils;
 import com.hippo.nimingban.client.ac.data.ACReference;
 import com.hippo.nimingban.client.data.Post;
 import com.hippo.nimingban.client.data.Reply;
@@ -87,7 +86,6 @@ import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ResourcesUtils;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -549,13 +547,15 @@ public class PostFragment extends BaseFragment
         @Override
         public void onClick(View v) {
             if (v == mContent) {
-                ClickableSpan span = mContent.getCurrentSpan();
+                Object span = mContent.getCurrentSpan();
                 mContent.clearCurrentSpan();
 
                 if (span instanceof URLSpan) {
                     handleURLSpan((URLSpan) span);
                 } else if (span instanceof ReferenceSpan) {
                     handleReferenceSpan((ReferenceSpan) span);
+                } else if (span instanceof ACItemUtils.HideSpan) {
+                    ((ACItemUtils.HideSpan) span).toggle(mContent);
                 }
             } else if (v == mThumb) {
                 String key;
@@ -607,7 +607,7 @@ public class PostFragment extends BaseFragment
             mLeftText.setText(highlightOp(reply));
             mCenterText.setText("No." + reply.getNMBId());
             mRightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
-            mContent.setText(reply.getNMBDisplayContent());
+            ACItemUtils.setContentText(mContent, reply.getNMBDisplayContent());
 
             String thumbKey = reply.getNMBThumbKey();
             String thumbUrl = reply.getNMBThumbUrl();
@@ -837,7 +837,7 @@ public class PostFragment extends BaseFragment
         RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
         if (holder instanceof ReplyHolder) {
             ReplyHolder replyHolder = (ReplyHolder) holder;
-            ClickableSpan span = replyHolder.content.getCurrentSpan();
+            Object span = replyHolder.content.getCurrentSpan();
             replyHolder.content.clearCurrentSpan();
 
             if (span instanceof URLSpan) {
@@ -846,6 +846,8 @@ public class PostFragment extends BaseFragment
             } else if (span instanceof ReferenceSpan) {
                 handleReferenceSpan((ReferenceSpan) span);
                 return true;
+            } else if (span instanceof ACItemUtils.HideSpan) {
+                ((ACItemUtils.HideSpan) span).toggle(replyHolder.content);
             }
         }
         return false;
@@ -906,7 +908,7 @@ public class PostFragment extends BaseFragment
             holder.leftText.setText(highlightOp(reply));
             holder.centerText.setText("No." + reply.getNMBId());
             holder.rightText.setText(ReadableTime.getDisplayTime(reply.getNMBTime()));
-            holder.content.setText(reply.getNMBDisplayContent());
+            ACItemUtils.setContentText(holder.content, reply.getNMBDisplayContent());
 
             String thumbKey = reply.getNMBThumbKey();
             String thumbUrl = reply.getNMBThumbUrl();
