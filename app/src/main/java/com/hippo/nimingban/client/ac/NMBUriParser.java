@@ -34,6 +34,7 @@ public final class NMBUriParser {
             "hacfun.tv",
             "adnmb.com",
             "adnmb1.com",
+            "adnmb2.com",
     };
 
     private static final Pattern ID_PATTERN = Pattern.compile("^(?:/m)?/t/(\\d+)");
