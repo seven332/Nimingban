@@ -1,3 +1,5 @@
+# DEPRECATED
+
 # Nimingban
 
 ![Icon](art/launcher_icon-web.png)
